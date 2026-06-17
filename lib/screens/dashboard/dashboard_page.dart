@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/stock_provider.dart';
 import '../../widgets/dashboard_card.dart';
+import '../../widgets/search_bar_widget.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -13,7 +14,7 @@ class DashboardPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("ARTHA AI"),
+        title: const Text("Nivaarth"),
         centerTitle: true,
       ),
       body: stocks.when(
@@ -40,6 +41,8 @@ class DashboardPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SearchBarWidget(),
+                    const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
