@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/dashboard/dashboard_page.dart';
 import 'services/supabase_service.dart';
+import 'screens/login/login_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +25,9 @@ class ArthaAIApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ARTHA AI',
+      title: 'NIVAARTH',
       theme: AppTheme.darkTheme,
-      home: const DashboardPage(),
+      home: const LoginPage(),
     );
   }
 }

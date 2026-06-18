@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/search_provider.dart';
+import '../stock/stock_detail_page.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -85,6 +86,16 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       return Card(
 
                         child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (_) => StockDetailPage(
+                            stock: stock,
+        ),
+      ),
+    );
+  },
 
                           title: Text(stock.instrument),
 
