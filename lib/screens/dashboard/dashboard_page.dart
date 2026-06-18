@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/stock_provider.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/dashboard_card.dart';
 import '../../widgets/search_bar_widget.dart';
+import '../login/login_page.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -14,15 +16,36 @@ class DashboardPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Nivaarth"),
+        title: const Text("NIVAARTH"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService().signOut();
+
+              if (!context.mounted) return;
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const LoginPage(),
+                ),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
+
       body: stocks.when(
         loading: () =>
             const Center(child: CircularProgressIndicator()),
+
         error: (e, _) => Center(
           child: Text(e.toString()),
         ),
+
         data: (data) {
           if (data.isEmpty) {
             return const Center(
@@ -41,8 +64,11 @@ class DashboardPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 const SearchBarWidget(),
-                    const SizedBox(height: 20),
+
+                const SizedBox(height: 20),
+
                 Row(
                   children: [
                     Expanded(
@@ -51,7 +77,9 @@ class DashboardPage extends ConsumerWidget {
                         value: "${data.length}",
                       ),
                     ),
+
                     const SizedBox(width: 10),
+
                     Expanded(
                       child: DashboardCard(
                         title: "Top Score",
@@ -65,7 +93,8 @@ class DashboardPage extends ConsumerWidget {
 
                 DashboardCard(
                   title: "Portfolio Health",
-                  value: "${averageScore.toStringAsFixed(1)}/100",
+                  value:
+                      "${averageScore.toStringAsFixed(1)}/100",
                 ),
 
                 const SizedBox(height: 30),
@@ -86,7 +115,9 @@ class DashboardPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(18),
+                    contentPadding:
+                        const EdgeInsets.all(18),
+
                     title: Text(
                       top.instrument,
                       style: const TextStyle(
@@ -94,8 +125,10 @@ class DashboardPage extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+
                     subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding:
+                          const EdgeInsets.only(top: 8),
                       child: Text(
                         top.recommendation,
                         style: const TextStyle(
@@ -103,6 +136,7 @@ class DashboardPage extends ConsumerWidget {
                         ),
                       ),
                     ),
+
                     trailing: CircleAvatar(
                       radius: 28,
                       child: Text(
