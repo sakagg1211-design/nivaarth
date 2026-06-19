@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../portfolio/portfolio_page.dart';
 
 import '../../providers/stock_provider.dart';
 import '../../services/auth_service.dart';
@@ -96,7 +97,24 @@ class DashboardPage extends ConsumerWidget {
                   value:
                       "${averageScore.toStringAsFixed(1)}/100",
                 ),
+                const SizedBox(height: 20),
 
+SizedBox(
+  width: double.infinity,
+  height: 50,
+  child: ElevatedButton.icon(
+    icon: const Icon(Icons.account_balance_wallet),
+    label: const Text("Open Portfolio"),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const PortfolioPage(),
+        ),
+      );
+    },
+  ),
+),
                 const SizedBox(height: 30),
 
                 const Text(
