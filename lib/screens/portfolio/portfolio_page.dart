@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/portfolio_provider.dart';
+import '../../widgets/portfolio_card.dart';
 
 class PortfolioPage extends ConsumerWidget {
   const PortfolioPage({super.key});
@@ -29,58 +30,73 @@ class PortfolioPage extends ConsumerWidget {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: stocks.length,
+          double totalInvested = 0;
 
-            itemBuilder: (context, index) {
-              final stock = stocks[index];
+          for (final stock in stocks) {
+            totalInvested += stock.totalInvested;
+          }
 
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
 
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.all(16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                        children: [
 
-                  title: Text(
-                    stock.instrument,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                          Column(
+                            children: [
+                              const Text("Stocks"),
+                              Text(
+                                "${stocks.length}",
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Column(
+                            children: [
+                              const Text("Invested"),
+                              Text(
+                                "₹${totalInvested.toStringAsFixed(0)}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
-                  subtitle: Padding(
-                    padding:
-                        const EdgeInsets.only(top: 8),
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
+                  const SizedBox(height: 20),
 
-                        Text(
-                          "Qty : ${stock.qty}",
-                        ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    itemCount: stocks.length,
 
-                        Text(
-                          "Avg Price : ₹${stock.avgPrice.toStringAsFixed(2)}",
-                        ),
-
-                        Text(
-                          "Invested : ₹${stock.totalInvested.toStringAsFixed(2)}",
-                        ),
-
-                      ],
-                    ),
+                    itemBuilder: (context, index) {
+                      return PortfolioCard(
+                        stock: stocks[index],
+                      );
+                    },
                   ),
-
-                  trailing: const Icon(
-                    Icons.chevron_right,
-                  ),
-                ),
-              );
-            },
+                ],
+              ),
+            ),
           );
         },
       ),

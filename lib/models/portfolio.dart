@@ -8,6 +8,10 @@ class Portfolio {
   final double avgPrice;
   final double totalInvested;
 
+  // Existing Database Fields
+  final double? currentValue;
+  final double? netPL;
+
   final String sector;
   final String industry;
   final String status;
@@ -21,6 +25,8 @@ class Portfolio {
     required this.qty,
     required this.avgPrice,
     required this.totalInvested,
+    required this.currentValue,
+    required this.netPL,
     required this.sector,
     required this.industry,
     required this.status,
@@ -43,6 +49,12 @@ class Portfolio {
 
       totalInvested:
           (json["Total Invested"] as num?)?.toDouble() ?? 0,
+
+      currentValue:
+          (json["Current Val"] as num?)?.toDouble(),
+
+      netPL:
+          (json["Net P&L"] as num?)?.toDouble(),
 
       sector: json["Sector"]?.toString() ?? "",
 

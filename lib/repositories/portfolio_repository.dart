@@ -18,8 +18,13 @@ class PortfolioRepository {
       debugPrint(response.first.toString());
     }
 
-    return response
-        .map<Portfolio>((json) => Portfolio.fromJson(json))
-        .toList();
+    final list = response
+    .map<Portfolio>((json) => Portfolio.fromJson(json))
+    .toList();
+
+debugPrint("Model CurrentValue: ${list.first.currentValue}");
+debugPrint("Model NetPL: ${list.first.netPL}");
+
+return list;
   }
 }
