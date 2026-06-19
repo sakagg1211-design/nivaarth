@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
-import 'screens/dashboard/dashboard_page.dart';
+import 'screens/home/home_page.dart';
 import 'screens/login/login_page.dart';
 import 'services/supabase_service.dart';
 
@@ -32,7 +32,7 @@ class NivaarthApp extends StatelessWidget {
       theme: AppTheme.darkTheme,
       home: session == null
           ? const LoginPage()
-          : const DashboardPage(),
+          : const HomePage(),
     );
   }
 }

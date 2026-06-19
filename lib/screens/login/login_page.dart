@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
-import '../dashboard/dashboard_page.dart';
+import '../home/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -39,11 +39,11 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const DashboardPage(),
-        ),
-      );
+      context,
+      MaterialPageRoute(
+      builder: (_) => const HomePage(),
+    ),
+);
     } catch (e) {
       if (!mounted) return;
 
