@@ -87,15 +87,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
                         child: ListTile(
                           onTap: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                            builder: (_) => StockDetailPage(
-                            stock: stock,
-        ),
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text(
+        "Stock Detail from Search is coming in next sprint 🚀",
       ),
-    );
-  },
+    ),
+  );
+},
 
                           title: Text(stock.instrument),
 

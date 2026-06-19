@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/portfolio.dart';
+import '../screens/stock/stock_detail_page.dart';
 
 class PortfolioCard extends StatelessWidget {
   final Portfolio stock;
@@ -24,124 +25,154 @@ class PortfolioCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
 
-            /// Stock Name
-            Text(
-              stock.instrument,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => StockDetailPage(
+                stock: stock,
               ),
             ),
+          );
+        },
 
-            if (stock.companyName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  stock.companyName,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: [
+
+              //--------------------
+              // Header
+              //--------------------
+
+              Row(
+                children: [
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+
+                      children: [
+
+                        Text(
+                          stock.instrument,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
+
+                        if (stock.companyName.isNotEmpty)
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(
+                                    top: 4),
+                            child: Text(
+                              stock.companyName,
+                              style: TextStyle(
+                                color: Colors
+                                    .grey.shade600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
+
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 18,
+                  ),
+
+                ],
               ),
 
-            const SizedBox(height: 15),
+              const SizedBox(height: 15),
 
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
+              Wrap(
+                spacing: 8,
+                children: [
 
-                if (stock.sector.isNotEmpty)
-                  Chip(
-                    label: Text(stock.sector),
-                  ),
+                  if (stock.status.isNotEmpty)
+                    Chip(
+                      label: Text(stock.status),
+                    ),
 
-                if (stock.status.isNotEmpty)
-                  Chip(
-                    backgroundColor: Colors.green.withOpacity(.15),
-                    label: Text(stock.status),
-                  ),
-              ],
-            ),
+                  if (stock.sector.isNotEmpty)
+                    Chip(
+                      label: Text(stock.sector),
+                    ),
 
-            const SizedBox(height: 18),
-
-            _row(
-              "Quantity",
-              stock.qty.toString(),
-            ),
-
-            _row(
-              "Avg Price",
-              "₹${stock.avgPrice.toStringAsFixed(2)}",
-            ),
-
-            _row(
-              "Invested",
-              "₹${stock.totalInvested.toStringAsFixed(2)}",
-            ),
-
-            const Divider(height: 28),
-Text(
-  "DEBUG: ${stock.currentValue} | ${stock.netPL}",
-),
-            _row(
-              "Current Value",
-              stock.currentValue == null
-                  ? "--"
-                  : "₹${stock.currentValue!.toStringAsFixed(2)}",
-            ),
-
-            _row(
-              "Net P&L",
-              stock.netPL == null
-                  ? "--"
-                  : "${isProfit ? "+" : ""}₹${stock.netPL!.toStringAsFixed(2)}",
-              valueColor:
-                  isProfit ? Colors.green : Colors.red,
-            ),
-
-            _row(
-              "Return",
-              stock.netPL == null
-                  ? "--"
-                  : "${returnPercent.toStringAsFixed(2)}%",
-              valueColor:
-                  isProfit ? Colors.green : Colors.red,
-            ),
-
-            const SizedBox(height: 10),
-
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                onPressed: () {
-                  // Next Sprint
-                },
-                icon: const Icon(Icons.arrow_forward),
-                label: const Text("View Details"),
+                ],
               ),
-            ),
-          ],
+
+              const SizedBox(height: 15),
+
+              buildRow(
+                "Quantity",
+                stock.qty.toString(),
+              ),
+
+              buildRow(
+                "Average Price",
+                "₹${stock.avgPrice.toStringAsFixed(2)}",
+              ),
+
+              buildRow(
+                "Invested",
+                "₹${stock.totalInvested.toStringAsFixed(2)}",
+              ),
+
+              const Divider(height: 30),
+
+              buildRow(
+                "Current Value",
+                stock.currentValue == null
+                    ? "--"
+                    : "₹${stock.currentValue!.toStringAsFixed(2)}",
+              ),
+
+              buildRow(
+                "Net P&L",
+                stock.netPL == null
+                    ? "--"
+                    : "${isProfit ? "+" : ""}₹${stock.netPL!.toStringAsFixed(2)}",
+                color:
+                    isProfit ? Colors.green : Colors.red,
+              ),
+
+              buildRow(
+                "Return",
+                "${returnPercent.toStringAsFixed(2)} %",
+                color:
+                    isProfit ? Colors.green : Colors.red,
+              ),
+
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _row(
+  Widget buildRow(
     String title,
     String value, {
-    Color? valueColor,
+    Color? color,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding:
+          const EdgeInsets.symmetric(vertical: 5),
+
       child: Row(
         children: [
 
@@ -150,7 +181,6 @@ Text(
               title,
               style: const TextStyle(
                 color: Colors.grey,
-                fontSize: 15,
               ),
             ),
           ),
@@ -159,10 +189,10 @@ Text(
             value,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: valueColor,
-              fontSize: 15,
+              color: color,
             ),
           ),
+
         ],
       ),
     );
