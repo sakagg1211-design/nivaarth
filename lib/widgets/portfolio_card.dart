@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../models/portfolio.dart';
+import '../models/live_portfolio.dart';
 import '../screens/stock/stock_detail_page.dart';
 
 class PortfolioCard extends StatelessWidget {
-  final Portfolio stock;
+  final LivePortfolio stock;
 
   const PortfolioCard({
     super.key,
@@ -13,11 +13,9 @@ class PortfolioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final returnPercent = stock.totalInvested == 0
-        ? 0
-        : ((stock.netPL ?? 0) / stock.totalInvested) * 100;
+    final portfolio = stock.portfolio;
 
-    final isProfit = (stock.netPL ?? 0) >= 0;
+    final bool isProfit = stock.netPL >= 0;
 
     return Card(
       elevation: 4,
@@ -25,32 +23,23 @@ class PortfolioCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
       ),
-
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => StockDetailPage(
-                stock: stock,
+                stock: portfolio,
               ),
             ),
           );
         },
-
         child: Padding(
           padding: const EdgeInsets.all(18),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
-
-              //--------------------
-              // Header
-              //--------------------
 
               Row(
                 children: [
@@ -59,28 +48,24 @@ class PortfolioCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start,
-
                       children: [
 
                         Text(
-                          stock.instrument,
+                          portfolio.instrument,
                           style: const TextStyle(
                             fontSize: 22,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
-                        if (stock.companyName.isNotEmpty)
+                        if (portfolio.companyName.isNotEmpty)
                           Padding(
                             padding:
-                                const EdgeInsets.only(
-                                    top: 4),
+                                const EdgeInsets.only(top: 4),
                             child: Text(
-                              stock.companyName,
+                              portfolio.companyName,
                               style: TextStyle(
-                                color: Colors
-                                    .grey.shade600,
+                                color: Colors.grey.shade600,
                               ),
                             ),
                           ),
@@ -92,7 +77,6 @@ class PortfolioCard extends StatelessWidget {
                     Icons.arrow_forward_ios,
                     size: 18,
                   ),
-
                 ],
               ),
 
@@ -102,14 +86,14 @@ class PortfolioCard extends StatelessWidget {
                 spacing: 8,
                 children: [
 
-                  if (stock.status.isNotEmpty)
+                  if (portfolio.status.isNotEmpty)
                     Chip(
-                      label: Text(stock.status),
+                      label: Text(portfolio.status),
                     ),
 
-                  if (stock.sector.isNotEmpty)
+                  if (portfolio.sector.isNotEmpty)
                     Chip(
-                      label: Text(stock.sector),
+                      label: Text(portfolio.sector),
                     ),
 
                 ],
@@ -119,44 +103,42 @@ class PortfolioCard extends StatelessWidget {
 
               buildRow(
                 "Quantity",
-                stock.qty.toString(),
+                portfolio.qty.toString(),
               ),
 
               buildRow(
                 "Average Price",
-                "₹${stock.avgPrice.toStringAsFixed(2)}",
+                "₹${portfolio.avgPrice.toStringAsFixed(2)}",
               ),
 
               buildRow(
                 "Invested",
-                "₹${stock.totalInvested.toStringAsFixed(2)}",
+                "₹${portfolio.totalInvested.toStringAsFixed(2)}",
               ),
 
-              const Divider(height: 30),
+              const Divider(),
+
+              buildRow(
+                "Current Price",
+                "₹${stock.currentPrice.toStringAsFixed(2)}",
+              ),
 
               buildRow(
                 "Current Value",
-                stock.currentValue == null
-                    ? "--"
-                    : "₹${stock.currentValue!.toStringAsFixed(2)}",
+                "₹${stock.currentValue.toStringAsFixed(2)}",
               ),
 
               buildRow(
                 "Net P&L",
-                stock.netPL == null
-                    ? "--"
-                    : "${isProfit ? "+" : ""}₹${stock.netPL!.toStringAsFixed(2)}",
-                color:
-                    isProfit ? Colors.green : Colors.red,
+                "${isProfit ? "+" : ""}₹${stock.netPL.toStringAsFixed(2)}",
+                color: isProfit ? Colors.green : Colors.red,
               ),
 
               buildRow(
                 "Return",
-                "${returnPercent.toStringAsFixed(2)} %",
-                color:
-                    isProfit ? Colors.green : Colors.red,
+                "${stock.returnPercent.toStringAsFixed(2)} %",
+                color: isProfit ? Colors.green : Colors.red,
               ),
-
             ],
           ),
         ),
@@ -170,9 +152,7 @@ class PortfolioCard extends StatelessWidget {
     Color? color,
   }) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(vertical: 5),
-
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
 

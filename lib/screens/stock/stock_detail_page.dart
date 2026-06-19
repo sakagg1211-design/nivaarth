@@ -12,46 +12,41 @@ class StockDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isProfit = (stock.netPL ?? 0) >= 0;
+    final double currentValue = stock.currentValue ?? 0.0;
+    final double netPL = stock.netPL ?? 0.0;
 
-    final double returnPercent =
-        stock.totalInvested == 0
-            ? 0
-            : ((stock.netPL ?? 0) / stock.totalInvested) * 100;
+    final bool isProfit = netPL >= 0;
+
+    final double returnPercent = stock.totalInvested == 0
+        ? 0.0
+        : (netPL / stock.totalInvested) * 100.0;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(stock.instrument),
         centerTitle: true,
       ),
-
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(18),
-
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
 
-            //--------------------------
+            //-----------------------------------
             // HEADER
-            //--------------------------
+            //-----------------------------------
 
             Card(
               elevation: 4,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
-
               child: Padding(
                 padding: const EdgeInsets.all(20),
-
                 child: Column(
                   children: [
 
                     CircleAvatar(
-                      radius: 38,
+                      radius: 35,
                       child: Text(
                         stock.instrument.substring(0, 1),
                         style: const TextStyle(
@@ -66,12 +61,12 @@ class StockDetailPage extends StatelessWidget {
                     Text(
                       stock.instrument,
                       style: const TextStyle(
-                        fontSize: 26,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
                     Text(
                       stock.companyName.isEmpty
@@ -80,7 +75,7 @@ class StockDetailPage extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 12),
 
                     Chip(
                       label: Text(stock.status),
@@ -93,24 +88,19 @@ class StockDetailPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            //--------------------------
+            //-----------------------------------
             // HOLDING DETAILS
-            //--------------------------
+            //-----------------------------------
 
             Card(
               elevation: 3,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
-
               child: Padding(
                 padding: const EdgeInsets.all(18),
-
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
                     const Text(
@@ -121,7 +111,7 @@ class StockDetailPage extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     buildRow(
                       "Quantity",
@@ -140,27 +130,21 @@ class StockDetailPage extends StatelessWidget {
 
                     buildRow(
                       "Current Value",
-                      stock.currentValue == null
-                          ? "--"
-                          : "₹${stock.currentValue!.toStringAsFixed(2)}",
+                      "₹${currentValue.toStringAsFixed(2)}",
                     ),
 
                     buildRow(
                       "Net P&L",
-                      stock.netPL == null
-                          ? "--"
-                          : "${isProfit ? "+" : ""}₹${stock.netPL!.toStringAsFixed(2)}",
-                      color: isProfit
-                          ? Colors.green
-                          : Colors.red,
+                      "${isProfit ? "+" : ""}₹${netPL.toStringAsFixed(2)}",
+                      color:
+                          isProfit ? Colors.green : Colors.red,
                     ),
 
                     buildRow(
                       "Return",
                       "${returnPercent.toStringAsFixed(2)} %",
-                      color: isProfit
-                          ? Colors.green
-                          : Colors.red,
+                      color:
+                          isProfit ? Colors.green : Colors.red,
                     ),
 
                   ],
@@ -170,24 +154,20 @@ class StockDetailPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            //--------------------------
-            // COMPANY INFO
-            //--------------------------
+            //-----------------------------------
+            // COMPANY
+            //-----------------------------------
 
             Card(
               elevation: 3,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
-
               child: Padding(
                 padding: const EdgeInsets.all(18),
-
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
-
                   children: [
 
                     const Text(
@@ -221,24 +201,20 @@ class StockDetailPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            //--------------------------
-            // INVESTMENT THESIS
-            //--------------------------
+            //-----------------------------------
+            // THESIS
+            //-----------------------------------
 
             Card(
               elevation: 3,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
-
               child: Padding(
                 padding: const EdgeInsets.all(18),
-
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
-
                   children: [
 
                     const Text(
@@ -264,24 +240,20 @@ class StockDetailPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            //--------------------------
-            // AI SECTION
-            //--------------------------
+            //-----------------------------------
+            // AI
+            //-----------------------------------
 
             Card(
-              color: Colors.blue.withOpacity(.08),
-
+              color: Colors.blue.withValues(alpha: 0.08),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
-
               child: const Padding(
                 padding: EdgeInsets.all(18),
-
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
-
                   children: [
 
                     Text(
@@ -295,7 +267,7 @@ class StockDetailPage extends StatelessWidget {
                     SizedBox(height: 12),
 
                     Text(
-                      "Coming in Sprint 8",
+                      "Coming in Sprint 9",
                     ),
 
                   ],
@@ -316,7 +288,6 @@ class StockDetailPage extends StatelessWidget {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-
       child: Row(
         children: [
 
