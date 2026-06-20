@@ -22,6 +22,6 @@ final stockScoreProvider =
     final repository =
         ref.read(stockScoreRepositoryProvider);
 
-    return repository.getScore(instrument);
+    return repository.getByInstrument(instrument);
   },
 );

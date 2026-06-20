@@ -57,10 +57,16 @@ class DashboardEngine {
         await stockRepository.getScores();
 
     final StockScore topOpportunity =
-        stockScoreEngine.getTopOpportunity(scores);
+    stockScoreEngine.getTopOpportunity(
+      portfolio,
+      scores,
+    );
 
-    final StockScore weakestHolding =
-        stockScoreEngine.getWeakestHolding(scores);
+final StockScore weakestHolding =
+    stockScoreEngine.getWeakestHolding(
+      portfolio,
+      scores,
+    );
 
     // ==========================
     // AI Recommendation

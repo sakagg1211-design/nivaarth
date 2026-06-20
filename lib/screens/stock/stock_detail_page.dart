@@ -245,42 +245,119 @@ class StockDetailPage extends StatelessWidget {
             //-----------------------------------
 
             Card(
-              color: Colors.blue.withValues(alpha: 0.08),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
+  elevation: 3,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(18),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(18),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-                    Text(
-                      "🤖 AI Analysis",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+        const Row(
+          children: [
 
-                    SizedBox(height: 12),
+            Icon(
+              Icons.psychology,
+              color: Colors.blue,
+            ),
 
-                    Text(
-                      "Coming in Sprint 9",
-                    ),
+            SizedBox(width: 8),
 
-                  ],
-                ),
+            Text(
+              "AI Analysis",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
+
+          ],
+        ),
+
+        const SizedBox(height: 20),
+
+        buildRow(
+          "AI Score",
+          "-- /100",
+        ),
+
+        buildRow(
+          "Recommendation",
+          "HOLD",
+          color: Colors.orange,
+        ),
+
+        buildRow(
+          "Confidence",
+          "-- %",
+        ),
+
+        const Divider(height: 30),
+
+        buildRow(
+          "Business Quality",
+          "-- /25",
+        ),
+
+        buildRow(
+          "Financial Strength",
+          "-- /25",
+        ),
+
+        buildRow(
+          "Growth",
+          "-- /20",
+        ),
+
+        buildRow(
+          "Valuation",
+          "-- /15",
+        ),
+
+        buildRow(
+          "Technical",
+          "-- /10",
+        ),
+
+        buildRow(
+          "Risk",
+          "-- /5",
+        ),
+
+        const SizedBox(height: 25),
+
+        const Text(
+          "Suggested Actions",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        const Text("• Hold existing position"),
+
+        const SizedBox(height: 6),
+
+        const Text("• Buy on correction"),
+
+        const SizedBox(height: 6),
+
+        const Text("• Review after quarterly results"),
+
+      ],
+    ),
+  ),
+),
 
           ],
         ),
       ),
     );
   }
-
   Widget buildRow(
     String title,
     String value, {

@@ -19,20 +19,41 @@ class StockScoreRepository {
         )
         .toList();
   }
+Future<StockScore?> getScore(
+  String instrument,
+) async {
+  final response = await client
+      .from("StockScores")
+      .select()
+      .eq("Instrument", instrument)
+      .maybeSingle();
 
-  Future<StockScore?> getScore(
-    String instrument,
-  ) async {
-    final response = await client
-        .from("StockScores")
-        .select()
-        .eq("Instrument", instrument)
-        .maybeSingle();
-
-    if (response == null) {
-      return null;
-    }
-
-    return StockScore.fromJson(response);
+  if (response == null) {
+    return null;
   }
+
+  return StockScore.fromJson(response);
+}
+  Future<StockScore?> getByInstrument(
+  String instrument,
+) async {
+  final normalized = instrument
+      .toUpperCase()
+      .replaceAll("-BE", "");
+
+  final response = await client
+      .from("StockScores")
+      .select()
+      .ilike(
+        "Instrument",
+        "$normalized%",
+      )
+      .maybeSingle();
+
+  if (response == null) {
+    return null;
+  }
+
+  return StockScore.fromJson(response);
+}
 }

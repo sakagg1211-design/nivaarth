@@ -1,80 +1,115 @@
+import '../models/live_portfolio.dart';
 import '../models/stock_score.dart';
 
 class StockScoreEngine {
   const StockScoreEngine();
 
-  // ==========================
-  // Best Stock
-  // ==========================
+  List<StockScore> portfolioScores(
+    List<LivePortfolio> portfolio,
+    List<StockScore> scores,
+  ) {
+    final Map<String, StockScore> scoreMap = {};
+
+for (final score in scores) {
+  final key = score.instrument
+      .toUpperCase()
+      .replaceAll(".NS", "");
+
+  scoreMap[key] = score;
+}
+
+    final List<StockScore> result = [];
+
+    for (final holding in portfolio) {
+  final symbol = holding.portfolio.instrument
+    .toUpperCase()
+    .replaceAll("-BE", "")
+    .replaceAll(".NS", "");
+
+  print("Portfolio : $symbol");
+
+  if (scoreMap.containsKey(symbol)) {
+    print("Matched : $symbol");
+    result.add(scoreMap[symbol]!);
+  } else {
+    print("Not Found : $symbol");
+  }
+}
+print(scoreMap.keys.toList());
+    return result;
+  }
 
   StockScore getTopOpportunity(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    if (scores.isEmpty) {
-      throw Exception("No Stock Scores Found");
+    final portfolioOnly =
+        portfolioScores(portfolio, scores);
+
+    if (portfolioOnly.isEmpty) {
+      throw Exception(
+        "No Stock Scores Found",
+      );
     }
 
-    StockScore best = scores.first;
+    portfolioOnly.sort(
+      (a, b) =>
+          b.overallScore.compareTo(
+        a.overallScore,
+      ),
+    );
 
-    for (final stock in scores) {
-      if (stock.overallScore >
-          best.overallScore) {
-        best = stock;
-      }
-    }
-
-    return best;
+    return portfolioOnly.first;
   }
-
-  // ==========================
-  // Weakest Stock
-  // ==========================
 
   StockScore getWeakestHolding(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    if (scores.isEmpty) {
-      throw Exception("No Stock Scores Found");
+    final portfolioOnly =
+        portfolioScores(portfolio, scores);
+
+    if (portfolioOnly.isEmpty) {
+      throw Exception(
+        "No Stock Scores Found",
+      );
     }
 
-    StockScore worst = scores.first;
+    portfolioOnly.sort(
+      (a, b) =>
+          a.overallScore.compareTo(
+        b.overallScore,
+      ),
+    );
 
-    for (final stock in scores) {
-      if (stock.overallScore <
-          worst.overallScore) {
-        worst = stock;
-      }
-    }
-
-    return worst;
+    return portfolioOnly.first;
   }
 
-  // ==========================
-  // Average Score
-  // ==========================
-
   double getAverageScore(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    if (scores.isEmpty) return 0;
+    final portfolioOnly =
+        portfolioScores(portfolio, scores);
+
+    if (portfolioOnly.isEmpty) {
+      return 0;
+    }
 
     double total = 0;
 
-    for (final stock in scores) {
+    for (final stock in portfolioOnly) {
       total += stock.overallScore;
     }
 
-    return total / scores.length;
+    return total / portfolioOnly.length;
   }
 
-  // ==========================
-  // Strong Buy Count
-  // ==========================
-
   int strongBuyCount(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    return scores
+    return portfolioScores(portfolio, scores)
         .where(
           (e) =>
               e.recommendation
@@ -84,14 +119,11 @@ class StockScoreEngine {
         .length;
   }
 
-  // ==========================
-  // Buy Count
-  // ==========================
-
   int buyCount(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    return scores
+    return portfolioScores(portfolio, scores)
         .where(
           (e) =>
               e.recommendation
@@ -101,14 +133,11 @@ class StockScoreEngine {
         .length;
   }
 
-  // ==========================
-  // Sell Count
-  // ==========================
-
   int sellCount(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    return scores
+    return portfolioScores(portfolio, scores)
         .where(
           (e) =>
               e.recommendation
@@ -118,31 +147,21 @@ class StockScoreEngine {
         .length;
   }
 
-  // ==========================
-  // High Risk Stocks
-  // ==========================
-
   List<StockScore> highRiskStocks(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    return scores
-        .where(
-          (e) => e.risk >= 70,
-        )
+    return portfolioScores(portfolio, scores)
+        .where((e) => e.risk >= 70)
         .toList();
   }
 
-  // ==========================
-  // Low Confidence Stocks
-  // ==========================
-
   List<StockScore> lowConfidenceStocks(
+    List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    return scores
-        .where(
-          (e) => e.confidence < 60,
-        )
+    return portfolioScores(portfolio, scores)
+        .where((e) => e.confidence < 60)
         .toList();
   }
 }
