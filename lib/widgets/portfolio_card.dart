@@ -30,7 +30,7 @@ class PortfolioCard extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (_) => StockDetailPage(
-                stock: portfolio,
+                stock: stock,
               ),
             ),
           );
