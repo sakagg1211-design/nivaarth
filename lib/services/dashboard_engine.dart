@@ -1,11 +1,17 @@
+import '../models/ai_recommendation.dart';
 import '../models/dashboard_summary.dart';
 import '../models/live_portfolio.dart';
 import '../models/portfolio_analysis.dart';
+import '../models/stock_score.dart';
+
 import '../repositories/live_portfolio_repository.dart';
 import '../repositories/portfolio_repository.dart';
 import '../repositories/price_repository.dart';
+import '../repositories/stock_score_repository.dart';
+
 import 'portfolio_analyzer.dart';
 import 'recommendation_engine.dart';
+import 'stock_score_engine.dart';
 
 class DashboardEngine {
   final LivePortfolioRepository liveRepository;
@@ -14,17 +20,23 @@ class DashboardEngine {
 
   final RecommendationEngine recommendationEngine;
 
+  final StockScoreRepository stockRepository;
+
+  final StockScoreEngine stockScoreEngine;
+
   DashboardEngine()
       : liveRepository = LivePortfolioRepository(
           portfolioRepository: PortfolioRepository(),
           priceRepository: PriceRepository(),
         ),
         portfolioAnalyzer = PortfolioAnalyzer(),
-        recommendationEngine = RecommendationEngine();
+        recommendationEngine = RecommendationEngine(),
+        stockRepository = StockScoreRepository(),
+        stockScoreEngine = const StockScoreEngine();
 
   Future<DashboardSummary> buildDashboard() async {
     // ==========================
-    // Load Live Portfolio
+    // Live Portfolio
     // ==========================
 
     final List<LivePortfolio> portfolio =
@@ -38,14 +50,27 @@ class DashboardEngine {
         portfolioAnalyzer.analyze(portfolio);
 
     // ==========================
+    // Stock Scores
+    // ==========================
+
+    final List<StockScore> scores =
+        await stockRepository.getScores();
+
+    final StockScore topOpportunity =
+        stockScoreEngine.getTopOpportunity(scores);
+
+    final StockScore weakestHolding =
+        stockScoreEngine.getWeakestHolding(scores);
+
+    // ==========================
     // AI Recommendation
     // ==========================
 
-    final ai =
+    final AIRecommendation ai =
         recommendationEngine.generate(analysis);
 
     // ==========================
-    // Dashboard Model
+    // Dashboard
     // ==========================
 
     return DashboardSummary(
@@ -57,7 +82,9 @@ class DashboardEngine {
       biggestWinner: analysis.biggestWinner,
       biggestLoser: analysis.biggestLoser,
       portfolioHealth: analysis.healthScore,
-      aiRecommendation: ai.summary,
+      aiRecommendation: ai,
+      topOpportunity: topOpportunity,
+      weakestHolding: weakestHolding,
     );
   }
 }

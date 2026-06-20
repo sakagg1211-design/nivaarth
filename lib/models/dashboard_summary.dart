@@ -1,4 +1,6 @@
+import 'package:mobile/models/ai_recommendation.dart';
 import 'package:mobile/models/live_portfolio.dart';
+import 'package:mobile/models/stock_score.dart';
 
 class DashboardSummary {
   final double totalInvested;
@@ -13,7 +15,15 @@ class DashboardSummary {
 
   final double portfolioHealth;
 
-  final String aiRecommendation;
+  // ==========================
+  // AI
+  // ==========================
+
+  final AIRecommendation aiRecommendation;
+
+  final StockScore topOpportunity;
+
+  final StockScore weakestHolding;
 
   const DashboardSummary({
     required this.totalInvested,
@@ -25,5 +35,7 @@ class DashboardSummary {
     required this.biggestLoser,
     required this.portfolioHealth,
     required this.aiRecommendation,
+    required this.topOpportunity,
+    required this.weakestHolding,
   });
 }

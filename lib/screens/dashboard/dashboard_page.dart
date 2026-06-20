@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/dashboard_provider.dart';
+import 'widgets/ai_verdict_card.dart';
+import 'widgets/top_opportunity_card.dart';
+import 'widgets/weakest_holding_card.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -71,8 +74,8 @@ class DashboardPage extends ConsumerWidget {
                         const SizedBox(height: 10),
 
                         Text(
-                          data.aiRecommendation,
-                          textAlign: TextAlign.center,
+                            data.aiRecommendation.summary,
+                           textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -188,44 +191,28 @@ class DashboardPage extends ConsumerWidget {
 
                 const SizedBox(height: 20),
 
+                 //----------------------------------
+                // AI Section
                 //----------------------------------
-                // AI Card
-                //----------------------------------
 
-                Card(
-                  color: Colors.blue
-                      .withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.all(18),
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
+                const SizedBox(height: 20),
 
-                        const Text(
-                          "🤖 AI Recommendation",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Text(
-                          data.aiRecommendation,
-                        ),
-                      ],
-                    ),
-                  ),
+                AIVerdictCard(
+                  ai: data.aiRecommendation,
                 ),
-              ],
+
+                const SizedBox(height: 20),
+
+                TopOpportunityCard(
+                  stock: data.topOpportunity,
+                ),
+
+                const SizedBox(height: 20),
+
+                WeakestHoldingCard(
+                  stock: data.weakestHolding,
+                ),
+                 ],
             ),
           );
         },
