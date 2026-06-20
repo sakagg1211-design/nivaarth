@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../models/portfolio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class StockDetailPage extends StatelessWidget {
+import '../../models/stock_score.dart';
+import '../../providers/stock_score_provider.dart';
+class StockDetailPage extends ConsumerWidget {
   final Portfolio stock;
 
   const StockDetailPage({
@@ -11,11 +14,19 @@ class StockDetailPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+  BuildContext context,
+  WidgetRef ref,
+) {
     final double currentValue = stock.currentValue ?? 0.0;
     final double netPL = stock.netPL ?? 0.0;
 
     final bool isProfit = netPL >= 0;
+    final scoreAsync = ref.watch(
+  stockScoreProvider(
+    stock.instrument,
+  ),
+);
 
     final double returnPercent = stock.totalInvested == 0
         ? 0.0
@@ -278,16 +289,68 @@ class StockDetailPage extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        buildRow(
-          "AI Score",
-          "-- /100",
-        ),
+        scoreAsync.when(
+  data: (score) {
+    if (score == null) {
+      return buildRow(
+        "AI Score",
+        "N/A",
+      );
+    }
 
-        buildRow(
-          "Recommendation",
-          "HOLD",
-          color: Colors.orange,
-        ),
+    return buildRow(
+      "AI Score",
+      "${score.overallScore}/100",
+    );
+  },
+  loading: () => const Padding(
+    padding: EdgeInsets.symmetric(vertical: 8),
+    child: LinearProgressIndicator(),
+  ),
+  error: (_, __) => buildRow(
+    "AI Score",
+    "Error",
+  ),
+),
+
+        scoreAsync.when(
+  data: (score) {
+    if (score == null) {
+      return buildRow(
+        "Recommendation",
+        "N/A",
+      );
+    }
+
+    Color color = Colors.orange;
+
+    switch (score.recommendation.toUpperCase()) {
+      case "STRONG BUY":
+      case "BUY":
+        color = Colors.green;
+        break;
+
+      case "SELL":
+      case "REDUCE":
+        color = Colors.red;
+        break;
+
+      default:
+        color = Colors.orange;
+    }
+
+    return buildRow(
+      "Recommendation",
+      score.recommendation,
+      color: color,
+    );
+  },
+  loading: () => const SizedBox.shrink(),
+  error: (_, __) => buildRow(
+    "Recommendation",
+    "Error",
+  ),
+),
 
         buildRow(
           "Confidence",
