@@ -10,7 +10,9 @@ class PortfolioHealthEngine {
     List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
+    double overallWeighted = 0;
     double totalInvestment = 0;
+    
 
     double business = 0;
     double financial = 0;
@@ -41,7 +43,7 @@ class PortfolioHealthEngine {
       if (score == null) {
         continue;
       }
-
+      overallWeighted += score.overallScore * investment;
       totalInvestment += investment;
 
       business += score.businessQuality * investment;
@@ -66,7 +68,6 @@ class PortfolioHealthEngine {
         weaknesses: [],
       );
     }
-
     business /= totalInvestment;
     financial /= totalInvestment;
     growth /= totalInvestment;
@@ -74,14 +75,10 @@ class PortfolioHealthEngine {
     technical /= totalInvestment;
     risk /= totalInvestment;
 
+// Portfolio Health comes from weighted OverallScore
     final double overall =
-        business +
-        financial +
-        growth +
-        valuation +
-        technical +
-        risk;
-
+    overallWeighted / totalInvestment;
+    print("Overall Health : $overall");
     String status;
 
     if (overall >= 90) {

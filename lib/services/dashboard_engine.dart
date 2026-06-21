@@ -56,7 +56,6 @@ class DashboardEngine {
     final PortfolioAnalysis analysis =
     portfolioAnalyzer.analyze(
       portfolio,
-      scores,
     );
 
     // ==========================
