@@ -14,6 +14,14 @@ class DashboardSummary {
   final LivePortfolio biggestLoser;
 
   final double portfolioHealth;
+  final double businessHealth;
+  final double financialHealth;
+  final double growthHealth;
+  final double valuationHealth;
+  final double technicalHealth;
+  final double riskHealth;
+
+final String portfolioHealthStatus;
 
   // ==========================
   // AI
@@ -37,5 +45,13 @@ class DashboardSummary {
     required this.aiRecommendation,
     required this.topOpportunity,
     required this.weakestHolding,
+    required this.businessHealth,
+    required this.financialHealth,
+    required this.growthHealth,
+    required this.valuationHealth,
+    required this.technicalHealth,
+    required this.riskHealth,
+
+required this.portfolioHealthStatus,
   });
 }

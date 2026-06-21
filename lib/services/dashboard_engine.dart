@@ -13,7 +13,6 @@ import 'portfolio_analyzer.dart';
 import 'recommendation_engine.dart';
 import 'stock_score_engine.dart';
 import 'portfolio_health_engine.dart';
-import '../core/utils/symbol_utils.dart';
 
 class DashboardEngine {
   final LivePortfolioRepository liveRepository;
@@ -86,7 +85,7 @@ final StockScore weakestHolding =
     // ==========================
     // Dashboard
     // ==========================
-print("Dashboard Health : ${analysis.healthScore}");
+
     return DashboardSummary(
       totalInvested: analysis.totalInvested,
       currentValue: analysis.currentValue,
@@ -96,6 +95,14 @@ print("Dashboard Health : ${analysis.healthScore}");
       biggestWinner: analysis.biggestWinner,
       biggestLoser: analysis.biggestLoser,
       portfolioHealth: health.overall,
+      businessHealth: health.business,
+      financialHealth: health.financial,
+      growthHealth: health.growth,
+      valuationHealth: health.valuation,
+      technicalHealth: health.technical,
+      riskHealth: health.risk,
+
+portfolioHealthStatus: health.status,
       aiRecommendation: ai,
       topOpportunity: topOpportunity,
       weakestHolding: weakestHolding,
