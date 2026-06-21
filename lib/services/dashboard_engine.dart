@@ -12,6 +12,8 @@ import '../repositories/stock_score_repository.dart';
 import 'portfolio_analyzer.dart';
 import 'recommendation_engine.dart';
 import 'stock_score_engine.dart';
+import 'portfolio_health_engine.dart';
+import '../core/utils/symbol_utils.dart';
 
 class DashboardEngine {
   final LivePortfolioRepository liveRepository;
@@ -23,7 +25,7 @@ class DashboardEngine {
   final StockScoreRepository stockRepository;
 
   final StockScoreEngine stockScoreEngine;
-
+  final PortfolioHealthEngine portfolioHealthEngine;
   DashboardEngine()
       : liveRepository = LivePortfolioRepository(
           portfolioRepository: PortfolioRepository(),
@@ -32,7 +34,8 @@ class DashboardEngine {
         portfolioAnalyzer = PortfolioAnalyzer(),
         recommendationEngine = RecommendationEngine(),
         stockRepository = StockScoreRepository(),
-        stockScoreEngine = const StockScoreEngine();
+        stockScoreEngine = const StockScoreEngine(),
+        portfolioHealthEngine = const PortfolioHealthEngine();
 
   Future<DashboardSummary> buildDashboard() async {
     // ==========================
@@ -45,18 +48,23 @@ class DashboardEngine {
     // ==========================
     // Portfolio Analysis
     // ==========================
+    final List<StockScore> scores =
+        await stockRepository.getScores();
+        final health =
+    portfolioHealthEngine.calculate(portfolio,scores,
+    );
 
     final PortfolioAnalysis analysis =
-        portfolioAnalyzer.analyze(portfolio);
+    portfolioAnalyzer.analyze(
+      portfolio,
+      scores,
+    );
 
     // ==========================
     // Stock Scores
     // ==========================
 
-    final List<StockScore> scores =
-        await stockRepository.getScores();
-
-    final StockScore topOpportunity =
+     final StockScore topOpportunity =
     stockScoreEngine.getTopOpportunity(
       portfolio,
       scores,
@@ -78,7 +86,7 @@ final StockScore weakestHolding =
     // ==========================
     // Dashboard
     // ==========================
-
+print("Dashboard Health : ${analysis.healthScore}");
     return DashboardSummary(
       totalInvested: analysis.totalInvested,
       currentValue: analysis.currentValue,
@@ -87,7 +95,7 @@ final StockScore weakestHolding =
       totalStocks: analysis.totalStocks,
       biggestWinner: analysis.biggestWinner,
       biggestLoser: analysis.biggestLoser,
-      portfolioHealth: analysis.healthScore,
+      portfolioHealth: health.overall,
       aiRecommendation: ai,
       topOpportunity: topOpportunity,
       weakestHolding: weakestHolding,

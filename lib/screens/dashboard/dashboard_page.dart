@@ -40,97 +40,115 @@ class DashboardPage extends ConsumerWidget {
                 //----------------------------------
 
                 Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
+  elevation: 4,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(18),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(18),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-                        const Text(
-                          "Portfolio Health",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
+        //------------------------------------------------
+        // LEFT
+        //------------------------------------------------
 
-                        const SizedBox(height: 15),
+        Expanded(
+          flex: 6,
+          child: Column(
+            children: [
 
-                        Text(
-                          "${data.portfolioHealth.toStringAsFixed(0)}/100",
-                          style: const TextStyle(
-                            fontSize: 40,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
+              buildRow(
+                "Stocks",
+                data.totalStocks.toString(),
+              ),
 
-                        const SizedBox(height: 10),
+              buildRow(
+                "Invested",
+                "₹${data.totalInvested.toStringAsFixed(2)}",
+              ),
 
-                        Text(
-                            data.aiRecommendation.summary,
-                           textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
+              buildRow(
+                "Current Value",
+                "₹${data.currentValue.toStringAsFixed(2)}",
+              ),
+
+              buildRow(
+                "Net P&L",
+                "${isProfit ? "+" : ""}₹${data.totalPnL.toStringAsFixed(2)}",
+                color: isProfit
+                    ? Colors.green
+                    : Colors.red,
+              ),
+
+              buildRow(
+                "Return",
+                "${data.returnPercent.toStringAsFixed(2)} %",
+                color: isProfit
+                    ? Colors.green
+                    : Colors.red,
+              ),
+
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 20),
+
+        //------------------------------------------------
+        // RIGHT
+        //------------------------------------------------
+
+        Expanded(
+          flex: 4,
+          child: Column(
+            children: [
+
+              const Text(
+                "Portfolio Health",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
-                //----------------------------------
-                // Summary
-                //----------------------------------
-
-                Card(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-
-                        buildRow(
-                          "Stocks",
-                          data.totalStocks.toString(),
-                        ),
-
-                        buildRow(
-                          "Invested",
-                          "₹${data.totalInvested.toStringAsFixed(2)}",
-                        ),
-
-                        buildRow(
-                          "Current Value",
-                          "₹${data.currentValue.toStringAsFixed(2)}",
-                        ),
-
-                        buildRow(
-                          "Net P&L",
-                          "${isProfit ? "+" : ""}₹${data.totalPnL.toStringAsFixed(2)}",
-                          color: isProfit
-                              ? Colors.green
-                              : Colors.red,
-                        ),
-
-                        buildRow(
-                          "Return",
-                          "${data.returnPercent.toStringAsFixed(2)} %",
-                          color: isProfit
-                              ? Colors.green
-                              : Colors.red,
-                        ),
-                      ],
-                    ),
-                  ),
+              Text(
+                "${data.portfolioHealth.toStringAsFixed(0)}",
+                style: const TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 10),
+
+              LinearProgressIndicator(
+                value: data.portfolioHealth / 100,
+                minHeight: 8,
+                borderRadius: BorderRadius.circular(10),
+              ),
+
+              const SizedBox(height: 12),
+
+              Text(
+                data.aiRecommendation.summary,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+
+            ],
+          ),
+        ),
+
+      ],
+    ),
+  ),
+),
 
                 //----------------------------------
                 // Biggest Winner
