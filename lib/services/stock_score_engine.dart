@@ -165,3 +165,14 @@ print(scoreMap.keys.toList());
         .toList();
   }
 }
+int calculateScore(StockScore stock) {
+  final score =
+      (stock.businessQuality * 0.25) +
+      (stock.financialStrength * 0.25) +
+      (stock.growth * 0.20) +
+      (stock.technical * 0.15) +
+      (stock.valuation * 0.10) -
+      (stock.risk * 0.05);
+
+  return score.round().clamp(0, 100);
+}

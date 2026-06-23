@@ -5,6 +5,8 @@ import '../../providers/dashboard_provider.dart';
 import 'widgets/ai_verdict_card.dart';
 import 'widgets/top_opportunity_card.dart';
 import 'widgets/weakest_holding_card.dart';
+import 'widgets/dashboard_header.dart';
+import 'widgets/portfolio_health_card.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -34,9 +36,22 @@ class DashboardPage extends ConsumerWidget {
               crossAxisAlignment:
                   CrossAxisAlignment.start,
               children: [
+                  const DashboardHeader(),
+
+                  const SizedBox(height: 20),
+
+                  PortfolioHealthCard(
+                    healthScore: data.portfolioHealth,
+                    action: data.aiRecommendation.recommendation
+                        .name
+                        .toUpperCase(),
+                  ),
+
+                  const SizedBox(height: 20),
+
 
                 //----------------------------------
-                // Portfolio Health
+                // "Portfolio Snapshot"
                 //----------------------------------
 
                 Card(
