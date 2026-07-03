@@ -5,7 +5,6 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 
-
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
   final String action;
@@ -18,89 +17,85 @@ class PortfolioHealthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = (healthScore / 100).clamp(0.0, 1.0).toDouble();
+    final tone = _tone(healthScore);
+
     return Container(
-      padding: const EdgeInsets.all(
-        AppSpacing.lg,
-      ),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(
-          AppRadius.lg,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.line),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.04),
+            blurRadius: 26,
+            offset: const Offset(0, 14),
+          ),
+        ],
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Portfolio Health",
-            style: AppTypography.title.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
           Row(
+            children: [
+              Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: tone.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Icon(
+                  Icons.health_and_safety_outlined,
+                  color: tone,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              const Expanded(
+                child: Text('Portfolio Health', style: AppTypography.title),
+              ),
+              _Badge(label: action, color: tone),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 healthScore.toStringAsFixed(0),
-                style: const TextStyle(
+                style: AppTypography.heading1.copyWith(
+                  color: tone,
                   fontSize: 42,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.gold,
                 ),
               ),
-
-              const Spacer(),
-
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.gold
-                      .withValues(alpha: 0.15),
-                  borderRadius:
-                      BorderRadius.circular(
-                    20,
-                  ),
-                ),
+              const SizedBox(width: AppSpacing.sm),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
-                  action,
-                  style: const TextStyle(
-                    color: AppColors.gold,
-                    fontWeight:
-                        FontWeight.bold,
+                  '/100',
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.textTertiary,
                   ),
                 ),
+              ),
+              const Spacer(),
+              Text(
+                _status(healthScore),
+                style: AppTypography.caption.copyWith(color: tone),
               ),
             ],
           ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          LinearProgressIndicator(
-            value: healthScore / 100,
-            minHeight: 8,
-            borderRadius:
-                BorderRadius.circular(20),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          Text(
-            _status(healthScore),
-            style: AppTypography.body.copyWith(
-              color: AppColors.textSecondary,
+          const SizedBox(height: AppSpacing.md),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              color: tone,
+              backgroundColor: AppColors.surfaceSecondary,
             ),
           ),
         ],
@@ -108,19 +103,45 @@ class PortfolioHealthCard extends StatelessWidget {
     );
   }
 
+  Color _tone(double score) {
+    if (score >= 80) return AppColors.success;
+    if (score >= 60) return AppColors.accent;
+    if (score >= 40) return AppColors.warning;
+    return AppColors.danger;
+  }
+
   String _status(double score) {
-    if (score >= 80) {
-      return "Strong Portfolio";
-    }
+    if (score >= 80) return 'Strong portfolio';
+    if (score >= 60) return 'Good portfolio';
+    if (score >= 40) return 'Needs attention';
+    return 'High risk';
+  }
+}
 
-    if (score >= 60) {
-      return "Good Portfolio";
-    }
+class _Badge extends StatelessWidget {
+  final String label;
+  final Color color;
 
-    if (score >= 40) {
-      return "Average Portfolio";
-    }
+  const _Badge({
+    required this.label,
+    required this.color,
+  });
 
-    return "Weak Portfolio";
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: AppTypography.caption.copyWith(color: color),
+      ),
+    );
   }
 }

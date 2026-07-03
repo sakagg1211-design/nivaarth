@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
+
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
 
@@ -10,26 +15,40 @@ class DashboardHeader extends StatelessWidget {
     String greeting;
 
     if (hour < 12) {
-      greeting = "Good Morning";
+      greeting = 'Good morning';
     } else if (hour < 17) {
-      greeting = "Good Afternoon";
+      greeting = 'Good afternoon';
     } else {
-      greeting = "Good Evening";
+      greeting = 'Good evening';
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Text(
-          "$greeting Saksham 👋",
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('$greeting, Saksham', style: AppTypography.heading1),
+              const SizedBox(height: AppSpacing.sm),
+              const Text(
+                'Your portfolio cockpit is ready.',
+                style: AppTypography.body,
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
-          "Your AI portfolio advisor is ready.",
+        Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(color: AppColors.line),
+          ),
+          child: const Icon(
+            Icons.notifications_none_rounded,
+            color: AppColors.textPrimary,
+          ),
         ),
       ],
     );
