@@ -25,4 +25,7 @@ class AppColors {
   static const warningSoft = Color(0xFFFFF4E4);
   static const violet = Color(0xFF6750D8);
   static const violetSoft = Color(0xFFF0EDFF);
+  // Compatibility aliases
+  static const primary = accent;
+  static const outline = line;
 }
