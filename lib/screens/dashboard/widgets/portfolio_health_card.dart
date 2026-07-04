@@ -17,85 +17,145 @@ class PortfolioHealthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (healthScore / 100).clamp(0.0, 1.0).toDouble();
+    final progress =
+        (healthScore / 100).clamp(0.0, 1.0).toDouble();
+
     final tone = _tone(healthScore);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+        24,
+        22,
+        24,
+        22,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.line),
+        borderRadius:
+            BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: AppColors.line,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 26,
-            offset: const Offset(0, 14),
+            color: AppColors.ink.withValues(
+              alpha: .05,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                height: 36,
-                width: 36,
+                height: 44,
+                width: 44,
                 decoration: BoxDecoration(
-                  color: tone.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: tone.withValues(
+                    alpha: .12,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(
+                    14,
+                  ),
                 ),
                 child: Icon(
-                  Icons.health_and_safety_outlined,
+                  Icons.health_and_safety_rounded,
                   color: tone,
-                  size: 20,
+                  size: 22,
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
+
+              const SizedBox(width: 14),
+
               const Expanded(
-                child: Text('Portfolio Health', style: AppTypography.title),
+                child: Text(
+                  "Portfolio Health",
+                  style: AppTypography.title,
+                ),
               ),
-              _Badge(label: action, color: tone),
+
+              _Badge(
+                label: action,
+                color: tone,
+              ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+
+          const SizedBox(height: 22),
+
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment:
+                CrossAxisAlignment.end,
             children: [
               Text(
-                healthScore.toStringAsFixed(0),
-                style: AppTypography.heading1.copyWith(
+                healthScore
+                    .toStringAsFixed(0),
+                style:
+                    AppTypography.heading1.copyWith(
                   color: tone,
-                  fontSize: 42,
+                  fontSize: 52,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+
+              const SizedBox(width: 6),
+
               Padding(
-                padding: const EdgeInsets.only(bottom: 6),
+                padding:
+                    const EdgeInsets.only(
+                  bottom: 8,
+                ),
                 child: Text(
-                  '/100',
-                  style: AppTypography.caption.copyWith(
-                    color: AppColors.textTertiary,
+                  "/100",
+                  style:
+                      AppTypography.caption.copyWith(
+                    color: AppColors
+                        .textTertiary,
                   ),
                 ),
               ),
+
               const Spacer(),
+
               Text(
                 _status(healthScore),
-                style: AppTypography.caption.copyWith(color: tone),
+                style:
+                    AppTypography.caption.copyWith(
+                  color: tone,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+
+          const SizedBox(height: 18),
+
           ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius:
+                BorderRadius.circular(
+              AppRadius.pill,
+            ),
             child: LinearProgressIndicator(
               value: progress,
-              minHeight: 8,
+              minHeight: 10,
               color: tone,
-              backgroundColor: AppColors.surfaceSecondary,
+              backgroundColor:
+                  AppColors.surfaceSecondary,
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          Text(
+            _message(healthScore),
+            style: AppTypography.body.copyWith(
+              color:
+                  AppColors.textSecondary,
             ),
           ),
         ],
@@ -111,10 +171,26 @@ class PortfolioHealthCard extends StatelessWidget {
   }
 
   String _status(double score) {
-    if (score >= 80) return 'Strong portfolio';
-    if (score >= 60) return 'Good portfolio';
-    if (score >= 40) return 'Needs attention';
-    return 'High risk';
+    if (score >= 80) return "Strong portfolio";
+    if (score >= 60) return "Good portfolio";
+    if (score >= 40) return "Needs attention";
+    return "High risk";
+  }
+
+  String _message(double score) {
+    if (score >= 80) {
+      return "Your portfolio is fundamentally strong. Continue monitoring and add quality businesses on corrections.";
+    }
+
+    if (score >= 60) {
+      return "Portfolio quality is healthy. Small improvements can further strengthen long-term returns.";
+    }
+
+    if (score >= 40) {
+      return "Review weak holdings and rebalance gradually. Focus on improving portfolio quality.";
+    }
+
+    return "Portfolio requires immediate attention. Reduce weak businesses and increase exposure to fundamentally strong companies.";
   }
 }
 
@@ -130,17 +206,33 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
+        color: color.withValues(
+          alpha: .10,
+        ),
+        borderRadius:
+            BorderRadius.circular(
+          AppRadius.pill,
+        ),
+        border: Border.all(
+          color: color.withValues(
+            alpha: .20,
+          ),
+        ),
       ),
       child: Text(
         label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: AppTypography.caption.copyWith(color: color),
+        style:
+            AppTypography.caption.copyWith(
+          color: color,
+          fontWeight:
+              FontWeight.w700,
+        ),
       ),
     );
   }

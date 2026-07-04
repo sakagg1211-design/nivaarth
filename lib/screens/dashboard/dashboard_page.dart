@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';import '../../core/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -9,6 +10,7 @@ import 'widgets/dashboard_header.dart';
 import 'widgets/portfolio_health_card.dart';
 import 'widgets/top_opportunity_card.dart';
 import 'widgets/weakest_holding_card.dart';
+import 'widgets/portfolio_hero_card.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -56,16 +58,17 @@ class DashboardPage extends ConsumerWidget {
                           action: data.aiRecommendation.recommendation.name
                               .toUpperCase(),
                         ),
-                        const SizedBox(height: AppSpacing.lg),
-                        _SnapshotCard(
-                          currentValue: data.currentValue,
-                          totalInvested: data.totalInvested,
-                          totalPnL: data.totalPnL,
+                        const SizedBox(height: 28),
+                        PortfolioHeroCard(
+                         currentValue: data.currentValue,
+                          investedValue: data.totalInvested,
+                          netPnL: data.totalPnL,
                           returnPercent: data.returnPercent,
-                          totalStocks: data.totalStocks,
-                          isProfit: isProfit,
+                          holdings: data.totalStocks,
+                          aiConfidence: 74,
                         ),
-                        const SizedBox(height: AppSpacing.lg),
+                        const SizedBox(height: 28),
+                       
                         Row(
                           children: [
                             Flexible(
@@ -123,133 +126,6 @@ class DashboardPage extends ConsumerWidget {
   }
 }
 
-class _SnapshotCard extends StatelessWidget {
-  final double currentValue;
-  final double totalInvested;
-  final double totalPnL;
-  final double returnPercent;
-  final int totalStocks;
-  final bool isProfit;
-
-  const _SnapshotCard({
-    required this.currentValue,
-    required this.totalInvested,
-    required this.totalPnL,
-    required this.returnPercent,
-    required this.totalStocks,
-    required this.isProfit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tone = isProfit ? AppColors.success : AppColors.danger;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: AppColors.ink,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.16),
-            blurRadius: 34,
-            offset: const Offset(0, 18),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Portfolio Snapshot',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                decoration: BoxDecoration(
-                  color: tone.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: Text(
-                  _percent(returnPercent, signed: true),
-                  style: TextStyle(
-                    color: tone,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              _money(currentValue, decimals: 2),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 34,
-                fontWeight: FontWeight.w900,
-                height: 1,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          Row(
-            children: [
-              Expanded(
-                child: _DarkMetricTile(
-                  title: 'Invested',
-                  value: _money(totalInvested),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _DarkMetricTile(
-                  title: 'Stocks',
-                  value: totalStocks.toString(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: _DarkMetricTile(
-                  title: 'Net P&L',
-                  value: _money(totalPnL, signed: true),
-                  valueColor: tone,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _DarkMetricTile(
-                  title: 'Return',
-                  value: _percent(returnPercent, signed: true),
-                  valueColor: tone,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _DarkMetricTile extends StatelessWidget {
   final String title;
   final String value;
@@ -263,35 +139,50 @@ class _DarkMetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = valueColor ?? Colors.white;
+
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        color: Colors.white.withValues(alpha: .08),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: .06),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Colors.white54,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
+              color: Colors.white60,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: .2,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: valueColor ?? Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
+
+          const SizedBox(height: 6),
+
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: TextStyle(
+                color: color,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                height: 1,
+              ),
             ),
           ),
         ],
@@ -299,7 +190,6 @@ class _DarkMetricTile extends StatelessWidget {
     );
   }
 }
-
 class _MoveCard extends StatelessWidget {
   final IconData icon;
   final String title;
