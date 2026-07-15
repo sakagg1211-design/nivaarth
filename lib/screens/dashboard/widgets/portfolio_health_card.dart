@@ -99,7 +99,10 @@ class PortfolioHealthCard extends StatelessWidget {
             // Content
             //--------------------------------------------------
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(
+  horizontal: 22,
+  vertical: 20,
+),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,157 +110,243 @@ class PortfolioHealthCard extends StatelessWidget {
                   // Header
                   //--------------------------------------------------
                   Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: .08),
-                          borderRadius: BorderRadius.circular(AppRadius.pill),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.auto_awesome,
-                              size: 15,
-                              color: Color(0xFFF6C453),
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              "AI Portfolio Health",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+  children: [
 
-                      const Spacer(),
+    //----------------------------------------
+    // AI Icon
+    //----------------------------------------
 
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: .15),
-                          borderRadius: BorderRadius.circular(AppRadius.pill),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.success,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "LIVE",
-                              style: TextStyle(
-                                color: AppColors.success,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+    Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF34D399),
+            Color(0xFF10B981),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF10B981).withValues(alpha: .35),
+            blurRadius: 18,
+          ),
+        ],
+      ),
+      child: const Icon(
+        Icons.auto_awesome_rounded,
+        color: Colors.white,
+        size: 26,
+      ),
+    ),
+
+    const SizedBox(width: 16),
+
+    //----------------------------------------
+    // Title
+    //----------------------------------------
+
+    const Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Text(
+            "AI Portfolio Health",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+
+          SizedBox(height: 4),
+
+          Text(
+            "Updated 2 mins ago",
+            style: TextStyle(
+              color: Colors.white60,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    ),
+
+    //----------------------------------------
+    // Score Badge
+    //----------------------------------------
+
+    Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: _healthColor(healthScore).withValues(alpha: .15),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        "${healthScore.toInt()}/100",
+        style: TextStyle(
+          color: _healthColor(healthScore),
+          fontWeight: FontWeight.w900,
+          fontSize: 16,
+        ),
+      ),
+    ),
+  ],
+),
 
                   const SizedBox(height: 28),
 
                   //--------------------------------------------------
                   // Health Gauge Section
                   //--------------------------------------------------
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Gauge Placeholder
-                      Container(
-                        width: 112,
-                        height: 112,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: .05),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: .08),
-                          ),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                healthScore.toStringAsFixed(0),
-                                style: TextStyle(
-                                  color: tone,
-                                  fontSize: 34,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                "/100",
-                                style: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                 Row(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
 
-                      const SizedBox(width: 22),
+    //-------------------------------------------------
+    // Premium Health Ring
+    //-------------------------------------------------
 
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _status(healthScore),
-                              style: TextStyle(
-                                color: tone,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+    SizedBox(
+      width: 138,
+      height: 138,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
 
-                            const SizedBox(height: 10),
+          SizedBox(
+            width: 138,
+            height: 138,
+            child: CircularProgressIndicator(
+              value: healthScore / 100,
+              strokeWidth: 12,
+              backgroundColor: Colors.white.withValues(alpha: .08),
+              valueColor: AlwaysStoppedAnimation(
+                _healthColor(healthScore),
+              ),
+            ),
+          ),
 
-                            const Text(
-                              "AI Confidence",
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 12,
-                              ),
-                            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
 
-                            const SizedBox(height: 4),
+              Text(
+                healthScore.toInt().toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 40,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
 
-                            const Text(
-                              "91%",
-                              style: TextStyle(
-                                color: Color(0xFF8B5CF6),
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+              const SizedBox(height: 2),
+
+              Text(
+                "/100",
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: .45),
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+
+    const SizedBox(width: 24),
+
+    //-------------------------------------------------
+    // Health Summary
+    //-------------------------------------------------
+
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Text(
+  _healthStatus(healthScore),
+  style: TextStyle(
+    color: _healthColor(healthScore),
+    fontWeight: FontWeight.w900,
+    fontSize: 30,
+    letterSpacing: -.3,
+  ),
+),
+
+          const SizedBox(height: 18),
+
+          Text(
+            "AI Confidence",
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: .55),
+              fontSize: 14,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          const Text(
+            "91%",
+            style: TextStyle(
+              color: Color(0xFF8B5CF6),
+              fontWeight: FontWeight.bold,
+              fontSize: 40,
+            ),
+          ),
+          const SizedBox(height: 4),
+
+Text(
+  "High Confidence",
+  style: TextStyle(
+    color: Colors.white.withValues(alpha: .55),
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+  ),
+),
+          const SizedBox(height: 18),
+
+          Row(
+            children: [
+
+              Icon(
+                Icons.trending_up_rounded,
+                size: 20,
+                color: Colors.greenAccent.shade400,
+              ),
+
+              const SizedBox(width: 6),
+
+              Text(
+                "+4 This Week",
+                style: TextStyle(
+                  color: Colors.greenAccent.shade400,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+            "Portfolio quality improved",
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: .55),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
+),
 
                   const SizedBox(height: 24),
 
@@ -266,10 +355,13 @@ class PortfolioHealthCard extends StatelessWidget {
                   //--------------------------------------------------
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.symmetric(
+  horizontal: 20,
+  vertical: 18,
+),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: .05),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(22),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: .06),
                       ),
@@ -282,7 +374,7 @@ class PortfolioHealthCard extends StatelessWidget {
                           text: "Strong Business Quality",
                         ),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 18),
 
                         _InsightRow(
                           icon: Icons.account_balance_wallet_rounded,
@@ -290,7 +382,7 @@ class PortfolioHealthCard extends StatelessWidget {
                           text: "Healthy Balance Sheet",
                         ),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 18),
 
                         _InsightRow(
                           icon: Icons.warning_amber_rounded,
@@ -307,7 +399,7 @@ class PortfolioHealthCard extends StatelessWidget {
                   // CTA
                   //--------------------------------------------------
                   InkWell(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(22),
                     onTap: () {},
                     child: Container(
                       width: double.infinity,
@@ -317,7 +409,7 @@ class PortfolioHealthCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: .05),
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(22),
                         border: Border.all(
                           color: Colors.white.withValues(alpha: .05),
                         ),
@@ -336,10 +428,10 @@ class PortfolioHealthCard extends StatelessWidget {
                             child: const Icon(
                               Icons.auto_awesome,
                               color: Color(0xFF8B5CF6),
-                              size: 18,
+                              size: 20,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 14),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,9 +457,9 @@ class PortfolioHealthCard extends StatelessWidget {
                             ),
                           ),
                           const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: Colors.white38,
+                            Icons.arrow_forward_rounded,
+                            size: 20,
+                            color: Colors.white54,
                           ),
                         ],
                       ),
@@ -389,7 +481,27 @@ Color _tone(double score) {
   if (score >= 40) return AppColors.warning;
   return AppColors.danger;
 }
+Color _healthColor(double score) {
+  if (score >= 80) {
+    return const Color(0xFF22C55E);
+  }
 
+  if (score >= 60) {
+    return const Color(0xFF3B82F6);
+  }
+
+  if (score >= 40) {
+    return const Color(0xFFF59E0B);
+  }
+
+  return const Color(0xFFEF4444);
+}
+String _healthStatus(double score) {
+  if (score >= 80) return "Excellent";
+  if (score >= 60) return "Healthy";
+  if (score >= 40) return "Needs Attention";
+  return "High Risk";
+}
 String _status(double score) {
   if (score >= 80) return "Strong portfolio";
   if (score >= 60) return "Good portfolio";
@@ -401,16 +513,25 @@ class _Badge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _Badge({super.key, required this.label, required this.color});
+  const _Badge({
+    super.key,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 7,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: .12),
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: color.withValues(alpha: .25)),
+        border: Border.all(
+          color: color.withValues(alpha: .25),
+        ),
       ),
       child: Text(
         label,
@@ -440,17 +561,23 @@ class _InsightRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: color, size: 18),
-        const SizedBox(width: 12),
+        Icon(
+          icon,
+          color: color,
+          size: 18,
+        ),
+        const SizedBox(width: 14),
         Expanded(
           child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+  text,
+  style: const TextStyle(
+    color: Colors.white,
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.2,
+    height: 1.2,
+  ),
+),
         ),
       ],
     );

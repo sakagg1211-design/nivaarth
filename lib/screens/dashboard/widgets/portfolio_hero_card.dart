@@ -343,8 +343,8 @@ class PortfolioHeroCard extends StatelessWidget {
                     const SizedBox(width: 12),
 
 const Icon(
-  Icons.arrow_forward_ios,
-  size: 14,
+ Icons.arrow_forward_rounded,
+  size: 20,
   color: Colors.white38,
 ),
                   ],
