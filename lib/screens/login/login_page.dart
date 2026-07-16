@@ -4,9 +4,11 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../services/auth_service.dart';
-import '../home/home_page.dart';
 
+import '../../services/auth_service.dart';
+import '../../services/backend_service.dart';
+
+import '../../features/sync/sync_loading_page.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -17,7 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
+final backendService = BackendService();
   final authService = AuthService();
 
   bool loading = false;
@@ -36,18 +38,28 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       await authService.signIn(
-        email: emailController.text.trim(),
-        password: passwordController.text,
-      );
+  email: emailController.text.trim(),
+  password: passwordController.text,
+);
 
-      if (!mounted) return;
+if (!mounted) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
+// ============================================
+// BACKEND AUTOMATION
+// ============================================
+
+// ============================================
+// OPEN DASHBOARD
+// ============================================
+
+if (!mounted) return;
+
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => const SyncLoadingPage(),
+  ),
+);
     } catch (e) {
       if (!mounted) return;
 
