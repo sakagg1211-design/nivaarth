@@ -109,7 +109,7 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
       if (!mounted) return;
 
       setState(() {
-        steps[2].completed = true;
+        steps[3].completed = true;
         currentStep = "Reading Fundamental Data...";
         progress = 0.65;
       });
@@ -119,7 +119,6 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
       if (!mounted) return;
 
       setState(() {
-        steps[3].completed = true;
         currentStep = "Generating AI Portfolio Insights...";
         progress = 0.85;
       });
@@ -128,21 +127,15 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
       // REAL BACKEND CALL
       // ================================
 
-      try {
+    try {
   await backendService.startAutomation();
-} catch (_) {
-  // Log the error if needed
+} catch (e, s) {
+  debugPrint("❌ AUTOMATION ERROR");
+  debugPrint(e.toString());
+  debugPrint(s.toString());
 }
 
-// Always continue
-Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (_) => const HomePage(),
-  ),
-);
-
-      if (!mounted) return;
+     if (!mounted) return;
 
       setState(() {
         steps[4].completed = true;

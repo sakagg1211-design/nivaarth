@@ -1,33 +1,53 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
 class BackendService {
-  // Android Emulator
-  // static const String baseUrl = "http://10.0.2.2:8000";
-
-  // Real Device (same WiFi)
-  // static const String baseUrl = "http://192.168.1.100:8000";
-
-  // Windows/Desktop
-  static const String baseUrl = "http://127.0.0.1:8000";
+  static const String baseUrl = "https://nivaarth-api.onrender.com";
 
   Future<void> startAutomation() async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/automation/start"),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    );
+    print("🚀 STEP 1 : startAutomation() called");
 
-    if (response.statusCode != 200) {
-      throw Exception("Backend Automation Failed");
-    }
+    final url = Uri.parse("$baseUrl/automation/start");
 
-    final json = jsonDecode(response.body);
+    print("🌐 URL : $url");
 
-    if (json["success"] != true) {
-      throw Exception("Automation Failed");
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: const {
+              "Content-Type": "application/json",
+            },
+          )
+          .timeout(const Duration(seconds: 120));
+
+      print("📡 Status Code : ${response.statusCode}");
+      print("📄 Response Body : ${response.body}");
+
+      if (response.statusCode != 200) {
+        throw Exception(
+          "Backend returned ${response.statusCode}: ${response.body}",
+        );
+      }
+
+      final json = jsonDecode(response.body);
+
+      print("✅ Parsed Response : $json");
+
+      if (json["success"] != true) {
+        throw Exception("Automation completed with failure.");
+      }
+
+      print("🎉 Backend automation completed");
+    } on TimeoutException {
+      throw Exception(
+        "Backend request timed out. Render may be waking up or automation is taking longer than expected.",
+      );
+    } catch (e) {
+      print("❌ Backend Error: $e");
+      rethrow;
     }
   }
 }
