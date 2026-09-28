@@ -14,14 +14,7 @@ class BackendService {
     print("🌐 URL : $url");
 
     try {
-      final response = await http
-          .post(
-            url,
-            headers: const {
-              "Content-Type": "application/json",
-            },
-          )
-          .timeout(const Duration(seconds: 120));
+      final response = await http.post(url);
 
       print("📡 Status Code : ${response.statusCode}");
       print("📄 Response Body : ${response.body}");
