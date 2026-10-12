@@ -399,11 +399,16 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                             ),
                                           );
                                         } else {
-                                          watchlistNotifier.addStock(stock);
+                                          final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
+                                          final savePrice = (liveQuote != null && liveQuote.currentPrice > 0)
+                                              ? liveQuote.currentPrice
+                                              : SymbolUtils.getEstimatedPrice(stock.instrument);
+
+                                          watchlistNotifier.addStock(stock, customPrice: savePrice);
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                '${SymbolUtils.normalize(stock.instrument)} saved at ₹${SymbolUtils.getEstimatedPrice(stock.instrument).toStringAsFixed(2)}',
+                                                '${SymbolUtils.normalize(stock.instrument)} saved at ₹${savePrice.toStringAsFixed(2)}',
                                               ),
                                               backgroundColor: const Color(0xFF16171B),
                                             ),
