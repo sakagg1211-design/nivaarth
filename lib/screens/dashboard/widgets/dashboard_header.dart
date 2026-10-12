@@ -1,56 +1,353 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../services/auth_service.dart';
+import '../../login/welcome_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final hour = DateTime.now().hour;
-
-    String greeting;
-
-    if (hour < 12) {
-      greeting = 'Good morning';
-    } else if (hour < 17) {
-      greeting = 'Good afternoon';
-    } else {
-      greeting = 'Good evening';
+  String _getUserDisplayName() {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      final metaName = user.userMetadata?['name'] ?? user.userMetadata?['full_name'];
+      if (metaName != null && metaName.toString().trim().isNotEmpty) {
+        return metaName.toString().trim();
+      }
+      if (user.email != null && user.email!.contains('@')) {
+        final emailPrefix = user.email!.split('@').first;
+        return emailPrefix[0].toUpperCase() + emailPrefix.substring(1);
+      }
     }
+    return 'Investor';
+  }
 
-    return Row(
-      children: [
-        Expanded(
+  void _showUserMenu(BuildContext context) {
+    final user = Supabase.instance.client.auth.currentUser;
+    final email = user?.email ?? 'user@nivaarth.ai';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        return Material(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(AppRadius.sheet),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.xxl,
+            ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$greeting, Saksham', style: AppTypography.heading1),
+              // Bottom sheet drag handle
+              Center(
+                child: Container(
+                  height: 4,
+                  width: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.lineStrong,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // User Info Card
+              Row(
+                children: [
+                  Container(
+                    height: 46,
+                    width: 46,
+                    decoration: BoxDecoration(
+                      color: AppColors.ink,
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _getUserDisplayName().substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _getUserDisplayName(),
+                          style: AppTypography.title,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          email,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.caption,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceSecondary,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      border: Border.all(color: AppColors.line),
+                    ),
+                    child: Text(
+                      'Beta',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AppSpacing.xl),
+              const Divider(color: AppColors.line),
               const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'Your portfolio cockpit is ready.',
-                style: AppTypography.body,
+
+              // Logout Action
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  height: 38,
+                  width: 38,
+                  decoration: BoxDecoration(
+                    color: AppColors.dangerSoft,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: AppColors.danger,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  'Log out',
+                  style: AppTypography.title.copyWith(
+                    color: AppColors.danger,
+                    fontSize: 16,
+                  ),
+                ),
+                subtitle: const Text(
+                  'Sign out and return to welcome screen',
+                  style: AppTypography.caption,
+                ),
+                onTap: () async {
+                  Navigator.pop(modalContext);
+                  await _handleLogout(context);
+                },
               ),
             ],
           ),
         ),
-        Container(
-          height: 48,
-          width: 48,
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: AppColors.line),
+      );
+    },
+  );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.card),
+        ),
+        title: const Text('Log out of Nivaarth?'),
+        content: const Text(
+          'You will need to sign in again to view your private portfolio cockpit.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
           ),
-          child: const Icon(
-            Icons.notifications_none_rounded,
-            color: AppColors.textPrimary,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.danger,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Log out'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final authService = AuthService();
+      await authService.signOut();
+
+      if (!context.mounted) return;
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const WelcomeScreen(),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hour = DateTime.now().hour;
+    final displayName = _getUserDisplayName();
+
+    String greeting;
+    if (hour < 12) {
+      greeting = 'Good morning,';
+    } else if (hour < 17) {
+      greeting = 'Good afternoon,';
+    } else {
+      greeting = 'Good evening,';
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          height: 42,
+          width: 42,
+          margin: const EdgeInsets.only(right: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFE5A93C).withValues(alpha: 0.20),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              'assets/images/logo.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                greeting,
+                style: const TextStyle(
+                  color: Color(0xFF9E9E9E),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Action 1: Info / Profile Menu
+        _HeaderIconButton(
+          icon: Icons.info_outline_rounded,
+          tooltip: 'Profile & Details',
+          onTap: () => _showUserMenu(context),
+        ),
+        const SizedBox(width: 8),
+        // Action 2: Notifications
+        _HeaderIconButton(
+          icon: Icons.notifications_none_rounded,
+          tooltip: 'Notifications',
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No new alerts. Market tracking active.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+        ),
+        const SizedBox(width: 8),
+        // Action 3: Logout
+        _HeaderIconButton(
+          icon: Icons.logout_rounded,
+          tooltip: 'Log out',
+          onTap: () => _handleLogout(context),
+        ),
       ],
+    );
+  }
+}
+
+class _HeaderIconButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const _HeaderIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF1E2024),
+            border: Border.all(color: const Color(0xFF2C2F36), width: 1),
+          ),
+          child: Icon(
+            icon,
+            size: 19,
+            color: const Color(0xFFC7CDD6),
+          ),
+        ),
+      ),
     );
   }
 }

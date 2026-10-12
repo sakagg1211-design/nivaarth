@@ -3,450 +3,232 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../models/ai_recommendation.dart';
 
 class AIBriefingCard extends StatelessWidget {
-  final String verdict;
-  final double confidence;
-  final List<String> reasons;
-  final String recommendation;
-  final VoidCallback? onTap;
+  final AIRecommendation ai;
 
   const AIBriefingCard({
     super.key,
-    required this.verdict,
-    required this.confidence,
-    required this.reasons,
-    required this.recommendation,
-    this.onTap,
+    required this.ai,
   });
 
-  bool get _isPositive =>
-      verdict.toLowerCase().contains("strong") ||
-      verdict.toLowerCase().contains("bull") ||
-      verdict.toLowerCase().contains("buy");
+  Color get color {
+    switch (ai.recommendation) {
+      case RecommendationType.strongBuy:
+      case RecommendationType.buy:
+        return const Color(0xFF00E676);
+      case RecommendationType.accumulate:
+        return const Color(0xFF38BDF8);
+      case RecommendationType.hold:
+        return const Color(0xFFE5A93C);
+      case RecommendationType.reduce:
+        return const Color(0xFFFF9800);
+      case RecommendationType.sell:
+        return const Color(0xFFFF5252);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final accent =
-        _isPositive ? AppColors.success : AppColors.warning;
+    final confidence = (ai.confidence / 100).clamp(0.0, 1.0).toDouble();
 
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xff23293B),
-            Color(0xff151922),
-          ],
-        ),
-        border: Border.all(
-          color: Colors.white12,
-          width: .6,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .20),
-            blurRadius: 40,
-            offset: const Offset(0, 18),
-          ),
-        ],
+        color: const Color(0xFF16171B),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF282A30), width: 1),
       ),
-
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-
-        child: Stack(
-          children: [
-
-            //------------------------------------------------
-            // Blue Ambient Glow
-            //------------------------------------------------
-
-            Positioned(
-              top: -120,
-              right: -100,
-              child: Container(
-                width: 280,
-                height: 280,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      Color(0x183B82F6),
-                      Colors.transparent,
-                    ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: AI Verdict + Sparkle icon + 92% Confidence pill
+          Row(
+            children: [
+              Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF23252B),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Color(0xFFE5A93C),
+                  size: 19,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'NV Verdict',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0x1FE5A93C),
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  border: Border.all(color: const Color(0x33E5A93C)),
+                ),
+                child: Text(
+                  '${ai.confidence}%',
+                  style: const TextStyle(
+                    color: Color(0xFFE5A93C),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Main Verdict Title e.g. "Portfolio Needs Attention"
+          Text(
+            ai.title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: color,
+              letterSpacing: -0.5,
             ),
+          ),
 
-            //------------------------------------------------
-            // Purple Ambient Glow
-            //------------------------------------------------
+          const SizedBox(height: 4),
 
-            Positioned(
-              bottom: -120,
-              left: -90,
-              child: Container(
-                width: 240,
-                height: 240,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      Color(0x16A855F7),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
+          // Subtitle e.g. "Risk has increased significantly."
+          Text(
+            ai.summary,
+            style: const TextStyle(
+              color: Color(0xFF8E929B),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
+          ),
 
-            Padding(
-              padding: const EdgeInsets.all(24),
+          const SizedBox(height: 14),
 
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+          // Progress Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: confidence,
+              minHeight: 6,
+              color: color,
+              backgroundColor: const Color(0xFF23252B),
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Reasons Section with lightning icons
+          const Text(
+            'Reasons',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          ...ai.reasons.map(
+            (reason) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  //------------------------------------------------
-                  // Header
-                  //------------------------------------------------
-
-                  Row(
-                    children: [
-
-                      Container(
-                        padding:
-                            const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(
-                            alpha: .08,
-                          ),
-                          borderRadius:
-                              BorderRadius.circular(
-                            AppRadius.pill,
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisSize:
-                              MainAxisSize.min,
-                          children: [
-
-                            Icon(
-                              Icons.auto_awesome,
-                              size: 15,
-                              color:
-                                  Color(0xFFF6C453),
-                            ),
-
-                            SizedBox(width: 8),
-
-                            Text(
-                              "AI Briefing",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight:
-                                    FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      Container(
-                        padding:
-                            const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(
-                            0xFF8B5CF6,
-                          ).withValues(alpha: .15),
-                          borderRadius:
-                              BorderRadius.circular(
-                            AppRadius.pill,
-                          ),
-                        ),
-                        child: const Text(
-                          "LIVE AI",
-                          style: TextStyle(
-                            color:
-                                Color(0xFF8B5CF6),
-                            fontWeight:
-                                FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  Text(
-                    verdict,
-                    style: TextStyle(
-                      color: accent,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  const Text(
-                    "AI Confidence",
-                    style: TextStyle(
-                      color: Colors.white60,
-                      fontSize: 12,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Row(
-                    children: [
-
-                      Text(
-                        "${confidence.toStringAsFixed(0)}%",
-                        style: const TextStyle(
-                          color: Color(0xFF8B5CF6),
-                          fontSize: 26,
-                          fontWeight:
-                              FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(width: 14),
-
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(
-                            100,
-                          ),
-                          child: LinearProgressIndicator(
-                            value: confidence / 100,
-                            minHeight: 8,
-                            color:
-                                const Color(
-                              0xFF8B5CF6,
-                            ),
-                            backgroundColor:
-                                Colors.white10,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 26),
-                                    //------------------------------------------------
-                  // Why AI thinks this
-                  //------------------------------------------------
-
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(18),
+                    height: 22,
+                    width: 22,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .05),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: .06),
-                      ),
+                      color: const Color(0x1F38BDF8),
+                      shape: BoxShape.circle,
                     ),
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
-
-                        const Text(
-                          "Why AI thinks this",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        ...reasons.take(3).map(
-                          (reason) => Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 14,
-                            ),
-                            child: _ReasonRow(
-                              text: reason,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: const Icon(
+                      Icons.bolt_rounded,
+                      size: 14,
+                      color: Color(0xFF38BDF8),
                     ),
                   ),
-
-                  const SizedBox(height: 18),
-
-                  //------------------------------------------------
-                  // Recommendation
-                  //------------------------------------------------
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: .12),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: accent.withValues(alpha: .20),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
-
-                        const Text(
-                          "Recommended Action",
-                          style: TextStyle(
-                            color: Colors.white60,
-                            fontSize: 12,
-                          ),
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          recommendation,
-                          style: TextStyle(
-                            color: accent,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  //------------------------------------------------
-                  // CTA
-                  //------------------------------------------------
-
-                  InkWell(
-                    borderRadius:
-                        BorderRadius.circular(18),
-                    onTap: onTap,
-                    child: Container(
-                      width: double.infinity,
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(
-                          alpha: .05,
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(18),
-                      ),
-                      child: const Row(
-                        children: [
-
-                          Icon(
-                            Icons.auto_awesome,
-                            color: Color(0xFF8B5CF6),
-                            size: 18,
-                          ),
-
-                          SizedBox(width: 10),
-
-                          Expanded(
-                            child: Text(
-                              "Open AI Copilot",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight:
-                                    FontWeight.w700,
-                              ),
-                            ),
-                          ),
-
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white38,
-                            size: 14,
-                          ),
-                        ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      reason,
+                      style: const TextStyle(
+                        color: Color(0xFFC7CDD6),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+          ),
 
-class _ReasonRow extends StatelessWidget {
-  final String text;
+          const SizedBox(height: 12),
 
-  const _ReasonRow({
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    IconData icon = Icons.check_circle_rounded;
-    Color color = AppColors.success;
-
-    if (text.toLowerCase().contains("risk") ||
-        text.toLowerCase().contains("weak") ||
-        text.toLowerCase().contains("warning")) {
-      icon = Icons.warning_amber_rounded;
-      color = AppColors.warning;
-    }
-
-    return Row(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
-      children: [
-
-        Icon(
-          icon,
-          color: color,
-          size: 18,
-        ),
-
-        const SizedBox(width: 12),
-
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
+          // Actions Section with green check icons
+          const Text(
+            'Actions',
+            style: TextStyle(
               color: Colors.white,
               fontSize: 14,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
+              fontWeight: FontWeight.w800,
             ),
           ),
-        ),
-      ],
+
+          const SizedBox(height: 8),
+
+          ...ai.actions.map(
+            (action) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 22,
+                    width: 22,
+                    decoration: BoxDecoration(
+                      color: const Color(0x1F00E676),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      size: 14,
+                      color: Color(0xFF00E676),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      action,
+                      style: const TextStyle(
+                        color: Color(0xFFC7CDD6),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

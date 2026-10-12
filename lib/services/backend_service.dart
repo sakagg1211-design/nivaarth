@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BackendService {
-  static const String baseUrl = "https://nivaarth-api.onrender.com";
+  static const String baseUrl = "https://nivaarth-backend.onrender.com";
 
   Future<void> startAutomation() async {
     print("🚀 STEP 1 : startAutomation() called");
@@ -14,7 +14,9 @@ class BackendService {
     print("🌐 URL : $url");
 
     try {
-      final response = await http.post(url);
+      final response = await http
+          .post(url)
+          .timeout(const Duration(seconds: 10));
 
       print("📡 Status Code : ${response.statusCode}");
       print("📄 Response Body : ${response.body}");

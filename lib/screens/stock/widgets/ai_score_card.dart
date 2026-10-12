@@ -82,7 +82,7 @@ class AiScoreCard extends StatelessWidget {
                   children: [
 
                     Text(
-                      "AI Score",
+                      "NV Score",
                       style: AppTypography.titleLarge.copyWith(
                         fontWeight:
                             FontWeight.w800,
@@ -94,7 +94,7 @@ class AiScoreCard extends StatelessWidget {
                     ),
 
                     Text(
-                      "AI generated conviction score",
+                      "Nivaarth quantitative conviction score",
                       style: AppTypography.bodySmall,
                     ),
                   ],
@@ -320,7 +320,7 @@ class AiScoreCard extends StatelessWidget {
           ),
 
           Text(
-            "AI Breakdown",
+            "NV Factor Breakdown",
             style: AppTypography.titleMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -436,7 +436,7 @@ class AiScoreCard extends StatelessWidget {
       return "Overall fundamentals remain healthy. Monitor quarterly earnings and valuation before increasing allocation.";
     }
 
-    return "Current AI score indicates elevated risk. Review technical trend, valuation and business quality before fresh buying.";
+    return "Current NV conviction score indicates elevated risk. Review technical trend, valuation and business quality before fresh buying.";
   }
 }
 

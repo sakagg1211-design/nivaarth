@@ -7,6 +7,8 @@ class LivePortfolio {
   final double currentValue;
   final double netPL;
   final double returnPercent;
+  final double todayPL;
+  final double todayReturnPercent;
 
   const LivePortfolio({
     required this.portfolio,
@@ -14,5 +16,7 @@ class LivePortfolio {
     required this.currentValue,
     required this.netPL,
     required this.returnPercent,
+    this.todayPL = 0.0,
+    this.todayReturnPercent = 0.0,
   });
 }

@@ -1,12 +1,33 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/utils/symbol_utils.dart';
 import '../models/portfolio.dart';
 
 class PortfolioRepository {
   final SupabaseClient client = Supabase.instance.client;
 
   Future<List<Portfolio>> getPortfolio() async {
+    final user = client.auth.currentUser;
+
+    if (user != null) {
+      try {
+        final userResponse = await client
+            .from("Portfolio")
+            .select()
+            .eq("user_id", user.id)
+            .order("Instrument");
+
+        if (userResponse.isNotEmpty) {
+          return userResponse
+              .map<Portfolio>((json) => Portfolio.fromJson(json))
+              .toList();
+        }
+      } catch (_) {
+        // Fallback if user_id column is not yet provisioned in older table
+      }
+    }
+
     final response = await client
         .from("Portfolio")
         .select()
@@ -14,17 +35,36 @@ class PortfolioRepository {
 
     debugPrint("Rows: ${response.length}");
 
-    if (response.isNotEmpty) {
-      debugPrint(response.first.toString());
-    }
+    return response
+        .map<Portfolio>((json) => Portfolio.fromJson(json))
+        .toList();
+  }
 
-    final list = response
-    .map<Portfolio>((json) => Portfolio.fromJson(json))
-    .toList();
+  Future<void> addHolding({
+    required String instrument,
+    required String companyName,
+    required int qty,
+    required double avgPrice,
+    String sector = 'General',
+    String industry = 'Diversified',
+  }) async {
+    final user = client.auth.currentUser;
+    final totalInvested = qty * avgPrice;
 
-debugPrint("Model CurrentValue: ${list.first.currentValue}");
-debugPrint("Model NetPL: ${list.first.netPL}");
+    final Map<String, dynamic> payload = {
+      if (user != null) 'user_id': user.id,
+      'Instrument': instrument.trim().toUpperCase(),
+      'Company_name': companyName.trim(),
+      'YahooSymbol': SymbolUtils.getYahooSymbol(instrument),
+      'Qty': qty,
+      'Avg Price': avgPrice,
+      'Total Invested': totalInvested,
+      'Sector': sector,
+      'Industry': industry,
+      'Status': 'ACTIVE',
+      'Investment_thesis': 'Added manually via portfolio manager.',
+    };
 
-return list;
+    await client.from('Portfolio').insert(payload);
   }
 }

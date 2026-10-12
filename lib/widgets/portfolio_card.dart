@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_radius.dart';
-import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
+import '../core/utils/formatters.dart';
+import '../core/utils/symbol_utils.dart';
 import '../models/live_portfolio.dart';
 import '../screens/stock/stock_detail_page.dart';
 
@@ -19,14 +20,21 @@ class PortfolioCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolio = stock.portfolio;
     final isProfit = stock.netPL >= 0;
-    final tone = isProfit ? AppColors.success : AppColors.danger;
+    final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final toneBg = isProfit ? const Color(0x1F00E676) : const Color(0x26FF5252);
+
+    final displayName = SymbolUtils.getDisplayName(
+      portfolio.instrument,
+      dbCompanyName: portfolio.companyName,
+    );
+    final cleanSymbol = SymbolUtils.normalize(portfolio.instrument);
 
     return Material(
-      color: AppColors.surface,
+      color: const Color(0xFF16171B),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        side: const BorderSide(color: AppColors.line),
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFF282A30), width: 1),
       ),
       child: InkWell(
         onTap: () {
@@ -38,119 +46,134 @@ class PortfolioCard extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // Top Row: Avatar + Symbol & Company + Pill
               Row(
                 children: [
                   Container(
-                    height: 44,
-                    width: 44,
+                    height: 34,
+                    width: 34,
                     decoration: BoxDecoration(
-                      color: AppColors.ink,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
                     ),
                     child: Center(
                       child: Text(
-                        portfolio.instrument.isEmpty
-                            ? '-'
-                            : portfolio.instrument.substring(0, 1),
+                        cleanSymbol.isEmpty ? '-' : cleanSymbol.substring(0, 1),
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
+                          color: Colors.black,
+                          fontSize: 15,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.md),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                cleanSymbol,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 1.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0x1F00E676),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'ACTIVE',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF00E676),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 1),
                         Text(
-                          portfolio.instrument,
+                          displayName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.title,
-                        ),
-                        if (portfolio.companyName.isNotEmpty) ...[
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            portfolio.companyName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTypography.caption,
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            color: Color(0xFF8E929B),
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ],
                     ),
                   ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.textTertiary,
+                  const SizedBox(width: 8),
+                  // Return Pill
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: toneBg,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                    ),
+                    child: Text(
+                      Formatters.percent(stock.returnPercent, signed: true),
+                      style: TextStyle(
+                        color: tone,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 11.5,
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: [
-                  if (portfolio.status.isNotEmpty)
-                    _Tag(label: portfolio.status, color: AppColors.accent),
-                  if (portfolio.sector.isNotEmpty)
-                    _Tag(label: portfolio.sector, color: AppColors.mint),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: 10),
+              const Divider(height: 1, color: Color(0xFF23252B)),
+              const SizedBox(height: 8),
+              // Metrics Bar
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: _MetricTile(
-                      label: 'Current Value',
-                      value: _money(stock.currentValue, decimals: 2),
-                    ),
+                  _CompactMetric(
+                    label: 'Qty',
+                    value: '${portfolio.qty}',
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: _MetricTile(
-                      label: 'Net P&L',
-                      value: _money(stock.netPL, decimals: 2, signed: true),
-                      color: tone,
-                    ),
+                  _CompactMetric(
+                    label: 'Avg',
+                    value: Formatters.currency(portfolio.avgPrice),
+                  ),
+                  _CompactMetric(
+                    label: 'Value',
+                    value: Formatters.currency0(stock.currentValue),
+                  ),
+                  _CompactMetric(
+                    label: 'P&L',
+                    value: Formatters.currency0(stock.netPL, signed: true),
+                    valueColor: tone,
+                    alignEnd: true,
                   ),
                 ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: _MetricTile(
-                      label: 'Avg Price',
-                      value: _money(portfolio.avgPrice, decimals: 2),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: _MetricTile(
-                      label: 'Return',
-                      value: _percent(stock.returnPercent, signed: true),
-                      color: tone,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _DetailRow('Quantity', portfolio.qty.toString()),
-              _DetailRow(
-                'Invested',
-                _money(portfolio.totalInvested, decimals: 2),
-              ),
-              _DetailRow(
-                'Current Price',
-                _money(stock.currentPrice, decimals: 2),
               ),
             ],
           ),
@@ -160,96 +183,43 @@ class PortfolioCard extends StatelessWidget {
   }
 }
 
-class _MetricTile extends StatelessWidget {
+class _CompactMetric extends StatelessWidget {
   final String label;
   final String value;
-  final Color? color;
+  final Color? valueColor;
+  final bool alignEnd;
 
-  const _MetricTile({
+  const _CompactMetric({
     required this.label,
     required this.value,
-    this.color,
+    this.valueColor,
+    this.alignEnd = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.line),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: AppTypography.caption),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.title.copyWith(
-              color: color ?? AppColors.textPrimary,
-            ),
+    return Column(
+      crossAxisAlignment:
+          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 10.5,
+            color: Color(0xFF757A85),
+            fontWeight: FontWeight.w500,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: valueColor ?? Colors.white,
+            fontSize: 12.5,
+          ),
+        ),
+      ],
     );
   }
-}
-
-class _DetailRow extends StatelessWidget {
-  final String title;
-  final String value;
-
-  const _DetailRow(this.title, this.value);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
-      child: Row(
-        children: [
-          Expanded(child: Text(title, style: AppTypography.caption)),
-          Text(value, style: AppTypography.body.copyWith(color: AppColors.ink)),
-        ],
-      ),
-    );
-  }
-}
-
-class _Tag extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _Tag({
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-      ),
-      child: Text(
-        label,
-        style: AppTypography.caption.copyWith(color: color),
-      ),
-    );
-  }
-}
-
-String _money(num value, {int decimals = 0, bool signed = false}) {
-  final prefix = signed && value >= 0 ? '+' : '';
-  return '$prefix\u20B9${value.toStringAsFixed(decimals)}';
-}
-
-String _percent(num value, {bool signed = false}) {
-  final prefix = signed && value >= 0 ? '+' : '';
-  return '$prefix${value.toStringAsFixed(2)}%';
 }

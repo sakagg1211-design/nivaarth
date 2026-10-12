@@ -81,9 +81,10 @@ class _StatTile extends StatelessWidget {
         item.color ?? AppColors.primary;
 
     return Container(
-      height: 78,
+      height: 72,
       padding: const EdgeInsets.symmetric(
-        horizontal: 18,
+        horizontal: 12,
+        vertical: 8,
       ),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -111,25 +112,25 @@ class _StatTile extends StatelessWidget {
         children: [
 
           Container(
-            height: 40,
-            width: 40,
+            height: 38,
+            width: 38,
             decoration: BoxDecoration(
               color: accent.withValues(
                 alpha: .10,
               ),
               borderRadius:
                   BorderRadius.circular(
-                12,
+                10,
               ),
             ),
             child: Icon(
               item.icon,
               color: accent,
-              size: 20,
+              size: 19,
             ),
           ),
 
-          const SizedBox(width: 14),
+          const SizedBox(width: 10),
 
           Expanded(
             child: Column(
@@ -139,40 +140,41 @@ class _StatTile extends StatelessWidget {
                   CrossAxisAlignment.start,
               children: [
 
-                Text(
-                  item.title,
-                  style:
-                      AppTypography.bodySmall
-                          .copyWith(
-                    color:
-                        AppColors.textSecondary,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    item.title,
+                    maxLines: 1,
+                    style:
+                        AppTypography.bodySmall
+                            .copyWith(
+                      color:
+                          AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 2),
 
-                Text(
-                  item.value,
-                  maxLines: 1,
-                  overflow:
-                      TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight:
-                        FontWeight.w800,
-                        letterSpacing: -0.2,
-                    color: accent,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    item.value,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight:
+                          FontWeight.w800,
+                      letterSpacing: -0.2,
+                      color: accent,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-
-          Icon(
-            Icons.chevron_right_rounded,
-            color:
-                AppColors.textTertiary,
-            size: 18,
           ),
         ],
       ),

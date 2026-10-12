@@ -1,585 +1,263 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
 
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
   final String action;
+  final double aiConfidence;
+  final String healthStatus;
+  final VoidCallback? onOpenAdvisor;
 
   const PortfolioHealthCard({
     super.key,
     required this.healthScore,
     required this.action,
+    this.aiConfidence = 91,
+    this.healthStatus = 'Needs Attention',
+    this.onOpenAdvisor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final tone = _tone(healthScore);
+    final score = healthScore.round().clamp(0, 100);
+    const gaugeColor = Color(0xFFE5A93C);
 
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF23293B), Color(0xFF151922)],
+        color: const Color(0xFF16171B),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: const Color(0xFF282A30),
+          width: 1,
         ),
-        border: Border.all(color: Colors.white12, width: .6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .20),
-            blurRadius: 40,
-            offset: const Offset(0, 18),
-          ),
-        ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Stack(
-          children: [
-            //--------------------------------------------------
-            // Blue Ambient Glow
-            //--------------------------------------------------
-            Positioned(
-              top: -120,
-              right: -100,
-              child: Container(
-                width: 280,
-                height: 280,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [Color(0x183B82F6), Colors.transparent],
-                  ),
-                ),
-              ),
-            ),
-
-            //--------------------------------------------------
-            // Purple Ambient Glow
-            //--------------------------------------------------
-            Positioned(
-              bottom: -120,
-              left: -90,
-              child: Container(
-                width: 240,
-                height: 240,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [Color(0x16A855F7), Colors.transparent],
-                  ),
-                ),
-              ),
-            ),
-
-            //--------------------------------------------------
-            // Decorative Ring
-            //--------------------------------------------------
-            Positioned(
-              top: -60,
-              right: -35,
-              child: Container(
-                width: 170,
-                height: 170,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: .04),
-                  ),
-                ),
-              ),
-            ),
-
-            //--------------------------------------------------
-            // Content
-            //--------------------------------------------------
-            Padding(
-              padding: const EdgeInsets.symmetric(
-  horizontal: 22,
-  vertical: 20,
-),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //--------------------------------------------------
-                  // Header
-                  //--------------------------------------------------
-                  Row(
-  children: [
-
-    //----------------------------------------
-    // AI Icon
-    //----------------------------------------
-
-    Container(
-      width: 52,
-      height: 52,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF34D399),
-            Color(0xFF10B981),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF10B981).withValues(alpha: .35),
-            blurRadius: 18,
-          ),
-        ],
-      ),
-      child: const Icon(
-        Icons.auto_awesome_rounded,
-        color: Colors.white,
-        size: 26,
-      ),
-    ),
-
-    const SizedBox(width: 16),
-
-    //----------------------------------------
-    // Title
-    //----------------------------------------
-
-    const Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-
-          Text(
-            "AI Portfolio Health",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-
-          SizedBox(height: 4),
-
-          Text(
-            "Updated 2 mins ago",
-            style: TextStyle(
-              color: Colors.white60,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
-    ),
-
-    //----------------------------------------
-    // Score Badge
-    //----------------------------------------
-
-    Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: _healthColor(healthScore).withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        "${healthScore.toInt()}/100",
-        style: TextStyle(
-          color: _healthColor(healthScore),
-          fontWeight: FontWeight.w900,
-          fontSize: 16,
-        ),
-      ),
-    ),
-  ],
-),
-
-                  const SizedBox(height: 28),
-
-                  //--------------------------------------------------
-                  // Health Gauge Section
-                  //--------------------------------------------------
-                 Row(
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-
-    //-------------------------------------------------
-    // Premium Health Ring
-    //-------------------------------------------------
-
-    SizedBox(
-      width: 138,
-      height: 138,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-
-          SizedBox(
-            width: 138,
-            height: 138,
-            child: CircularProgressIndicator(
-              value: healthScore / 100,
-              strokeWidth: 12,
-              backgroundColor: Colors.white.withValues(alpha: .08),
-              valueColor: AlwaysStoppedAnimation(
-                _healthColor(healthScore),
-              ),
-            ),
-          ),
-
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-
-              Text(
-                healthScore.toInt().toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-
-              const SizedBox(height: 2),
-
-              Text(
-                "/100",
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: .45),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-
-    const SizedBox(width: 24),
-
-    //-------------------------------------------------
-    // Health Summary
-    //-------------------------------------------------
-
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          Text(
-  _healthStatus(healthScore),
-  style: TextStyle(
-    color: _healthColor(healthScore),
-    fontWeight: FontWeight.w900,
-    fontSize: 30,
-    letterSpacing: -.3,
-  ),
-),
-
-          const SizedBox(height: 18),
-
-          Text(
-            "AI Confidence",
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: .55),
-              fontSize: 14,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          const Text(
-            "91%",
-            style: TextStyle(
-              color: Color(0xFF8B5CF6),
-              fontWeight: FontWeight.bold,
-              fontSize: 40,
-            ),
-          ),
-          const SizedBox(height: 4),
-
-Text(
-  "High Confidence",
-  style: TextStyle(
-    color: Colors.white.withValues(alpha: .55),
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-  ),
-),
-          const SizedBox(height: 18),
-
+          // Header: Sparkle + "AI PORTFOLIO HEALTH" + "Live" badge
           Row(
             children: [
-
-              Icon(
-                Icons.trending_up_rounded,
-                size: 20,
-                color: Colors.greenAccent.shade400,
+              const Icon(
+                Icons.health_and_safety_rounded,
+                size: 14,
+                color: Color(0xFFE5A93C),
               ),
-
-              const SizedBox(width: 6),
-
-              Text(
-                "+4 This Week",
+              const SizedBox(width: 8),
+              const Text(
+                'NV PORTFOLIO HEALTH',
                 style: TextStyle(
-                  color: Colors.greenAccent.shade400,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFE5A93C),
+                  letterSpacing: 1.1,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0x1F00E676),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.circle, size: 6, color: Color(0xFF00E676)),
+                    SizedBox(width: 4),
+                    Text(
+                      'Live',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF00E676),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 6),
+          const SizedBox(height: 16),
 
-          Text(
-            "Portfolio quality improved",
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: .55),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ],
-),
-
-                  const SizedBox(height: 24),
-
-                  //--------------------------------------------------
-                  // AI Insights
-                  //--------------------------------------------------
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-  horizontal: 20,
-  vertical: 18,
-),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .05),
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: .06),
+          // Body: Circular Ring + Analysis Text & AI Confidence statement + CTA
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Circular score gauge
+              SizedBox(
+                width: 86,
+                height: 86,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 86,
+                      height: 86,
+                      child: CircularProgressIndicator(
+                        value: (score / 100).clamp(0.05, 1.0),
+                        strokeWidth: 8,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: const Color(0xFF23252B),
+                        valueColor: const AlwaysStoppedAnimation<Color>(gaugeColor),
                       ),
                     ),
-                    child: Column(
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        _InsightRow(
-                          icon: Icons.check_circle_rounded,
-                          color: AppColors.success,
-                          text: "Strong Business Quality",
+                        Text(
+                          '$score',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            height: 1,
+                          ),
                         ),
-
-                        const SizedBox(height: 18),
-
-                        _InsightRow(
-                          icon: Icons.account_balance_wallet_rounded,
-                          color: const Color(0xFF60A5FA),
-                          text: "Healthy Balance Sheet",
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _InsightRow(
-                          icon: Icons.warning_amber_rounded,
-                          color: AppColors.warning,
-                          text: "Technical Momentum Needs Attention",
+                        const SizedBox(height: 2),
+                        const Text(
+                          '/100',
+                          style: TextStyle(
+                            color: Color(0xFF757A85),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
+                ),
+              ),
 
-                  const SizedBox(height: 18),
+              const SizedBox(width: 20),
 
-                  //--------------------------------------------------
-                  // CTA
-                  //--------------------------------------------------
-                  InkWell(
-                    borderRadius: BorderRadius.circular(22),
-                    onTap: () {},
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: .05),
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: .05),
+              // Status, AI Confidence statement and CTA
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'NV Confidence: ${aiConfidence.toInt()}%',
+                          style: const TextStyle(
+                            color: Color(0xFF8B5CF6),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 34,
-                            height: 34,
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF8B5CF6,
-                              ).withValues(alpha: .15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.auto_awesome,
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: const Color(0x1F8B5CF6),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'HIGH',
+                            style: TextStyle(
                               color: Color(0xFF8B5CF6),
-                              size: 20,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Text(
-                                  "View Full AI Analysis",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                SizedBox(height: 2),
-                                Text(
-                                  "Detailed portfolio diagnosis",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 20,
-                            color: Colors.white54,
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Status: $healthStatus',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 3),
+                    const Text(
+                      'Nivaarth engine actively tracking risk & quality.',
+                      style: TextStyle(
+                        color: Color(0xFF8E929B),
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: onOpenAdvisor ??
+                          () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Nivaarth Advisor is monitoring portfolio risk.'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                      borderRadius: BorderRadius.circular(4),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Open Advisor',
+                              style: TextStyle(
+                                color: Color(0xFFE5A93C),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 14,
+                              color: Color(0xFFE5A93C),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+            ],
+          ),
+
+          const SizedBox(height: 14),
+
+          // Mini AI statement pill strip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E2024),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF282A30)),
             ),
-          ],
-        ),
+            child: const Row(
+              children: [
+                Icon(Icons.check_circle_outline_rounded, size: 14, color: Color(0xFF00E676)),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Multi-factor balance active • Risk hedging monitored',
+                    style: TextStyle(
+                      color: Color(0xFFC7CDD6),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-Color _tone(double score) {
-  if (score >= 80) return AppColors.success;
-  if (score >= 60) return AppColors.accent;
-  if (score >= 40) return AppColors.warning;
-  return AppColors.danger;
-}
-Color _healthColor(double score) {
-  if (score >= 80) {
-    return const Color(0xFF22C55E);
-  }
-
-  if (score >= 60) {
-    return const Color(0xFF3B82F6);
-  }
-
-  if (score >= 40) {
-    return const Color(0xFFF59E0B);
-  }
-
-  return const Color(0xFFEF4444);
-}
-String _healthStatus(double score) {
-  if (score >= 80) return "Excellent";
-  if (score >= 60) return "Healthy";
-  if (score >= 40) return "Needs Attention";
-  return "High Risk";
-}
-String _status(double score) {
-  if (score >= 80) return "Strong portfolio";
-  if (score >= 60) return "Good portfolio";
-  if (score >= 40) return "Needs attention";
-  return "High risk";
-}
-
-class _Badge extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _Badge({
-    super.key,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 7,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(
-          color: color.withValues(alpha: .25),
-        ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _InsightRow extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String text;
-
-  const _InsightRow({
-    super.key,
-    required this.icon,
-    required this.color,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: color,
-          size: 18,
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Text(
-  text,
-  style: const TextStyle(
-    color: Colors.white,
-    fontSize: 15,
-    fontWeight: FontWeight.w700,
-    letterSpacing: -0.2,
-    height: 1.2,
-  ),
-),
-        ),
-      ],
     );
   }
 }

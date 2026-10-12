@@ -15,22 +15,15 @@ class LivePortfolioRepository {
     final portfolio = await portfolioRepository.getPortfolio();
     final prices = await priceRepository.getPrices();
 
-    // Price Map
+    // Price & Previous Close Maps
     final Map<String, double> priceMap = {};
+    final Map<String, double> prevCloseMap = {};
 
     for (final price in prices) {
-      priceMap[price.instrument.trim().toUpperCase()] =
-          price.currentPrice;
+      final sym = price.instrument.trim().toUpperCase();
+      priceMap[sym] = price.currentPrice;
+      prevCloseMap[sym] = price.previousClose > 0 ? price.previousClose : price.currentPrice;
     }
-
-    // ===========================
-    // DEBUG (Temporary)
-    // ===========================
-
-    print("========== PRICE MAP ==========");
-    print(priceMap);
-
-    // ===========================
 
     return portfolio.map((stock) {
       final key =
@@ -38,10 +31,6 @@ class LivePortfolioRepository {
 
       final double currentPrice =
           priceMap[key] ?? 0.0;
-
-      print(
-        "Stock : $key  ->  Price : $currentPrice",
-      );
 
       final double currentValue =
           currentPrice * stock.qty;
@@ -54,12 +43,22 @@ class LivePortfolioRepository {
               ? 0.0
               : (netPL / stock.totalInvested) * 100.0;
 
+      final double prevClose = prevCloseMap[key] ?? currentPrice;
+      final double todayPL = prevClose > 0
+          ? (currentPrice - prevClose) * stock.qty
+          : 0.0;
+      final double todayReturnPercent = prevClose > 0
+          ? ((currentPrice - prevClose) / prevClose) * 100.0
+          : 0.0;
+
       return LivePortfolio(
         portfolio: stock,
         currentPrice: currentPrice,
         currentValue: currentValue,
         netPL: netPL,
         returnPercent: returnPercent,
+        todayPL: todayPL,
+        todayReturnPercent: todayReturnPercent,
       );
     }).toList();
   }

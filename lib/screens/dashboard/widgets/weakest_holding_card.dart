@@ -306,7 +306,7 @@ String get headerChip {
                   //------------------------------------------------
 
                   const Text(
-                    "AI Score Breakdown",
+                    "NV Factor Breakdown",
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 13,
@@ -409,7 +409,7 @@ String get headerChip {
                   _ReasonRow(
                     icon: Icons.analytics_outlined,
                     color: const Color(0xFF60A5FA),
-                    text: "AI confidence is below preferred level",
+                    text: "NV conviction is below preferred level",
                   ),
 
                   const SizedBox(height: 24),

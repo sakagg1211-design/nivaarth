@@ -5,6 +5,8 @@ class PortfolioAnalysis {
   final double currentValue;
   final double totalPnL;
   final double returnPercent;
+  final double todayPnL;
+  final double todayReturnPercent;
 
   final int totalStocks;
   final int profitStocks;
@@ -21,6 +23,8 @@ class PortfolioAnalysis {
     required this.currentValue,
     required this.totalPnL,
     required this.returnPercent,
+    this.todayPnL = 0.0,
+    this.todayReturnPercent = 0.0,
     required this.totalStocks,
     required this.profitStocks,
     required this.lossStocks,

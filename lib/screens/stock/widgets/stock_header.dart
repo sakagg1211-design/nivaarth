@@ -15,6 +15,9 @@ class StockHeader extends StatelessWidget {
   final double returnPercent;
 
   final bool isProfit;
+  final String? trend;
+  final bool isSaved;
+  final VoidCallback? onSaveToggle;
 
   const StockHeader({
     super.key,
@@ -25,6 +28,9 @@ class StockHeader extends StatelessWidget {
     required this.netPL,
     required this.returnPercent,
     required this.isProfit,
+    this.trend,
+    this.isSaved = false,
+    this.onSaveToggle,
   });
 
   @override
@@ -39,12 +45,12 @@ class StockHeader extends StatelessWidget {
 
       width: double.infinity,
 
-      padding: const EdgeInsets.all(26),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
 
       decoration: BoxDecoration(
 
         borderRadius:
-            BorderRadius.circular(30),
+            BorderRadius.circular(28),
 
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -90,8 +96,8 @@ class StockHeader extends StatelessWidget {
 
               Container(
 
-                height: 68,
-                width: 68,
+                height: 52,
+                width: 52,
 
                 decoration: BoxDecoration(
 
@@ -101,7 +107,7 @@ class StockHeader extends StatelessWidget {
 
                   borderRadius:
                       BorderRadius.circular(
-                    22,
+                    16,
                   ),
                 ),
 
@@ -114,7 +120,7 @@ class StockHeader extends StatelessWidget {
                         : instrument[0],
 
                     style: const TextStyle(
-                      fontSize: 28,
+                      fontSize: 22,
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                     ),
@@ -123,7 +129,7 @@ class StockHeader extends StatelessWidget {
               ),
 
               const SizedBox(
-                width: 18,
+                width: 12,
               ),
 
               Expanded(
@@ -135,29 +141,32 @@ class StockHeader extends StatelessWidget {
 
                   children: [
 
-                    Text(
-                      instrument,
-                      maxLines: 1,
-                      overflow:
-                          TextOverflow.ellipsis,
-                      style:
-                          AppTypography.titleLarge
-                              .copyWith(
-                        color: Colors.white,
-                        fontWeight:
-                            FontWeight.w800,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        instrument,
+                        maxLines: 1,
+                        style:
+                            AppTypography.titleLarge
+                                .copyWith(
+                          color: Colors.white,
+                          fontWeight:
+                              FontWeight.w800,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
 
                     const SizedBox(
-                      height: 4,
+                      height: 3,
                     ),
 
                     Text(
                       companyName.isEmpty
                           ? "Company"
                           : companyName,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow:
                           TextOverflow.ellipsis,
                       style:
@@ -165,12 +174,14 @@ class StockHeader extends StatelessWidget {
                               .copyWith(
                         color:
                             Colors.white70,
+                        fontSize: 12,
                       ),
                     ),
                   ],
                 ),
               ),
-                            Column(
+              const SizedBox(width: 8),
+              Column(
                 crossAxisAlignment:
                     CrossAxisAlignment.end,
                 children: [
@@ -178,8 +189,8 @@ class StockHeader extends StatelessWidget {
                   Container(
                     padding:
                         const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
+                      horizontal: 9,
+                      vertical: 5,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.success
@@ -198,12 +209,12 @@ class StockHeader extends StatelessWidget {
 
                         Icon(
                           Icons.circle,
-                          size: 8,
+                          size: 7,
                           color:
                               AppColors.success,
                         ),
 
-                        SizedBox(width: 6),
+                        SizedBox(width: 5),
 
                         Text(
                           "LIVE",
@@ -212,7 +223,7 @@ class StockHeader extends StatelessWidget {
                                 .success,
                             fontWeight:
                                 FontWeight.bold,
-                            fontSize: 11,
+                            fontSize: 10.5,
                           ),
                         ),
                       ],
@@ -220,30 +231,25 @@ class StockHeader extends StatelessWidget {
                   ),
 
                   const SizedBox(
-                    height: 14,
+                    height: 8,
                   ),
 
                   Container(
-                    height: 42,
-                    width: 42,
+                    height: 36,
+                    width: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white
-                          .withValues(
-                        alpha: .06,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(
-                        14,
-                      ),
+                      color: isSaved
+                          ? const Color(0x33E5A93C)
+                          : Colors.white.withValues(alpha: .06),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      splashRadius: 20,
-                      padding:
-                          EdgeInsets.zero,
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.star_border,
-                        color: Colors.white,
+                      splashRadius: 18,
+                      padding: EdgeInsets.zero,
+                      onPressed: onSaveToggle,
+                      icon: Icon(
+                        isSaved ? Icons.star_rounded : Icons.star_outline_rounded,
+                        color: isSaved ? const Color(0xFFE5A93C) : Colors.white,
                         size: 20,
                       ),
                     ),
@@ -254,80 +260,90 @@ class StockHeader extends StatelessWidget {
           ),
 
           const SizedBox(
-            height: 28,
+            height: 22,
           ),
 
-          Text(
-            _money(currentPrice),
-            style: AppTypography
-                .displaySmall
-                .copyWith(
-              color: Colors.white,
-              fontWeight:
-                  FontWeight.w900,
-            ),
-          ),
-
-          const SizedBox(
-            height: 10,
-          ),
-
-          Container(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 9,
-            ),
-            decoration: BoxDecoration(
-              color:
-                  gainColor.withValues(
-                alpha: .12,
-              ),
-              borderRadius:
-                  BorderRadius.circular(
-                50,
-              ),
-            ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
             child: Text(
-              "${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+              _money(currentPrice > 0 ? currentPrice : 100.0),
               style: AppTypography
-                  .bodyMedium
+                  .displaySmall
                   .copyWith(
-                color: gainColor,
+                color: Colors.white,
                 fontWeight:
-                    FontWeight.bold,
+                    FontWeight.w900,
+                fontSize: 32,
               ),
             ),
           ),
 
           const SizedBox(
-            height: 28,
+            height: 8,
+          ),
+
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 7,
+              ),
+              decoration: BoxDecoration(
+                color:
+                    gainColor.withValues(
+                  alpha: .12,
+                ),
+                borderRadius:
+                    BorderRadius.circular(
+                  50,
+                ),
+              ),
+              child: Text(
+                status == 'WATCHLIST' || status == 'DISCOVERY'
+                    ? "Live Market Quote   (NSE)"
+                    : "${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                style: AppTypography
+                    .bodyMedium
+                    .copyWith(
+                  color: gainColor,
+                  fontWeight:
+                      FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(
+            height: 22,
           ),
 
           Row(
             children: [
-                            Expanded(
+              const Expanded(
                 child: _HeaderMetric(
                   title: "Exchange",
-                  value: status.isEmpty
-                      ? "NSE"
-                      : status,
+                  value: "NSE",
                 ),
               ),
-
+              const SizedBox(width: 8),
               Expanded(
                 child: _HeaderMetric(
                   title: "Trend",
-                  value: isProfit
-                      ? "Bullish"
-                      : "Bearish",
+                  value: trend != null && trend!.isNotEmpty
+                      ? trend!
+                      : (isProfit ? "Bullish" : "Neutral"),
                 ),
               ),
-
+              const SizedBox(width: 8),
               Expanded(
                 child: _HeaderMetric(
-                  title: "Portfolio",
-                  value: "Holding",
+                  title: "Status",
+                  value: status.isNotEmpty ? status : (isProfit ? "PORTFOLIO" : "WATCHLIST"),
                 ),
               ),
             ],
@@ -370,19 +386,16 @@ class _HeaderMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(
-        right: 8,
-      ),
       padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 12,
+        horizontal: 8,
+        vertical: 10,
       ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(
           alpha: .05,
         ),
         borderRadius: BorderRadius.circular(
-          16,
+          14,
         ),
         border: Border.all(
           color: Colors.white.withValues(
@@ -395,25 +408,34 @@ class _HeaderMetric extends StatelessWidget {
             CrossAxisAlignment.start,
         children: [
 
-          Text(
-            title,
-            style: AppTypography.bodySmall.copyWith(
-              color: Colors.white60,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              maxLines: 1,
+              style: AppTypography.bodySmall.copyWith(
+                color: Colors.white60,
+                fontSize: 11,
+              ),
             ),
           ),
 
           const SizedBox(
-            height: 6,
+            height: 4,
           ),
 
-          Text(
-            value,
-            maxLines: 1,
-            overflow:
-                TextOverflow.ellipsis,
-            style: AppTypography.titleMedium.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: AppTypography.titleMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
             ),
           ),
         ],

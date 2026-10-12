@@ -42,7 +42,7 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
       completed: false,
     ),
     _SyncStep(
-      title: "AI Portfolio Scoring",
+      title: "NV Portfolio Scoring",
       completed: false,
     ),
   ];
@@ -119,7 +119,7 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
       if (!mounted) return;
 
       setState(() {
-        currentStep = "Generating AI Portfolio Insights...";
+        currentStep = "Generating NV Portfolio Insights...";
         progress = 0.85;
       });
 

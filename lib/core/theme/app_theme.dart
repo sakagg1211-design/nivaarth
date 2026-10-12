@@ -84,7 +84,7 @@ class AppTheme {
         minimumSize: const WidgetStatePropertyAll(Size.fromHeight(52)),
         elevation: const WidgetStatePropertyAll(0),
         backgroundColor: const WidgetStatePropertyAll(AppColors.ink),
-        foregroundColor: const WidgetStatePropertyAll(Colors.white),
+        foregroundColor: const WidgetStatePropertyAll(Color(0xFF0C0D10)),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.lg),

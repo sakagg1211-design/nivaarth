@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
-import 'screens/home/home_page.dart';
-import 'screens/login/login_page.dart';
+import 'screens/splash/splash_screen.dart';
 import 'services/supabase_service.dart';
 
 Future<void> main() async {
@@ -24,15 +23,11 @@ class NivaarthApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final session = Supabase.instance.client.auth.currentSession;
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NIVAARTH',
       theme: AppTheme.darkTheme,
-      home: session == null
-          ? const LoginPage()
-          : const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

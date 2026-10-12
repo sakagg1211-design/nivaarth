@@ -6,10 +6,14 @@ class AuthService {
   Future<AuthResponse> signUp({
     required String email,
     required String password,
+    String? name,
   }) async {
     return await client.auth.signUp(
       email: email,
       password: password,
+      data: name != null && name.trim().isNotEmpty
+          ? {'name': name.trim(), 'full_name': name.trim()}
+          : null,
     );
   }
 
@@ -25,6 +29,10 @@ class AuthService {
 
   Future<void> signOut() async {
     await client.auth.signOut();
+  }
+
+  Future<void> resetPassword(String email) async {
+    await client.auth.resetPasswordForEmail(email);
   }
 
   User? get currentUser => client.auth.currentUser;

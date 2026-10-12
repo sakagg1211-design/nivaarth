@@ -44,7 +44,7 @@ class RecommendationCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
 
               Text(
-                "AI Recommendation",
+                "NV Verdict",
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -153,7 +153,7 @@ class RecommendationCard extends StatelessWidget {
 
   String _summary() {
     if (score.overallScore >= 80) {
-      return "This stock demonstrates excellent fundamentals with strong business quality, healthy financials and attractive growth prospects. AI suggests accumulation for long-term investors.";
+      return "This stock demonstrates excellent fundamentals with strong business quality, healthy financials and attractive growth prospects. Nivaarth models suggest accumulation for long-term investors.";
     }
 
     if (score.overallScore >= 60) {

@@ -1,298 +1,284 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../providers/dashboard_provider.dart';
-import 'widgets/ai_verdict_card.dart';
+import '../../providers/live_portfolio_provider.dart';
+import '../../providers/market_indices_provider.dart';
+import '../../providers/portfolio_provider.dart';
+import '../../providers/price_provider.dart';
+import '../../services/backend_service.dart';
+import '../home/home_page.dart';
+import 'widgets/ai_briefing_card.dart';
 import 'widgets/dashboard_header.dart';
+import 'widgets/dashboard_signals_grid.dart';
+import 'widgets/dashboard_top_holdings_section.dart';
+import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
-import 'widgets/top_opportunity_card.dart';
-import 'widgets/weakest_holding_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage>
+    with WidgetsBindingObserver {
+  final BackendService _backendService = BackendService();
+  bool _isRefreshing = false;
+  DateTime _lastUpdated = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final difference = DateTime.now().difference(_lastUpdated);
+      if (difference.inMinutes >= 5) {
+        _refreshDashboard();
+      }
+    }
+  }
+
+  bool _checkIsMarketOpen() {
+    final now = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30)); // IST
+    if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
+      return false;
+    }
+    final startMinutes = 9 * 60 + 15;
+    final endMinutes = 15 * 60 + 30;
+    final currentMinutes = now.hour * 60 + now.minute;
+    return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+  }
+
+  Future<void> _refreshDashboard() async {
+    if (_isRefreshing) return;
+
+    setState(() => _isRefreshing = true);
+    try {
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(livePortfolioProvider);
+      ref.invalidate(portfolioProvider);
+      ref.invalidate(pricesProvider);
+      ref.invalidate(marketIndicesProvider);
+      await Future.wait([
+        ref.read(dashboardProvider.future),
+        ref.read(marketIndicesProvider.future),
+      ]);
+
+      if (!mounted) return;
+      setState(() {
+        _lastUpdated = DateTime.now();
+      });
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Dashboard and market data refreshed.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+    } catch (error) {
+      ref.invalidate(dashboardProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text('Refresh notice: $error')),
+        );
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dashboard = ref.watch(dashboardProvider);
+    final portfolioAsync = ref.watch(livePortfolioProvider);
+    final isMarketOpen = _checkIsMarketOpen();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFF0C0D10),
       body: SafeArea(
         child: dashboard.when(
           loading: () => const _ScreenState(
             icon: Icons.hourglass_empty_rounded,
-            title: 'Building your portfolio view',
-            message: 'Fetching live value, health and AI signals.',
+            title: 'Building portfolio cockpit',
+            message: 'Fetching live valuation, health scores and AI signals.',
             loading: true,
           ),
           error: (e, _) => _ScreenState(
             icon: Icons.error_outline_rounded,
             title: 'Dashboard unavailable',
             message: e.toString(),
+            action: ElevatedButton(
+              onPressed: () => ref.invalidate(dashboardProvider),
+              child: const Text('Try Again'),
+            ),
           ),
           data: (data) {
-            final isProfit = data.totalPnL >= 0;
+            final liveStocks = portfolioAsync.value ?? [];
 
-            return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      AppSpacing.lg,
-                      AppSpacing.lg,
-                      AppSpacing.xxl,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const DashboardHeader(),
-                        const SizedBox(height: AppSpacing.xl),
-                        PortfolioHealthCard(
-                          healthScore: data.portfolioHealth,
-                          action: data.aiRecommendation.recommendation.name
-                              .toUpperCase(),
-                        ),
-                        const SizedBox(height: 28),
-                        PortfolioHeroCard(
-                         currentValue: data.currentValue,
-                          investedValue: data.totalInvested,
-                          netPnL: data.totalPnL,
-                          returnPercent: data.returnPercent,
-                          holdings: data.totalStocks,
-                          aiConfidence: 74,
-                        ),
-                        const SizedBox(height: 28),
-                       
-                        Row(
-                          children: [
-                            Flexible(
-                              fit: FlexFit.loose,
-                              child: _MoveCard(
-                                icon: Icons.north_east_rounded,
-                                title: 'Biggest Winner',
-                                instrument:
-                                    data.biggestWinner.portfolio.instrument,
-                                value: _percent(
-                                  data.biggestWinner.returnPercent,
-                                  signed: true,
-                                ),
-                                color: AppColors.success,
+            return RefreshIndicator(
+              onRefresh: _refreshDashboard,
+              color: const Color(0xFFE5A93C),
+              backgroundColor: const Color(0xFF16171B),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 540),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 1. Sleek Compact Header (Good afternoon, Demo User + Actions)
+                              const DashboardHeader(),
+
+                              const SizedBox(height: 12),
+
+                              // Live NIFTY 50 and SENSEX Benchmark Bar
+                              const MarketIndicesBar(),
+
+                              const SizedBox(height: 14),
+
+                              // 2. Compact Portfolio Value Card
+                              PortfolioHeroCard(
+                                currentValue: data.currentValue,
+                                investedValue: data.totalInvested,
+                                netPnL: data.totalPnL,
+                                returnPercent: data.returnPercent,
+                                todayPnL: data.todayPnL,
+                                todayReturnPercent: data.todayReturnPercent,
+                                holdings: data.totalStocks,
+                                aiConfidence: 74,
+                                isMarketOpen: isMarketOpen,
                               ),
-                            ),
-                            const SizedBox(width: AppSpacing.md),
-                            Flexible(
-                              fit: FlexFit.loose,
-                              child: _MoveCard(
-                                icon: Icons.south_east_rounded,
-                                title: 'Biggest Loser',
-                                instrument:
-                                    data.biggestLoser.portfolio.instrument,
-                                value: _percent(
-                                  data.biggestLoser.returnPercent,
-                                  signed: true,
-                                ),
-                                color: AppColors.danger,
+
+                              const SizedBox(height: 14),
+
+                              // 3. Compact AI Portfolio Health Gauge Card
+                              PortfolioHealthCard(
+                                healthScore: data.portfolioHealth,
+                                action: data.aiRecommendation.recommendation.name.toUpperCase(),
                               ),
-                            ),
-                          ],
+
+                              const SizedBox(height: 14),
+
+                              // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
+                              DashboardSignalsGrid(
+                                summary: data,
+                                holdings: liveStocks,
+                              ),
+
+                              const SizedBox(height: 22),
+
+                              // 5. Today's AI Briefing & Insight Column (Attached Image 2)
+                              Row(
+                                children: [
+                                  const Text(
+                                    'NV Briefing',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: -0.4,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0x1FE5A93C),
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: const Color(0x33E5A93C),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'TODAY',
+                                      style: TextStyle(
+                                        color: Color(0xFFE5A93C),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Signals ranked by conviction and risk.',
+                                style: TextStyle(
+                                  color: Color(0xFF8E929B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // AI Verdict & Health Insights Card (Reasons + Actions)
+                              AIBriefingCard(ai: data.aiRecommendation),
+
+                              const SizedBox(height: 22),
+
+                              // 6. Sector Allocation Preview & Top Holdings List
+                              DashboardTopHoldingsSection(
+                                holdings: liveStocks,
+                                onViewAll: () {
+                                  // Switch to Portfolio tab if embedded in HomePage
+                                  final homeState = context.findAncestorStateOfType<State<HomePage>>();
+                                  if (homeState != null) {
+                                    // ignore: invalid_use_of_protected_member
+                                    homeState.setState(() {
+                                      // ignore: avoid_dynamic_calls
+                                      (homeState as dynamic).currentIndex = 1;
+                                    });
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(height: 24),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: AppSpacing.xl),
-                        const _SectionHeader(
-                          title: 'AI Briefing',
-                          subtitle: 'Signals ranked by conviction and risk.',
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AIVerdictCard(ai: data.aiRecommendation),
-                        const SizedBox(height: AppSpacing.lg),
-                        TopOpportunityCard(stock: data.topOpportunity),
-                        const SizedBox(height: AppSpacing.lg),
-                        WeakestHoldingCard(stock: data.weakestHolding),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),
       ),
-    );
-  }
-}
-
-class _DarkMetricTile extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color? valueColor;
-
-  const _DarkMetricTile({
-    required this.title,
-    required this.value,
-    this.valueColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = valueColor ?? Colors.white;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 14,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .08),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: .06),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white60,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: .2,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              maxLines: 1,
-              style: TextStyle(
-                color: color,
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                height: 1,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-class _MoveCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String instrument;
-  final String value;
-  final Color color;
-
-  const _MoveCard({
-    required this.icon,
-    required this.title,
-    required this.instrument,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        minHeight: 132,
-      ),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.line),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.title.copyWith(
-                      color: color,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: AppSpacing.lg),
-
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.caption,
-          ),
-
-          const SizedBox(height: AppSpacing.xs),
-
-          Text(
-            instrument,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.title,
-          ),
-        ],
-      ),
-    );
-  }
-}
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const _SectionHeader({
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: AppTypography.heading2),
-        const SizedBox(height: AppSpacing.xs),
-        Text(subtitle, style: AppTypography.body),
-      ],
     );
   }
 }
@@ -302,12 +288,14 @@ class _ScreenState extends StatelessWidget {
   final String title;
   final String message;
   final bool loading;
+  final Widget? action;
 
   const _ScreenState({
     required this.icon,
     required this.title,
     required this.message,
     this.loading = false,
+    this.action,
   });
 
   @override
@@ -319,39 +307,52 @@ class _ScreenState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              height: 54,
-              width: 54,
+              height: 52,
+              width: 52,
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: const Color(0xFF16171B),
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: AppColors.line),
+                border: Border.all(color: const Color(0xFF282A30)),
               ),
-              child: Icon(icon, color: AppColors.textPrimary),
+              child: Icon(icon, color: Colors.white),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(title, textAlign: TextAlign.center, style: AppTypography.title),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: AppSpacing.sm),
-            Text(message, textAlign: TextAlign.center, style: AppTypography.body),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF8E929B),
+                fontSize: 14,
+              ),
+            ),
             if (loading) ...[
               const SizedBox(height: AppSpacing.lg),
               const SizedBox(
-                width: 160,
-                child: LinearProgressIndicator(minHeight: 3),
+                width: 140,
+                child: LinearProgressIndicator(
+                  minHeight: 2,
+                  backgroundColor: Color(0xFF23252B),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                ),
               ),
+            ],
+            if (action != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              action!,
             ],
           ],
         ),
       ),
     );
   }
-}
-
-String _money(num value, {int decimals = 0, bool signed = false}) {
-  final prefix = signed && value >= 0 ? '+' : '';
-  return '$prefix\u20B9${value.toStringAsFixed(decimals)}';
-}
-
-String _percent(num value, {bool signed = false}) {
-  final prefix = signed && value >= 0 ? '+' : '';
-  return '$prefix${value.toStringAsFixed(2)}%';
 }
