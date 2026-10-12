@@ -153,6 +153,30 @@ class StockRepository {
   }
 
   static Map<String, int> _computeScoreBreakdown(String symbol, int overall) {
+    final clean = SymbolUtils.normalize(symbol);
+
+    if (clean == 'IRCON') {
+      return {
+        'bq': 20,
+        'fs': 21,
+        'growth': 18,
+        'val': 19,
+        'tech': 17,
+        'risk': 7,
+      };
+    }
+
+    if (clean == 'RPOWER') {
+      return {
+        'bq': 14,
+        'fs': 11,
+        'growth': 13,
+        'val': 12,
+        'tech': 18,
+        'risk': 21,
+      };
+    }
+
     int hash = 0;
     for (int i = 0; i < symbol.length; i++) {
       hash = (hash * 31 + symbol.codeUnitAt(i)) & 0x7FFFFFFF;
@@ -243,6 +267,8 @@ class StockRepository {
       'IRCTC': 76,
       'IREDA': 80,
       'CDSL': 83,
+      'IRCON': 82,
+      'RPOWER': 54,
     };
 
     final clean = SymbolUtils.normalize(symbol);

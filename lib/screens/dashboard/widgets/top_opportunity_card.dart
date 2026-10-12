@@ -246,7 +246,7 @@ class TopOpportunityCard extends StatelessWidget {
                   // AI Breakdown
                   //------------------------------------------------
                   const Text(
-                    "NV Factor Breakdown",
+                    "NV Analytics",
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 13,

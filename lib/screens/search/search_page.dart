@@ -25,8 +25,15 @@ class SearchPage extends ConsumerStatefulWidget {
 }
 
 class _SearchPageState extends ConsumerState<SearchPage> {
+  final TextEditingController _searchController = TextEditingController();
   String query = '';
   int _activeTab = 0; // 0: Explore / Search, 1: My Saved List (Watchlist)
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,12 +180,24 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
               if (_activeTab == 0) ...[
                 TextField(
+                  controller: _searchController,
                   textInputAction: TextInputAction.search,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search stock by symbol or name (e.g. TAT, KEI, APO)...',
                     hintStyle: const TextStyle(color: Color(0xFF757A85), fontSize: 13),
                     prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B)),
+                    suffixIcon: query.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded, color: Color(0xFF8E929B), size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                query = '';
+                              });
+                            },
+                          )
+                        : null,
                     filled: true,
                     fillColor: const Color(0xFF16171B),
                     border: OutlineInputBorder(

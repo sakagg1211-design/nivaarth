@@ -44,11 +44,17 @@ class LivePortfolioRepository {
               : (netPL / stock.totalInvested) * 100.0;
 
       final double prevClose = prevCloseMap[key] ?? currentPrice;
-      final double todayPL = prevClose > 0
-          ? (currentPrice - prevClose) * stock.qty
-          : 0.0;
-      final double todayReturnPercent = prevClose > 0
-          ? ((currentPrice - prevClose) / prevClose) * 100.0
+      // If prevClose is available and distinct, compute previous value from it.
+      // Otherwise fallback to DB stored currentValue as the previous baseline.
+      final double prevStockVal = (prevClose > 0 && prevClose != currentPrice)
+          ? (prevClose * stock.qty)
+          : ((stock.currentValue != null && stock.currentValue! > 0)
+              ? stock.currentValue!
+              : currentValue);
+
+      final double todayPL = currentValue - prevStockVal;
+      final double todayReturnPercent = prevStockVal > 0
+          ? (todayPL / prevStockVal) * 100.0
           : 0.0;
 
       return LivePortfolio(

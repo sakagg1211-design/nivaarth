@@ -11,6 +11,7 @@ class PortfolioAnalyzer {
 
     double totalInvested = 0;
     double currentValue = 0;
+    double previousPortfolioValue = 0;
     double totalPnL = 0;
     double todayPnL = 0;
 
@@ -23,6 +24,7 @@ class PortfolioAnalyzer {
     for (final stock in portfolio) {
       totalInvested += stock.portfolio.totalInvested;
       currentValue += stock.currentValue;
+      previousPortfolioValue += (stock.currentValue - stock.todayPL);
       totalPnL += stock.netPL;
       todayPnL += stock.todayPL;
 
@@ -45,9 +47,10 @@ class PortfolioAnalyzer {
         ? 0
         : (totalPnL / totalInvested) * 100;
 
-    final double prevVal = currentValue - todayPnL;
-    final double todayReturnPercent = prevVal > 0
-        ? (todayPnL / prevVal) * 100
+    // Today P&L = Current Portfolio Value - Previous Portfolio Value
+    final double finalTodayPnL = currentValue - previousPortfolioValue;
+    final double todayReturnPercent = previousPortfolioValue > 0
+        ? (finalTodayPnL / previousPortfolioValue) * 100
         : 0.0;
 
     final double riskScore =
@@ -58,7 +61,7 @@ class PortfolioAnalyzer {
       currentValue: currentValue,
       totalPnL: totalPnL,
       returnPercent: returnPercent,
-      todayPnL: todayPnL,
+      todayPnL: finalTodayPnL,
       todayReturnPercent: todayReturnPercent,
       totalStocks: portfolio.length,
       profitStocks: profitStocks,

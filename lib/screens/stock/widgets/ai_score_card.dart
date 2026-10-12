@@ -320,7 +320,7 @@ class AiScoreCard extends StatelessWidget {
           ),
 
           Text(
-            "NV Factor Breakdown",
+            "NV Analytics",
             style: AppTypography.titleMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),

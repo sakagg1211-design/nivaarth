@@ -98,6 +98,10 @@ class SymbolUtils {
     'BHEL': 'BHEL',
     'HINDUSTAN AERONAUTICS': 'HAL',
     'HAL': 'HAL',
+    'IRCON': 'IRCON',
+    'IRCON INTERNATIONAL': 'IRCON',
+    'RPOWER': 'RPOWER',
+    'RELIANCE POWER': 'RPOWER',
     'KEI': 'KEI',
     'KEI INDUSTRIES': 'KEI',
     'APOLLO TYRE': 'APOLLOTYRE',
@@ -178,6 +182,8 @@ class SymbolUtils {
     'OLECTRA': 'Olectra Greentech Limited',
     'ONGC': 'Oil & Natural Gas Corporation Ltd',
     'RELIANCE': 'Reliance Industries Limited',
+    'IRCON': 'Ircon International Ltd',
+    'RPOWER': 'Reliance Power Limited',
     'RVNL': 'Rail Vikas Nigam Limited',
     'SEPC': 'SEPC Limited',
     'TATSILV': 'Tata Silver ETF',
@@ -265,6 +271,7 @@ class SymbolUtils {
   static const Map<String, String> _knownSectors = {
     'TATAPOWER': 'Power & Utilities',
     'ADANIPOWER': 'Power & Utilities',
+    'RPOWER': 'Power & Utilities',
     'NTPC': 'Power & Utilities',
     'POWERGRID': 'Power & Utilities',
     'NTPCGREEN': 'Renewable Energy',
@@ -347,6 +354,7 @@ class SymbolUtils {
     'DLF': 'Real Estate & Infrastructure',
     'LT': 'Construction & Engineering',
     'RVNL': 'Infrastructure & Railways',
+    'IRCON': 'Infrastructure & Railways',
     'IRCTC': 'Consumer Services',
     'LIKHITHA': 'Infrastructure & Engineering',
     'LIKHITHA-BE': 'Infrastructure & Engineering',
@@ -395,9 +403,11 @@ class SymbolUtils {
   static const Map<String, String> _knownIndustries = {
     'TATAPOWER': 'Thermal & Renewable Power Generation',
     'ADANIPOWER': 'Thermal Power Generation',
+    'RPOWER': 'Thermal & Renewable Power Generation',
     'POWERGRID': 'Power Transmission',
     'NTPC': 'Power Generation & Utility',
     'NTPCGREEN': 'Green Energy Solutions',
+    'IRCON': 'Railway Infrastructure & EPC Construction',
     'SUZLON': 'Wind Turbines & Equipment',
     'TATAMOTORS': 'Commercial & Passenger Vehicles',
     'MARUTI': 'Passenger Cars & Utility Vehicles',
@@ -573,6 +583,8 @@ class SymbolUtils {
       'MRF': 132000.00,
       'CEAT': 2840.00,
       'BALKRISIND': 2790.00,
+      'IRCON': 214.50,
+      'RPOWER': 39.80,
     };
 
     if (prices.containsKey(clean)) return prices[clean]!;
