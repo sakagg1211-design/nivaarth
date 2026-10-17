@@ -7,7 +7,7 @@ class PortfolioAnalyzer {
   List<LivePortfolio> portfolio,
 ) {
     if (portfolio.isEmpty) {
-      const defaultHolding = LivePortfolio(
+      final defaultHolding = LivePortfolio(
         portfolio: Portfolio(
           id: '0',
           instrument: 'N/A',
@@ -29,7 +29,7 @@ class PortfolioAnalyzer {
         returnPercent: 0.0,
       );
 
-      return const PortfolioAnalysis(
+      return PortfolioAnalysis(
         totalInvested: 0.0,
         currentValue: 0.0,
         totalPnL: 0.0,
