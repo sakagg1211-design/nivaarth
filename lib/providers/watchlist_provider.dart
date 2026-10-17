@@ -82,7 +82,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     return state.any((item) => SymbolUtils.normalize(item.instrument) == norm);
   }
 
-  bool addStock(StockScore stock, {double? customPrice}) {
+  bool addStock(StockScore stock, {double? customPrice, double? dayChangePercent}) {
     final sym = SymbolUtils.normalize(stock.instrument);
     if (isSaved(sym)) return false;
 
@@ -118,7 +118,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       score: stock.overallScore,
       addedPrice: price,
       latestPrice: price,
-      dayChangePercent: 0.85,
+      dayChangePercent: dayChangePercent ?? 0.0,
       volume: '154.2 k',
       returnPercent: 0.0,
       trackedDate: 'Today',

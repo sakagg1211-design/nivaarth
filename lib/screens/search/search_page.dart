@@ -403,8 +403,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           final savePrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.currentPrice
                                               : SymbolUtils.getEstimatedPrice(stock.instrument);
+                                          final changePct = (liveQuote != null && liveQuote.currentPrice > 0)
+                                              ? liveQuote.changePercent
+                                              : 0.0;
 
-                                          watchlistNotifier.addStock(stock, customPrice: savePrice);
+                                          watchlistNotifier.addStock(
+                                            stock,
+                                            customPrice: savePrice,
+                                            dayChangePercent: changePct,
+                                          );
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
                                               content: Text(
