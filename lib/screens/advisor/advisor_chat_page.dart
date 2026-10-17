@@ -399,31 +399,118 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   }
 
   Widget _formatMessageText(String rawText, bool isUser) {
-    // Splits text with bold tags or bullet points for readability
     final lines = rawText.split('\n');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: lines.map((line) {
-        if (line.trim().isEmpty) {
+        final trimmed = line.trim();
+        if (trimmed.isEmpty) {
           return const SizedBox(height: 6);
         }
+
+        // Section divider ---
+        if (trimmed == '---' || trimmed == '***') {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: Divider(color: Color(0xFF2C2F36), height: 1),
+          );
+        }
+
+        // Headings: ### or ## or #
+        if (trimmed.startsWith('#')) {
+          final cleanTitle = trimmed.replaceAll(RegExp(r'^#+\s*'), '').replaceAll('**', '');
+          return Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 4),
+            child: Text(
+              cleanTitle,
+              style: const TextStyle(
+                color: Color(0xFFE5A93C),
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+              ),
+            ),
+          );
+        }
+
+        // Blockquotes: >
+        final isQuote = trimmed.startsWith('>');
+        final contentText = isQuote ? trimmed.substring(1).trim() : line;
+
+        // Parse inline **bold**
+        final spans = _parseInlineSpans(contentText, isUser);
+
+        if (isQuote) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E2128),
+              borderRadius: BorderRadius.circular(6),
+              border: const Border(
+                left: BorderSide(color: Color(0xFFE5A93C), width: 3),
+              ),
+            ),
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  color: Color(0xFFD6DADF),
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  height: 1.4,
+                ),
+                children: spans,
+              ),
+            ),
+          );
+        }
+
         return Padding(
-          padding: const EdgeInsets.only(bottom: 2),
-          child: Text(
-            line.replaceAll('**', ''),
-            style: TextStyle(
-              color: isUser ? Colors.white : const Color(0xFFE1E5EA),
-              fontSize: 14,
-              height: 1.4,
-              fontWeight: line.contains('**') || line.startsWith('•') || line.startsWith('#')
-                  ? FontWeight.w600
-                  : FontWeight.w400,
+          padding: const EdgeInsets.only(bottom: 3),
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                color: isUser ? Colors.white : const Color(0xFFE1E5EA),
+                fontSize: 14,
+                height: 1.45,
+              ),
+              children: spans,
             ),
           ),
         );
       }).toList(),
     );
+  }
+
+  List<InlineSpan> _parseInlineSpans(String text, bool isUser) {
+    final List<InlineSpan> spans = [];
+    final pattern = RegExp(r'\*\*(.*?)\*\*');
+    int lastMatchEnd = 0;
+
+    for (final match in pattern.allMatches(text)) {
+      if (match.start > lastMatchEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastMatchEnd, match.start),
+        ));
+      }
+      spans.add(TextSpan(
+        text: match.group(1),
+        style: TextStyle(
+          color: isUser ? Colors.white : const Color(0xFFFFFFFF),
+          fontWeight: FontWeight.w700,
+        ),
+      ));
+      lastMatchEnd = match.end;
+    }
+
+    if (lastMatchEnd < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastMatchEnd),
+      ));
+    }
+
+    return spans;
   }
 
   Widget _buildTypingIndicator() {

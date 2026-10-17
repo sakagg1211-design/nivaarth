@@ -26,14 +26,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 220),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        child: KeyedSubtree(
-          key: ValueKey(currentIndex),
-          child: pages[currentIndex],
-        ),
+      body: IndexedStack(
+        index: currentIndex,
+        children: pages,
       ),
       bottomNavigationBar: DecoratedBox(
         decoration: const BoxDecoration(
