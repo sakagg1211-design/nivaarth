@@ -1,4 +1,5 @@
 import '../models/live_portfolio.dart';
+import '../models/portfolio.dart';
 import '../models/portfolio_analysis.dart';
 
 class PortfolioAnalyzer {
@@ -6,7 +7,43 @@ class PortfolioAnalyzer {
   List<LivePortfolio> portfolio,
 ) {
     if (portfolio.isEmpty) {
-      throw Exception("Portfolio is empty");
+      const defaultHolding = LivePortfolio(
+        portfolio: Portfolio(
+          id: '0',
+          instrument: 'N/A',
+          companyName: 'No holdings yet',
+          yahooSymbol: '',
+          qty: 0,
+          avgPrice: 0.0,
+          totalInvested: 0.0,
+          currentValue: 0.0,
+          netPL: 0.0,
+          sector: 'General',
+          industry: 'General',
+          status: 'ACTIVE',
+          investmentThesis: '',
+        ),
+        currentPrice: 0.0,
+        currentValue: 0.0,
+        netPL: 0.0,
+        returnPercent: 0.0,
+      );
+
+      return const PortfolioAnalysis(
+        totalInvested: 0.0,
+        currentValue: 0.0,
+        totalPnL: 0.0,
+        returnPercent: 0.0,
+        todayPnL: 0.0,
+        todayReturnPercent: 0.0,
+        totalStocks: 0,
+        profitStocks: 0,
+        lossStocks: 0,
+        healthScore: 0,
+        riskScore: 0,
+        biggestWinner: defaultHolding,
+        biggestLoser: defaultHolding,
+      );
     }
 
     double totalInvested = 0;

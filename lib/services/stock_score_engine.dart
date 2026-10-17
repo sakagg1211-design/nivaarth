@@ -47,9 +47,12 @@ print(scoreMap.keys.toList());
         portfolioScores(portfolio, scores);
 
     if (portfolioOnly.isEmpty) {
-      throw Exception(
-        "No Stock Scores Found",
-      );
+      if (scores.isNotEmpty) {
+        final sorted = List<StockScore>.from(scores)
+          ..sort((a, b) => b.overallScore.compareTo(a.overallScore));
+        return sorted.first;
+      }
+      return StockScore.empty();
     }
 
     portfolioOnly.sort(
@@ -70,9 +73,12 @@ print(scoreMap.keys.toList());
         portfolioScores(portfolio, scores);
 
     if (portfolioOnly.isEmpty) {
-      throw Exception(
-        "No Stock Scores Found",
-      );
+      if (scores.isNotEmpty) {
+        final sorted = List<StockScore>.from(scores)
+          ..sort((a, b) => a.overallScore.compareTo(b.overallScore));
+        return sorted.first;
+      }
+      return StockScore.empty();
     }
 
     portfolioOnly.sort(

@@ -18,13 +18,11 @@ class PortfolioRepository {
             .eq("user_id", user.id)
             .order("Instrument");
 
-        if (userResponse.isNotEmpty) {
-          return userResponse
-              .map<Portfolio>((json) => Portfolio.fromJson(json))
-              .toList();
-        }
-      } catch (_) {
-        // Fallback if user_id column is not yet provisioned in older table
+        return userResponse
+            .map<Portfolio>((json) => Portfolio.fromJson(json))
+            .toList();
+      } catch (e) {
+        debugPrint("Notice: user_id portfolio query: $e");
       }
     }
 

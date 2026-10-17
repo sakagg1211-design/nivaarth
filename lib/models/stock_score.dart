@@ -38,6 +38,23 @@ class StockScore {
     required this.lastUpdated,
   });
 
+  factory StockScore.empty() {
+    return const StockScore(
+      instrument: "",
+      companyName: "",
+      businessQuality: 0,
+      financialStrength: 0,
+      growth: 0,
+      valuation: 0,
+      technical: 0,
+      risk: 0,
+      overallScore: 0,
+      recommendation: "HOLD",
+      confidence: 0,
+      lastUpdated: null,
+    );
+  }
+
   factory StockScore.fromJson(
     Map<String, dynamic> json,
   ) {
