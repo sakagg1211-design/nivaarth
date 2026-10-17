@@ -24,4 +24,36 @@ class WatchlistItem {
     required this.technicalTag,
     required this.keyTakeaway,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'instrument': instrument,
+      'company_name': companyName,
+      'score': score,
+      'added_price': addedPrice,
+      'latest_price': latestPrice,
+      'day_change_percent': dayChangePercent,
+      'volume': volume,
+      'return_percent': returnPercent,
+      'tracked_date': trackedDate,
+      'technical_tag': technicalTag,
+      'key_takeaway': keyTakeaway,
+    };
+  }
+
+  factory WatchlistItem.fromJson(Map<String, dynamic> json) {
+    return WatchlistItem(
+      instrument: json['instrument']?.toString() ?? '',
+      companyName: json['company_name']?.toString() ?? '',
+      score: (json['score'] as num?)?.toInt() ?? 78,
+      addedPrice: (json['added_price'] as num?)?.toDouble() ?? 0.0,
+      latestPrice: (json['latest_price'] as num?)?.toDouble() ?? 0.0,
+      dayChangePercent: (json['day_change_percent'] as num?)?.toDouble() ?? 0.0,
+      volume: json['volume']?.toString() ?? '154.2 k',
+      returnPercent: (json['return_percent'] as num?)?.toDouble() ?? 0.0,
+      trackedDate: json['tracked_date']?.toString() ?? 'Today',
+      technicalTag: json['technical_tag']?.toString() ?? 'BUY',
+      keyTakeaway: json['key_takeaway']?.toString() ?? 'Active monitored watchlist asset',
+    );
+  }
 }

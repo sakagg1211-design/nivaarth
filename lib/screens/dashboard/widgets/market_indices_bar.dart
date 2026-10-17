@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../providers/market_indices_provider.dart';
+import '../index_detail_page.dart';
 
 class MarketIndicesBar extends ConsumerWidget {
   const MarketIndicesBar({super.key});
@@ -19,6 +20,7 @@ class MarketIndicesBar extends ConsumerWidget {
           children: [
             Expanded(
               child: _IndexPill(
+                symbol: '^NSEI',
                 name: indices.nifty.name,
                 value: indices.nifty.value,
                 pointChange: indices.nifty.pointChange,
@@ -31,6 +33,7 @@ class MarketIndicesBar extends ConsumerWidget {
             const SizedBox(width: 10),
             Expanded(
               child: _IndexPill(
+                symbol: '^BSESN',
                 name: indices.sensex.name,
                 value: indices.sensex.value,
                 pointChange: indices.sensex.pointChange,
@@ -51,6 +54,7 @@ class MarketIndicesBar extends ConsumerWidget {
       children: [
         Expanded(
           child: _IndexPill(
+            symbol: '^NSEI',
             name: 'NIFTY 50',
             value: 22520.45,
             pointChange: 288.65,
@@ -63,6 +67,7 @@ class MarketIndicesBar extends ConsumerWidget {
         SizedBox(width: 10),
         Expanded(
           child: _IndexPill(
+            symbol: '^BSESN',
             name: 'SENSEX',
             value: 72472.33,
             pointChange: 879.09,
@@ -81,6 +86,7 @@ class MarketIndicesBar extends ConsumerWidget {
       children: [
         Expanded(
           child: _IndexPill(
+            symbol: '^NSEI',
             name: 'NIFTY 50',
             value: 22520.45,
             pointChange: 288.65,
@@ -93,6 +99,7 @@ class MarketIndicesBar extends ConsumerWidget {
         SizedBox(width: 10),
         Expanded(
           child: _IndexPill(
+            symbol: '^BSESN',
             name: 'SENSEX',
             value: 72472.33,
             pointChange: 879.09,
@@ -108,6 +115,7 @@ class MarketIndicesBar extends ConsumerWidget {
 }
 
 class _IndexPill extends StatelessWidget {
+  final String symbol;
   final String name;
   final double value;
   final double pointChange;
@@ -117,6 +125,7 @@ class _IndexPill extends StatelessWidget {
   final bool isLive;
 
   const _IndexPill({
+    required this.symbol,
     required this.name,
     required this.value,
     required this.pointChange,
@@ -132,120 +141,140 @@ class _IndexPill extends StatelessWidget {
     final tone = isUp ? const Color(0xFF00E676) : const Color(0xFFFF5252);
     final toneBg = isUp ? const Color(0x1F00E676) : const Color(0x26FF5252);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF282A30)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Row 1: Index Name + Live Indicator + Return Badge
-          Row(
-            children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF8E929B),
-                  letterSpacing: 0.5,
-                ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => IndexDetailPage(
+                symbol: symbol,
+                name: name,
               ),
-              if (isLive) ...[
-                const SizedBox(width: 5),
-                Container(
-                  width: 5,
-                  height: 5,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF00E676),
-                    shape: BoxShape.circle,
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFF16171B),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFF282A30)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Row 1: Index Name + Live Indicator + Arrow Hint
+              Row(
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF8E929B),
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-              ],
-              const SizedBox(width: 4),
-              // Up / Down Change Badge with +/- Points and %
-              Flexible(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: toneBg,
-                        borderRadius: BorderRadius.circular(5),
+                  if (isLive) ...[
+                    const SizedBox(width: 5),
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00E676),
+                        shape: BoxShape.circle,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
-                            size: 14,
-                            color: tone,
-                          ),
-                          Text(
-                            '${isUp ? '+' : '-'}${pointChange.abs().toStringAsFixed(1)} (${changePercent.abs().toStringAsFixed(2)}%)',
-                            style: TextStyle(
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w800,
+                    ),
+                  ],
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 9.5,
+                    color: Color(0xFF636773),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 6),
+
+              // Row 2: Big Index Value + Return Badge BESIDE IT!
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    Formatters.number(value.round()),
+                    style: const TextStyle(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: toneBg,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
+                              size: 14,
                               color: tone,
                             ),
-                          ),
-                        ],
+                            Text(
+                              '${isUp ? '+' : '-'}${pointChange.abs().toStringAsFixed(1)} (${changePercent.abs().toStringAsFixed(2)}%)',
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w800,
+                                color: tone,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
+              ),
+
+              const SizedBox(height: 6),
+
+              // Row 3: Day High (H) & Day Low (L) Range
+              Row(
+                children: [
+                  Text(
+                    'H: ${Formatters.number(dayHigh.round())}',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF00E676),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'L: ${Formatters.number(dayLow.round())}',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF5252),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-
-          const SizedBox(height: 6),
-
-          // Row 2: Big Index Value
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              Formatters.number(value.round()),
-              style: const TextStyle(
-                fontSize: 16.5,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: -0.3,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          // Row 3: Day High (H) & Day Low (L) Range
-          Row(
-            children: [
-              Text(
-                'H: ${Formatters.number(dayHigh.round())}',
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF00E676),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'L: ${Formatters.number(dayLow.round())}',
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFFF5252),
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

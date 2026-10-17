@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
@@ -6,11 +9,43 @@ import '../models/stock_score.dart';
 import '../models/watchlist_item.dart';
 
 class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
+  static const String _localKey = 'nivaarth_local_watchlist_v1';
+  final SupabaseClient _supabase = Supabase.instance.client;
+
   WatchlistNotifier() : super([]) {
-    loadCloudWatchlist();
+    _init();
   }
 
-  final SupabaseClient _supabase = Supabase.instance.client;
+  Future<void> _init() async {
+    // 1. Instant Local Disk Restore (Survives app kill/recent tasks)
+    await _loadFromLocal();
+    // 2. Multi-user Cloud Sync from Supabase
+    await loadCloudWatchlist();
+  }
+
+  Future<void> _loadFromLocal() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = prefs.getStringList(_localKey);
+      if (list != null && list.isNotEmpty) {
+        final items = list.map((str) {
+          final json = jsonDecode(str) as Map<String, dynamic>;
+          return WatchlistItem.fromJson(json);
+        }).toList();
+        if (items.isNotEmpty) {
+          state = items;
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _saveToLocal() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = state.map((item) => jsonEncode(item.toJson())).toList();
+      await prefs.setStringList(_localKey, list);
+    } catch (_) {}
+  }
 
   Future<void> loadCloudWatchlist() async {
     final user = _supabase.auth.currentUser;
@@ -24,27 +59,21 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
 
       if (response != null && response is List && response.isNotEmpty) {
         final loaded = response.map((json) {
-          return WatchlistItem(
-            instrument: json['instrument']?.toString() ?? '',
-            companyName: json['company_name']?.toString() ?? '',
-            score: (json['score'] as num?)?.toInt() ?? 78,
-            addedPrice: (json['added_price'] as num?)?.toDouble() ?? 0.0,
-            latestPrice: (json['latest_price'] as num?)?.toDouble() ?? 0.0,
-            dayChangePercent: (json['day_change_percent'] as num?)?.toDouble() ?? 0.0,
-            volume: json['volume']?.toString() ?? '145.2 k',
-            returnPercent: (json['return_percent'] as num?)?.toDouble() ?? 0.0,
-            trackedDate: json['tracked_date']?.toString() ?? 'Today',
-            technicalTag: json['technical_tag']?.toString() ?? 'BUY',
-            keyTakeaway: json['key_takeaway']?.toString() ?? 'Active monitored watchlist asset',
-          );
+          return WatchlistItem.fromJson(json as Map<String, dynamic>);
         }).toList();
 
         if (loaded.isNotEmpty) {
-          state = loaded;
+          // Merge unique items from cloud into local state
+          final existingSymbols = state.map((e) => SymbolUtils.normalize(e.instrument)).toSet();
+          final newFromCloud = loaded.where((e) => !existingSymbols.contains(SymbolUtils.normalize(e.instrument))).toList();
+          if (newFromCloud.isNotEmpty) {
+            state = [...state, ...newFromCloud];
+            _saveToLocal();
+          }
         }
       }
     } catch (_) {
-      // Table may not exist yet or offline, state remains in-memory
+      // Offline or table pending migration, local state remains fully preserved
     }
   }
 
@@ -98,6 +127,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     );
 
     state = [...state, newItem];
+    _saveToLocal();
     _syncAddToCloud(newItem);
     return true;
   }
@@ -147,6 +177,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     );
 
     state = [...state, newItem];
+    _saveToLocal();
     _syncAddToCloud(newItem);
     return true;
   }
@@ -154,6 +185,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
   void remove(String symbol) {
     final norm = SymbolUtils.normalize(symbol);
     state = state.where((item) => SymbolUtils.normalize(item.instrument) != norm).toList();
+    _saveToLocal();
     _syncRemoveFromCloud(norm);
   }
 

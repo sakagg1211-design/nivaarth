@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_radius.dart';
-import '../core/theme/app_typography.dart';
 import '../core/utils/formatters.dart';
 import '../core/utils/symbol_utils.dart';
 import '../models/live_portfolio.dart';
@@ -29,6 +27,10 @@ class PortfolioCard extends StatelessWidget {
     );
     final cleanSymbol = SymbolUtils.normalize(portfolio.instrument);
 
+    final isDayProfit = stock.todayPL >= 0;
+    final dayTone = isDayProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final dayToneBg = isDayProfit ? const Color(0x1F00E676) : const Color(0x26FF5252);
+
     return Material(
       color: const Color(0xFF16171B),
       clipBehavior: Clip.antiAlias,
@@ -46,7 +48,7 @@ class PortfolioCard extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -168,12 +170,55 @@ class PortfolioCard extends StatelessWidget {
                     value: Formatters.currency0(stock.currentValue),
                   ),
                   _CompactMetric(
-                    label: 'P&L',
+                    label: 'Total P&L',
                     value: Formatters.currency0(stock.netPL, signed: true),
                     valueColor: tone,
                     alignEnd: true,
                   ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              // Day's P&L Strip
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.5),
+                decoration: BoxDecoration(
+                  color: dayToneBg,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isDayProfit ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
+                      color: dayTone,
+                      size: 18,
+                    ),
+                    const Text(
+                      "1D P&L: ",
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: Color(0xFF8E929B),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${Formatters.currency0(stock.todayPL, signed: true)} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: dayTone,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'LTP: ${Formatters.currency(stock.currentPrice)}',
+                      style: const TextStyle(
+                        fontSize: 10.5,
+                        color: Color(0xFFC7CDD6),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

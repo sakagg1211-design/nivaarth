@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/live_portfolio.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/portfolio_provider.dart';
-import '../../services/backend_service.dart';
 import '../../widgets/portfolio_card.dart';
 import 'widgets/add_holding_sheet.dart';
 
@@ -19,6 +16,8 @@ enum PortfolioSortOption {
   bestPnL,
   worstPnL,
   highestValue,
+  todayGainers,
+  todayLosers,
 }
 
 class PortfolioPage extends ConsumerStatefulWidget {
@@ -30,6 +29,26 @@ class PortfolioPage extends ConsumerStatefulWidget {
 
 class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   PortfolioSortOption _selectedSort = PortfolioSortOption.alphabetical;
+  late final ScrollController _scrollController;
+  bool _showBackToTop = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      final show = _scrollController.hasClients && _scrollController.offset > 240;
+      if (show != _showBackToTop) {
+        setState(() => _showBackToTop = show);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _refreshPortfolio() async {
     try {
@@ -74,6 +93,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
       case PortfolioSortOption.highestValue:
         list.sort((a, b) => b.currentValue.compareTo(a.currentValue));
         break;
+      case PortfolioSortOption.todayGainers:
+        list.sort((a, b) => b.todayPL.compareTo(a.todayPL));
+        break;
+      case PortfolioSortOption.todayLosers:
+        list.sort((a, b) => a.todayPL.compareTo(b.todayPL));
+        break;
     }
     return list;
   }
@@ -84,16 +109,44 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openAddHoldingSheet,
-        backgroundColor: const Color(0xFFE5A93C),
-        foregroundColor: Colors.black,
-        elevation: 4,
-        icon: const Icon(Icons.add_rounded, color: Colors.black),
-        label: const Text(
-          'Add Holding',
-          style: TextStyle(fontWeight: FontWeight.w800),
-        ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (_showBackToTop) ...[
+            FloatingActionButton.small(
+              heroTag: 'portfolio_go_top',
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeOutCubic,
+                );
+              },
+              backgroundColor: const Color(0xFF1E2024),
+              foregroundColor: const Color(0xFFE5A93C),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Color(0xFF282A30)),
+              ),
+              child: const Icon(Icons.arrow_upward_rounded, size: 20),
+            ),
+            const SizedBox(height: 10),
+          ],
+          FloatingActionButton.extended(
+            heroTag: 'portfolio_add_holding',
+            onPressed: _openAddHoldingSheet,
+            backgroundColor: const Color(0xFFE5A93C),
+            foregroundColor: Colors.black,
+            elevation: 4,
+            icon: const Icon(Icons.add_rounded, color: Colors.black),
+            label: const Text(
+              'Add Holding',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: portfolioAsync.when(
@@ -192,11 +245,19 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
               onRefresh: _refreshPortfolio,
               color: const Color(0xFFE5A93C),
               backgroundColor: const Color(0xFF16171B),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                slivers: [
+              child: RawScrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                thickness: 4.5,
+                radius: const Radius.circular(8),
+                thumbColor: const Color(0xFFE5A93C).withValues(alpha: 0.8),
+                interactive: true,
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(
@@ -325,16 +386,30 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                         ),
                                       ),
                                       const PopupMenuItem(
+                                        value: PortfolioSortOption.todayGainers,
+                                        child: Text(
+                                          "Today's Top Gainers (₹)",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: PortfolioSortOption.todayLosers,
+                                        child: Text(
+                                          "Today's Top Losers (₹)",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      const PopupMenuItem(
                                         value: PortfolioSortOption.bestPnL,
                                         child: Text(
-                                          'Top Gainers (% Return)',
+                                          'Overall Top Gainers (%)',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
                                       const PopupMenuItem(
                                         value: PortfolioSortOption.worstPnL,
                                         child: Text(
-                                          'Top Losers (% Return)',
+                                          'Overall Top Losers (%)',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -378,7 +453,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                   crossAxisCount: crossAxisCount,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
-                                  mainAxisExtent: 124,
+                                  mainAxisExtent: 148,
                                 ),
                                 itemCount: sortedStocks.length,
                                 itemBuilder: (context, index) {
@@ -393,17 +468,22 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 
   String _getSortLabel(PortfolioSortOption option) {
     switch (option) {
       case PortfolioSortOption.alphabetical:
         return 'A-Z';
+      case PortfolioSortOption.todayGainers:
+        return "Today's Gainers";
+      case PortfolioSortOption.todayLosers:
+        return "Today's Losers";
       case PortfolioSortOption.bestPnL:
         return 'Top Gainers';
       case PortfolioSortOption.worstPnL:

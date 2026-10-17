@@ -120,7 +120,7 @@ class MarketQuoteService {
       return _chartPointsCache[cacheKey]!;
     }
 
-    final nseSymbol = clean.endsWith('.NS') || clean.endsWith('.BO') ? clean : '$clean.NS';
+    final nseSymbol = SymbolUtils.getYahooSymbol(clean);
 
     String yRange;
     String yInterval;
