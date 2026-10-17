@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../advisor/advisor_chat_page.dart';
 import '../dashboard/dashboard_page.dart';
 import '../portfolio/portfolio_page.dart';
 import '../search/search_page.dart';
@@ -17,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> pages = const [
     DashboardPage(),
     PortfolioPage(),
+    AdvisorChatPage(),
     SearchPage(),
   ];
 
@@ -92,6 +94,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.account_balance_wallet_outlined),
                 selectedIcon: Icon(Icons.account_balance_wallet_rounded),
                 label: 'Portfolio',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.smart_toy_outlined),
+                selectedIcon: Icon(Icons.smart_toy_rounded),
+                label: 'NV Advisor',
               ),
               NavigationDestination(
                 icon: Icon(Icons.search_rounded),

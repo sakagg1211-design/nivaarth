@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../providers/alerts_provider.dart';
 import '../../../services/auth_service.dart';
 import '../../login/welcome_screen.dart';
+import '../../notifications/notifications_page.dart';
 
-class DashboardHeader extends StatelessWidget {
+class DashboardHeader extends ConsumerWidget {
   const DashboardHeader({super.key});
 
   String _getUserDisplayName() {
@@ -215,9 +218,11 @@ class DashboardHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hour = DateTime.now().hour;
     final displayName = _getUserDisplayName();
+    final alertsAsync = ref.watch(alertsProvider);
+    final unreadCount = alertsAsync.value?.where((a) => !a.isRead).length ?? 0;
 
     String greeting;
     if (hour < 12) {
@@ -292,14 +297,16 @@ class DashboardHeader extends StatelessWidget {
         const SizedBox(width: 8),
         // Action 2: Notifications
         _HeaderIconButton(
-          icon: Icons.notifications_none_rounded,
+          icon: unreadCount > 0
+              ? Icons.notifications_active_rounded
+              : Icons.notifications_none_rounded,
           tooltip: 'Notifications',
+          hasBadge: unreadCount > 0,
+          badgeCount: unreadCount,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('No new alerts. Market tracking active.'),
-                duration: Duration(seconds: 2),
-              ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationsPage()),
             );
           },
         ),
@@ -319,11 +326,15 @@ class _HeaderIconButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
+  final bool hasBadge;
+  final int badgeCount;
 
   const _HeaderIconButton({
     required this.icon,
     required this.tooltip,
     required this.onTap,
+    this.hasBadge = false,
+    this.badgeCount = 0,
   });
 
   @override
@@ -333,19 +344,52 @@ class _HeaderIconButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xFF1E2024),
-            border: Border.all(color: const Color(0xFF2C2F36), width: 1),
-          ),
-          child: Icon(
-            icon,
-            size: 19,
-            color: const Color(0xFFC7CDD6),
-          ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF1E2024),
+                border: Border.all(
+                  color: hasBadge ? const Color(0xFFE5A93C).withValues(alpha: 0.6) : const Color(0xFF2C2F36),
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                icon,
+                size: 19,
+                color: hasBadge ? const Color(0xFFE5A93C) : const Color(0xFFC7CDD6),
+              ),
+            ),
+            if (hasBadge)
+              Positioned(
+                top: -2,
+                right: -2,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF5252),
+                    shape: badgeCount > 9 ? BoxShape.rectangle : BoxShape.circle,
+                    borderRadius: badgeCount > 9 ? BorderRadius.circular(10) : null,
+                    border: Border.all(color: const Color(0xFF111215), width: 1.5),
+                  ),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Center(
+                    child: Text(
+                      badgeCount > 9 ? '9+' : '$badgeCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
