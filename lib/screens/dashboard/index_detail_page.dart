@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_radius.dart';
 import '../../core/utils/formatters.dart';
 import '../../providers/live_quote_provider.dart';
 import '../../providers/market_indices_provider.dart';
