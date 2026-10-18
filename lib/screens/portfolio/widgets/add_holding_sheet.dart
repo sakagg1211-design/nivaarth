@@ -32,6 +32,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
   String? _selectedYahooSymbol;
   double? _liveLtp;
+  bool _fetchingLtp = false;
 
   List<StockScore> _suggestions = [];
   bool _isSearching = false;
