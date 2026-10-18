@@ -630,6 +630,10 @@ class _StockDetailPageState
 
                     RecommendationCard(
                       score: score,
+                      companyName: portfolio.companyName,
+                      sector: portfolio.sector,
+                      industry: portfolio.industry,
+                      isOwned: isOwned,
                     ),
 
                     const SizedBox(

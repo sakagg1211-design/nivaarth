@@ -23,6 +23,8 @@ class StockScore {
 
   final DateTime? lastUpdated;
 
+  final String? analystVerdict;
+
   const StockScore({
     required this.instrument,
     required this.companyName,
@@ -36,6 +38,7 @@ class StockScore {
     required this.recommendation,
     required this.confidence,
     required this.lastUpdated,
+    this.analystVerdict,
   });
 
   factory StockScore.empty() {
@@ -52,6 +55,7 @@ class StockScore {
       recommendation: "HOLD",
       confidence: 0,
       lastUpdated: null,
+      analystVerdict: null,
     );
   }
 
@@ -115,6 +119,8 @@ class StockScore {
               ? null
               : DateTime.tryParse(
                   json["LastUpdated"]),
+      analystVerdict: json["AnalystVerdict"]?.toString() ??
+          json["analyst_verdict"]?.toString(),
     );
   }
 }

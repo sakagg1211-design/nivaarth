@@ -442,6 +442,19 @@ class SymbolUtils {
     'BALKRISIND': 'Off-Highway Tires Manufacturing',
   };
 
+  static bool isEtf(String symbol) {
+    final sym = normalize(symbol).toUpperCase();
+    return sym.endsWith("BEES") ||
+        sym.endsWith("ETF") ||
+        sym.contains("NIFTY") ||
+        sym.contains("SILV") ||
+        sym.contains("GOLD") ||
+        sym.contains("COMMODITY") ||
+        sym.contains("LIQUID") ||
+        sym.contains("INVIT") ||
+        sym.contains("REIT");
+  }
+
   static String getDisplayName(String symbol, {String? dbCompanyName}) {
     if (dbCompanyName != null &&
         dbCompanyName.trim().isNotEmpty &&
