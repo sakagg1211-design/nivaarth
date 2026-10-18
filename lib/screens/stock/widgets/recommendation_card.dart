@@ -189,53 +189,63 @@ class RecommendationCard extends StatelessWidget {
           // -------------------------------------------------------------------
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(14),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: const Color(0xFF111215),
               borderRadius: BorderRadius.circular(12),
-              border: Border(
-                left: BorderSide(
-                  color: recColor,
-                  width: 3.5,
-                ),
-                top: const BorderSide(color: Color(0xFF22242A)),
-                right: const BorderSide(color: Color(0xFF22242A)),
-                bottom: const BorderSide(color: Color(0xFF22242A)),
+              border: Border.all(
+                color: const Color(0xFF22242A),
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.format_quote_rounded,
-                      size: 15,
-                      color: recColor,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      "INSTITUTIONAL BRIEFING",
-                      style: TextStyle(
-                        color: recColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 4,
+                    color: recColor,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.format_quote_rounded,
+                                size: 15,
+                                color: recColor,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                "INSTITUTIONAL BRIEFING",
+                                style: TextStyle(
+                                  color: recColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            narrative.analystBriefing,
+                            style: const TextStyle(
+                              color: Color(0xFFD6D9E0),
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w400,
+                              height: 1.55,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  narrative.analystBriefing,
-                  style: const TextStyle(
-                    color: Color(0xFFD6D9E0),
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w400,
-                    height: 1.55,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 

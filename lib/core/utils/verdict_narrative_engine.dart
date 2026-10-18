@@ -51,6 +51,7 @@ class VerdictNarrativeEngine {
   const VerdictNarrativeEngine._();
 
   static const Set<String> _psuSymbols = {
+    'LT',
     'IRFC',
     'NBCC',
     'BHEL',
