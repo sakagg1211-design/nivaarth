@@ -46,6 +46,30 @@ class BackendService {
     }
   }
 
+  Future<void> onboardStock({
+    required String instrument,
+    String? yahooSymbol,
+  }) async {
+    final url = Uri.parse("$baseUrl/automation/onboard-stock");
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({
+              "instrument": instrument,
+              "yahoo_symbol": yahooSymbol,
+              "sync": true,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      print("Onboard stock response: ${response.statusCode}");
+    } catch (e) {
+      print("Onboard stock background error: $e");
+    }
+  }
+
   Future<String> chatWithAdvisor(String message, {String? userId}) async {
     final url = Uri.parse("$baseUrl/ai/chat");
     try {

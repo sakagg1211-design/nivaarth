@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/app_radius.dart';
 import '../core/utils/formatters.dart';
 import '../core/utils/symbol_utils.dart';
 import '../models/live_portfolio.dart';
+import '../providers/dashboard_provider.dart';
+import '../providers/live_portfolio_provider.dart';
+import '../providers/portfolio_provider.dart';
+import '../repositories/portfolio_repository.dart';
+import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
 
-class PortfolioCard extends StatelessWidget {
+class PortfolioCard extends ConsumerWidget {
   final LivePortfolio stock;
 
   const PortfolioCard({
@@ -14,8 +20,74 @@ class PortfolioCard extends StatelessWidget {
     required this.stock,
   });
 
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E2024),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF282A30)),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.delete_forever_rounded, color: Color(0xFFFF5252), size: 24),
+            const SizedBox(width: 8),
+            Text(
+              'Remove ${stock.portfolio.instrument}?',
+              style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete ${stock.portfolio.instrument} from your portfolio?',
+          style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF8E929B))),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF5252),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await PortfolioRepository().deleteHolding(stock.portfolio.id);
+      ref.invalidate(portfolioProvider);
+      ref.invalidate(livePortfolioProvider);
+      ref.invalidate(dashboardProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${stock.portfolio.instrument} removed.'),
+            backgroundColor: const Color(0xFFFF5252),
+          ),
+        );
+      }
+    }
+  }
+
+  void _openEdit(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EditHoldingSheet(stock: stock),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final portfolio = stock.portfolio;
     final isProfit = stock.netPL >= 0;
     final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
@@ -47,13 +119,14 @@ class PortfolioCard extends StatelessWidget {
             ),
           );
         },
+        onLongPress: () => _openEdit(context),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Top Row: Avatar + Symbol & Company + Pill
+              // Top Row: Avatar + Symbol & Company + Return Pill + Options
               Row(
                 children: [
                   Container(
@@ -128,11 +201,11 @@ class PortfolioCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   // Return Pill
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
+                      horizontal: 7,
                       vertical: 3.5,
                     ),
                     decoration: BoxDecoration(
@@ -144,9 +217,50 @@ class PortfolioCard extends StatelessWidget {
                       style: TextStyle(
                         color: tone,
                         fontWeight: FontWeight.w800,
-                        fontSize: 11.5,
+                        fontSize: 11,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 2),
+                  // 3-dots Menu Button
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded, size: 18, color: Color(0xFF8E929B)),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    color: const Color(0xFF1E2024),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(color: Color(0xFF282A30)),
+                    ),
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 16, color: Color(0xFFE5A93C)),
+                            SizedBox(width: 8),
+                            Text('Edit Holding', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFFF5252)),
+                            SizedBox(width: 8),
+                            Text('Delete Holding', style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onSelected: (val) {
+                      if (val == 'edit') {
+                        _openEdit(context);
+                      } else if (val == 'delete') {
+                        _confirmDelete(context, ref);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -251,17 +365,17 @@ class _CompactMetric extends StatelessWidget {
           label,
           style: const TextStyle(
             fontSize: 10.5,
-            color: Color(0xFF757A85),
-            fontWeight: FontWeight.w500,
+            color: Color(0xFF8E929B),
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 1),
         Text(
           value,
           style: TextStyle(
-            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
             color: valueColor ?? Colors.white,
-            fontSize: 12.5,
           ),
         ),
       ],

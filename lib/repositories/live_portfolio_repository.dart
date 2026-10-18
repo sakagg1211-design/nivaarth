@@ -26,22 +26,27 @@ class LivePortfolioRepository {
     }
 
     return portfolio.map((stock) {
-      final key =
-          stock.instrument.trim().toUpperCase();
+      final key = stock.instrument.trim().toUpperCase();
+      final yfKey = stock.yahooSymbol.trim().toUpperCase();
 
-      final double currentPrice =
-          priceMap[key] ?? 0.0;
+      // Check both instrument and yahooSymbol in priceMap
+      double currentPrice = priceMap[key] ?? priceMap[yfKey] ?? 0.0;
 
-      final double currentValue =
-          currentPrice * stock.qty;
+      // If price not yet in LatestPrices, fallback to DB stored currentValue or avgPrice
+      if (currentPrice <= 0 && stock.qty > 0 && stock.currentValue != null && stock.currentValue! > 0) {
+        currentPrice = stock.currentValue! / stock.qty;
+      }
+      if (currentPrice <= 0 && stock.avgPrice > 0) {
+        currentPrice = stock.avgPrice;
+      }
 
-      final double netPL =
-          currentValue - stock.totalInvested;
+      final double currentValue = currentPrice * stock.qty;
 
-      final double returnPercent =
-          stock.totalInvested == 0
-              ? 0.0
-              : (netPL / stock.totalInvested) * 100.0;
+      final double netPL = currentValue - stock.totalInvested;
+
+      final double returnPercent = stock.totalInvested == 0
+          ? 0.0
+          : (netPL / stock.totalInvested) * 100.0;
 
       final double prevClose = prevCloseMap[key] ?? currentPrice;
       // If prevClose is available and distinct, compute previous value from it.

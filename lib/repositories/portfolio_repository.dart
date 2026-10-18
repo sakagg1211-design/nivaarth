@@ -65,4 +65,30 @@ class PortfolioRepository {
 
     await client.from('Portfolio').insert(payload);
   }
+
+  Future<void> updateHolding({
+    required String id,
+    required int qty,
+    required double avgPrice,
+    double? currentPrice,
+  }) async {
+    final totalInvested = qty * avgPrice;
+    final Map<String, dynamic> updates = {
+      'Qty': qty,
+      'Avg Price': avgPrice,
+      'Total Invested': totalInvested,
+    };
+
+    if (currentPrice != null && currentPrice > 0) {
+      final currentVal = qty * currentPrice;
+      updates['Current Val'] = currentVal;
+      updates['Net P&L'] = currentVal - totalInvested;
+    }
+
+    await client.from('Portfolio').update(updates).eq('id', id);
+  }
+
+  Future<void> deleteHolding(String id) async {
+    await client.from('Portfolio').delete().eq('id', id);
+  }
 }

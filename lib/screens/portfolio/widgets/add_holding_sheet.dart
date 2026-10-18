@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../core/utils/symbol_utils.dart';
+import '../../../models/stock_score.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/portfolio_provider.dart';
+import '../../../providers/stock_provider.dart';
 import '../../../repositories/portfolio_repository.dart';
+import '../../../repositories/price_repository.dart';
 import '../../../services/backend_service.dart';
 
-/// Modal bottom sheet dialog for manually adding a stock holding
+/// Modal bottom sheet dialog for adding a stock holding with live autocomplete search
 class AddHoldingSheet extends ConsumerStatefulWidget {
   const AddHoldingSheet({super.key});
 
@@ -24,17 +28,96 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
   final _companyController = TextEditingController();
   final _qtyController = TextEditingController();
   final _avgPriceController = TextEditingController();
+  final _qtyFocusNode = FocusNode();
+
+  String? _selectedYahooSymbol;
+  double? _liveLtp;
+
+  List<StockScore> _suggestions = [];
+  bool _isSearching = false;
+  Timer? _debounceTimer;
 
   bool _loading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _instrumentController.dispose();
     _companyController.dispose();
     _qtyController.dispose();
     _avgPriceController.dispose();
+    _qtyFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String text) {
+    _debounceTimer?.cancel();
+    final q = text.trim();
+    if (q.length < 2) {
+      if (_suggestions.isNotEmpty) {
+        setState(() => _suggestions = []);
+      }
+      return;
+    }
+
+    _debounceTimer = Timer(const Duration(milliseconds: 220), () async {
+      setState(() => _isSearching = true);
+      try {
+        final results = await ref.read(stockRepositoryProvider).searchStocks(q);
+        if (mounted) {
+          setState(() {
+            _suggestions = results.take(6).toList();
+            _isSearching = false;
+          });
+        }
+      } catch (_) {
+        if (mounted) {
+          setState(() => _isSearching = false);
+        }
+      }
+    });
+  }
+
+  Future<void> _selectStock(StockScore stock) async {
+    final cleanSym = SymbolUtils.normalize(stock.instrument);
+    final yfSym = SymbolUtils.getYahooSymbol(stock.instrument);
+
+    setState(() {
+      _instrumentController.text = cleanSym;
+      _companyController.text = stock.companyName;
+      _selectedYahooSymbol = yfSym;
+      _suggestions = [];
+      _fetchingLtp = true;
+    });
+
+    // Fetch live market price if available in PriceRepository
+    try {
+      final prices = await PriceRepository().getPrices();
+      final match = prices.firstWhere(
+        (p) =>
+            p.instrument.trim().toUpperCase() == cleanSym ||
+            p.instrument.trim().toUpperCase() == yfSym,
+        orElse: () => prices.first,
+      );
+
+      if (match.instrument.trim().toUpperCase() == cleanSym ||
+          match.instrument.trim().toUpperCase() == yfSym) {
+        if (match.currentPrice > 0) {
+          setState(() {
+            _liveLtp = match.currentPrice;
+            if (_avgPriceController.text.isEmpty) {
+              _avgPriceController.text = match.currentPrice.toStringAsFixed(2);
+            }
+          });
+        }
+      }
+    } catch (_) {}
+
+    setState(() => _fetchingLtp = false);
+
+    // Shift focus to Quantity
+    _qtyFocusNode.requestFocus();
   }
 
   Future<void> _handleSubmit() async {
@@ -44,7 +127,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     final avgPrice = double.tryParse(_avgPriceController.text.trim());
 
     if (instrument.isEmpty) {
-      setState(() => _errorMessage = 'Please enter stock symbol (e.g. RELIANCE, TCS).');
+      setState(() => _errorMessage = 'Please search and select a stock symbol.');
       return;
     }
 
@@ -64,7 +147,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     });
 
     try {
+      final yfSymbol = _selectedYahooSymbol ?? SymbolUtils.getYahooSymbol(instrument);
       final repository = PortfolioRepository();
+
       await repository.addHolding(
         instrument: instrument,
         companyName: company.isEmpty ? instrument : company,
@@ -72,8 +157,11 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
         avgPrice: avgPrice,
       );
 
-      // Trigger automation in background asynchronously without blocking UI
-      BackendService().startAutomation().catchError((_) {});
+      // Trigger instant single-stock onboarding in backend (Price, Tech, Fund, Score)
+      BackendService().onboardStock(
+        instrument: instrument,
+        yahooSymbol: yfSymbol,
+      ).catchError((_) {});
 
       // Refresh providers
       ref.invalidate(portfolioProvider);
@@ -163,7 +251,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
             const SizedBox(height: AppSpacing.sm),
             const Text(
-              'Enter your position details to begin live price & AI intelligence tracking.',
+              'Search any NSE/BSE stock to auto-fill details and start live AI tracking.',
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 13,
@@ -172,26 +260,141 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
             const SizedBox(height: AppSpacing.lg),
 
-            // Symbol
+            // Live Autocomplete Search Field
             TextField(
               controller: _instrumentController,
               textCapitalization: TextCapitalization.characters,
-              style: const TextStyle(color: Colors.white),
-              decoration: _inputDecoration('Stock Symbol (e.g. INFY, TATAMOTORS)', Icons.tag_rounded),
-              onChanged: (_) {
-                if (_errorMessage != null) setState(() => _errorMessage = null);
-              },
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              decoration: _inputDecoration(
+                'Search Stock Symbol (e.g. RELIANCE, TITAN, INFY)',
+                Icons.search_rounded,
+                suffix: _isSearching
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
+                      )
+                    : null,
+              ),
+              onChanged: _onSearchChanged,
             ),
+
+            // Suggestions Dropdown
+            if (_suggestions.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 220),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E2024),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF282A30)),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black45,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  itemCount: _suggestions.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFF282A30)),
+                  itemBuilder: (context, index) {
+                    final item = _suggestions[index];
+                    final cleanSym = SymbolUtils.normalize(item.instrument);
+                    return ListTile(
+                      dense: true,
+                      leading: Container(
+                        height: 28,
+                        width: 28,
+                        decoration: BoxDecoration(
+                          color: const Color(0x33E5A93C),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Center(
+                          child: Text(
+                            cleanSym.isNotEmpty ? cleanSym[0] : 'S',
+                            style: const TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w800, fontSize: 13),
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        cleanSym,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13.5),
+                      ),
+                      subtitle: Text(
+                        item.companyName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11.5),
+                      ),
+                      trailing: item.overallScore > 0
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0x1F00E676),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '${item.overallScore} ${item.recommendation}',
+                                style: const TextStyle(color: Color(0xFF00E676), fontSize: 10, fontWeight: FontWeight.w700),
+                              ),
+                            )
+                          : null,
+                      onTap: () => _selectStock(item),
+                    );
+                  },
+                ),
+              ),
+            ],
 
             const SizedBox(height: AppSpacing.md),
 
-            // Company Name
+            // Company Name Field
             TextField(
               controller: _companyController,
               textCapitalization: TextCapitalization.words,
               style: const TextStyle(color: Colors.white),
-              decoration: _inputDecoration('Company Name (Optional)', Icons.business_rounded),
+              decoration: _inputDecoration('Company Name', Icons.business_rounded),
             ),
+
+            // Live LTP Badge
+            if (_liveLtp != null && _liveLtp! > 0) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0x1FE5A93C),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0x33E5A93C)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.show_chart_rounded, size: 15, color: Color(0xFFE5A93C)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Live Market LTP: ${Formatters.currency(_liveLtp!)}',
+                      style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 11.5, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _avgPriceController.text = _liveLtp!.toStringAsFixed(2);
+                        });
+                      },
+                      child: const Text(
+                        '[Use as Buy Price]',
+                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800, decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             const SizedBox(height: AppSpacing.md),
 
@@ -201,6 +404,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                 Expanded(
                   child: TextField(
                     controller: _qtyController,
+                    focusNode: _qtyFocusNode,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
                     decoration: _inputDecoration('Quantity', Icons.pin_outlined),
@@ -279,11 +483,12 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     );
   }
 
-  InputDecoration _inputDecoration(String label, IconData icon) {
+  InputDecoration _inputDecoration(String label, IconData icon, {Widget? suffix}) {
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
       prefixIcon: Icon(icon, color: const Color(0xFF8E929B), size: 18),
+      suffixIcon: suffix != null ? Padding(padding: const EdgeInsets.all(12), child: suffix) : null,
       filled: true,
       fillColor: const Color(0xFF1E2024),
       border: OutlineInputBorder(
