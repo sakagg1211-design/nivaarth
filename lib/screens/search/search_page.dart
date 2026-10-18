@@ -509,6 +509,24 @@ class _ScoreBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (score <= 0) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+        ),
+        child: const Text(
+          'ANALYZE',
+          style: TextStyle(
+            color: Color(0xFF8E929B),
+            fontWeight: FontWeight.w700,
+            fontSize: 9.5,
+          ),
+        ),
+      );
+    }
+
     final color = _scoreColor(score);
 
     return Container(

@@ -23,6 +23,7 @@ import 'widgets/investment_thesis_card.dart';
 import 'widgets/ai_score_card.dart';
 import 'widgets/recommendation_card.dart';
 import 'widgets/news_card.dart';
+import '../../services/backend_service.dart';
 
 class StockDetailPage extends ConsumerStatefulWidget {
   final LivePortfolio stock;
@@ -41,6 +42,21 @@ class _StockDetailPageState
     extends ConsumerState<StockDetailPage> {
 
   String _selectedRange = "1D";
+  bool _isOnboarding = false;
+
+  void _triggerAutoOnboard(String cleanSym) {
+    if (_isOnboarding) return;
+    _isOnboarding = true;
+    BackendService().onboardStock(instrument: cleanSym).then((res) {
+      if (mounted) {
+        ref.invalidate(stockScoreProvider(widget.stock.portfolio.instrument));
+      }
+    }).catchError((_) {}).whenComplete(() {
+      if (mounted) {
+        setState(() => _isOnboarding = false);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -516,24 +532,88 @@ class _StockDetailPageState
               },
 
               data: (StockScore? score) {
-
                 if (score == null) {
+                  // Trigger real quantitative onboarding in backend
+                  _triggerAutoOnboard(cleanSym);
 
                   return Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(22),
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius:
-                          BorderRadius.circular(
-                              16),
+                      color: const Color(0xFF16171B),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFF282A30)),
                     ),
-                    child: const Text(
-                      "AI data not available.",
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0x1FE5A93C),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.auto_awesome_rounded,
+                                color: Color(0xFFE5A93C),
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'NV Quantitative Engine',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    'Analyzing $cleanSym signals...',
+                                    style: const TextStyle(
+                                      color: Color(0xFF8E929B),
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Color(0xFFE5A93C),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        const LinearProgressIndicator(
+                          backgroundColor: Color(0xFF23252B),
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                          minHeight: 3,
+                        ),
+                        const SizedBox(height: 14),
+                        const Text(
+                          'Evaluating 6 institutional pillars: Business Quality, Financial Strength, Growth, Valuation, Technical & Risk.',
+                          style: TextStyle(
+                            color: Color(0xFF757A85),
+                            fontSize: 11.5,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
                     ),
                   );
-
                 }
 
                 return Column(
