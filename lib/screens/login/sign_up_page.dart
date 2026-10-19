@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../features/sync/sync_loading_page.dart';
 import '../../services/auth_service.dart';
+import '../../widgets/legal_disclaimer_sheet.dart';
 import 'login_page.dart';
 
 /// Premium Nivaarth Sign Up Screen
@@ -77,7 +78,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (!_agreedToTerms) {
       setState(
-        () => _errorMessage = 'Please accept the Terms of Service to continue.',
+        () => _errorMessage =
+            'Please acknowledge that stock investments carry market risks and accept the terms.',
       );
       return;
     }
@@ -372,9 +374,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
                           const SizedBox(height: AppSpacing.md),
 
-                          // Terms and Conditions
+                          // Terms and Conditions & Risk Disclaimer Acceptance
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
                                 height: 24,
@@ -398,22 +400,40 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                               const SizedBox(width: AppSpacing.sm),
                               Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _agreedToTerms = !_agreedToTerms;
-                                      if (_errorMessage != null) {
-                                        _errorMessage = null;
-                                      }
-                                    });
-                                  },
-                                  child: Text(
-                                    'I agree to Nivaarth Friends Beta Terms',
-                                    style: AppTypography.caption.copyWith(
-                                      color: AppColors.textPrimary,
-                                      fontWeight: FontWeight.w600,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _agreedToTerms = !_agreedToTerms;
+                                          if (_errorMessage != null) {
+                                            _errorMessage = null;
+                                          }
+                                        });
+                                      },
+                                      child: Text(
+                                        'I agree that stock market investments carry market risks and Nivaarth does not guarantee any returns.',
+                                        style: AppTypography.caption.copyWith(
+                                          color: AppColors.textPrimary,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.35,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    GestureDetector(
+                                      onTap: () => LegalDisclaimerSheet.show(context),
+                                      child: Text(
+                                        'Read Terms of Service, Privacy Policy & SEBI Disclaimer ↗',
+                                        style: AppTypography.caption.copyWith(
+                                          color: AppColors.accent,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -507,6 +527,37 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Regulatory Disclaimer
+                    GestureDetector(
+                      onTap: () => LegalDisclaimerSheet.show(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF131418),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFF23252B)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF757A85)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Nivaarth is an educational & analytical technology platform. Not registered with SEBI as an Investment Adviser. All data & scores are algorithmically generated.',
+                                style: AppTypography.caption.copyWith(
+                                  color: const Color(0xFF757A85),
+                                  fontSize: 10.5,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

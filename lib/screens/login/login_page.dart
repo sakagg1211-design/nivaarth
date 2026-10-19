@@ -8,6 +8,7 @@ import '../../features/sync/sync_loading_page.dart';
 import '../../services/auth_service.dart';
 import 'forgot_password_page.dart';
 import 'sign_up_page.dart';
+import '../../widgets/legal_disclaimer_sheet.dart';
 
 enum LoginViewMode {
   signIn,
@@ -367,6 +368,43 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     const _TrustStrip(),
+                    const SizedBox(height: AppSpacing.md),
+                    GestureDetector(
+                      onTap: () => LegalDisclaimerSheet.show(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF131418),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFF23252B)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF757A85)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Nivaarth is an educational & analytical technology platform. Not registered with SEBI as an Investment Adviser.',
+                                style: AppTypography.caption.copyWith(
+                                  color: const Color(0xFF757A85),
+                                  fontSize: 10.5,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'Details ↗',
+                              style: TextStyle(
+                                color: Color(0xFFE5A93C),
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

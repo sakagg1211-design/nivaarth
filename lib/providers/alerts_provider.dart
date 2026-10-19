@@ -64,8 +64,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             if (weight > 25.0 && holdings.length > 1) {
               alerts.add(UserAlert(
                 id: 'local_conc_${h.portfolio.instrument}',
-                title: 'High Weight: ${h.portfolio.instrument}',
-                message: '${h.portfolio.instrument} accounts for ${weight.toStringAsFixed(1)}% of your portfolio. Consider rebalancing.',
+                title: 'Weight Alert: ${h.portfolio.instrument}',
+                message: '${h.portfolio.instrument} accounts for ${weight.toStringAsFixed(1)}% of your portfolio value. Consider rebalancing to maintain optimal diversification.',
                 type: AlertType.portfolioRisk,
                 severity: AlertSeverity.warning,
                 symbol: h.portfolio.instrument,
@@ -79,8 +79,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             0,
             UserAlert(
               id: 'local_health_active',
-              title: 'NV Market Guardian Active 🟢',
-              message: 'Nivaarth AI is actively tracking your ${holdings.length} portfolio positions in real-time.',
+              title: 'NV Quantitative Guardian Active 🟢',
+              message: 'Data-backed models are actively monitoring ${holdings.length} tracked positions for technical momentum and risk limits.',
               type: AlertType.system,
               severity: AlertSeverity.info,
               isRead: false,
@@ -92,7 +92,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             UserAlert(
               id: 'local_welcome',
               title: 'Welcome to Nivaarth Cockpit',
-              message: 'Add your holdings in Portfolio to enable automated AI risk monitoring and price alerts.',
+              message: 'Add your holdings in Portfolio to enable automated algorithmic risk monitoring and technical pivot tracking.',
               type: AlertType.system,
               severity: AlertSeverity.info,
               isRead: false,

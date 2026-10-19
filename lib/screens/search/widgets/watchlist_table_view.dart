@@ -74,7 +74,7 @@ class WatchlistTableView extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         child: SizedBox(
-          width: 860,
+          width: 780,
           child: ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -150,19 +150,7 @@ class WatchlistTableView extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 85,
-            child: Text(
-              'Volume ⬍\nChange',
-              style: TextStyle(
-                color: Color(0xFF8E929B),
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                height: 1.1,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 100,
+            width: 110,
             child: Text(
               'Returns ⬍\nTracked Date',
               style: TextStyle(
@@ -358,36 +346,9 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
 
-            // Volume
-            SizedBox(
-              width: 85,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    item.volume,
-                    style: const TextStyle(
-                      color: Color(0xFF00E676),
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 1),
-                  const Text(
-                    'NSE Cash',
-                    style: TextStyle(
-                      color: Color(0xFF757A85),
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Returns & Tracked Date
             SizedBox(
-              width: 100,
+              width: 110,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,

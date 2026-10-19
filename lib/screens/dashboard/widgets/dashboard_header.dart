@@ -10,6 +10,7 @@ import '../../../providers/alerts_provider.dart';
 import '../../../services/auth_service.dart';
 import '../../login/welcome_screen.dart';
 import '../../notifications/notifications_page.dart';
+import '../../../widgets/legal_disclaimer_sheet.dart';
 
 class DashboardHeader extends ConsumerWidget {
   const DashboardHeader({super.key});
@@ -129,6 +130,46 @@ class DashboardHeader extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.xl),
+              const Divider(color: AppColors.line),
+              // Regulatory & Legal Disclaimers Action
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  height: 38,
+                  width: 38,
+                  decoration: BoxDecoration(
+                    color: const Color(0x1FE5A93C),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(
+                    Icons.gavel_rounded,
+                    color: Color(0xFFE5A93C),
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  'Compliance & Legal Disclaimers',
+                  style: AppTypography.title.copyWith(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),
+                ),
+                subtitle: const Text(
+                  'SEBI non-advisory notice & platform terms',
+                  style: AppTypography.caption,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Colors.white38,
+                ),
+                onTap: () {
+                  Navigator.pop(modalContext);
+                  LegalDisclaimerSheet.show(context);
+                },
+              ),
+
+              const SizedBox(height: AppSpacing.sm),
               const Divider(color: AppColors.line),
               const SizedBox(height: AppSpacing.sm),
 
