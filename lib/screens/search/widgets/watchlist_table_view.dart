@@ -21,50 +21,61 @@ class WatchlistTableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.bookmark_border_rounded,
-                color: Color(0xFF757A85),
-                size: 32,
+      return LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF16171B),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.bookmark_border_rounded,
+                      color: Color(0xFF757A85),
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'No stocks in watchlist',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Search any stock and tap "+ Save" to track it here.\nPull down to sync and refresh.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF757A85),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'No stocks in watchlist',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Search any stock and tap "+ Save" to track it here.',
-              style: TextStyle(
-                color: Color(0xFF757A85),
-                fontSize: 12,
-              ),
-            ),
-          ],
+          ),
         ),
       );
     }
 
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: SizedBox(
-        width: 860,
-        child: ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: SizedBox(
+          width: 860,
+          child: ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length + 1, // +1 for Header row
@@ -83,8 +94,9 @@ class WatchlistTableView extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTableHeader() {
     return Container(
@@ -404,21 +416,45 @@ class WatchlistTableView extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00E676),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      item.technicalTag.toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 9.5,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final upper = item.technicalTag.toUpperCase();
+                      final Color tagBg;
+                      if (upper.contains('STRONG') || upper.contains('OUTPERFORM') || upper.contains('BUY')) {
+                        tagBg = const Color(0xFF00E676);
+                      } else if (upper.contains('ACCUMULATE')) {
+                        tagBg = const Color(0xFF4ADE80);
+                      } else if (upper.contains('HOLD') || upper.contains('NEUTRAL') || upper.contains('RANGE')) {
+                        tagBg = const Color(0xFFE5A93C);
+                      } else if (upper.contains('CAUTION') || upper.contains('REDUCE')) {
+                        tagBg = const Color(0xFFFF9800);
+                      } else if (upper.contains('SELL') || upper.contains('UNDERPERFORM') || upper.contains('AVOID')) {
+                        tagBg = const Color(0xFFFF5252);
+                      } else {
+                        tagBg = const Color(0xFF282A30);
+                      }
+
+                      final Color textColor = (tagBg == const Color(0xFF00E676) || tagBg == const Color(0xFF4ADE80))
+                          ? Colors.black
+                          : Colors.white;
+
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: tagBg,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          item.technicalTag.toUpperCase(),
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 9.5,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 8),
                   Expanded(

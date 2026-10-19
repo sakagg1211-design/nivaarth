@@ -144,29 +144,43 @@ class PortfolioHealthCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'NV Confidence: ${aiConfidence.toInt()}%',
-                          style: const TextStyle(
-                            color: Color(0xFF8B5CF6),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                          decoration: BoxDecoration(
-                            color: const Color(0x1F8B5CF6),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'HIGH',
-                            style: TextStyle(
-                              color: Color(0xFF8B5CF6),
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final confInt = aiConfidence.round().clamp(60, 99);
+                            final String confTier = confInt >= 88 ? 'HIGH CONVICTION' : (confInt >= 75 ? 'OPTIMAL' : 'MODERATE');
+                            final Color confColor = confInt >= 88
+                                ? const Color(0xFF8B5CF6)
+                                : (confInt >= 75 ? const Color(0xFF38BDF8) : const Color(0xFFE5A93C));
+
+                            return Row(
+                              children: [
+                                Text(
+                                  'NV Confidence: $confInt%',
+                                  style: TextStyle(
+                                    color: confColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: confColor.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    confTier,
+                                    style: TextStyle(
+                                      color: confColor,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),

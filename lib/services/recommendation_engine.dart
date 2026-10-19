@@ -2,6 +2,39 @@ import '../models/ai_recommendation.dart';
 import '../models/portfolio_analysis.dart';
 
 class RecommendationEngine {
+  int _calculateDynamicConfidence(PortfolioAnalysis analysis, {required double baseScore}) {
+    double score = baseScore;
+
+    // Asset breadth & data coverage
+    if (analysis.totalStocks >= 20) {
+      score += 6.0;
+    } else if (analysis.totalStocks >= 10) {
+      score += 4.0;
+    } else if (analysis.totalStocks >= 4) {
+      score += 2.0;
+    }
+
+    // Factor alignment (Health & Risk)
+    final healthFactor = ((analysis.healthScore - 50.0) / 50.0) * 4.0;
+    score += healthFactor;
+
+    if (analysis.riskScore > 65) {
+      score -= 4.0;
+    } else if (analysis.riskScore < 35) {
+      score += 3.0;
+    }
+
+    // Breadth consensus
+    if (analysis.totalStocks > 0) {
+      final winRatio = analysis.profitStocks / analysis.totalStocks;
+      if (winRatio > 0.65 || winRatio < 0.25) {
+        score += 3.0;
+      }
+    }
+
+    return score.round().clamp(68, 95);
+  }
+
   AIRecommendation generate(
     PortfolioAnalysis analysis,
   ) {
@@ -22,7 +55,7 @@ class RecommendationEngine {
         analysis.healthScore >= 80) {
       recommendation = RecommendationType.strongBuy;
 
-      confidence = 96;
+      confidence = _calculateDynamicConfidence(analysis, baseScore: 84);
 
       title = "Excellent Portfolio";
 
@@ -42,11 +75,11 @@ class RecommendationEngine {
       );
 
       actions.add(
-        "Continue holding quality stocks.",
+        "Continue holding quality businesses.",
       );
 
       actions.add(
-        "Book profits only after target achievement.",
+        "Review profit booking near resistance zones.",
       );
     }
 
@@ -58,7 +91,7 @@ class RecommendationEngine {
     else if (analysis.returnPercent >= 10) {
       recommendation = RecommendationType.buy;
 
-      confidence = 90;
+      confidence = _calculateDynamicConfidence(analysis, baseScore: 80);
 
       title = "Healthy Portfolio";
 
@@ -70,7 +103,7 @@ class RecommendationEngine {
       );
 
       actions.add(
-        "Continue accumulation.",
+        "Continue steady accumulation.",
       );
     }
 
@@ -82,7 +115,7 @@ class RecommendationEngine {
     else if (analysis.returnPercent >= 0) {
       recommendation = RecommendationType.hold;
 
-      confidence = 82;
+      confidence = _calculateDynamicConfidence(analysis, baseScore: 74);
 
       title = "Stable Portfolio";
 
@@ -98,7 +131,7 @@ class RecommendationEngine {
       );
 
       actions.add(
-        "Continue SIP.",
+        "Continue disciplined investing.",
       );
     }
 
@@ -111,7 +144,7 @@ class RecommendationEngine {
       recommendation =
           RecommendationType.accumulate;
 
-      confidence = 74;
+      confidence = _calculateDynamicConfidence(analysis, baseScore: 71);
 
       title = "Temporary Weakness";
 
@@ -119,15 +152,15 @@ class RecommendationEngine {
           "Current drawdown appears manageable.";
 
       reasons.add(
-        "Loss is still within acceptable range.",
+        "Drawdown is still within normal market bands.",
       );
 
       actions.add(
-        "Avoid panic selling.",
+        "Maintain investment horizon; avoid panic selling.",
       );
 
       actions.add(
-        "Average only quality businesses.",
+        "Accumulate only fundamentally sound businesses.",
       );
     }
 
@@ -139,19 +172,19 @@ class RecommendationEngine {
     else {
       recommendation = RecommendationType.reduce;
 
-      confidence = 92;
+      confidence = _calculateDynamicConfidence(analysis, baseScore: 81);
 
       title = "Portfolio Needs Attention";
 
       summary =
-          "Risk has increased significantly.";
+          "Risk metrics have increased across holdings.";
 
       reasons.add(
-        "Portfolio return below -10%.",
+        "Portfolio return dropped below -10%.",
       );
 
       reasons.add(
-        "${analysis.lossStocks} stocks are currently in loss.",
+        "${analysis.lossStocks} holdings are currently in loss.",
       );
 
       reasons.add(
@@ -159,15 +192,15 @@ class RecommendationEngine {
       );
 
       actions.add(
-        "Review weakest holdings.",
+        "Review risk exposure on underperforming holdings.",
       );
 
       actions.add(
-        "Increase cash allocation.",
+        "Consider preserving cash liquidity.",
       );
 
       actions.add(
-        "Avoid averaging every falling stock.",
+        "Avoid aggressive averaging in falling cyclical stocks.",
       );
     }
 

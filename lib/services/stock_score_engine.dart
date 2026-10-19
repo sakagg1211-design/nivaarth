@@ -117,10 +117,10 @@ print(scoreMap.keys.toList());
   ) {
     return portfolioScores(portfolio, scores)
         .where(
-          (e) =>
-              e.recommendation
-                  .toLowerCase() ==
-              "strong buy",
+          (e) {
+            final rec = e.recommendation.toLowerCase();
+            return rec.contains("strong") || rec.contains("outperform");
+          },
         )
         .length;
   }
@@ -131,10 +131,10 @@ print(scoreMap.keys.toList());
   ) {
     return portfolioScores(portfolio, scores)
         .where(
-          (e) =>
-              e.recommendation
-                  .toLowerCase() ==
-              "buy",
+          (e) {
+            final rec = e.recommendation.toLowerCase();
+            return rec == "buy" || rec == "outperform" || rec == "accumulate";
+          },
         )
         .length;
   }

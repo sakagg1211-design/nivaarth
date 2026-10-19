@@ -250,12 +250,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         );
                       }
 
-                    return ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
-                      itemCount: stocks.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: 10),
+                    return RefreshIndicator(
+                      color: const Color(0xFFE5A93C),
+                      backgroundColor: const Color(0xFF16171B),
+                      onRefresh: () async {
+                        ref.invalidate(searchProvider(query));
+                      },
+                      child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+                        itemCount: stocks.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: 10),
                       itemBuilder: (context, index) {
                         final stock = stocks[index];
 
@@ -471,24 +477,32 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           ),
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
+            ),
             ] else ...[
               // Tab 1: MY SAVED LIST (Watchlist Table View matching attached image 4)
               Expanded(
-                child: WatchlistTableView(
-                  items: savedList,
-                  onDelete: (item) {
-                    watchlistNotifier.remove(item.instrument);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${item.instrument} removed from MY SAVED LIST'),
-                        backgroundColor: const Color(0xFF16171B),
-                      ),
-                    );
+                child: RefreshIndicator(
+                  color: const Color(0xFFE5A93C),
+                  backgroundColor: const Color(0xFF16171B),
+                  onRefresh: () async {
+                    await watchlistNotifier.refreshWatchlist();
                   },
+                  child: WatchlistTableView(
+                    items: savedList,
+                    onDelete: (item) {
+                      watchlistNotifier.remove(item.instrument);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${item.instrument} removed from MY SAVED LIST'),
+                          backgroundColor: const Color(0xFF16171B),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

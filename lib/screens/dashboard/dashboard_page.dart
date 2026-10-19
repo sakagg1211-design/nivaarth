@@ -11,6 +11,7 @@ import '../../providers/market_indices_provider.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../providers/price_provider.dart';
 import '../../services/backend_service.dart';
+import '../advisor/advisor_chat_page.dart';
 import '../home/home_page.dart';
 import 'widgets/ai_briefing_card.dart';
 import 'widgets/dashboard_header.dart';
@@ -21,7 +22,9 @@ import 'widgets/portfolio_health_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
-  const DashboardPage({super.key});
+  final VoidCallback? onOpenAdvisor;
+
+  const DashboardPage({super.key, this.onOpenAdvisor});
 
   @override
   ConsumerState<DashboardPage> createState() => _DashboardPageState();
@@ -185,6 +188,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                               PortfolioHealthCard(
                                 healthScore: data.portfolioHealth,
                                 action: data.aiRecommendation.recommendation.name.toUpperCase(),
+                                aiConfidence: data.aiRecommendation.confidence.toDouble(),
+                                onOpenAdvisor: widget.onOpenAdvisor ?? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const AdvisorChatPage()),
+                                  );
+                                },
                               ),
 
                               const SizedBox(height: 14),

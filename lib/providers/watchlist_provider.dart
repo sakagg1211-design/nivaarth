@@ -82,6 +82,12 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     return state.any((item) => SymbolUtils.normalize(item.instrument) == norm);
   }
 
+  String _formatToday() {
+    final now = DateTime.now();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${now.day} ${months[now.month - 1]} ${now.year}';
+  }
+
   bool addStock(StockScore stock, {double? customPrice, double? dayChangePercent}) {
     final sym = SymbolUtils.normalize(stock.instrument);
     if (isSaved(sym)) return false;
@@ -95,21 +101,30 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String tag;
     final String takeaway;
-    if (stock.overallScore >= 85) {
-      tag = 'STRONG BUY';
-      takeaway = 'Market leader in $sector with resilient operating margins & robust ROE.';
-    } else if (stock.overallScore >= 78) {
+    if (stock.recommendation.isNotEmpty && stock.recommendation != 'PENDING') {
+      tag = stock.recommendation;
+    } else if (stock.overallScore >= 80) {
+      tag = 'STRONG OUTPERFORM';
+    } else if (stock.overallScore >= 70) {
+      tag = 'OUTPERFORM';
+    } else if (stock.overallScore >= 60) {
       tag = 'ACCUMULATE';
-      takeaway = 'Steady compounding in $sector; healthy quarterly volume & earnings support.';
-    } else if (stock.overallScore >= 68) {
-      tag = 'CONSOLIDATING';
-      takeaway = 'Trading within fair valuation band in $sector; monitor margin expansion.';
-    } else if (stock.overallScore >= 58) {
+    } else if (stock.overallScore >= 45) {
+      tag = 'NEUTRAL / HOLD';
+    } else if (stock.overallScore >= 35) {
       tag = 'CAUTION';
-      takeaway = 'Elevated leverage or cyclical contraction; wait for price stabilization.';
     } else {
-      tag = 'AVOID';
-      takeaway = 'Weak fundamental scoring with elevated downside risk profile.';
+      tag = 'UNDERPERFORM';
+    }
+
+    if (stock.overallScore >= 80) {
+      takeaway = 'Market leader in $sector with resilient operating margins & robust ROE.';
+    } else if (stock.overallScore >= 60) {
+      takeaway = 'Steady compounding in $sector; healthy quarterly volume & earnings support.';
+    } else if (stock.overallScore >= 45) {
+      takeaway = 'Trading within fair valuation band in $sector; monitor margin expansion.';
+    } else {
+      takeaway = 'Elevated leverage or cyclical contraction; wait for price stabilization.';
     }
 
     final newItem = WatchlistItem(
@@ -121,7 +136,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       dayChangePercent: dayChangePercent ?? 0.0,
       volume: '154.2 k',
       returnPercent: 0.0,
-      trackedDate: 'Today',
+      trackedDate: _formatToday(),
       technicalTag: tag,
       keyTakeaway: takeaway,
     );
@@ -136,8 +151,8 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     required String symbol,
     required String companyName,
     required double price,
-    int score = 78,
-    String tag = 'BUY',
+    int score = 0,
+    String tag = '',
   }) {
     final sym = SymbolUtils.normalize(symbol);
     if (isSaved(sym)) return false;
@@ -145,21 +160,30 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String computedTag;
     final String takeaway;
-    if (score >= 85) {
-      computedTag = 'STRONG BUY';
-      takeaway = 'High conviction leader in $sector. Strong balance sheet & institutional backing.';
-    } else if (score >= 78) {
+    if (tag.isNotEmpty && tag != 'BUY' && tag != 'PENDING') {
+      computedTag = tag;
+    } else if (score >= 80) {
+      computedTag = 'STRONG OUTPERFORM';
+    } else if (score >= 70) {
+      computedTag = 'OUTPERFORM';
+    } else if (score >= 60) {
       computedTag = 'ACCUMULATE';
-      takeaway = 'Positive multi-quarter momentum in $sector; attractive accumulation zone.';
-    } else if (score >= 68) {
-      computedTag = 'RANGE BOUND';
-      takeaway = 'Consolidating above support levels in $sector; watchful accumulation.';
-    } else if (score >= 58) {
+    } else if (score >= 45) {
+      computedTag = 'NEUTRAL / HOLD';
+    } else if (score >= 35) {
       computedTag = 'CAUTION';
-      takeaway = 'Elevated volatility or margin compression; wait for clear breakout confirmation.';
+    } else if (score > 0) {
+      computedTag = 'UNDERPERFORM';
     } else {
-      computedTag = 'AVOID';
-      takeaway = 'Sub-optimal financial metrics with high downside drawdown risk.';
+      computedTag = 'MONITORED';
+    }
+
+    if (score >= 75) {
+      takeaway = 'High conviction leader in $sector. Strong balance sheet & institutional backing.';
+    } else if (score >= 60) {
+      takeaway = 'Positive multi-quarter momentum in $sector; attractive accumulation zone.';
+    } else {
+      takeaway = 'Consolidating above support levels in $sector; watchful accumulation.';
     }
 
     final newItem = WatchlistItem(
@@ -168,10 +192,10 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       score: score,
       addedPrice: price,
       latestPrice: price,
-      dayChangePercent: 0.85,
+      dayChangePercent: 0.0,
       volume: '154.2 k',
       returnPercent: 0.0,
-      trackedDate: 'Today',
+      trackedDate: _formatToday(),
       technicalTag: computedTag,
       keyTakeaway: takeaway,
     );
@@ -181,6 +205,79 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     _syncAddToCloud(newItem);
     return true;
   }
+
+  /// Pull-to-Refresh: Updates live quotes, recalculates return %, and refreshes scores
+  Future<void> refreshWatchlist() async {
+    if (state.isEmpty) return;
+
+    final updated = <WatchlistItem>[];
+    for (final item in state) {
+      try {
+        final sym = SymbolUtils.normalize(item.instrument);
+        double freshPrice = item.latestPrice;
+        double changePct = item.dayChangePercent;
+        int freshScore = item.score;
+        String freshTag = item.technicalTag;
+
+        // 1. Fetch latest price
+        try {
+          final priceRow = await _supabase
+              .from('LatestPrices')
+              .select()
+              .eq('Instrument', sym)
+              .maybeSingle();
+          if (priceRow != null) {
+            final p = (priceRow['CurrentPrice'] ?? priceRow['price']) as num?;
+            if (p != null && p > 0) freshPrice = p.toDouble();
+            final ch = (priceRow['ChangePercent'] ?? priceRow['change_percent']) as num?;
+            if (ch != null) changePct = ch.toDouble();
+          }
+        } catch (_) {}
+
+        // 2. Fetch latest authentic score
+        try {
+          final scoreRow = await _supabase
+              .from('StockScores')
+              .select()
+              .eq('Instrument', sym)
+              .maybeSingle();
+          if (scoreRow != null) {
+            final sc = (scoreRow['OverallScore'] ?? scoreRow['overall_score']) as num?;
+            if (sc != null && sc > 0) freshScore = sc.toInt();
+            final rec = (scoreRow['Recommendation'] ?? scoreRow['recommendation'])?.toString();
+            if (rec != null && rec.isNotEmpty) freshTag = rec;
+          }
+        } catch (_) {}
+
+        // 3. Authentic Return Calculation: preserve addedPrice, calculate live return
+        final retPct = item.addedPrice > 0
+            ? ((freshPrice - item.addedPrice) / item.addedPrice) * 100
+            : 0.0;
+
+        updated.add(
+          WatchlistItem(
+            instrument: item.instrument,
+            companyName: item.companyName,
+            score: freshScore,
+            addedPrice: item.addedPrice, // Fixed at entry!
+            latestPrice: freshPrice,     // Live price
+            dayChangePercent: changePct,
+            volume: item.volume,
+            returnPercent: retPct,       // Live return
+            trackedDate: item.trackedDate.isNotEmpty ? item.trackedDate : _formatToday(),
+            technicalTag: freshTag,
+            keyTakeaway: item.keyTakeaway,
+          ),
+        );
+      } catch (_) {
+        updated.add(item);
+      }
+    }
+
+    state = updated;
+    await _saveToLocal();
+  }
+
 
   void remove(String symbol) {
     final norm = SymbolUtils.normalize(symbol);

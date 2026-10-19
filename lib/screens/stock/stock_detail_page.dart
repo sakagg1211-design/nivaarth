@@ -155,8 +155,8 @@ class _StockDetailPageState
                     symbol: portfolio.instrument,
                     companyName: portfolio.companyName,
                     price: stock.currentPrice,
-                    score: scoreAsync.value?.overallScore ?? 78,
-                    tag: scoreAsync.value?.recommendation ?? 'BUY',
+                    score: scoreAsync.value?.overallScore ?? 0,
+                    tag: scoreAsync.value?.recommendation ?? '',
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -246,8 +246,8 @@ class _StockDetailPageState
                     symbol: portfolio.instrument,
                     companyName: portfolio.companyName,
                     price: stock.currentPrice,
-                    score: scoreAsync.value?.overallScore ?? 78,
-                    tag: scoreAsync.value?.recommendation ?? 'BUY',
+                    score: scoreAsync.value?.overallScore ?? 0,
+                    tag: scoreAsync.value?.recommendation ?? '',
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -642,6 +642,35 @@ class _StockDetailPageState
 
                     const NewsCard(
                       news: [],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Regulatory Notice & Educational Disclaimer
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF131418),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFF23252B)),
+                      ),
+                      child: const Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.info_outline_rounded, size: 15, color: Color(0xFF757A85)),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Regulatory Notice: Nivaarth is a financial analytics and research technology platform. All quantitative scores, factor models, and signals are algorithmically computed for educational purposes only and do not constitute SEBI-registered investment advice.',
+                              style: TextStyle(
+                                color: Color(0xFF757A85),
+                                fontSize: 10.5,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 );

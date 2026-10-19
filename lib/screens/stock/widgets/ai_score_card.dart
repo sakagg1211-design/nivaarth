@@ -558,17 +558,19 @@ class _RecommendationChip extends StatelessWidget {
   }
 
   Color _color() {
-    switch (recommendation.toUpperCase()) {
-      case "BUY":
-      case "STRONG BUY":
-        return AppColors.success;
-
-      case "SELL":
-      case "STRONG SELL":
-        return AppColors.danger;
-
-      default:
-        return Colors.orange;
+    final rec = recommendation.toUpperCase();
+    if (rec.contains("OUTPERFORM") || rec.contains("BUY")) {
+      return AppColors.success;
     }
+    if (rec.contains("ACCUMULATE")) {
+      return const Color(0xFF4ADE80);
+    }
+    if (rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+      return AppColors.danger;
+    }
+    if (rec.contains("CAUTION") || rec.contains("REDUCE")) {
+      return Colors.orange;
+    }
+    return AppColors.warning;
   }
 }

@@ -396,20 +396,23 @@ class RecommendationCard extends StatelessWidget {
   }
 
   Color _recommendationColor() {
-    switch (score.recommendation.toUpperCase()) {
-      case "BUY":
-      case "STRONG BUY":
-        return AppColors.success;
-      case "ACCUMULATE":
-        return const Color(0xFF4ADE80);
-      case "SELL":
-      case "STRONG SELL":
-        return AppColors.danger;
-      case "REDUCE":
-        return const Color(0xFFFF7043);
-      default:
-        return AppColors.warning;
+    final rec = score.recommendation.toUpperCase();
+    if (rec.contains("STRONG OUTPERFORM") || rec == "STRONG BUY" || rec == "BUY") {
+      return AppColors.success;
     }
+    if (rec.contains("OUTPERFORM")) {
+      return AppColors.success;
+    }
+    if (rec.contains("ACCUMULATE")) {
+      return const Color(0xFF4ADE80);
+    }
+    if (rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+      return AppColors.danger;
+    }
+    if (rec.contains("CAUTION") || rec.contains("REDUCE")) {
+      return const Color(0xFFFF7043);
+    }
+    return AppColors.warning;
   }
 }
 

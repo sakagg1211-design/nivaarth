@@ -314,6 +314,10 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
             _TechnicalAnalysisCard(
               indexName: widget.name,
               isNifty: isNifty,
+              changePercent: changePercent,
+              currentValue: value,
+              dayHigh: dayHigh,
+              dayLow: dayLow,
             ),
 
             const SizedBox(height: 16),
@@ -510,10 +514,18 @@ class _SectorTag extends StatelessWidget {
 class _TechnicalAnalysisCard extends StatefulWidget {
   final String indexName;
   final bool isNifty;
+  final double changePercent;
+  final double currentValue;
+  final double dayHigh;
+  final double dayLow;
 
   const _TechnicalAnalysisCard({
     required this.indexName,
     required this.isNifty,
+    this.changePercent = 0.0,
+    this.currentValue = 0.0,
+    this.dayHigh = 0.0,
+    this.dayLow = 0.0,
   });
 
   @override
@@ -523,63 +535,103 @@ class _TechnicalAnalysisCard extends StatefulWidget {
 class _TechnicalAnalysisCardState extends State<_TechnicalAnalysisCard> {
   String _selectedTf = 'Hourly';
 
-  static const List<Map<String, dynamic>> _timeframes = [
-    {
-      'id': '15 min',
-      'label': '15 min',
-      'badge': 'Buy',
-      'isBullish': true,
-      'summaryScore': 0.65,
-      'techScore': 0.60,
-      'maScore': 0.70,
-      'verdict': 'Buy',
-      'description': 'Short-term consolidation with accumulation above 20-EMA',
-    },
-    {
-      'id': '30 min',
-      'label': '30 min',
-      'badge': 'Strong Buy',
-      'isBullish': true,
-      'summaryScore': 0.85,
-      'techScore': 0.80,
-      'maScore': 0.90,
-      'verdict': 'Strong Buy',
-      'description': 'Intraday breakout confirmed with expanding RSI momentum',
-    },
-    {
-      'id': 'Hourly',
-      'label': 'Hourly',
-      'badge': 'Strong Buy',
-      'isBullish': true,
-      'summaryScore': 0.88,
-      'techScore': 0.82,
-      'maScore': 0.92,
-      'verdict': 'Strong Buy',
-      'description': 'All key moving averages aligned bullish above 50-DMA and MACD crossover',
-    },
-    {
-      'id': 'Daily',
-      'label': 'Daily',
-      'badge': 'Neutral',
-      'isBullish': false,
-      'summaryScore': 0.10,
-      'techScore': -0.10,
-      'maScore': 0.30,
-      'verdict': 'Neutral',
-      'description': 'Consolidating above 200-DMA long-term institutional trend line',
-    },
-    {
-      'id': 'Weekly',
-      'label': 'Weekly',
-      'badge': 'Strong Buy',
-      'isBullish': true,
-      'summaryScore': 0.80,
-      'techScore': 0.75,
-      'maScore': 0.85,
-      'verdict': 'Strong Buy',
-      'description': 'Primary multi-month uptrend channel firmly intact',
-    },
-  ];
+  List<Map<String, dynamic>> get _timeframes {
+    final ch = widget.changePercent;
+
+    // 1. Intraday momentum (15m) based on live % change
+    final bool isBullish15m = ch > 0.15;
+    final bool isBearish15m = ch < -0.15;
+    final String verdict15m = isBullish15m ? 'Bullish' : (isBearish15m ? 'Bearish' : 'Neutral');
+    final double score15m = (ch / 2.0).clamp(-1.0, 1.0);
+
+    // 2. Hourly momentum
+    final bool isBullishHourly = ch > 0.35;
+    final bool isBearishHourly = ch < -0.35;
+    final String verdictHourly = isBullishHourly ? 'Bullish' : (isBearishHourly ? 'Bearish' : 'Neutral');
+    final double scoreHourly = (ch / 2.5).clamp(-1.0, 1.0);
+
+    // 3. Daily position relative to Day High & Low
+    final dayRange = (widget.dayHigh - widget.dayLow).abs();
+    final dayPos = dayRange > 0 ? ((widget.currentValue - widget.dayLow) / dayRange).clamp(0.0, 1.0) : 0.5;
+    final String verdictDaily = dayPos > 0.65 ? 'Bullish' : (dayPos < 0.35 ? 'Bearish' : 'Neutral');
+    final double scoreDaily = ((dayPos - 0.5) * 2).clamp(-1.0, 1.0);
+
+    // 4. Weekly macro trend relative to 52-week band
+    final range52High = widget.isNifty ? 26277.35 : 85978.25;
+    final range52Low = widget.isNifty ? 19300.50 : 64000.00;
+    final range52 = (range52High - range52Low).abs();
+    final pos52 = range52 > 0 ? ((widget.currentValue - range52Low) / range52).clamp(0.0, 1.0) : 0.7;
+    final String verdictWeekly = pos52 > 0.60 ? 'Bullish' : (pos52 < 0.40 ? 'Bearish' : 'Neutral');
+    final double scoreWeekly = ((pos52 - 0.5) * 2).clamp(-1.0, 1.0);
+
+    return [
+      {
+        'id': '15 min',
+        'label': '15 min',
+        'badge': verdict15m,
+        'isBullish': isBullish15m,
+        'summaryScore': score15m,
+        'techScore': score15m * 0.9,
+        'maScore': score15m * 1.1,
+        'verdict': verdict15m,
+        'description': isBearish15m
+            ? 'Short-term selling pressure under intraday VWAP'
+            : (isBullish15m ? 'Short-term accumulation above 20-EMA' : 'Intraday consolidation within narrow range'),
+      },
+      {
+        'id': '30 min',
+        'label': '30 min',
+        'badge': verdict15m,
+        'isBullish': isBullish15m,
+        'summaryScore': score15m * 0.95,
+        'techScore': score15m * 0.85,
+        'maScore': score15m * 1.05,
+        'verdict': verdict15m,
+        'description': isBearish15m
+            ? 'Momentum breakdown with expanding volatility'
+            : (isBullish15m ? 'Intraday breakout confirmed with expanding RSI momentum' : 'Volume consolidation near key pivot levels'),
+      },
+      {
+        'id': 'Hourly',
+        'label': 'Hourly',
+        'badge': verdictHourly,
+        'isBullish': isBullishHourly,
+        'summaryScore': scoreHourly,
+        'techScore': scoreHourly * 0.9,
+        'maScore': scoreHourly * 1.05,
+        'verdict': verdictHourly,
+        'description': isBearishHourly
+            ? 'Hourly moving averages sloping downwards with bearish momentum'
+            : (isBullishHourly ? 'Key moving averages aligned bullish above 50-DMA' : 'Consolidating between hourly support and resistance'),
+      },
+      {
+        'id': 'Daily',
+        'label': 'Daily',
+        'badge': verdictDaily,
+        'isBullish': verdictDaily == 'Bullish',
+        'summaryScore': scoreDaily,
+        'techScore': scoreDaily * 0.9,
+        'maScore': scoreDaily,
+        'verdict': verdictDaily,
+        'description': verdictDaily == 'Bearish'
+            ? 'Trading near day lows; caution advised against aggressive long leverage'
+            : (verdictDaily == 'Bullish' ? 'Strong daily price action near day highs' : 'Consolidating above 200-DMA institutional trend line'),
+      },
+      {
+        'id': 'Weekly',
+        'label': 'Weekly',
+        'badge': verdictWeekly,
+        'isBullish': verdictWeekly == 'Bullish',
+        'summaryScore': scoreWeekly,
+        'techScore': scoreWeekly * 0.85,
+        'maScore': scoreWeekly * 1.1,
+        'verdict': verdictWeekly,
+        'description': verdictWeekly == 'Bullish'
+            ? 'Primary multi-month macro uptrend channel firmly intact'
+            : 'Multi-week consolidation testing macro trendline support',
+      },
+    ];
+  }
 
   Map<String, dynamic> get _currentTfData {
     return _timeframes.firstWhere(
@@ -592,12 +644,11 @@ class _TechnicalAnalysisCardState extends State<_TechnicalAnalysisCard> {
   Widget build(BuildContext context) {
     final data = _currentTfData;
     final String verdict = data['verdict'];
-    final bool isStrongBuy = verdict.contains('Strong Buy');
-    final Color verdictColor = isStrongBuy
+    final bool isBullish = verdict == 'Bullish';
+    final bool isBearish = verdict == 'Bearish';
+    final Color verdictColor = isBullish
         ? const Color(0xFF00E676)
-        : (verdict == 'Buy'
-            ? const Color(0xFF10B981)
-            : (verdict == 'Neutral' ? const Color(0xFFE5A93C) : const Color(0xFFFF5252)));
+        : (isBearish ? const Color(0xFFFF5252) : const Color(0xFFE5A93C));
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -733,7 +784,9 @@ class _TechnicalAnalysisCardState extends State<_TechnicalAnalysisCard> {
               _GaugeColumn(
                 title: 'Technical Indicators',
                 score: (data['techScore'] as num).toDouble(),
-                verdict: (data['techScore'] as num) > 0.4 ? 'Strong Buy' : 'Neutral',
+                verdict: (data['techScore'] as num) > 0.2
+                    ? 'Bullish'
+                    : ((data['techScore'] as num) < -0.2 ? 'Bearish' : 'Neutral'),
                 size: 76,
               ),
 
@@ -750,7 +803,9 @@ class _TechnicalAnalysisCardState extends State<_TechnicalAnalysisCard> {
               _GaugeColumn(
                 title: 'Moving Averages',
                 score: (data['maScore'] as num).toDouble(),
-                verdict: (data['maScore'] as num) > 0.4 ? 'Strong Buy' : 'Neutral',
+                verdict: (data['maScore'] as num) > 0.2
+                    ? 'Bullish'
+                    : ((data['maScore'] as num) < -0.2 ? 'Bearish' : 'Neutral'),
                 size: 76,
               ),
             ],

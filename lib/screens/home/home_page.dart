@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../advisor/advisor_chat_page.dart';
 import '../dashboard/dashboard_page.dart';
@@ -14,22 +15,51 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
+  DateTime? _lastBackPressTime;
 
-  final List<Widget> pages = const [
-    DashboardPage(),
-    PortfolioPage(),
-    AdvisorChatPage(),
-    SearchPage(),
+  late final List<Widget> pages = [
+    DashboardPage(
+      onOpenAdvisor: () => setState(() => currentIndex = 2),
+    ),
+    const PortfolioPage(),
+    const AdvisorChatPage(),
+    const SearchPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
-      body: IndexedStack(
-        index: currentIndex,
-        children: pages,
-      ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+
+        // If not on Dashboard tab, switch to Dashboard first
+        if (currentIndex != 0) {
+          setState(() => currentIndex = 0);
+          return;
+        }
+
+        final now = DateTime.now();
+        if (_lastBackPressTime == null ||
+            now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+          _lastBackPressTime = now;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Press back again to exit Nivaarth'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Color(0xFF16171B),
+            ),
+          );
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0C0D10),
+        body: IndexedStack(
+          index: currentIndex,
+          children: pages,
+        ),
       bottomNavigationBar: DecoratedBox(
         decoration: const BoxDecoration(
           color: Color(0xFF111215),
@@ -104,6 +134,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
+}
+
