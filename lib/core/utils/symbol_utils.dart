@@ -600,15 +600,7 @@ class SymbolUtils {
       'RPOWER': 39.80,
     };
 
-    if (prices.containsKey(clean)) return prices[clean]!;
-
-    int hash = 0;
-    for (int i = 0; i < clean.length; i++) {
-      hash = (hash * 31 + clean.codeUnitAt(i)) & 0x7FFFFFFF;
-    }
-    final base = (hash % 3200) + 75.0;
-    final decimal = (hash % 95) / 100.0;
-    return double.parse((base + decimal).toStringAsFixed(2));
+    return prices[clean] ?? 0.0;
   }
 
   static String getEstimatedThesis(String symbol) {

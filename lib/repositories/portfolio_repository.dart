@@ -10,32 +10,26 @@ class PortfolioRepository {
   Future<List<Portfolio>> getPortfolio() async {
     final user = client.auth.currentUser;
 
-    if (user != null) {
-      try {
-        final userResponse = await client
-            .from("Portfolio")
-            .select()
-            .eq("user_id", user.id)
-            .order("Instrument");
-
-        return userResponse
-            .map<Portfolio>((json) => Portfolio.fromJson(json))
-            .toList();
-      } catch (e) {
-        debugPrint("Notice: user_id portfolio query: $e");
-      }
+    // Strict multi-tenancy: Unauthenticated queries must NEVER leak data
+    if (user == null) {
+      debugPrint("PortfolioRepository: No authenticated user session. Returning empty holdings.");
+      return const [];
     }
 
-    final response = await client
-        .from("Portfolio")
-        .select()
-        .order("Instrument");
+    try {
+      final userResponse = await client
+          .from("Portfolio")
+          .select()
+          .eq("user_id", user.id)
+          .order("Instrument");
 
-    debugPrint("Rows: ${response.length}");
-
-    return response
-        .map<Portfolio>((json) => Portfolio.fromJson(json))
-        .toList();
+      return userResponse
+          .map<Portfolio>((json) => Portfolio.fromJson(json))
+          .toList();
+    } catch (e) {
+      debugPrint("Error fetching user portfolio: $e");
+      return const [];
+    }
   }
 
   Future<void> addHolding({
@@ -47,10 +41,14 @@ class PortfolioRepository {
     String industry = 'Diversified',
   }) async {
     final user = client.auth.currentUser;
+    if (user == null) {
+      throw Exception("User must be authenticated to add portfolio holdings.");
+    }
+
     final totalInvested = qty * avgPrice;
 
     final Map<String, dynamic> payload = {
-      if (user != null) 'user_id': user.id,
+      'user_id': user.id,
       'Instrument': instrument.trim().toUpperCase(),
       'Company_name': companyName.trim(),
       'YahooSymbol': SymbolUtils.getYahooSymbol(instrument),
@@ -72,6 +70,11 @@ class PortfolioRepository {
     required double avgPrice,
     double? currentPrice,
   }) async {
+    final user = client.auth.currentUser;
+    if (user == null) {
+      throw Exception("User must be authenticated to update portfolio holdings.");
+    }
+
     final totalInvested = qty * avgPrice;
     final Map<String, dynamic> updates = {
       'Qty': qty,
@@ -85,10 +88,25 @@ class PortfolioRepository {
       updates['Net P&L'] = currentVal - totalInvested;
     }
 
-    await client.from('Portfolio').update(updates).eq('id', id);
+    // Strict ownership verification: id AND user_id must match
+    await client
+        .from('Portfolio')
+        .update(updates)
+        .eq('id', id)
+        .eq('user_id', user.id);
   }
 
   Future<void> deleteHolding(String id) async {
-    await client.from('Portfolio').delete().eq('id', id);
+    final user = client.auth.currentUser;
+    if (user == null) {
+      throw Exception("User must be authenticated to delete portfolio holdings.");
+    }
+
+    // Strict ownership verification: id AND user_id must match
+    await client
+        .from('Portfolio')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
   }
 }

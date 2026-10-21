@@ -267,7 +267,7 @@ class StockHeader extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              _money(currentPrice > 0 ? currentPrice : 100.0),
+              currentPrice > 0 ? _money(currentPrice) : 'Syncing...',
               style: AppTypography
                   .displaySmall
                   .copyWith(

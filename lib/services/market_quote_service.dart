@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
 import '../models/live_market_quote.dart';
@@ -90,20 +91,54 @@ class MarketQuoteService {
       } catch (_) {}
     }
 
-    // 3. Fallback to cached value or estimated baseline
+    // 3. Fallback to Supabase LatestPrices database record
+    try {
+      final res = await Supabase.instance.client
+          .from('LatestPrices')
+          .select()
+          .eq('Instrument', clean)
+          .maybeSingle();
+
+      if (res != null && res['CurrentPrice'] != null) {
+        final dbPrice = (res['CurrentPrice'] as num).toDouble();
+        if (dbPrice > 0) {
+          final dbPrev = (res['PreviousClose'] as num?)?.toDouble() ?? dbPrice;
+          final dbHigh = (res['DayHigh'] as num?)?.toDouble() ?? dbPrice;
+          final dbLow = (res['DayLow'] as num?)?.toDouble() ?? dbPrice;
+          final dbVol = (res['Volume'] as num?)?.toInt() ?? 0;
+
+          final quote = LiveMarketQuote(
+            symbol: clean,
+            currentPrice: dbPrice,
+            previousClose: dbPrev,
+            change: dbPrice - dbPrev,
+            changePercent: dbPrev > 0 ? ((dbPrice - dbPrev) / dbPrev) * 100 : 0.0,
+            dayHigh: dbHigh,
+            dayLow: dbLow,
+            volume: dbVol,
+            timestamp: DateTime.now(),
+          );
+          _quoteCache[clean] = quote;
+          _cacheTime[clean] = DateTime.now();
+          return quote;
+        }
+      }
+    } catch (_) {}
+
+    // 4. Fallback to verified static baseline or uninitialized (0.0) state
     if (_quoteCache.containsKey(clean)) {
       return _quoteCache[clean]!;
     }
 
-    final fallbackPrice = SymbolUtils.getEstimatedPrice(clean);
+    final baselinePrice = SymbolUtils.getEstimatedPrice(clean);
     final fallbackQuote = LiveMarketQuote(
       symbol: clean,
-      currentPrice: fallbackPrice,
-      previousClose: fallbackPrice,
+      currentPrice: baselinePrice,
+      previousClose: baselinePrice,
       change: 0.0,
       changePercent: 0.0,
-      dayHigh: fallbackPrice,
-      dayLow: fallbackPrice,
+      dayHigh: baselinePrice,
+      dayLow: baselinePrice,
       volume: 0,
       timestamp: DateTime.now(),
     );

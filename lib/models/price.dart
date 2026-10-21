@@ -20,7 +20,7 @@ class Price {
   factory Price.fromJson(Map<String, dynamic> json) {
     final cur = (json["CurrentPrice"] as num?)?.toDouble() ?? 0;
     final low = (json["DayLow"] as num?)?.toDouble() ?? 0;
-    final prev = (json["PreviousClose"] as num?)?.toDouble() ?? (low > 0 ? low : cur);
+    final prev = (json["PreviousClose"] as num?)?.toDouble() ?? cur;
 
     return Price(
       instrument: json["Instrument"]?.toString() ?? "",

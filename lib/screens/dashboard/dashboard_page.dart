@@ -20,6 +20,7 @@ import 'widgets/dashboard_top_holdings_section.dart';
 import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
 import 'widgets/portfolio_hero_card.dart';
+import '../portfolio/widgets/add_holding_sheet.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final VoidCallback? onOpenAdvisor;
@@ -169,41 +170,45 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
 
                               const SizedBox(height: 14),
 
-                              // 2. Compact Portfolio Value Card
-                              PortfolioHeroCard(
-                                currentValue: data.currentValue,
-                                investedValue: data.totalInvested,
-                                netPnL: data.totalPnL,
-                                returnPercent: data.returnPercent,
-                                todayPnL: data.todayPnL,
-                                todayReturnPercent: data.todayReturnPercent,
-                                holdings: data.totalStocks,
-                                aiConfidence: 74,
-                                isMarketOpen: isMarketOpen,
-                              ),
+                              if (data.totalStocks == 0) ...[
+                                _buildNewUserOnboardingCard(context),
+                              ] else ...[
+                                // 2. Compact Portfolio Value Card
+                                PortfolioHeroCard(
+                                  currentValue: data.currentValue,
+                                  investedValue: data.totalInvested,
+                                  netPnL: data.totalPnL,
+                                  returnPercent: data.returnPercent,
+                                  todayPnL: data.todayPnL,
+                                  todayReturnPercent: data.todayReturnPercent,
+                                  holdings: data.totalStocks,
+                                  aiConfidence: 74,
+                                  isMarketOpen: isMarketOpen,
+                                ),
 
-                              const SizedBox(height: 14),
+                                const SizedBox(height: 14),
 
-                              // 3. Compact AI Portfolio Health Gauge Card
-                              PortfolioHealthCard(
-                                healthScore: data.portfolioHealth,
-                                action: data.aiRecommendation.recommendation.name.toUpperCase(),
-                                aiConfidence: data.aiRecommendation.confidence.toDouble(),
-                                onOpenAdvisor: widget.onOpenAdvisor ?? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const AdvisorChatPage()),
-                                  );
-                                },
-                              ),
+                                // 3. Compact AI Portfolio Health Gauge Card
+                                PortfolioHealthCard(
+                                  healthScore: data.portfolioHealth,
+                                  action: data.aiRecommendation.recommendation.name.toUpperCase(),
+                                  aiConfidence: data.aiRecommendation.confidence.toDouble(),
+                                  onOpenAdvisor: widget.onOpenAdvisor ?? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const AdvisorChatPage()),
+                                    );
+                                  },
+                                ),
 
-                              const SizedBox(height: 14),
+                                const SizedBox(height: 14),
 
-                              // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
-                              DashboardSignalsGrid(
-                                summary: data,
-                                holdings: liveStocks,
-                              ),
+                                // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
+                                DashboardSignalsGrid(
+                                  summary: data,
+                                  holdings: liveStocks,
+                                ),
+                              ],
 
                               const SizedBox(height: 22),
 
@@ -363,6 +368,173 @@ class _ScreenState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNewUserOnboardingCard(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF16171B),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0x33E5A93C)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE5A93C).withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 44,
+                width: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0x1FE5A93C),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0x40E5A93C)),
+                ),
+                child: const Icon(
+                  Icons.rocket_launch_rounded,
+                  color: Color(0xFFE5A93C),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome to Nivaarth Cockpit',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Institutional AI Intelligence Engine Active',
+                      style: TextStyle(
+                        color: Color(0xFF8E929B),
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          const Text(
+            'Add your current equity holdings to activate real-time analytics:',
+            style: TextStyle(
+              color: Color(0xFFD1D5DB),
+              fontSize: 13,
+              height: 1.4,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+          _buildOnboardingBullet(
+            icon: Icons.auto_awesome_rounded,
+            title: 'Deterministic 100-Point Conviction Scoring',
+            subtitle: 'Quality (25), Solvency (25), Growth (20), Valuation (15), Tech (10)',
+          ),
+          const SizedBox(height: 8),
+          _buildOnboardingBullet(
+            icon: Icons.shield_outlined,
+            title: 'Dynamic Portfolio Health & Risk Radar',
+            subtitle: 'Real-time concentration limits, factor diversification & drift alerts',
+          ),
+          const SizedBox(height: 8),
+          _buildOnboardingBullet(
+            icon: Icons.psychology_outlined,
+            title: 'NV Advisor Contextual Co-Pilot',
+            subtitle: 'Ask questions about your holdings with institutional quantitative models',
+          ),
+
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE5A93C),
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const AddHoldingSheet(),
+                );
+              },
+              icon: const Icon(Icons.add_circle_outline_rounded, size: 18, color: Colors.black),
+              label: const Text(
+                'Add Your First Holding',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOnboardingBullet({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: const Color(0xFFE5A93C)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: Color(0xFF757A85),
+                  fontSize: 11,
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -406,22 +406,25 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           );
                                         } else {
                                           final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
-                                          final savePrice = (liveQuote != null && liveQuote.currentPrice > 0)
+                                          final rawPrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.currentPrice
                                               : SymbolUtils.getEstimatedPrice(stock.instrument);
+                                          final savePrice = rawPrice > 0 ? rawPrice : 0.0;
                                           final changePct = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.changePercent
                                               : 0.0;
 
                                           watchlistNotifier.addStock(
                                             stock,
-                                            customPrice: savePrice,
+                                            customPrice: savePrice > 0 ? savePrice : null,
                                             dayChangePercent: changePct,
                                           );
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                '${SymbolUtils.normalize(stock.instrument)} saved at ₹${savePrice.toStringAsFixed(2)}',
+                                                savePrice > 0
+                                                    ? '${SymbolUtils.normalize(stock.instrument)} saved at ₹${savePrice.toStringAsFixed(2)}'
+                                                    : '${SymbolUtils.normalize(stock.instrument)} added to watchlist',
                                               ),
                                               backgroundColor: const Color(0xFF16171B),
                                             ),
@@ -657,16 +660,16 @@ class _LivePriceColumn extends ConsumerWidget {
         final hasChange = quote.changePercent != 0.0;
         final changeText = hasChange
             ? '${isPos ? '+' : ''}${quote.changePercent.toStringAsFixed(2)}%'
-            : 'Live NSE';
+            : (price > 0 ? 'Live NSE' : 'Pending');
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '₹${price.toStringAsFixed(2)}',
-              style: const TextStyle(
-                color: Colors.white,
+              price > 0 ? '₹${price.toStringAsFixed(2)}' : 'Syncing...',
+              style: TextStyle(
+                color: price > 0 ? Colors.white : const Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
                 fontSize: 13.5,
               ),
@@ -675,7 +678,7 @@ class _LivePriceColumn extends ConsumerWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (hasChange) ...[
+                if (hasChange && price > 0) ...[
                   Container(
                     width: 6,
                     height: 6,
@@ -691,7 +694,7 @@ class _LivePriceColumn extends ConsumerWidget {
                   style: TextStyle(
                     color: hasChange
                         ? (isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252))
-                        : const Color(0xFF00E676),
+                        : const Color(0xFF8E929B),
                     fontSize: 10.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -708,9 +711,9 @@ class _LivePriceColumn extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : '₹...',
-              style: const TextStyle(
-                color: Colors.white,
+              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : 'Syncing...',
+              style: TextStyle(
+                color: estPrice > 0 ? Colors.white : const Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
                 fontSize: 13.5,
               ),
@@ -719,7 +722,7 @@ class _LivePriceColumn extends ConsumerWidget {
             const Text(
               'Live NSE',
               style: TextStyle(
-                color: Color(0xFF00E676),
+                color: Color(0xFF8E929B),
                 fontSize: 10.5,
                 fontWeight: FontWeight.w700,
               ),
@@ -734,20 +737,20 @@ class _LivePriceColumn extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : '₹...',
+              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : '—',
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
                 fontSize: 13.5,
               ),
             ),
             const SizedBox(height: 2),
             const Text(
-              'Live NSE',
+              'Offline',
               style: TextStyle(
-                color: Color(0xFF00E676),
+                color: Color(0xFF8E929B),
                 fontSize: 10.5,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

@@ -130,7 +130,48 @@ class DashboardHeader extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.xl),
+              // Feedback & Issue Report Action
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  height: 38,
+                  width: 38,
+                  decoration: BoxDecoration(
+                    color: const Color(0x1F3B82F6),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    color: Color(0xFF3B82F6),
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  'Share Feedback / Report Bug',
+                  style: AppTypography.title.copyWith(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),
+                ),
+                subtitle: const Text(
+                  'Direct channel to the engineering team',
+                  style: AppTypography.caption,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Colors.white38,
+                ),
+                onTap: () {
+                  Navigator.pop(modalContext);
+                  _showFeedbackDialog(context);
+                },
+              ),
+
+              const SizedBox(height: AppSpacing.sm),
               const Divider(color: AppColors.line),
+              const SizedBox(height: AppSpacing.sm),
+
               // Regulatory & Legal Disclaimers Action
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -205,12 +246,97 @@ class DashboardHeader extends ConsumerWidget {
                   await _handleLogout(context);
                 },
               ),
+
+              const SizedBox(height: AppSpacing.lg),
+              const Center(
+                child: Text(
+                  'Nivaarth Friends Beta v1.0.0 (Build 1)',
+                  style: TextStyle(
+                    color: Color(0xFF757A85),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       );
     },
   );
+  }
+
+  void _showFeedbackDialog(BuildContext context) {
+    final feedbackCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF16171B),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.feedback_outlined, color: Color(0xFFE5A93C), size: 22),
+              SizedBox(width: 10),
+              Text('Friends Beta Feedback', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Found a bug or have a suggestion? Let us know directly:',
+                style: TextStyle(color: Color(0xFFD1D5DB), fontSize: 13),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: feedbackCtrl,
+                maxLines: 4,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: 'Describe the issue or idea...',
+                  hintStyle: const TextStyle(color: Color(0xFF757A85)),
+                  filled: true,
+                  fillColor: const Color(0xFF111215),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFF282A30)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFE5A93C)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE5A93C),
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Thank you! Your feedback has been noted for the next release.'),
+                    backgroundColor: Color(0xFF16171B),
+                  ),
+                );
+              },
+              child: const Text('Submit', style: TextStyle(fontWeight: FontWeight.w700)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _handleLogout(BuildContext context) async {

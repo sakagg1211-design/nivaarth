@@ -9,7 +9,11 @@ import '../models/stock_score.dart';
 import '../models/watchlist_item.dart';
 
 class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
-  static const String _localKey = 'nivaarth_local_watchlist_v1';
+  String _getLocalKey() {
+    final uid = _supabase.auth.currentUser?.id;
+    return uid != null ? 'nivaarth_watchlist_$uid' : 'nivaarth_guest_watchlist_v1';
+  }
+
   final SupabaseClient _supabase = Supabase.instance.client;
 
   WatchlistNotifier() : super([]) {
@@ -17,7 +21,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
   }
 
   Future<void> _init() async {
-    // 1. Instant Local Disk Restore (Survives app kill/recent tasks)
+    // 1. Instant Local Disk Restore for current user
     await _loadFromLocal();
     // 2. Multi-user Cloud Sync from Supabase
     await loadCloudWatchlist();
@@ -26,7 +30,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
   Future<void> _loadFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final list = prefs.getStringList(_localKey);
+      final list = prefs.getStringList(_getLocalKey());
       if (list != null && list.isNotEmpty) {
         final items = list.map((str) {
           final json = jsonDecode(str) as Map<String, dynamic>;
@@ -43,7 +47,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final list = state.map((item) => jsonEncode(item.toJson())).toList();
-      await prefs.setStringList(_localKey, list);
+      await prefs.setStringList(_getLocalKey(), list);
     } catch (_) {}
   }
 
