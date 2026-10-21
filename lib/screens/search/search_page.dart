@@ -234,7 +234,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         return const _SearchState(
                           icon: Icons.search_rounded,
                           title: 'Start with a symbol',
-                          message: 'Search any stock to see recommendations.',
+                          message: 'Search any stock to view 100-point conviction score.',
                         );
                       }
 

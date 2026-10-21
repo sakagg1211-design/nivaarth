@@ -106,19 +106,19 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final String tag;
     final String takeaway;
     if (stock.recommendation.isNotEmpty && stock.recommendation != 'PENDING') {
-      tag = stock.recommendation;
+      tag = SymbolUtils.toCompliantVerdict(stock.recommendation);
     } else if (stock.overallScore >= 80) {
       tag = 'STRONG OUTPERFORM';
     } else if (stock.overallScore >= 70) {
       tag = 'OUTPERFORM';
     } else if (stock.overallScore >= 60) {
-      tag = 'ACCUMULATE';
+      tag = 'MODERATE STRENGTH';
     } else if (stock.overallScore >= 45) {
-      tag = 'NEUTRAL / HOLD';
+      tag = 'NEUTRAL / WATCH';
     } else if (stock.overallScore >= 35) {
-      tag = 'CAUTION';
+      tag = 'ELEVATED RISK';
     } else {
-      tag = 'UNDERPERFORM';
+      tag = 'HIGH RISK';
     }
 
     if (stock.overallScore >= 80) {
@@ -165,21 +165,21 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final String computedTag;
     final String takeaway;
     if (tag.isNotEmpty && tag != 'BUY' && tag != 'PENDING') {
-      computedTag = tag;
+      computedTag = SymbolUtils.toCompliantVerdict(tag);
     } else if (score >= 80) {
       computedTag = 'STRONG OUTPERFORM';
     } else if (score >= 70) {
       computedTag = 'OUTPERFORM';
     } else if (score >= 60) {
-      computedTag = 'ACCUMULATE';
+      computedTag = 'MODERATE STRENGTH';
     } else if (score >= 45) {
-      computedTag = 'NEUTRAL / HOLD';
+      computedTag = 'NEUTRAL / WATCH';
     } else if (score >= 35) {
-      computedTag = 'CAUTION';
+      computedTag = 'ELEVATED RISK';
     } else if (score > 0) {
-      computedTag = 'UNDERPERFORM';
+      computedTag = 'HIGH RISK';
     } else {
-      computedTag = 'MONITORED';
+      computedTag = 'NEUTRAL / WATCH';
     }
 
     if (score >= 75) {

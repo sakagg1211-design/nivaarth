@@ -1,3 +1,5 @@
+import '../core/utils/symbol_utils.dart';
+
 class StockScore {
   final String instrument;
 
@@ -52,7 +54,7 @@ class StockScore {
       technical: 0,
       risk: 0,
       overallScore: 0,
-      recommendation: "HOLD",
+      recommendation: "NEUTRAL / WATCH",
       confidence: 0,
       lastUpdated: null,
       analystVerdict: null,
@@ -105,9 +107,7 @@ class StockScore {
               0,
 
       recommendation:
-          json["Recommendation"]
-                  ?.toString() ??
-              "",
+          SymbolUtils.toCompliantVerdict(json["Recommendation"]?.toString()),
 
       confidence:
           (json["Confidence"] as num?)

@@ -127,7 +127,10 @@ for (final score in scores) {
         .where(
           (e) {
             final rec = e.recommendation.toLowerCase();
-            return rec == "buy" || rec == "outperform" || rec == "accumulate";
+            return rec.contains("outperform") ||
+                rec.contains("strength") ||
+                rec == "buy" ||
+                rec == "accumulate";
           },
         )
         .length;
@@ -139,10 +142,12 @@ for (final score in scores) {
   ) {
     return portfolioScores(portfolio, scores)
         .where(
-          (e) =>
-              e.recommendation
-                  .toLowerCase() ==
-              "sell",
+          (e) {
+            final rec = e.recommendation.toLowerCase();
+            return rec.contains("high risk") ||
+                rec.contains("underperform") ||
+                rec == "sell";
+          },
         )
         .length;
   }

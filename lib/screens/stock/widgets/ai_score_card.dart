@@ -856,13 +856,13 @@ class _RecommendationChip extends StatelessWidget {
     if (rec.contains("OUTPERFORM") || rec.contains("BUY")) {
       return AppColors.success;
     }
-    if (rec.contains("ACCUMULATE")) {
+    if (rec.contains("MODERATE STRENGTH") || rec.contains("ACCUMULATE")) {
       return const Color(0xFF4ADE80);
     }
-    if (rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+    if (rec.contains("HIGH RISK") || rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
       return AppColors.danger;
     }
-    if (rec.contains("CAUTION") || rec.contains("REDUCE")) {
+    if (rec.contains("ELEVATED RISK") || rec.contains("CAUTION") || rec.contains("REDUCE")) {
       return Colors.orange;
     }
     return AppColors.warning;

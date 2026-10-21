@@ -284,11 +284,11 @@ String get headerChip {
 
                                 const SizedBox(height: 4),
 
-                                const Text(
-                                  "SELL",
-                                  style: TextStyle(
+                                Text(
+                                  stock.recommendation.isNotEmpty ? stock.recommendation : "HIGH RISK",
+                                  style: const TextStyle(
                                     color: Color(0xFFEF4444),
-                                    fontSize: 11,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),

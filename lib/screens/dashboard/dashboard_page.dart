@@ -187,7 +187,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                 // 3. Compact AI Portfolio Health Gauge Card
                                 PortfolioHealthCard(
                                   healthScore: data.portfolioHealth,
-                                  action: data.aiRecommendation.recommendation.name.toUpperCase(),
+                                  action: data.aiRecommendation.recommendation.label,
                                   aiConfidence: data.aiRecommendation.confidence.toDouble(),
                                   onOpenAdvisor: widget.onOpenAdvisor ?? () {
                                     Navigator.push(

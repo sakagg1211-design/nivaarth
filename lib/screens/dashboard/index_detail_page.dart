@@ -875,12 +875,13 @@ class _GaugeColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isStrongBuy = verdict.contains('Strong Buy');
-    final Color color = isStrongBuy
+    final bool isBullish = verdict == 'Bullish' || verdict.contains('Bull');
+    final bool isBearish = verdict == 'Bearish' || verdict.contains('Bear');
+    final Color color = isBullish
         ? const Color(0xFF00E676)
-        : (verdict == 'Buy'
-            ? const Color(0xFF10B981)
-            : (verdict == 'Neutral' ? const Color(0xFFE5A93C) : const Color(0xFFFF5252)));
+        : (isBearish
+            ? const Color(0xFFFF5252)
+            : const Color(0xFFE5A93C));
 
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -379,17 +379,18 @@ class WatchlistTableView extends StatelessWidget {
                 children: [
                   Builder(
                     builder: (context) {
-                      final upper = item.technicalTag.toUpperCase();
+                      final compliantTag = SymbolUtils.toCompliantVerdict(item.technicalTag);
+                      final upper = compliantTag.toUpperCase();
                       final Color tagBg;
-                      if (upper.contains('STRONG') || upper.contains('OUTPERFORM') || upper.contains('BUY')) {
+                      if (upper.contains('STRONG') || upper.contains('OUTPERFORM')) {
                         tagBg = const Color(0xFF00E676);
-                      } else if (upper.contains('ACCUMULATE')) {
+                      } else if (upper.contains('MODERATE') || upper.contains('STRENGTH')) {
                         tagBg = const Color(0xFF4ADE80);
-                      } else if (upper.contains('HOLD') || upper.contains('NEUTRAL') || upper.contains('RANGE')) {
+                      } else if (upper.contains('WATCH') || upper.contains('NEUTRAL') || upper.contains('RANGE')) {
                         tagBg = const Color(0xFFE5A93C);
-                      } else if (upper.contains('CAUTION') || upper.contains('REDUCE')) {
+                      } else if (upper.contains('ELEVATED') || upper.contains('RISK') && !upper.contains('HIGH')) {
                         tagBg = const Color(0xFFFF9800);
-                      } else if (upper.contains('SELL') || upper.contains('UNDERPERFORM') || upper.contains('AVOID')) {
+                      } else if (upper.contains('HIGH RISK') || upper.contains('UNDERPERFORM') || upper.contains('AVOID')) {
                         tagBg = const Color(0xFFFF5252);
                       } else {
                         tagBg = const Color(0xFF282A30);
@@ -406,7 +407,7 @@ class WatchlistTableView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          item.technicalTag.toUpperCase(),
+                          compliantTag,
                           style: TextStyle(
                             color: textColor,
                             fontWeight: FontWeight.w900,

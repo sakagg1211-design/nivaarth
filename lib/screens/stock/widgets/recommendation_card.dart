@@ -397,19 +397,19 @@ class RecommendationCard extends StatelessWidget {
 
   Color _recommendationColor() {
     final rec = score.recommendation.toUpperCase();
-    if (rec.contains("STRONG OUTPERFORM") || rec == "STRONG BUY" || rec == "BUY") {
+    if (rec.contains("STRONG OUTPERFORM") || rec.contains("STRONG BUY")) {
       return AppColors.success;
     }
-    if (rec.contains("OUTPERFORM")) {
+    if (rec.contains("OUTPERFORM") || rec == "BUY") {
       return AppColors.success;
     }
-    if (rec.contains("ACCUMULATE")) {
+    if (rec.contains("MODERATE STRENGTH") || rec.contains("ACCUMULATE")) {
       return const Color(0xFF4ADE80);
     }
-    if (rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+    if (rec.contains("HIGH RISK") || rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
       return AppColors.danger;
     }
-    if (rec.contains("CAUTION") || rec.contains("REDUCE")) {
+    if (rec.contains("ELEVATED RISK") || rec.contains("CAUTION") || rec.contains("REDUCE")) {
       return const Color(0xFFFF7043);
     }
     return AppColors.warning;

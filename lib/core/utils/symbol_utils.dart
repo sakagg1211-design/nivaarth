@@ -685,4 +685,30 @@ class SymbolUtils {
 
     return results;
   }
+
+  /// Normalizes legacy or non-compliant recommendation strings to SEBI-compliant
+  /// quantitative factor bands (e.g. STRONG OUTPERFORM, OUTPERFORM, MODERATE STRENGTH).
+  static String toCompliantVerdict(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return 'NEUTRAL / WATCH';
+    final upper = raw.trim().toUpperCase();
+    if (upper == 'STRONG BUY' || upper == 'STRONG OUTPERFORM') {
+      return 'STRONG OUTPERFORM';
+    }
+    if (upper == 'BUY' || upper == 'OUTPERFORM') {
+      return 'OUTPERFORM';
+    }
+    if (upper == 'ACCUMULATE' || upper == 'MODERATE STRENGTH' || upper == 'MODERATE') {
+      return 'MODERATE STRENGTH';
+    }
+    if (upper == 'HOLD' || upper.contains('HOLD') || upper == 'NEUTRAL' || upper.contains('WATCH')) {
+      return 'NEUTRAL / WATCH';
+    }
+    if (upper == 'REDUCE' || upper == 'CAUTION' || upper == 'ELEVATED RISK') {
+      return 'ELEVATED RISK';
+    }
+    if (upper == 'SELL' || upper == 'UNDERPERFORM' || upper == 'HIGH RISK') {
+      return 'HIGH RISK';
+    }
+    return upper;
+  }
 }

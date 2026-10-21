@@ -4,7 +4,24 @@ enum RecommendationType {
   accumulate,
   hold,
   reduce,
-  sell,
+  sell;
+
+  String get label {
+    switch (this) {
+      case RecommendationType.strongBuy:
+        return 'STRONG OUTPERFORM';
+      case RecommendationType.buy:
+        return 'OUTPERFORM';
+      case RecommendationType.accumulate:
+        return 'MODERATE STRENGTH';
+      case RecommendationType.hold:
+        return 'NEUTRAL / WATCH';
+      case RecommendationType.reduce:
+        return 'ELEVATED RISK';
+      case RecommendationType.sell:
+        return 'HIGH RISK';
+    }
+  }
 }
 
 class AIRecommendation {
