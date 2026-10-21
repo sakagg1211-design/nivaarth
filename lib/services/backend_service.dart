@@ -1,25 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class BackendService {
   static const String baseUrl = "https://nivaarth-backend.onrender.com";
 
   Future<void> startAutomation() async {
-    print("🚀 STEP 1 : startAutomation() called");
+    debugPrint("🚀 STEP 1 : startAutomation() called");
 
     final url = Uri.parse("$baseUrl/automation/start");
 
-    print("🌐 URL : $url");
+    debugPrint("🌐 URL : $url");
 
     try {
       final response = await http
           .post(url)
           .timeout(const Duration(seconds: 10));
 
-      print("📡 Status Code : ${response.statusCode}");
-      print("📄 Response Body : ${response.body}");
+      debugPrint("📡 Status Code : ${response.statusCode}");
+      debugPrint("📄 Response Body : ${response.body}");
 
       if (response.statusCode != 200) {
         throw Exception(
@@ -29,19 +30,19 @@ class BackendService {
 
       final json = jsonDecode(response.body);
 
-      print("✅ Parsed Response : $json");
+      debugPrint("✅ Parsed Response : $json");
 
       if (json["success"] != true) {
         throw Exception("Automation completed with failure.");
       }
 
-      print("🎉 Backend automation completed");
+      debugPrint("🎉 Backend automation completed");
     } on TimeoutException {
       throw Exception(
         "Backend request timed out. Render may be waking up or automation is taking longer than expected.",
       );
     } catch (e) {
-      print("❌ Backend Error: $e");
+      debugPrint("❌ Backend Error: $e");
       rethrow;
     }
   }
@@ -64,9 +65,9 @@ class BackendService {
           )
           .timeout(const Duration(seconds: 15));
 
-      print("Onboard stock response: ${response.statusCode}");
+      debugPrint("Onboard stock response: ${response.statusCode}");
     } catch (e) {
-      print("Onboard stock background error: $e");
+      debugPrint("Onboard stock background error: $e");
     }
   }
 
@@ -91,7 +92,7 @@ class BackendService {
         throw Exception("Server returned ${response.statusCode}");
       }
     } catch (e) {
-      print("AI Chat Backend Error: $e");
+      debugPrint("AI Chat Backend Error: $e");
       rethrow;
     }
   }
@@ -109,7 +110,7 @@ class BackendService {
       }
       return [];
     } catch (e) {
-      print("Smart Alerts Backend Error: $e");
+      debugPrint("Smart Alerts Backend Error: $e");
       return [];
     }
   }

@@ -32,7 +32,7 @@ class ChartSelector extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: _ranges.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (context, index) =>
             const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
           final range = _ranges[index];
@@ -57,7 +57,7 @@ class ChartSelector extends StatelessWidget {
                 border: Border.all(
                   color: selected
                       ? AppColors.primary
-                      : AppColors.outline.withOpacity(.30),
+                      : AppColors.outline.withValues(alpha: 0.30),
                 ),
               ),
               child: Center(

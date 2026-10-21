@@ -483,7 +483,6 @@ class _ReasonRow extends StatelessWidget {
   final String text;
 
   const _ReasonRow({
-    super.key,
     required this.icon,
     required this.color,
     required this.text,
@@ -524,7 +523,6 @@ class _MetricTile extends StatelessWidget {
   final int value;
 
   const _MetricTile({
-    super.key,
     required this.title,
     required this.value,
   });

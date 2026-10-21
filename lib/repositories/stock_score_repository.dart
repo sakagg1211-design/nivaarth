@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
@@ -11,8 +12,6 @@ class StockScoreRepository {
         .from("StockScores")
         .select()
         .order("OverallScore", ascending: false);
-
-    print("Stock Scores : ${response.length}");
 
     return response
         .map<StockScore>(
@@ -63,7 +62,7 @@ Future<StockScore?> getScore(
         return StockScore.fromJson(ilikeMatch.first);
       }
     } catch (e) {
-      print("StockScores query error for $normalized: $e");
+      debugPrint("StockScores query error for $normalized: $e");
     }
 
     // Return null if not yet calculated in database.

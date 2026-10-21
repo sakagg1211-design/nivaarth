@@ -11,12 +11,6 @@ class PriceRepository {
         .select()
         .order("Instrument");
 
-    print("PRICE ROWS : ${response.length}");
-
-    if (response.isNotEmpty) {
-      print(response.first);
-    }
-
     return response
         .map<Price>((json) => Price.fromJson(json))
         .toList();

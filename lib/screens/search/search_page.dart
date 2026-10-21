@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/utils/symbol_utils.dart';
 import '../../models/live_portfolio.dart';
 import '../../models/portfolio.dart';
-import '../../models/stock_score.dart';
-import '../../models/watchlist_item.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/live_quote_provider.dart';
 import '../../providers/search_provider.dart';
@@ -260,7 +256,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
                         itemCount: stocks.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                       itemBuilder: (context, index) {
                         final stock = stocks[index];
@@ -295,12 +291,6 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                   ? liveQuote.currentPrice
                                   : SymbolUtils.getEstimatedPrice(cleanSym);
-                              final liveChange = (liveQuote != null && liveQuote.currentPrice > 0)
-                                  ? liveQuote.change
-                                  : 0.0;
-                              final liveChangePct = (liveQuote != null && liveQuote.currentPrice > 0)
-                                  ? liveQuote.changePercent
-                                  : 0.0;
 
                               final displayName = stock.companyName.isNotEmpty && stock.companyName.toUpperCase() != cleanSym
                                   ? stock.companyName
@@ -730,7 +720,7 @@ class _LivePriceColumn extends ConsumerWidget {
           ],
         );
       },
-      error: (_, __) {
+      error: (error, stack) {
         final estPrice = SymbolUtils.getEstimatedPrice(clean);
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -50,7 +50,6 @@ class PortfolioAnalyzer {
     double currentValue = 0;
     double previousPortfolioValue = 0;
     double totalPnL = 0;
-    double todayPnL = 0;
 
     int profitStocks = 0;
     int lossStocks = 0;
@@ -63,7 +62,6 @@ class PortfolioAnalyzer {
       currentValue += stock.currentValue;
       previousPortfolioValue += (stock.currentValue - stock.todayPL);
       totalPnL += stock.netPL;
-      todayPnL += stock.todayPL;
 
       if (stock.netPL >= 0) {
         profitStocks++;

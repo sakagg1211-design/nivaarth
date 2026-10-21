@@ -14,7 +14,7 @@ class MarketIndicesBar extends ConsumerWidget {
 
     return indicesAsync.when(
       loading: () => _buildShimmer(),
-      error: (_, __) => _buildFallback(),
+      error: (error, stack) => _buildFallback(),
       data: (indices) {
         return Row(
           children: [

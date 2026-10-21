@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
   final String action;

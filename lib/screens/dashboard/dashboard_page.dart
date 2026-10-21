@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/market_indices_provider.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../providers/price_provider.dart';
-import '../../services/backend_service.dart';
 import '../advisor/advisor_chat_page.dart';
 import '../home/home_page.dart';
 import 'widgets/ai_briefing_card.dart';
@@ -33,7 +30,6 @@ class DashboardPage extends ConsumerStatefulWidget {
 
 class _DashboardPageState extends ConsumerState<DashboardPage>
     with WidgetsBindingObserver {
-  final BackendService _backendService = BackendService();
   bool _isRefreshing = false;
   DateTime _lastUpdated = DateTime.now();
 
@@ -296,80 +292,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
       ),
     );
   }
-}
-
-class _ScreenState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-  final bool loading;
-  final Widget? action;
-
-  const _ScreenState({
-    required this.icon,
-    required this.title,
-    required this.message,
-    this.loading = false,
-    this.action,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 52,
-              width: 52,
-              decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: const Color(0xFF282A30)),
-              ),
-              child: Icon(icon, color: Colors.white),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF8E929B),
-                fontSize: 14,
-              ),
-            ),
-            if (loading) ...[
-              const SizedBox(height: AppSpacing.lg),
-              const SizedBox(
-                width: 140,
-                child: LinearProgressIndicator(
-                  minHeight: 2,
-                  backgroundColor: Color(0xFF23252B),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
-                ),
-              ),
-            ],
-            if (action != null) ...[
-              const SizedBox(height: AppSpacing.lg),
-              action!,
-            ],
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildNewUserOnboardingCard(BuildContext context) {
     return Container(
@@ -482,7 +404,7 @@ class _ScreenState extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (_) => const AddHoldingSheet(),
+                  builder: (context) => const AddHoldingSheet(),
                 );
               },
               icon: const Icon(Icons.add_circle_outline_rounded, size: 18, color: Colors.black),
@@ -535,6 +457,80 @@ class _ScreenState extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ScreenState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String message;
+  final bool loading;
+  final Widget? action;
+
+  const _ScreenState({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.loading = false,
+    this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 52,
+              width: 52,
+              decoration: BoxDecoration(
+                color: const Color(0xFF16171B),
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                border: Border.all(color: const Color(0xFF282A30)),
+              ),
+              child: Icon(icon, color: Colors.white),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF8E929B),
+                fontSize: 14,
+              ),
+            ),
+            if (loading) ...[
+              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(
+                width: 140,
+                child: LinearProgressIndicator(
+                  minHeight: 2,
+                  backgroundColor: Color(0xFF23252B),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                ),
+              ),
+            ],
+            if (action != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              action!,
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

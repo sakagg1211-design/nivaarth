@@ -354,7 +354,7 @@ class _StockDetailPageState
                           ),
                         ),
                       ),
-                      error: (_, __) => const Center(
+                      error: (error, stack) => const Center(
                         child: Text(
                           "Historical Chart Coming Soon",
                           style: TextStyle(

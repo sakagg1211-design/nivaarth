@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
@@ -41,7 +42,7 @@ class StockRepository {
         }
       }
     } catch (e) {
-      print('StockScores search error: $e');
+      debugPrint('StockScores search error: $e');
     }
 
     // 2. Query Supabase 'listedstocks' master table
@@ -105,7 +106,7 @@ class StockRepository {
         }
       }
     } catch (e) {
-      print('listedstocks query error: $e');
+      debugPrint('listedstocks query error: $e');
     }
 
     // 3. Augment from Market Universe Catalog

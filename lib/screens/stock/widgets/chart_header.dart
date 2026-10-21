@@ -72,7 +72,7 @@ class ChartHeader extends StatelessWidget {
                 vertical: 4,
               ),
               decoration: BoxDecoration(
-                color: gainColor.withOpacity(.10),
+                color: gainColor.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(
                   AppRadius.lg,
                 ),

@@ -228,7 +228,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Image.asset(
                           'assets/images/logo.jpg',
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
+                          errorBuilder: (context, error, stackTrace) => Container(
                             color: const Color(0xFF16171B),
                             child: const Center(
                               child: Text(

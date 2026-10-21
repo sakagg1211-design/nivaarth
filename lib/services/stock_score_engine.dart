@@ -26,16 +26,10 @@ for (final score in scores) {
     .replaceAll("-BE", "")
     .replaceAll(".NS", "");
 
-  print("Portfolio : $symbol");
-
   if (scoreMap.containsKey(symbol)) {
-    print("Matched : $symbol");
     result.add(scoreMap[symbol]!);
-  } else {
-    print("Not Found : $symbol");
   }
 }
-print(scoreMap.keys.toList());
     return result;
   }
 

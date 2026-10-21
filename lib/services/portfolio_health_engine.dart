@@ -78,7 +78,6 @@ class PortfolioHealthEngine {
 // Portfolio Health comes from weighted OverallScore
     final double overall =
     overallWeighted / totalInvestment;
-    print("Overall Health : $overall");
     String status;
 
     if (overall >= 90) {

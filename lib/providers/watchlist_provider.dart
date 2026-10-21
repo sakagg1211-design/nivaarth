@@ -61,9 +61,9 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
           .select()
           .eq('user_id', user.id);
 
-      if (response != null && response is List && response.isNotEmpty) {
+      if (response.isNotEmpty) {
         final loaded = response.map((json) {
-          return WatchlistItem.fromJson(json as Map<String, dynamic>);
+          return WatchlistItem.fromJson(json);
         }).toList();
 
         if (loaded.isNotEmpty) {

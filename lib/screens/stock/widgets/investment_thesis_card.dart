@@ -26,7 +26,7 @@ class InvestmentThesisCard extends StatelessWidget {
           AppRadius.lg,
         ),
         border: Border.all(
-          color: AppColors.outline.withOpacity(.25),
+          color: AppColors.outline.withValues(alpha: 0.25),
         ),
       ),
       child: Column(

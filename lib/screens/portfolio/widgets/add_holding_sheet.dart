@@ -301,7 +301,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   itemCount: _suggestions.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFF282A30)),
+                  separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFF282A30)),
                   itemBuilder: (context, index) {
                     final item = _suggestions[index];
                     final cleanSym = SymbolUtils.normalize(item.instrument);
@@ -362,7 +362,16 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             ),
 
             // Live LTP Badge
-            if (_liveLtp != null && _liveLtp! > 0) ...[
+            if (_fetchingLtp) ...[
+              const SizedBox(height: 8),
+              const Row(
+                children: [
+                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFE5A93C))),
+                  SizedBox(width: 8),
+                  Text('Fetching live price...', style: TextStyle(color: Color(0xFF8E929B), fontSize: 11.5)),
+                ],
+              ),
+            ] else if (_liveLtp != null && _liveLtp! > 0) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

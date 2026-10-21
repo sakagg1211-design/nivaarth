@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../models/user_alert.dart';
 import '../../providers/alerts_provider.dart';
 
@@ -110,7 +108,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(AppSpacing.lg),
                     itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                    separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.md),
                     itemBuilder: (context, index) {
                       final item = filtered[index];
                       return _buildAlertCard(item);
@@ -201,7 +199,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         icon = Icons.error_outline_rounded;
         break;
       case AlertSeverity.info:
-      default:
         accentColor = const Color(0xFF29B6F6);
         icon = Icons.info_outline_rounded;
         break;

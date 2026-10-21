@@ -32,7 +32,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
               .eq('user_id', userId)
               .order('created_at', ascending: false);
 
-          if (res is List && res.isNotEmpty) {
+          if (res.isNotEmpty) {
             alerts = res.map((item) => UserAlert.fromJson(item)).toList();
           }
         } catch (_) {

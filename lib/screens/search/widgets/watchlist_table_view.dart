@@ -79,7 +79,7 @@ class WatchlistTableView extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length + 1, // +1 for Header row
-          separatorBuilder: (_, __) => const Divider(
+          separatorBuilder: (context, index) => const Divider(
             color: Color(0xFF23252B),
             height: 1,
             thickness: 1,

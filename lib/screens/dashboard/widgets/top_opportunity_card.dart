@@ -376,7 +376,6 @@ class _MetricTile extends StatelessWidget {
   final int value;
 
   const _MetricTile({
-    super.key,
     required this.title,
     required this.value,
   });
