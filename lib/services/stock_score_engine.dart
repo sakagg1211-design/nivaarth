@@ -157,7 +157,7 @@ for (final score in scores) {
     List<StockScore> scores,
   ) {
     return portfolioScores(portfolio, scores)
-        .where((e) => e.risk >= 70)
+        .where((e) => e.risk <= 2 || e.overallScore < 45)
         .toList();
   }
 

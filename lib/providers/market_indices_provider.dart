@@ -78,9 +78,10 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       isLive: true,
     );
   } else if (dbNifty != null && dbNifty.currentPrice > 5000) {
-    final prev = dbNifty.previousClose > 0 ? dbNifty.previousClose : (dbNifty.dayLow > 0 ? dbNifty.dayLow : dbNifty.currentPrice);
-    final delta = dbNifty.currentPrice - prev;
-    final pct = prev > 0 ? (delta / prev) * 100 : 0.0;
+    final hasPrev = dbNifty.previousClose > 0;
+    final prev = hasPrev ? dbNifty.previousClose : dbNifty.currentPrice;
+    final delta = hasPrev ? (dbNifty.currentPrice - prev) : 0.0;
+    final pct = (hasPrev && prev > 0) ? (delta / prev) * 100 : 0.0;
     niftyItem = MarketIndexItem(
       name: 'NIFTY 50',
       value: dbNifty.currentPrice,
@@ -88,7 +89,7 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       changePercent: pct,
       dayHigh: dbNifty.dayHigh > 0 ? dbNifty.dayHigh : dbNifty.currentPrice,
       dayLow: dbNifty.dayLow > 0 ? dbNifty.dayLow : dbNifty.currentPrice,
-      isLive: true,
+      isLive: hasPrev,
     );
   } else {
     niftyItem = const MarketIndexItem(
@@ -115,9 +116,10 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       isLive: true,
     );
   } else if (dbSensex != null && dbSensex.currentPrice > 10000) {
-    final prev = dbSensex.previousClose > 0 ? dbSensex.previousClose : (dbSensex.dayLow > 0 ? dbSensex.dayLow : dbSensex.currentPrice);
-    final delta = dbSensex.currentPrice - prev;
-    final pct = prev > 0 ? (delta / prev) * 100 : 0.0;
+    final hasPrev = dbSensex.previousClose > 0;
+    final prev = hasPrev ? dbSensex.previousClose : dbSensex.currentPrice;
+    final delta = hasPrev ? (dbSensex.currentPrice - prev) : 0.0;
+    final pct = (hasPrev && prev > 0) ? (delta / prev) * 100 : 0.0;
     sensexItem = MarketIndexItem(
       name: 'SENSEX',
       value: dbSensex.currentPrice,
@@ -125,7 +127,7 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       changePercent: pct,
       dayHigh: dbSensex.dayHigh > 0 ? dbSensex.dayHigh : dbSensex.currentPrice,
       dayLow: dbSensex.dayLow > 0 ? dbSensex.dayLow : dbSensex.currentPrice,
-      isLive: true,
+      isLive: hasPrev,
     );
   } else {
     sensexItem = const MarketIndexItem(

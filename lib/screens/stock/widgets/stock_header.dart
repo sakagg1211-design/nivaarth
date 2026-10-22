@@ -301,9 +301,9 @@ class StockHeader extends StatelessWidget {
                 ),
               ),
               child: Text(
-                status == 'WATCHLIST' || status == 'DISCOVERY'
-                    ? "Live Market Quote   (NSE)"
-                    : "${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                status == 'PORTFOLIO'
+                    ? "All-Time: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})"
+                    : "Today: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
                 style: AppTypography
                     .bodyMedium
                     .copyWith(
@@ -341,7 +341,7 @@ class StockHeader extends StatelessWidget {
               Expanded(
                 child: _HeaderMetric(
                   title: "Status",
-                  value: status.isNotEmpty ? status : (isProfit ? "PORTFOLIO" : "WATCHLIST"),
+                  value: status.isNotEmpty ? status : "UNTRACKED",
                 ),
               ),
             ],

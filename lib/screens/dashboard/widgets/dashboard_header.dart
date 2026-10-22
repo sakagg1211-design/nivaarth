@@ -7,6 +7,9 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../providers/alerts_provider.dart';
+import '../../../providers/dashboard_provider.dart';
+import '../../../providers/live_portfolio_provider.dart';
+import '../../../providers/watchlist_provider.dart';
 import '../../../services/auth_service.dart';
 import '../../login/welcome_screen.dart';
 import '../../notifications/notifications_page.dart';
@@ -30,7 +33,7 @@ class DashboardHeader extends ConsumerWidget {
     return 'Investor';
   }
 
-  void _showUserMenu(BuildContext context) {
+  void _showUserMenu(BuildContext context, WidgetRef ref) {
     final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? 'user@nivaarth.ai';
 
@@ -243,7 +246,7 @@ class DashboardHeader extends ConsumerWidget {
                 ),
                 onTap: () async {
                   Navigator.pop(modalContext);
-                  await _handleLogout(context);
+                  await _handleLogout(context, ref);
                 },
               ),
 
@@ -339,7 +342,7 @@ class DashboardHeader extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleLogout(BuildContext context) async {
+  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -371,6 +374,12 @@ class DashboardHeader extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       final authService = AuthService();
       await authService.signOut();
+
+      // Clear in-memory Riverpod user state to prevent session cross-contamination
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(livePortfolioProvider);
+      ref.invalidate(watchlistProvider);
+      ref.invalidate(alertsProvider);
 
       if (!context.mounted) return;
 
@@ -459,7 +468,7 @@ class DashboardHeader extends ConsumerWidget {
         _HeaderIconButton(
           icon: Icons.info_outline_rounded,
           tooltip: 'Profile & Details',
-          onTap: () => _showUserMenu(context),
+          onTap: () => _showUserMenu(context, ref),
         ),
         const SizedBox(width: 8),
         // Action 2: Notifications
@@ -482,7 +491,7 @@ class DashboardHeader extends ConsumerWidget {
         _HeaderIconButton(
           icon: Icons.logout_rounded,
           tooltip: 'Log out',
-          onTap: () => _handleLogout(context),
+          onTap: () => _handleLogout(context, ref),
         ),
       ],
     );

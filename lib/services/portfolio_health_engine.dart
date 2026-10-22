@@ -30,9 +30,11 @@ class PortfolioHealthEngine {
       ] = score;
     }
 
-    // Calculate weighted averages
+    // Calculate weighted averages based on Current Market Exposure
     for (final holding in portfolio) {
-      final investment = holding.portfolio.totalInvested;
+      final exposure = holding.currentValue > 0
+          ? holding.currentValue
+          : holding.portfolio.totalInvested;
 
       final StockScore? score = scoreMap[
         SymbolUtils.normalize(
@@ -43,15 +45,15 @@ class PortfolioHealthEngine {
       if (score == null) {
         continue;
       }
-      overallWeighted += score.overallScore * investment;
-      totalInvestment += investment;
+      overallWeighted += score.overallScore * exposure;
+      totalInvestment += exposure;
 
-      business += score.businessQuality * investment;
-      financial += score.financialStrength * investment;
-      growth += score.growth * investment;
-      valuation += score.valuation * investment;
-      technical += score.technical * investment;
-      risk += score.risk * investment;
+      business += score.businessQuality * exposure;
+      financial += score.financialStrength * exposure;
+      growth += score.growth * exposure;
+      valuation += score.valuation * exposure;
+      technical += score.technical * exposure;
+      risk += score.risk * exposure;
     }
 
     if (totalInvestment == 0) {

@@ -3,8 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/utils/symbol_utils.dart';
+import '../../models/live_portfolio.dart';
+import '../../models/portfolio.dart';
 import '../../models/user_alert.dart';
 import '../../providers/alerts_provider.dart';
+import '../../providers/live_portfolio_provider.dart';
+import '../../providers/live_quote_provider.dart';
+import '../stock/stock_detail_page.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
@@ -207,6 +213,47 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     return InkWell(
       onTap: () {
         ref.read(alertsProvider.notifier).markAsRead(alert.id);
+        final rawSym = alert.symbol?.trim();
+        if (rawSym != null && rawSym.isNotEmpty) {
+          final sym = SymbolUtils.normalize(rawSym);
+          final liveHoldings = ref.read(livePortfolioProvider).value ?? [];
+          final matchingHolding = liveHoldings.where((h) => SymbolUtils.normalize(h.portfolio.instrument) == sym).firstOrNull;
+
+          final liveQuote = ref.read(liveQuoteProvider(sym)).value;
+          final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
+              ? liveQuote.currentPrice
+              : SymbolUtils.getEstimatedPrice(sym);
+
+          final targetStock = matchingHolding ??
+              LivePortfolio(
+                portfolio: Portfolio(
+                  id: '0',
+                  instrument: sym,
+                  companyName: SymbolUtils.getDisplayName(sym),
+                  yahooSymbol: SymbolUtils.getYahooSymbol(sym),
+                  qty: 0,
+                  avgPrice: 0.0,
+                  totalInvested: 0.0,
+                  currentValue: 0.0,
+                  netPL: 0.0,
+                  sector: SymbolUtils.getSector(sym),
+                  industry: SymbolUtils.getIndustry(sym),
+                  status: 'WATCHLIST',
+                  investmentThesis: SymbolUtils.getEstimatedThesis(sym),
+                ),
+                currentPrice: livePrice,
+                currentValue: 0.0,
+                netPL: 0.0,
+                returnPercent: 0.0,
+              );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => StockDetailPage(stock: targetStock),
+            ),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(14),
       child: Container(
