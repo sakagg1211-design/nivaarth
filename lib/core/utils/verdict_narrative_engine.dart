@@ -186,10 +186,12 @@ class VerdictNarrativeEngine {
           isPositive: false,
         );
         playbook = TacticalPlaybook(
-          existingHoldersGuideline:
-              'Hold firmly. Sovereign backing and strong balance sheet provide high downside protection. Avoid panic selling.',
-          freshCapitalGuideline:
-              'Accumulate systematically in defined support bands rather than chasing impulsive intraday moves.',
+          existingHoldersGuideline: isOwned
+              ? 'Currently in your portfolio. Hold firmly through base-building. Sovereign backing and clean solvency (${score.financialStrength}/25 FS) provide high downside protection; avoid panic selling.'
+              : 'Core sovereign infrastructure holding. Established holders should hold firmly; sovereign backing provides strong downside protection.',
+          freshCapitalGuideline: isOwned
+              ? 'Position already established. Only add incrementally in defined technical support bands rather than chasing impulsive intraday spikes.'
+              : 'Accumulate systematically in defined support bands rather than chasing impulsive intraday moves.',
           keyMonitorable:
               'Government capex budget releases and quarterly order backlog execution rate.',
         );
@@ -214,10 +216,12 @@ class VerdictNarrativeEngine {
           isPositive: false,
         );
         playbook = TacticalPlaybook(
-          existingHoldersGuideline:
-              'Hold with a trailing stop-loss below the 50-day EMA. Allow compounding trend to run.',
-          freshCapitalGuideline:
-              'Stagger entries in tranches; avoid lump-sum buying during gap-up breakout sessions.',
+          existingHoldersGuideline: isOwned
+              ? 'Currently generating strong alpha in your portfolio. Hold with a trailing stop-loss below the 50-day EMA to let compounding run.'
+              : 'Hold with a trailing stop-loss below the 50-day EMA. Allow compounding trend to run.',
+          freshCapitalGuideline: isOwned
+              ? 'Maintain existing allocation cap; pyramid cautiously only on mild 2-3% pullbacks towards the 20-day EMA.'
+              : 'Stagger entries in tranches; avoid lump-sum buying during gap-up breakout sessions.',
           keyMonitorable:
               'New order award announcements and operating EBITDA margin defense.',
         );
@@ -244,10 +248,12 @@ class VerdictNarrativeEngine {
           isPositive: false,
         );
         playbook = TacticalPlaybook(
-          existingHoldersGuideline:
-              'Core portfolio compounder. Continue holding through cyclical volatility; do not attempt aggressive timing.',
-          freshCapitalGuideline:
-              'Look for market-wide pullbacks or earnings dips to establish positions with an improved margin of safety.',
+          existingHoldersGuideline: isOwned
+              ? 'Core portfolio compounder. Maintain high holding conviction through cyclical valuation digestion; do not attempt aggressive market timing.'
+              : 'Core portfolio compounder. Continue holding through cyclical volatility; do not attempt aggressive timing.',
+          freshCapitalGuideline: isOwned
+              ? 'Position already active. Maintain weight and add incrementally only during sector-wide drawdowns for superior margin of safety.'
+              : 'Look for market-wide pullbacks or earnings dips to establish initial positions with an improved margin of safety.',
           keyMonitorable:
               'Quarterly EBITDA margin sustainability and free cash flow conversion efficiency.',
         );
@@ -272,10 +278,12 @@ class VerdictNarrativeEngine {
           isPositive: false,
         );
         playbook = TacticalPlaybook(
-          existingHoldersGuideline:
-              'Maintain strong holding conviction. High-quality long-term compounder suitable for core weighting.',
-          freshCapitalGuideline:
-              'Favorable risk-reward profile for progressive accumulation at current market levels.',
+          existingHoldersGuideline: isOwned
+              ? 'Anchor holding in your portfolio. High capital return efficiency and robust balance sheet warrant patient multi-year compounding.'
+              : 'Maintain strong holding conviction. High-quality long-term compounder suitable for core weighting.',
+          freshCapitalGuideline: isOwned
+              ? 'Favorable setup to incrementally expand portfolio weighting during routine base consolidations.'
+              : 'Favorable risk-reward profile for progressive accumulation at current market levels.',
           keyMonitorable:
               'Sustained market share expansion and incremental return on invested capital.',
         );
@@ -289,24 +297,26 @@ class VerdictNarrativeEngine {
       primaryCatalyst = VerdictSignal(
         title: 'Technical Momentum & Relative Strength',
         description:
-            'Buyers consistently defending intermediate moving average supports with constructive price action.',
+          'Buyers consistently defending intermediate moving average supports with constructive price action.',
         scoreLabel: '${score.technical}/10 Tech',
         isPositive: true,
       );
       primaryRisk = VerdictSignal(
         title: 'Valuation Multiple Drag',
         description:
-            'Premium multiples (${score.valuation}/15 Val) leave minimal buffer for quarterly earnings surprises.',
+          'Premium multiples (${score.valuation}/15 Val) leave minimal buffer for quarterly earnings surprises.',
         scoreLabel: '${score.valuation}/15 Val',
         isPositive: false,
       );
       playbook = TacticalPlaybook(
-        existingHoldersGuideline:
-            'Hold with a disciplined trailing stop-loss below key support. Consider partial profit booking on momentum spikes.',
-        freshCapitalGuideline:
-            'Wait for a consolidation base or valuation pullback before committing significant fresh capital.',
+        existingHoldersGuideline: isOwned
+            ? 'Held in your portfolio. Protect accumulated gains with a trailing stop-loss below key support. Consider trimming into parabolic momentum spikes.'
+            : 'Hold with a disciplined trailing stop-loss below key support. Consider partial profit booking on momentum spikes.',
+        freshCapitalGuideline: isOwned
+            ? 'Avoid increasing position weight at premium multiples until valuation consolidates.'
+            : 'Wait for a consolidation base or valuation pullback before committing significant fresh capital.',
         keyMonitorable:
-            'Quarterly revenue guidance revisions and operating profit margin trajectory.',
+          'Quarterly revenue guidance revisions and operating profit margin trajectory.',
       );
     } else if (valPct >= 0.70 && techPct <= 0.45) {
       archetypeTag = 'Undervalued Mean-Reversion Play';
@@ -317,24 +327,26 @@ class VerdictNarrativeEngine {
       primaryCatalyst = VerdictSignal(
         title: 'Valuation Margin of Safety',
         description:
-            'Deep discount to intrinsic historical averages creates an asymmetric risk-reward setup.',
+          'Deep discount to intrinsic historical averages creates an asymmetric risk-reward setup.',
         scoreLabel: '${score.valuation}/15 Val',
         isPositive: true,
       );
       primaryRisk = VerdictSignal(
         title: 'Technical Trend Inertia',
         description:
-            'Extended base building may test investor patience until fresh institutional volume triggers a breakout.',
+          'Extended base building may test investor patience until fresh institutional volume triggers a breakout.',
         scoreLabel: '${score.technical}/10 Tech',
         isPositive: false,
       );
       playbook = TacticalPlaybook(
-        existingHoldersGuideline:
-            'Do not panic exit at discounted valuations. Allow mean-reversion cycle to mature.',
-        freshCapitalGuideline:
-            'Value investors can begin staggered accumulation; momentum traders should await trendline confirmation.',
+        existingHoldersGuideline: isOwned
+            ? 'Currently held in your portfolio. Downside is structurally cushioned at these multiples; resist panic-selling at cyclical bottoms.'
+            : 'Do not panic exit at discounted valuations. Allow mean-reversion cycle to mature.',
+        freshCapitalGuideline: isOwned
+            ? 'Disciplined dollar-cost averaging can be utilized if balance sheet solvency remains intact.'
+            : 'Value investors can begin staggered accumulation; momentum traders should await trendline confirmation.',
         keyMonitorable:
-            'Institutional delivery volumes crossing above the 20-day average.',
+          'Institutional delivery volumes crossing above the 20-day average.',
       );
     } else if (techPct >= 0.80 && grPct >= 0.65) {
       archetypeTag = 'High-Beta Momentum Outperformer';
@@ -345,24 +357,26 @@ class VerdictNarrativeEngine {
       primaryCatalyst = VerdictSignal(
         title: 'Growth Acceleration & Price Impulse',
         description:
-            'Expanding earnings delivery paired with multi-timeframe moving average breakouts.',
+          'Expanding earnings delivery paired with multi-timeframe moving average breakouts.',
         scoreLabel: '${score.technical}/10 Tech',
         isPositive: true,
       );
       primaryRisk = VerdictSignal(
         title: 'High Volatility & Profit-Taking Flushes',
         description:
-            'Stretched momentum makes the stock vulnerable to sharp, sudden mean-reverting pullbacks.',
+          'Stretched momentum makes the stock vulnerable to sharp, sudden mean-reverting pullbacks.',
         scoreLabel: '${score.risk}/5 Risk',
         isPositive: false,
       );
       playbook = TacticalPlaybook(
-        existingHoldersGuideline:
-            'Ride the momentum with trailing stop-loss along the 20-day EMA. Trim small portions into extreme parabolic candles.',
-        freshCapitalGuideline:
-            'Enter strictly on retests of the 20/50 EMA; never chase extended green candles.',
+        existingHoldersGuideline: isOwned
+            ? 'Riding strong momentum in your portfolio. Protect capital with a dynamic trailing stop along the 20-day EMA; trim small portions into extreme parabolic candles.'
+            : 'Ride the momentum with trailing stop-loss along the 20-day EMA. Trim small portions into extreme parabolic candles.',
+        freshCapitalGuideline: isOwned
+            ? 'Hold current position size; avoid chasing extended green candles with fresh capital.'
+            : 'Enter strictly on retests of the 20/50 EMA; never chase extended green candles.',
         keyMonitorable:
-            'Volume dry-up during corrective pullbacks vs expansion during upward breaks.',
+          'Volume dry-up during corrective pullbacks vs expansion during upward breaks.',
       );
     } else if (score.overallScore >= 50) {
       archetypeTag = 'Balanced Mid-Cycle Consolidator';
@@ -373,24 +387,26 @@ class VerdictNarrativeEngine {
       primaryCatalyst = VerdictSignal(
         title: 'Operational Baseline in $resolvedSector',
         description:
-            'Consistent revenue model with established client relationships and solvent financial footing.',
+          'Consistent revenue model with established client relationships and solvent financial footing.',
         scoreLabel: '${score.businessQuality}/25 BQ',
         isPositive: true,
       );
       primaryRisk = VerdictSignal(
         title: 'Growth Velocity Headwind',
         description:
-            'Growth cadence (${score.growth}/20) tracks sector averages rather than commanding market-share capture.',
+          'Growth cadence (${score.growth}/20) tracks sector averages rather than commanding market-share capture.',
         scoreLabel: '${score.growth}/20 Growth',
         isPositive: false,
       );
       playbook = TacticalPlaybook(
-        existingHoldersGuideline:
-            'Hold existing position. Rebalance if quarterly earnings fail to demonstrate sequential improvement.',
-        freshCapitalGuideline:
-            'Maintain neutral stance; compare risk-reward against higher-scoring sector alternatives.',
+        existingHoldersGuideline: isOwned
+            ? 'Held in portfolio. Maintain position weight but monitor upcoming quarterly earnings closely for operational inflection.'
+            : 'Hold existing position. Rebalance if quarterly earnings fail to demonstrate sequential improvement.',
+        freshCapitalGuideline: isOwned
+            ? 'Maintain current position size without adding until catalytic growth emerges.'
+            : 'Maintain neutral stance; compare risk-reward against higher-scoring sector alternatives.',
         keyMonitorable:
-            'Working capital cycle compression and quarterly margin trend.',
+          'Working capital cycle compression and quarterly margin trend.',
       );
     } else {
       archetypeTag = 'Fundamental Compression & Elevated Risk';
@@ -401,24 +417,26 @@ class VerdictNarrativeEngine {
       primaryCatalyst = VerdictSignal(
         title: 'Potential Operational Sunk-Cost Floor',
         description:
-            'Low market expectations mean any decisive turnaround could establish an operational inflection bottom.',
+          'Low market expectations mean any decisive turnaround could establish an operational inflection bottom.',
         scoreLabel: '${score.valuation}/15 Val',
         isPositive: true,
       );
       primaryRisk = VerdictSignal(
         title: 'Fundamental Solvency & Momentum Drag',
         description:
-            'Sub-par return metrics or balance-sheet leverage (${score.financialStrength}/25 FS) constrain institutional inflows.',
+          'Sub-par return metrics or balance-sheet leverage (${score.financialStrength}/25 FS) constrain institutional inflows.',
         scoreLabel: '${score.overallScore}/100 Overall',
         isPositive: false,
       );
       playbook = TacticalPlaybook(
-        existingHoldersGuideline:
-            'Evaluate position sizing. Consider trimming or reallocating capital into higher-conviction compounders.',
-        freshCapitalGuideline:
-            'Avoid fresh capital deployment until clear fundamental turnaround is verified across two consecutive quarters.',
+        existingHoldersGuideline: isOwned
+            ? 'Capital preservation alert: Currently in your portfolio. Strictly review position sizing; consider reallocating capital into higher-conviction compounders.'
+            : 'Evaluate position sizing. Consider trimming or reallocating capital into higher-conviction compounders.',
+        freshCapitalGuideline: isOwned
+            ? 'Strictly avoid averaging down until verifiable operational turnaround is confirmed across consecutive quarters.'
+            : 'Avoid fresh capital deployment until clear fundamental turnaround is verified across two consecutive quarters.',
         keyMonitorable:
-            'Debt reduction announcements and operating cash flow positive inflection.',
+          'Debt reduction announcements and operating cash flow positive inflection.',
       );
     }
 

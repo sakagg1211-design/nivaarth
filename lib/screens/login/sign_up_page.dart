@@ -383,7 +383,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                 width: 24,
                                 child: Checkbox(
                                   value: _agreedToTerms,
-                                  activeColor: AppColors.ink,
+                                  activeColor: AppColors.accent,
+                                  checkColor: Colors.black,
+                                  side: const BorderSide(color: Color(0xFF757A85), width: 1.5),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.circular(AppRadius.xs),

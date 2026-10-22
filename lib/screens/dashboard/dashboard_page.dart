@@ -5,9 +5,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
-import '../../providers/market_indices_provider.dart';
-import '../../providers/portfolio_provider.dart';
-import '../../providers/price_provider.dart';
+import '../../services/market_sync_service.dart';
 import '../advisor/advisor_chat_page.dart';
 import '../home/home_page.dart';
 import 'widgets/ai_briefing_card.dart';
@@ -71,39 +69,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
 
     setState(() => _isRefreshing = true);
     try {
-      ref.invalidate(dashboardProvider);
-      ref.invalidate(livePortfolioProvider);
-      ref.invalidate(portfolioProvider);
-      ref.invalidate(pricesProvider);
-      ref.invalidate(marketIndicesProvider);
-      await Future.wait([
-        ref.read(dashboardProvider.future),
-        ref.read(marketIndicesProvider.future),
-      ]);
+      await MarketSyncService.instance.syncAll(ref);
 
       if (!mounted) return;
       setState(() {
         _lastUpdated = DateTime.now();
       });
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('Dashboard and market data refreshed.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-    } catch (error) {
-      ref.invalidate(dashboardProvider);
+    } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text('Refresh notice: $error')),
-        );
     } finally {
-      if (mounted) setState(() => _isRefreshing = false);
+      if (mounted) {
+        setState(() => _isRefreshing = false);
+      }
     }
   }
 
@@ -206,76 +183,78 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                 ),
                               ],
 
-                              const SizedBox(height: 22),
+                              if (data.totalStocks > 0) ...[
+                                const SizedBox(height: 22),
 
-                              // 5. Today's AI Briefing & Insight Column (Attached Image 2)
-                              Row(
-                                children: [
-                                  const Text(
-                                    'NV Briefing',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: -0.4,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 3,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x1FE5A93C),
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: const Color(0x33E5A93C),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'TODAY',
+                                // 5. Today's AI Briefing & Insight Column (Attached Image 2)
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'NV Briefing',
                                       style: TextStyle(
-                                        color: Color(0xFFE5A93C),
-                                        fontSize: 10,
+                                        color: Colors.white,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.5,
+                                        letterSpacing: -0.4,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Signals ranked by conviction and risk.',
-                                style: TextStyle(
-                                  color: Color(0xFF8E929B),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0x1FE5A93C),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                          color: const Color(0x33E5A93C),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'TODAY',
+                                        style: TextStyle(
+                                          color: Color(0xFFE5A93C),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 12),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Signals ranked by conviction and risk.',
+                                  style: TextStyle(
+                                    color: Color(0xFF8E929B),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
 
-                              // AI Verdict & Health Insights Card (Reasons + Actions)
-                              AIBriefingCard(ai: data.aiRecommendation),
+                                // AI Verdict & Health Insights Card (Reasons + Actions)
+                                AIBriefingCard(ai: data.aiRecommendation),
 
-                              const SizedBox(height: 22),
+                                const SizedBox(height: 22),
 
-                              // 6. Sector Allocation Preview & Top Holdings List
-                              DashboardTopHoldingsSection(
-                                holdings: liveStocks,
-                                onViewAll: () {
-                                  // Switch to Portfolio tab if embedded in HomePage
-                                  final homeState = context.findAncestorStateOfType<State<HomePage>>();
-                                  if (homeState != null) {
-                                    // ignore: invalid_use_of_protected_member
-                                    homeState.setState(() {
-                                      // ignore: avoid_dynamic_calls
-                                      (homeState as dynamic).currentIndex = 1;
-                                    });
-                                  }
-                                },
-                              ),
+                                // 6. Sector Allocation Preview & Top Holdings List
+                                DashboardTopHoldingsSection(
+                                  holdings: liveStocks,
+                                  onViewAll: () {
+                                    // Switch to Portfolio tab if embedded in HomePage
+                                    final homeState = context.findAncestorStateOfType<State<HomePage>>();
+                                    if (homeState != null) {
+                                      // ignore: invalid_use_of_protected_member
+                                      homeState.setState(() {
+                                        // ignore: avoid_dynamic_calls
+                                        (homeState as dynamic).currentIndex = 1;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
 
                               const SizedBox(height: 24),
                             ],

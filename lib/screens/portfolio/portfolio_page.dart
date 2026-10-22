@@ -5,9 +5,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/live_portfolio.dart';
-import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
-import '../../providers/portfolio_provider.dart';
+import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
 import 'widgets/add_holding_sheet.dart';
 
@@ -52,20 +51,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
 
   Future<void> _refreshPortfolio() async {
     try {
-      ref.invalidate(livePortfolioProvider);
-      ref.invalidate(portfolioProvider);
-      ref.invalidate(dashboardProvider);
-      await ref.read(livePortfolioProvider.future);
-    } catch (error) {
-      ref.invalidate(livePortfolioProvider);
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(content: Text('Refresh notice: $error')),
-          );
-      }
-    }
+      await MarketSyncService.instance.syncAll(ref);
+    } catch (_) {}
   }
 
   void _openAddHoldingSheet() {

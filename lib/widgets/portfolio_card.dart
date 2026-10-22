@@ -198,6 +198,30 @@ class PortfolioCard extends ConsumerWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Text(
+                              Formatters.currency(stock.currentPrice),
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              '${stock.todayReturnPercent >= 0 ? '+' : ''}${Formatters.currency(stock.todayPL / (stock.portfolio.qty > 0 ? stock.portfolio.qty : 1))} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: stock.todayReturnPercent >= 0
+                                    ? const Color(0xFF00E676)
+                                    : const Color(0xFFFF5252),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

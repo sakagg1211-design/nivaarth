@@ -10,6 +10,8 @@ import '../../providers/live_portfolio_provider.dart';
 import '../../providers/live_quote_provider.dart';
 import '../../providers/search_provider.dart';
 import '../../providers/watchlist_provider.dart';
+import '../../services/market_sync_service.dart';
+import '../portfolio/widgets/add_holding_sheet.dart';
 import '../stock/stock_detail_page.dart';
 import 'widgets/watchlist_table_view.dart';
 
@@ -459,6 +461,58 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                     );
                                   },
                                 ),
+                                const SizedBox(width: 6),
+                                InkWell(
+                                  onTap: () {
+                                    final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
+                                    final rawPrice = (liveQuote != null && liveQuote.currentPrice > 0)
+                                        ? liveQuote.currentPrice
+                                        : SymbolUtils.getEstimatedPrice(stock.instrument);
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => AddHoldingSheet(
+                                        initialInstrument: stock.instrument,
+                                        initialCompanyName: stock.companyName,
+                                        initialPrice: rawPrice > 0 ? rawPrice : null,
+                                      ),
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 7,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0x1F00E676),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: const Color(0x3300E676),
+                                      ),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.add_circle_outline_rounded,
+                                          color: Color(0xFF00E676),
+                                          size: 13,
+                                        ),
+                                        SizedBox(width: 2),
+                                        Text(
+                                          '+ Port',
+                                          style: TextStyle(
+                                            color: Color(0xFF00E676),
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 4),
                                 const Icon(
                                   Icons.chevron_right_rounded,
@@ -482,7 +536,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   color: const Color(0xFFE5A93C),
                   backgroundColor: const Color(0xFF16171B),
                   onRefresh: () async {
-                    await watchlistNotifier.refreshWatchlist();
+                    await MarketSyncService.instance.syncAll(ref);
                   },
                   child: WatchlistTableView(
                     items: savedList,
@@ -647,9 +701,9 @@ class _LivePriceColumn extends ConsumerWidget {
             ? quote.currentPrice
             : SymbolUtils.getEstimatedPrice(clean);
         final isPos = quote.change >= 0;
-        final hasChange = quote.changePercent != 0.0;
+        final hasChange = quote.changePercent != 0.0 || quote.change != 0.0;
         final changeText = hasChange
-            ? '${isPos ? '+' : ''}${quote.changePercent.toStringAsFixed(2)}%'
+            ? '${isPos ? '+' : ''}${quote.change.toStringAsFixed(1)} (${isPos ? '+' : ''}${quote.changePercent.toStringAsFixed(2)}%)'
             : (price > 0 ? 'Live NSE' : 'Pending');
 
         return Column(
@@ -685,7 +739,7 @@ class _LivePriceColumn extends ConsumerWidget {
                     color: hasChange
                         ? (isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252))
                         : const Color(0xFF8E929B),
-                    fontSize: 10.5,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

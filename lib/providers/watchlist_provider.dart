@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/utils/symbol_utils.dart';
 import '../models/stock_score.dart';
 import '../models/watchlist_item.dart';
+import '../services/market_quote_service.dart';
 
 class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
   String _getLocalKey() {
@@ -15,9 +17,22 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
   }
 
   final SupabaseClient _supabase = Supabase.instance.client;
+  StreamSubscription<AuthState>? _authSub;
 
   WatchlistNotifier() : super([]) {
     _init();
+    _authSub = _supabase.auth.onAuthStateChange.listen((data) {
+      if (data.session?.user != null) {
+        _loadFromLocal();
+        loadCloudWatchlist();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _init() async {
@@ -223,18 +238,12 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
         int freshScore = item.score;
         String freshTag = item.technicalTag;
 
-        // 1. Fetch latest price
+        // 1. Fetch live market quote (Never use stale database tables for live prices)
         try {
-          final priceRow = await _supabase
-              .from('LatestPrices')
-              .select()
-              .eq('Instrument', sym)
-              .maybeSingle();
-          if (priceRow != null) {
-            final p = (priceRow['CurrentPrice'] ?? priceRow['price']) as num?;
-            if (p != null && p > 0) freshPrice = p.toDouble();
-            final ch = (priceRow['ChangePercent'] ?? priceRow['change_percent']) as num?;
-            if (ch != null) changePct = ch.toDouble();
+          final quote = await MarketQuoteService.instance.fetchLiveQuote(sym);
+          if (quote.currentPrice > 0) {
+            freshPrice = quote.currentPrice;
+            changePct = quote.changePercent;
           }
         } catch (_) {}
 

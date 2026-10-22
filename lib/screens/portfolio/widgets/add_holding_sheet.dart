@@ -17,7 +17,16 @@ import '../../../services/backend_service.dart';
 
 /// Modal bottom sheet dialog for adding a stock holding with live autocomplete search
 class AddHoldingSheet extends ConsumerStatefulWidget {
-  const AddHoldingSheet({super.key});
+  final String? initialInstrument;
+  final String? initialCompanyName;
+  final double? initialPrice;
+
+  const AddHoldingSheet({
+    super.key,
+    this.initialInstrument,
+    this.initialCompanyName,
+    this.initialPrice,
+  });
 
   @override
   ConsumerState<AddHoldingSheet> createState() => _AddHoldingSheetState();
@@ -40,6 +49,23 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
   bool _loading = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialInstrument != null && widget.initialInstrument!.isNotEmpty) {
+      final sym = SymbolUtils.normalize(widget.initialInstrument!);
+      _instrumentController.text = sym;
+      _companyController.text = widget.initialCompanyName?.isNotEmpty == true
+          ? widget.initialCompanyName!
+          : SymbolUtils.getDisplayName(sym);
+      _selectedYahooSymbol = SymbolUtils.getYahooSymbol(sym);
+      if (widget.initialPrice != null && widget.initialPrice! > 0) {
+        _avgPriceController.text = widget.initialPrice!.toStringAsFixed(2);
+        _liveLtp = widget.initialPrice;
+      }
+    }
+  }
 
   @override
   void dispose() {

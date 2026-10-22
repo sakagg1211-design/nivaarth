@@ -1,4 +1,7 @@
+import '../core/utils/symbol_utils.dart';
+import '../models/live_market_quote.dart';
 import '../models/live_portfolio.dart';
+import '../services/market_quote_service.dart';
 import 'portfolio_repository.dart';
 import 'price_repository.dart';
 
@@ -13,53 +16,45 @@ class LivePortfolioRepository {
 
   Future<List<LivePortfolio>> getPortfolio() async {
     final portfolio = await portfolioRepository.getPortfolio();
-    final prices = await priceRepository.getPrices();
+    if (portfolio.isEmpty) return [];
 
-    // Price & Previous Close Maps
-    final Map<String, double> priceMap = {};
-    final Map<String, double> prevCloseMap = {};
+    // Fetch live quotes in parallel for all holdings using MarketQuoteService
+    final quotes = await Future.wait(
+      portfolio.map((s) => MarketQuoteService.instance.fetchLiveQuote(s.instrument)),
+    );
 
-    for (final price in prices) {
-      final sym = price.instrument.trim().toUpperCase();
-      priceMap[sym] = price.currentPrice;
-      prevCloseMap[sym] = price.previousClose > 0 ? price.previousClose : price.currentPrice;
+    final Map<String, LiveMarketQuote> quoteMap = {};
+    for (int i = 0; i < portfolio.length; i++) {
+      final sym = SymbolUtils.normalize(portfolio[i].instrument);
+      quoteMap[sym] = quotes[i];
     }
 
     return portfolio.map((stock) {
-      final key = stock.instrument.trim().toUpperCase();
-      final yfKey = stock.yahooSymbol.trim().toUpperCase();
+      final clean = SymbolUtils.normalize(stock.instrument);
+      final quote = quoteMap[clean];
 
-      // Check both instrument and yahooSymbol in priceMap
-      double currentPrice = priceMap[key] ?? priceMap[yfKey] ?? 0.0;
-
-      // If price not yet in LatestPrices, fallback to DB stored currentValue or avgPrice
-      if (currentPrice <= 0 && stock.qty > 0 && stock.currentValue != null && stock.currentValue! > 0) {
-        currentPrice = stock.currentValue! / stock.qty;
-      }
-      if (currentPrice <= 0 && stock.avgPrice > 0) {
-        currentPrice = stock.avgPrice;
-      }
+      double currentPrice = (quote != null && quote.currentPrice > 0)
+          ? quote.currentPrice
+          : (stock.avgPrice > 0 ? stock.avgPrice : 0.0);
 
       final double currentValue = currentPrice * stock.qty;
-
       final double netPL = currentValue - stock.totalInvested;
-
       final double returnPercent = stock.totalInvested == 0
           ? 0.0
           : (netPL / stock.totalInvested) * 100.0;
 
-      final double prevClose = prevCloseMap[key] ?? currentPrice;
-      // If prevClose is available and distinct, compute previous value from it.
-      // Otherwise fallback to DB stored currentValue as the previous baseline.
-      final double prevStockVal = (prevClose > 0 && prevClose != currentPrice)
-          ? (prevClose * stock.qty)
-          : ((stock.currentValue != null && stock.currentValue! > 0)
-              ? stock.currentValue!
-              : currentValue);
+      // Authentic 1D P&L calculation directly from verified NSE previous close
+      final double prevClose = (quote != null && quote.previousClose > 0)
+          ? quote.previousClose
+          : currentPrice;
 
-      final double todayPL = currentValue - prevStockVal;
-      final double todayReturnPercent = prevStockVal > 0
-          ? (todayPL / prevStockVal) * 100.0
+      final double dayPointChange = (currentPrice > 0 && prevClose > 0)
+          ? (currentPrice - prevClose)
+          : 0.0;
+
+      final double todayPL = dayPointChange * stock.qty;
+      final double todayReturnPercent = prevClose > 0
+          ? (dayPointChange / prevClose) * 100.0
           : 0.0;
 
       return LivePortfolio(
