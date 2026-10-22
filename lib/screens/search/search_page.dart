@@ -11,7 +11,6 @@ import '../../providers/live_quote_provider.dart';
 import '../../providers/search_provider.dart';
 import '../../providers/watchlist_provider.dart';
 import '../../services/market_sync_service.dart';
-import '../portfolio/widgets/add_holding_sheet.dart';
 import '../stock/stock_detail_page.dart';
 import 'widgets/watchlist_table_view.dart';
 
@@ -380,21 +379,27 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               children: [
                                 // Real-Time Live Market Price Display
                                 _LivePriceColumn(symbol: stock.instrument),
-                                const SizedBox(width: 10),
-                                _ScoreBadge(score: stock.overallScore),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 4),
                                 Builder(
                                   builder: (context) {
                                     final isSaved = watchlistNotifier.isSaved(stock.instrument);
-                                    return InkWell(
-                                      onTap: () {
+                                    return IconButton(
+                                      icon: Icon(
+                                        isSaved ? Icons.star_rounded : Icons.star_outline_rounded,
+                                        color: isSaved ? const Color(0xFFE5A93C) : const Color(0xFF757A85),
+                                        size: 24,
+                                      ),
+                                      splashRadius: 20,
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                      tooltip: isSaved ? 'Remove from Watchlist' : 'Add to Watchlist',
+                                      onPressed: () {
                                         if (isSaved) {
-                                          watchlistNotifier.remove(stock.instrument);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('${stock.instrument} removed from MY SAVED LIST'),
-                                              backgroundColor: const Color(0xFF16171B),
-                                            ),
+                                          _showDeleteConfirmation(
+                                            context,
+                                            stock.instrument,
+                                            stock.companyName,
+                                            watchlistNotifier,
                                           );
                                         } else {
                                           final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
@@ -423,101 +428,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           );
                                         }
                                       },
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 5,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isSaved
-                                              ? const Color(0x33E5A93C)
-                                              : const Color(0x1FE5A93C),
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: const Color(0x33E5A93C),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              isSaved ? Icons.bookmark_rounded : Icons.add_rounded,
-                                              color: const Color(0xFFE5A93C),
-                                              size: 14,
-                                            ),
-                                            const SizedBox(width: 2),
-                                            Text(
-                                              isSaved ? 'Saved' : 'Save',
-                                              style: const TextStyle(
-                                                color: Color(0xFFE5A93C),
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     );
                                   },
-                                ),
-                                const SizedBox(width: 6),
-                                InkWell(
-                                  onTap: () {
-                                    final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
-                                    final rawPrice = (liveQuote != null && liveQuote.currentPrice > 0)
-                                        ? liveQuote.currentPrice
-                                        : SymbolUtils.getEstimatedPrice(stock.instrument);
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (_) => AddHoldingSheet(
-                                        initialInstrument: stock.instrument,
-                                        initialCompanyName: stock.companyName,
-                                        initialPrice: rawPrice > 0 ? rawPrice : null,
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 7,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x1F00E676),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0x3300E676),
-                                      ),
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.add_circle_outline_rounded,
-                                          color: Color(0xFF00E676),
-                                          size: 13,
-                                        ),
-                                        SizedBox(width: 2),
-                                        Text(
-                                          '+ Port',
-                                          style: TextStyle(
-                                            color: Color(0xFF00E676),
-                                            fontSize: 10.5,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: Color(0xFF757A85),
-                                  size: 18,
                                 ),
                               ],
                             ),
@@ -541,12 +453,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   child: WatchlistTableView(
                     items: savedList,
                     onDelete: (item) {
-                      watchlistNotifier.remove(item.instrument);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${item.instrument} removed from MY SAVED LIST'),
-                          backgroundColor: const Color(0xFF16171B),
-                        ),
+                      _showDeleteConfirmation(
+                        context,
+                        item.instrument,
+                        item.companyName,
+                        watchlistNotifier,
+                        addedPrice: item.addedPrice,
                       );
                     },
                   ),
@@ -559,61 +471,101 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       ),
     );
   }
-}
 
-class _ScoreBadge extends StatelessWidget {
-  final int score;
+  void _showDeleteConfirmation(
+    BuildContext context,
+    String instrument,
+    String companyName,
+    WatchlistNotifier notifier, {
+    double? addedPrice,
+  }) {
+    final cleanSym = SymbolUtils.normalize(instrument);
+    final displayName = companyName.isNotEmpty && companyName.toUpperCase() != cleanSym
+        ? companyName
+        : SymbolUtils.getDisplayName(cleanSym);
 
-  const _ScoreBadge({
-    required this.score,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (score <= 0) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(AppRadius.pill),
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF16171B),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: const BorderSide(color: Color(0xFF282A30)),
         ),
-        child: const Text(
-          'ANALYZE',
-          style: TextStyle(
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: const Color(0x26FF5252),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.delete_outline_rounded,
+                color: Color(0xFFFF5252),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Remove from Watchlist?',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          addedPrice != null && addedPrice > 0
+              ? 'Are you sure you want to remove $displayName ($cleanSym)? Your tracked entry price (₹${addedPrice.toStringAsFixed(2)}) will be cleared.'
+              : 'Are you sure you want to remove $displayName ($cleanSym) from your watchlist?',
+          style: const TextStyle(
             color: Color(0xFF8E929B),
-            fontWeight: FontWeight.w700,
-            fontSize: 9.5,
+            fontSize: 13,
+            height: 1.4,
           ),
         ),
-      );
-    }
-
-    final color = _scoreColor(score);
-
-    return Container(
-      width: 48,
-      height: 32,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-      ),
-      child: Text(
-        '$score',
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w800,
-          fontSize: 13,
-        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF5252),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              notifier.remove(cleanSym);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$cleanSym removed from MY SAVED LIST'),
+                  backgroundColor: const Color(0xFF16171B),
+                ),
+              );
+            },
+            child: const Text(
+              'Remove',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  Color _scoreColor(int value) {
-    if (value >= 80) return const Color(0xFF00E676);
-    if (value >= 60) return const Color(0xFFE5A93C);
-    if (value >= 40) return const Color(0xFFFF9800);
-    return const Color(0xFFFF5252);
   }
 }
 

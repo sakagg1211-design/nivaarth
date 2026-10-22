@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/user_alert.dart';
@@ -15,6 +16,43 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
 
   AlertsNotifier(this.ref) : super(const AsyncValue.loading()) {
     fetchAlerts();
+  }
+
+  String _getReadStorageKey() {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    return uid != null ? 'nivaarth_read_alerts_$uid' : 'nivaarth_read_alerts_guest';
+  }
+
+  Future<Set<String>> _getReadAlertIds() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = prefs.getStringList(_getReadStorageKey()) ?? [];
+      return list.toSet();
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> _saveReadAlertId(String id) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _getReadStorageKey();
+      final list = prefs.getStringList(key) ?? [];
+      if (!list.contains(id)) {
+        list.add(id);
+        await prefs.setStringList(key, list);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _saveAllReadAlertIds(List<String> ids) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _getReadStorageKey();
+      final list = prefs.getStringList(key) ?? [];
+      final set = list.toSet()..addAll(ids);
+      await prefs.setStringList(key, set.toList());
+    } catch (_) {}
   }
 
   Future<void> fetchAlerts() async {
@@ -102,13 +140,33 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
         }
       }
 
-      state = AsyncValue.data(alerts);
+      // 4. Map persistent read state from local storage
+      final readIds = await _getReadAlertIds();
+      final mappedAlerts = alerts.map((a) {
+        if (readIds.contains(a.id)) {
+          return a.copyWith(isRead: true);
+        }
+        return a;
+      }).toList();
+
+      state = AsyncValue.data(mappedAlerts);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
   void markAsRead(String id) {
+    _saveReadAlertId(id);
+
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null && !id.startsWith('local_')) {
+      Supabase.instance.client
+          .from('UserAlerts')
+          .update({'is_read': true})
+          .eq('id', id)
+          .catchError((_) {});
+    }
+
     state.whenData((list) {
       state = AsyncValue.data(
         list.map((a) => a.id == id ? a.copyWith(isRead: true) : a).toList(),
@@ -118,6 +176,18 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
 
   void markAllAsRead() {
     state.whenData((list) {
+      final ids = list.map((a) => a.id).toList();
+      _saveAllReadAlertIds(ids);
+
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        Supabase.instance.client
+            .from('UserAlerts')
+            .update({'is_read': true})
+            .eq('user_id', user.id)
+            .catchError((_) {});
+      }
+
       state = AsyncValue.data(
         list.map((a) => a.copyWith(isRead: true)).toList(),
       );

@@ -303,7 +303,9 @@ class StockHeader extends StatelessWidget {
               child: Text(
                 status == 'PORTFOLIO'
                     ? "All-Time: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})"
-                    : "Today: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                    : (returnPercent == 0 && netPL == 0)
+                        ? "0.00% (₹0.00 today)"
+                        : "${isProfit ? '▲' : '▼'} ${returnPercent.abs().toStringAsFixed(2)}%   ${isProfit ? '+' : '-'}₹${netPL.abs().toStringAsFixed(2)} today",
                 style: AppTypography
                     .bodyMedium
                     .copyWith(

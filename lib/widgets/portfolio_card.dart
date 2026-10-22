@@ -152,40 +152,15 @@ class PortfolioCard extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                cleanSymbol,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 1.5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0x1F00E676),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                'ACTIVE',
-                                style: TextStyle(
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF00E676),
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          cleanSymbol,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 1),
                         Text(
@@ -225,66 +200,97 @@ class PortfolioCard extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  // Return Pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 3.5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: toneBg,
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                    ),
-                    child: Text(
-                      Formatters.percent(stock.returnPercent, signed: true),
-                      style: TextStyle(
-                        color: tone,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11,
+                  const SizedBox(width: 8),
+                  // Right Column: ACTIVE badge + Menu on top, Return Pill below
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 1.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0x1F00E676),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'ACTIVE',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF00E676),
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert_rounded, size: 18, color: Color(0xFF8E929B)),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            color: const Color(0xFF1E2024),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(color: Color(0xFF282A30)),
+                            ),
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit_outlined, size: 16, color: Color(0xFFE5A93C)),
+                                    SizedBox(width: 8),
+                                    Text('Edit Holding', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFFF5252)),
+                                    SizedBox(width: 8),
+                                    Text('Delete Holding', style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            onSelected: (val) {
+                              if (val == 'edit') {
+                                _openEdit(context);
+                              } else if (val == 'delete') {
+                                _confirmDelete(context, ref);
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  // 3-dots Menu Button
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert_rounded, size: 18, color: Color(0xFF8E929B)),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    color: const Color(0xFF1E2024),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: const BorderSide(color: Color(0xFF282A30)),
-                    ),
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit_outlined, size: 16, color: Color(0xFFE5A93C)),
-                            SizedBox(width: 8),
-                            Text('Edit Holding', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                          ],
+                      const SizedBox(height: 5),
+                      // Return Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 3,
                         ),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFFF5252)),
-                            SizedBox(width: 8),
-                            Text('Delete Holding', style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
-                          ],
+                        decoration: BoxDecoration(
+                          color: toneBg,
+                          borderRadius: BorderRadius.circular(AppRadius.pill),
+                        ),
+                        child: Text(
+                          Formatters.percent(stock.returnPercent, signed: true),
+                          style: TextStyle(
+                            color: tone,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ],
-                    onSelected: (val) {
-                      if (val == 'edit') {
-                        _openEdit(context);
-                      } else if (val == 'delete') {
-                        _confirmDelete(context, ref);
-                      }
-                    },
                   ),
                 ],
               ),
