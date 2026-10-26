@@ -55,6 +55,7 @@ class PortfolioAnalyzer {
     int lossStocks = 0;
     int unpricedStocks = 0;
     int staleStocks = 0;
+    DateTime? pricesAsOf;
 
     // Holdings with no price would add their invested amount but zero value,
     // so every total below is computed over priced holdings only.
@@ -72,6 +73,10 @@ class PortfolioAnalyzer {
       }
       if (stock.isStale) {
         staleStocks++;
+      }
+      final t = stock.priceTime;
+      if (t != null && (pricesAsOf == null || t.isBefore(pricesAsOf))) {
+        pricesAsOf = t;
       }
 
       totalInvested += stock.portfolio.totalInvested;
@@ -120,6 +125,7 @@ class PortfolioAnalyzer {
       lossStocks: lossStocks,
       unpricedStocks: unpricedStocks,
       staleStocks: staleStocks,
+      pricesAsOf: pricesAsOf,
 
       // Portfolio Health is now handled by PortfolioHealthEngine
       healthScore: 0,

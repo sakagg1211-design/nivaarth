@@ -12,6 +12,10 @@ class LivePortfolio {
   final bool isStale;
   final bool isPriceUnavailable;
 
+  // When the shown price was set: last trade time for a live quote,
+  // LatestPrices.LastUpdated for the Supabase fallback.
+  final DateTime? priceTime;
+
   const LivePortfolio({
     required this.portfolio,
     required this.currentPrice,
@@ -22,5 +26,6 @@ class LivePortfolio {
     this.todayReturnPercent = 0.0,
     this.isStale = false,
     this.isPriceUnavailable = false,
+    this.priceTime,
   });
 }

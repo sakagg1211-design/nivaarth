@@ -33,6 +33,8 @@ class LiveMarketQuote {
     final dayHigh = (meta['regularMarketDayHigh'] as num?)?.toDouble() ?? price;
     final dayLow = (meta['regularMarketDayLow'] as num?)?.toDouble() ?? price;
     final volume = (meta['regularMarketVolume'] as num?)?.toInt() ?? 0;
+    // Exchange time of the last trade (epoch seconds), not the fetch time
+    final tradeSecs = (meta['regularMarketTime'] as num?)?.toInt();
 
     return LiveMarketQuote(
       symbol: symbol,
@@ -43,7 +45,9 @@ class LiveMarketQuote {
       dayHigh: dayHigh,
       dayLow: dayLow,
       volume: volume,
-      timestamp: DateTime.now(),
+      timestamp: tradeSecs != null
+          ? DateTime.fromMillisecondsSinceEpoch(tradeSecs * 1000)
+          : DateTime.now(),
     );
   }
 }

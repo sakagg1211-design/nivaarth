@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
 
@@ -14,6 +15,7 @@ class PortfolioHeroCard extends StatelessWidget {
   final bool isMarketOpen;
   final int unpricedHoldings;
   final int staleHoldings;
+  final DateTime? pricesAsOf;
 
   const PortfolioHeroCard({
     super.key,
@@ -28,7 +30,19 @@ class PortfolioHeroCard extends StatelessWidget {
     this.isMarketOpen = false,
     this.unpricedHoldings = 0,
     this.staleHoldings = 0,
+    this.pricesAsOf,
   });
+
+  String? get _asOfLabel {
+    final t = pricesAsOf?.toLocal();
+    if (t == null) return null;
+    final now = DateTime.now();
+    final sameDay = t.year == now.year && t.month == now.month && t.day == now.day;
+    final time = DateFormat('h:mm a').format(t);
+    return sameDay
+        ? 'Prices as of $time'
+        : 'Prices as of ${DateFormat('d MMM').format(t)}, $time';
+  }
 
   String? get _priceNote {
     if (unpricedHoldings > 0) {
@@ -172,6 +186,18 @@ class PortfolioHeroCard extends StatelessWidget {
               ),
             ],
           ),
+
+          if (_asOfLabel != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _asOfLabel!,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF6B6F78),
+              ),
+            ),
+          ],
 
           if (_priceNote != null) ...[
             const SizedBox(height: 10),

@@ -7,6 +7,18 @@ import '../models/portfolio.dart';
 class PortfolioRepository {
   final SupabaseClient client = Supabase.instance.client;
 
+  // ETFs are not in ScreenerFundamentals. Same exact-match list and suffixes
+  // as KNOWN_ETFS / ETF_SUFFIXES in backend/ai_scoring_service.py.
+  static const Set<String> _knownEtfs = {
+    'NIFTYBEES', 'TATSILV', 'MIDSMALL', 'MON100', 'MOM100',
+  };
+
+  static bool _isListedEtf(String sym) =>
+      _knownEtfs.contains(sym) ||
+      sym.endsWith('BEES') ||
+      sym.endsWith('IETF') ||
+      sym.endsWith('ETF');
+
   Future<List<Portfolio>> getPortfolio() async {
     final user = client.auth.currentUser;
 
@@ -60,8 +72,8 @@ class PortfolioRepository {
       throw Exception('Ye stock pehle se portfolio mein hai. Usko Edit karke quantity badlo.');
     }
 
-    // 2. Universe check: verify symbol is a genuine NSE listed stock
-    final valid = await client
+    // 2. Universe check: verify symbol is a genuine NSE listed stock or ETF
+    final valid = _isListedEtf(cleanSym) ? true : await client
         .from('ScreenerFundamentals')
         .select('Instrument')
         .eq('Instrument', cleanSym)

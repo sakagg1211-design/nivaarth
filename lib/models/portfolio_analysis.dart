@@ -17,6 +17,9 @@ class PortfolioAnalysis {
   final int unpricedStocks;
   final int staleStocks;
 
+  // Oldest price time among priced holdings: the whole total is only as fresh as this
+  final DateTime? pricesAsOf;
+
   final double healthScore;
   final double riskScore;
 
@@ -35,6 +38,7 @@ class PortfolioAnalysis {
     required this.lossStocks,
     this.unpricedStocks = 0,
     this.staleStocks = 0,
+    this.pricesAsOf,
     required this.healthScore,
     required this.riskScore,
     required this.biggestWinner,

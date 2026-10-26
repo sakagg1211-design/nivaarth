@@ -86,6 +86,9 @@ class LivePortfolioRepository {
         todayReturnPercent: todayReturnPercent,
         isStale: isStale,
         isPriceUnavailable: isPriceUnavailable,
+        priceTime: isPriceUnavailable
+            ? null
+            : (isStale ? dbPrice?.lastUpdated : quote?.timestamp),
       );
     }).toList();
   }

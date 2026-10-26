@@ -159,6 +159,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                   isMarketOpen: isMarketOpen,
                                   unpricedHoldings: data.unpricedStocks,
                                   staleHoldings: data.staleStocks,
+                                  pricesAsOf: data.pricesAsOf,
                                 ),
 
                                 const SizedBox(height: 14),

@@ -13,6 +13,7 @@ class DashboardSummary {
   final int totalStocks;
   final int unpricedStocks;
   final int staleStocks;
+  final DateTime? pricesAsOf;
 
   final LivePortfolio biggestWinner;
   final LivePortfolio biggestLoser;
@@ -47,6 +48,7 @@ final String portfolioHealthStatus;
     required this.totalStocks,
     this.unpricedStocks = 0,
     this.staleStocks = 0,
+    this.pricesAsOf,
     required this.biggestWinner,
     required this.biggestLoser,
     required this.portfolioHealth,
