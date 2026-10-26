@@ -11,26 +11,26 @@ class StockScoreEngine {
   ) {
     final Map<String, StockScore> scoreMap = {};
 
-for (final score in scores) {
-  final key = score.instrument
-      .toUpperCase()
-      .replaceAll(".NS", "");
+    for (final score in scores) {
+      final key = score.instrument
+          .toUpperCase()
+          .replaceAll(".NS", "");
 
-  scoreMap[key] = score;
-}
+      scoreMap[key] = score;
+    }
 
     final List<StockScore> result = [];
 
     for (final holding in portfolio) {
-  final symbol = holding.portfolio.instrument
-    .toUpperCase()
-    .replaceAll("-BE", "")
-    .replaceAll(".NS", "");
+      final symbol = holding.portfolio.instrument
+          .toUpperCase()
+          .replaceAll("-BE", "")
+          .replaceAll(".NS", "");
 
-  if (scoreMap.containsKey(symbol)) {
-    result.add(scoreMap[symbol]!);
-  }
-}
+      if (scoreMap.containsKey(symbol)) {
+        result.add(scoreMap[symbol]!);
+      }
+    }
     return result;
   }
 
@@ -38,23 +38,22 @@ for (final score in scores) {
     List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    final portfolioOnly =
-        portfolioScores(portfolio, scores);
+    final portfolioOnly = portfolioScores(portfolio, scores)
+        .where((s) => s.overallScore != null)
+        .toList();
 
     if (portfolioOnly.isEmpty) {
-      if (scores.isNotEmpty) {
-        final sorted = List<StockScore>.from(scores)
-          ..sort((a, b) => b.overallScore.compareTo(a.overallScore));
+      final scoredOnly = scores.where((s) => s.overallScore != null).toList();
+      if (scoredOnly.isNotEmpty) {
+        final sorted = List<StockScore>.from(scoredOnly)
+          ..sort((a, b) => (b.overallScore ?? -1).compareTo(a.overallScore ?? -1));
         return sorted.first;
       }
       return StockScore.empty();
     }
 
     portfolioOnly.sort(
-      (a, b) =>
-          b.overallScore.compareTo(
-        a.overallScore,
-      ),
+      (a, b) => (b.overallScore ?? -1).compareTo(a.overallScore ?? -1),
     );
 
     return portfolioOnly.first;
@@ -64,23 +63,22 @@ for (final score in scores) {
     List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    final portfolioOnly =
-        portfolioScores(portfolio, scores);
+    final portfolioOnly = portfolioScores(portfolio, scores)
+        .where((s) => s.overallScore != null)
+        .toList();
 
     if (portfolioOnly.isEmpty) {
-      if (scores.isNotEmpty) {
-        final sorted = List<StockScore>.from(scores)
-          ..sort((a, b) => a.overallScore.compareTo(b.overallScore));
+      final scoredOnly = scores.where((s) => s.overallScore != null).toList();
+      if (scoredOnly.isNotEmpty) {
+        final sorted = List<StockScore>.from(scoredOnly)
+          ..sort((a, b) => (a.overallScore ?? 999).compareTo(b.overallScore ?? 999));
         return sorted.first;
       }
       return StockScore.empty();
     }
 
     portfolioOnly.sort(
-      (a, b) =>
-          a.overallScore.compareTo(
-        b.overallScore,
-      ),
+      (a, b) => (a.overallScore ?? 999).compareTo(b.overallScore ?? 999),
     );
 
     return portfolioOnly.first;
@@ -104,12 +102,12 @@ for (final score in scores) {
     for (final h in portfolio) {
       final key = SymbolUtils.normalize(h.portfolio.instrument);
       final s = scoreMap[key];
-      if (s == null) continue;
+      if (s == null || s.overallScore == null) continue;
 
       final val = h.currentValue > 0 ? h.currentValue : h.portfolio.totalInvested;
       if (val <= 0) continue;
 
-      weighted += s.overallScore * val;
+      weighted += s.overallScore! * val;
       totalValue += val;
     }
 
@@ -168,7 +166,7 @@ for (final score in scores) {
     List<StockScore> scores,
   ) {
     return portfolioScores(portfolio, scores)
-        .where((e) => e.risk <= 2 || e.overallScore < 45)
+        .where((e) => e.risk <= 2 || (e.overallScore != null && e.overallScore! < 45))
         .toList();
   }
 
@@ -181,7 +179,11 @@ for (final score in scores) {
         .toList();
   }
 }
+
 int calculateScore(StockScore stock) {
+  final baseOverall = stock.overallScore;
+  if (baseOverall != null) return baseOverall;
+
   final score =
       (stock.businessQuality * 0.25) +
       (stock.financialStrength * 0.25) +

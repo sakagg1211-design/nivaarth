@@ -42,10 +42,10 @@ class PortfolioHealthEngine {
         )
       ];
 
-      if (score == null) {
+      if (score == null || score.overallScore == null) {
         continue;
       }
-      overallWeighted += score.overallScore * exposure;
+      overallWeighted += score.overallScore! * exposure;
       totalInvestment += exposure;
 
       business += score.businessQuality * exposure;

@@ -134,9 +134,9 @@ class AiScoreCard extends StatelessWidget {
 
                       child:
                           CircularProgressIndicator(
-                        value:
-                            score.overallScore /
-                                100,
+                        value: score.overallScore != null
+                            ? (score.overallScore! / 100)
+                            : 0.0,
 
                         strokeWidth: 11,
 
@@ -159,19 +159,24 @@ class AiScoreCard extends StatelessWidget {
                       children: [
 
                         Text(
-                          "${score.overallScore}",
+                          score.overallScore != null
+                              ? "${score.overallScore}"
+                              : "N/A",
                           style: AppTypography.displaySmall.copyWith(
-                            color:
-                                scoreColor,
-                            fontWeight:
-                                FontWeight.w900,
+                            color: scoreColor,
+                            fontWeight: FontWeight.w900,
+                            fontSize: score.overallScore != null ? 32 : 24,
                           ),
                         ),
 
                         Text(
-                          "/100",
-                          style:
-                              AppTypography.bodySmall,
+                          score.overallScore != null ? "/100" : "EXCLUDED",
+                          style: AppTypography.bodySmall.copyWith(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textSecondary,
+                            letterSpacing: 0.2,
+                          ),
                         ),
                       ],
                     ),
@@ -187,7 +192,7 @@ class AiScoreCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
-                                        children: [
+                  children: [
 
                     Text(
                       score.companyName.isEmpty
@@ -211,8 +216,45 @@ class AiScoreCard extends StatelessWidget {
                       ),
                     ),
 
+                    if (score.isExcluded ||
+                        score.provisionalCreditPending ||
+                        score.provisionalBrokerMTF ||
+                        score.debtNotAssessed) ...[
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 4,
+                        children: [
+                          if (score.isExcluded)
+                            _buildInstitutionalBadge(
+                              label: "Score Excluded",
+                              icon: Icons.block_outlined,
+                              color: Colors.amber,
+                            ),
+                          if (score.provisionalCreditPending)
+                            _buildInstitutionalBadge(
+                              label: "Credit Pending",
+                              icon: Icons.account_balance_outlined,
+                              color: Colors.blue,
+                            ),
+                          if (score.provisionalBrokerMTF)
+                            _buildInstitutionalBadge(
+                              label: "Broker MTF Leverage",
+                              icon: Icons.account_balance_wallet_outlined,
+                              color: Colors.purple,
+                            ),
+                          if (score.debtNotAssessed)
+                            _buildInstitutionalBadge(
+                              label: "Debt Not Assessed",
+                              icon: Icons.warning_amber_rounded,
+                              color: Colors.orange,
+                            ),
+                        ],
+                      ),
+                    ],
+
                     const SizedBox(
-                      height: AppSpacing.lg,
+                      height: AppSpacing.md,
                     ),
 
                     Row(
@@ -672,7 +714,42 @@ class AiScoreCard extends StatelessWidget {
     );
   }
 
-  Color _scoreColor(int score) {
+  static Widget _buildInstitutionalBadge({
+    required String label,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _scoreColor(int? score) {
+    if (score == null) {
+      return Colors.amber;
+    }
+
     if (score >= 80) {
       return AppColors.success;
     }
@@ -684,7 +761,11 @@ class AiScoreCard extends StatelessWidget {
     return AppColors.danger;
   }
 
-  String _ratingText(int score) {
+  String _ratingText(int? score) {
+    if (score == null) {
+      return "Excluded";
+    }
+
     if (score >= 85) {
       return "Excellent";
     }
@@ -701,6 +782,18 @@ class AiScoreCard extends StatelessWidget {
   }
 
   String _summary() {
+    if (score.isExcluded) {
+      final rec = score.recommendation.toUpperCase();
+      if (rec.contains("INSURANCE")) {
+        return "Life and General Insurance firms operate on actuarial float and statutory accounting. Quantitative 1-100 scoring is withheld until dedicated Embedded Value (EV) models are integrated.";
+      } else if (rec.contains("HOLDING")) {
+        return "Investment holding companies trade at variable net asset value (NAV) discounts. Standard operating multiples (P/E, ROCE) are not applicable; specialized SOTP research is recommended.";
+      } else if (rec.contains("REIT") || rec.contains("INVIT")) {
+        return "Real Estate & Infrastructure Investment Trusts operate on distribution yield and Net Asset Value (NAV). Standard industrial scoring is withheld.";
+      }
+      return "Quantitative conviction score withheld: specialized asset-class valuation framework required.";
+    }
+
     final rec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
     final bq = score.businessQuality;
     final val = score.valuation;
@@ -726,9 +819,9 @@ class AiScoreCard extends StatelessWidget {
       return "Robust top-line revenue expansion, but operating return on capital (ROCE) remains below the 8% cost-of-capital hurdle. Framework awaits operating margin expansion before accumulate eligibility.";
     }
 
-    // 4. Strong Fundamentals awaiting Technical Dip / Confirmation (e.g. NBCC, COALINDIA)
-    if (score.overallScore >= 70 && tech <= 5) {
-      return "Pristine balance sheet, strong solvency, and high return on capital. Price is in a short-term consolidation dip; model suggests monitoring for technical base stabilization.";
+    // 4. Strong Fundamentals awaiting Technical Confirmation
+    if (score.overallScore != null && score.overallScore! >= 70 && tech <= 5) {
+      return "Business fundamentals demonstrate healthy return on capital. Technical momentum data remains under active tracking; framework awaits moving average base confirmation.";
     }
 
     // 5. Overvalued with Technical Breakdown (e.g. ASIANPAINT)
@@ -742,11 +835,11 @@ class AiScoreCard extends StatelessWidget {
     }
 
     // 7. General High Conviction Accumulate
-    if (score.overallScore >= 75) {
+    if (score.overallScore != null && score.overallScore! >= 75) {
       return "Superior capital efficiency, pristine solvency, and attractive risk-reward alignment. Quantitative composite remains in institutional accumulation territory.";
     }
 
-    if (score.overallScore >= 60) {
+    if (score.overallScore != null && score.overallScore! >= 60) {
       return "Healthy underlying business fundamentals with balanced risk-reward. Monitor quarterly execution and entry valuation before increasing allocation.";
     }
 

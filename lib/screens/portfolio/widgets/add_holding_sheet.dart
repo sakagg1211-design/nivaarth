@@ -352,7 +352,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11.5),
                       ),
-                      trailing: item.overallScore > 0
+                      trailing: (item.overallScore != null && item.overallScore! > 0)
                           ? Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
@@ -364,7 +364,19 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                                 style: const TextStyle(color: Color(0xFF00E676), fontSize: 10, fontWeight: FontWeight.w700),
                               ),
                             )
-                          : null,
+                          : (item.isExcluded
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'EXCLUDED',
+                                    style: TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.w700),
+                                  ),
+                                )
+                              : null),
                       onTap: () => _selectStock(item),
                     );
                   },

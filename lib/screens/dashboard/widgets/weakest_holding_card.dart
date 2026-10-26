@@ -12,34 +12,22 @@ class WeakestHoldingCard extends StatelessWidget {
     required this.stock,
   });
 
-  Color get scoreColor 
-  {
-
-    if (stock.overallScore < 40) {
-      return AppColors.danger;
-    }
-
-    if (stock.overallScore < 60) {
-      return AppColors.warning;
-    }
-
+  Color get scoreColor {
+    final s = stock.overallScore;
+    if (s == null) return AppColors.warning;
+    if (s < 40) return AppColors.danger;
+    if (s < 60) return AppColors.warning;
     return AppColors.success;
   }
-String get headerChip {
-  if (stock.overallScore < 20) {
-    return "ACTION";
-  }
 
-  if (stock.overallScore < 40) {
-    return "REVIEW";
+  String get headerChip {
+    final s = stock.overallScore;
+    if (s == null) return "EXCLUDED";
+    if (s < 20) return "ACTION";
+    if (s < 40) return "REVIEW";
+    if (s < 60) return "WATCH";
+    return "STABLE";
   }
-
-  if (stock.overallScore < 60) {
-    return "WATCH";
-  }
-
-  return "STABLE";
-}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -254,17 +242,17 @@ String get headerChip {
                         height: 112,
                         child: CustomPaint(
                           painter: _ScoreRingPainter(
-                            progress: stock.overallScore / 100,
+                            progress: (stock.overallScore ?? 0) / 100,
                             color: const Color(0xFFEF4444),
                           ),
                           child: Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-
-                                // Score ko double digit (03) dikhane ke liye yahan change kiya gaya hai:
                                 Text(
-                                  stock.overallScore.toInt().toString().padLeft(2, '0'),
+                                  stock.overallScore != null
+                                      ? stock.overallScore!.toString().padLeft(2, '0')
+                                      : "N/A",
                                   style: const TextStyle(
                                     color: Color(0xFFEF4444),
                                     fontSize: 34,

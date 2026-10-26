@@ -120,27 +120,32 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String tag;
     final String takeaway;
+    final scoreVal = stock.overallScore;
     if (stock.recommendation.isNotEmpty && stock.recommendation != 'PENDING') {
       tag = SymbolUtils.toCompliantVerdict(stock.recommendation);
-    } else if (stock.overallScore >= 80) {
+    } else if (scoreVal != null && scoreVal >= 80) {
       tag = 'STRONG OUTPERFORM';
-    } else if (stock.overallScore >= 70) {
+    } else if (scoreVal != null && scoreVal >= 70) {
       tag = 'OUTPERFORM';
-    } else if (stock.overallScore >= 60) {
+    } else if (scoreVal != null && scoreVal >= 60) {
       tag = 'MODERATE STRENGTH';
-    } else if (stock.overallScore >= 45) {
+    } else if (scoreVal != null && scoreVal >= 45) {
       tag = 'NEUTRAL / WATCH';
-    } else if (stock.overallScore >= 35) {
+    } else if (scoreVal != null && scoreVal >= 35) {
       tag = 'ELEVATED RISK';
+    } else if (stock.isExcluded) {
+      tag = 'SCORE EXCLUDED';
     } else {
       tag = 'HIGH RISK';
     }
 
-    if (stock.overallScore >= 80) {
+    if (stock.isExcluded) {
+      takeaway = 'Specialized asset class ($sector); standard quantitative scoring withheld.';
+    } else if (scoreVal != null && scoreVal >= 80) {
       takeaway = 'Market leader in $sector with resilient operating margins & robust ROE.';
-    } else if (stock.overallScore >= 60) {
+    } else if (scoreVal != null && scoreVal >= 60) {
       takeaway = 'Steady compounding in $sector; healthy quarterly volume & earnings support.';
-    } else if (stock.overallScore >= 45) {
+    } else if (scoreVal != null && scoreVal >= 45) {
       takeaway = 'Trading within fair valuation band in $sector; monitor margin expansion.';
     } else {
       takeaway = 'Elevated leverage or cyclical contraction; wait for price stabilization.';

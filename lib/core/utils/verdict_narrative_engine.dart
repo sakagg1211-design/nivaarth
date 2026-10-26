@@ -146,6 +146,69 @@ class VerdictNarrativeEngine {
     }
 
     // -------------------------------------------------------------
+    // 1B. EXCLUDED ASSET CLASS PATH (HOLDING CO, INSURANCE, REIT)
+    // -------------------------------------------------------------
+    if (score.isExcluded) {
+      final rec = score.recommendation.toUpperCase();
+      final isHold = rec.contains('HOLDING');
+      final isIns = rec.contains('INSURANCE');
+      final isReit = rec.contains('REIT') || rec.contains('INVIT');
+
+      final archetype = isHold
+          ? 'Investment Holding Company (SOTP Required)'
+          : (isIns
+              ? 'Actuarial Underwriting Entity (EV Model Required)'
+              : (isReit
+                  ? 'Yield Distribution Trust (NAV Required)'
+                  : 'Specialized Asset Class (Score Excluded)'));
+
+      final icon = isHold ? '🏢' : (isIns ? '☂️' : (isReit ? '🏗️' : '📋'));
+
+      return VerdictNarrative(
+        archetypeTag: archetype,
+        archetypeIcon: icon,
+        analystBriefing: score.analystVerdict?.trim().isNotEmpty == true
+            ? score.analystVerdict!.trim()
+            : (isHold
+                ? '$displayName functions as an equity investment holding company. Standard operating ROCE and P/E ratios are mathematically distorted by holding company discounts and non-operating dividend income. Valuation must be assessed via Sum-of-the-Parts (SOTP) net asset value.'
+                : (isIns
+                    ? '$displayName operates an actuarial insurance underwriting portfolio. Statutory accounting and premium float dynamics make industrial ROCE metrics non-applicable; valuation is driven by Value of New Business (VNB) margins and Embedded Value (EV).'
+                    : '$displayName is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.')),
+        primaryCatalyst: VerdictSignal(
+          title: isHold ? 'Underlying Portfolio Holdings NAV' : (isIns ? 'Float Compounding & VNB Expansion' : 'Predictable Distribution Yield'),
+          description: isHold
+              ? 'Value realization is linked to the market capitalization growth of listed subsidiaries and unlisted associates.'
+              : (isIns
+                  ? 'Long-duration customer float and growing policyholder retention fuel actuarial book value expansion.'
+                  : 'High dividend payout mandates and pass-through tax structures provide tangible cash distribution.'),
+          scoreLabel: 'Coverage: Specialized',
+          isPositive: true,
+        ),
+        primaryRisk: VerdictSignal(
+          title: isHold ? 'Holding Company Discount Persistence' : (isIns ? 'Actuarial Claims / Surrender Risk' : 'Interest Rate Sensitivity'),
+          description: isHold
+              ? 'Holding company market price historically trades at a persistent 30-60% discount to underlying intrinsic NAV.'
+              : (isIns
+                  ? 'Regulatory commission caps and sudden mortality/morbidity claims spikes can pressure quarterly margins.'
+                  : 'Rising benchmark yields increase the discount rate and compress trust capital value.'),
+          scoreLabel: 'Risk: Specialized',
+          isPositive: false,
+        ),
+        playbook: TacticalPlaybook(
+          existingHoldersGuideline: isOwned
+              ? 'Currently in your portfolio. Track underlying holdings NAV and quarterly dividend distributions. Quantitative 1-100 score is withheld for this specialized vehicle.'
+              : 'Hold based on underlying asset quality and specialized NAV research rather than standard quant score.',
+          freshCapitalGuideline:
+              'Evaluate strictly through asset-class specific metrics (NAV discount for Holding Cos, EV/VNB for Insurance, Yield for REITs).',
+          keyMonitorable: isHold
+              ? 'Market value of core subsidiary holdings and parent capital allocation track record.'
+              : (isIns ? 'VNB margins, persistency ratios, and solvency margin ratio.' : 'Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec.'),
+        ),
+        convictionLabel: 'Specialized Asset Class (Score Excluded)',
+      );
+    }
+
+    // -------------------------------------------------------------
     // 2. EQUITIES FACTOR ANALYSIS
     // -------------------------------------------------------------
     final bqPct = score.businessQuality / 25.0;
@@ -383,7 +446,7 @@ class VerdictNarrativeEngine {
         keyMonitorable:
           'Volume dry-up during corrective pullbacks vs expansion during upward breaks.',
       );
-    } else if (score.overallScore >= 50) {
+    } else if ((score.overallScore ?? 0) >= 50) {
       archetypeTag = 'Balanced Mid-Cycle Consolidator';
       archetypeIcon = '📊';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
@@ -460,11 +523,11 @@ class VerdictNarrativeEngine {
       convictionLabel = 'Valuation Stretched / Consolidating';
     } else if (compliantRec.contains('NEUTRAL') || compliantRec.contains('WATCH')) {
       convictionLabel = 'Neutral / Quarterly Monitor';
-    } else if (score.overallScore >= 75) {
+    } else if ((score.overallScore ?? 0) >= 75) {
       convictionLabel = 'High Quantitative Factor Rank';
-    } else if (score.overallScore >= 60) {
+    } else if ((score.overallScore ?? 0) >= 60) {
       convictionLabel = 'Robust Factor Profile';
-    } else if (score.overallScore >= 45) {
+    } else if ((score.overallScore ?? 0) >= 45) {
       convictionLabel = 'Neutral Factor Profile';
     } else {
       convictionLabel = 'Defensive Risk Profile';

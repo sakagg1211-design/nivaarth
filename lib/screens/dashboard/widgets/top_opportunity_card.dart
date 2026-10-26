@@ -13,9 +13,11 @@ class TopOpportunityCard extends StatelessWidget {
   });
 
   Color get scoreColor {
-    if (stock.overallScore >= 90) return AppColors.success;
-    if (stock.overallScore >= 75) return AppColors.mint;
-    if (stock.overallScore >= 60) return AppColors.warning;
+    final s = stock.overallScore;
+    if (s == null) return AppColors.warning;
+    if (s >= 90) return AppColors.success;
+    if (s >= 75) return AppColors.mint;
+    if (s >= 60) return AppColors.warning;
     return AppColors.danger;
   }
 
@@ -209,7 +211,7 @@ class TopOpportunityCard extends StatelessWidget {
                         height: 112,
                         child: CustomPaint(
                           painter: _ScoreRingPainter(
-                            progress: stock.overallScore / 100,
+                            progress: (stock.overallScore ?? 0) / 100,
                             color: scoreColor,
                           ),
                           child: Center(
@@ -217,10 +219,12 @@ class TopOpportunityCard extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "${stock.overallScore}",
+                                  stock.overallScore != null
+                                      ? "${stock.overallScore}"
+                                      : "N/A",
                                   style: TextStyle(
                                     color: scoreColor,
-                                    fontSize: 34,
+                                    fontSize: stock.overallScore != null ? 34 : 26,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),

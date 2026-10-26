@@ -29,8 +29,8 @@ class DashboardSignalsGrid extends StatelessWidget {
     final oppSym = SymbolUtils.normalize(summary.topOpportunity.instrument.isNotEmpty
         ? summary.topOpportunity.instrument
         : summary.biggestWinner.portfolio.instrument);
-    final oppScore = summary.topOpportunity.overallScore > 0
-        ? summary.topOpportunity.overallScore
+    final oppScore = (summary.topOpportunity.overallScore != null && summary.topOpportunity.overallScore! > 0)
+        ? summary.topOpportunity.overallScore!
         : 64;
 
     // 4. Diversification Score & Distinct Sector Count
