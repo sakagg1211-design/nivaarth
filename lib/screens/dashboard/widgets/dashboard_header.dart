@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -251,14 +252,23 @@ class DashboardHeader extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.lg),
-              const Center(
-                child: Text(
-                  'Nivaarth Friends Beta v1.0.0 (Build 1)',
-                  style: TextStyle(
-                    color: Color(0xFF757A85),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
+              Center(
+                // Read from pubspec.yaml at runtime so it never goes stale
+                child: FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snap) {
+                    final info = snap.data;
+                    return Text(
+                      info == null
+                          ? 'Nivaarth Friends Beta'
+                          : 'Nivaarth Friends Beta v${info.version} (Build ${info.buildNumber})',
+                      style: const TextStyle(
+                        color: Color(0xFF757A85),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

@@ -93,6 +93,8 @@ final StockScore weakestHolding =
       todayPnL: analysis.todayPnL,
       todayReturnPercent: analysis.todayReturnPercent,
       totalStocks: analysis.totalStocks,
+      unpricedStocks: analysis.unpricedStocks,
+      staleStocks: analysis.staleStocks,
       biggestWinner: analysis.biggestWinner,
       biggestLoser: analysis.biggestLoser,
       portfolioHealth: health.overall,

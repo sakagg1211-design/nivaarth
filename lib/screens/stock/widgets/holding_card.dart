@@ -170,9 +170,19 @@ class HoldingCard extends StatelessWidget {
             "Return",
             _percent(
               stock.returnPercent,
+              signed: true,
             ),
             Icons.percent,
             valueColor: isProfit
+                ? AppColors.success
+                : AppColors.danger,
+          ),
+
+          _HoldingRow(
+            "Day's P&L",
+            '${_money(stock.todayPL, signed: true)} (${_percent(stock.todayReturnPercent, signed: true)})',
+            Icons.today_outlined,
+            valueColor: stock.todayPL >= 0
                 ? AppColors.success
                 : AppColors.danger,
           ),
@@ -192,9 +202,13 @@ class HoldingCard extends StatelessWidget {
   }
 
   static String _percent(
-    num value,
-  ) {
-    return "${value.toStringAsFixed(2)}%";
+    num value, {
+    bool signed = false,
+  }) {
+    final prefix =
+        signed && value >= 0 ? "+" : "";
+
+    return "$prefix${value.toStringAsFixed(2)}%";
   }
 }
 

@@ -9,6 +9,8 @@ class LivePortfolio {
   final double returnPercent;
   final double todayPL;
   final double todayReturnPercent;
+  final bool isStale;
+  final bool isPriceUnavailable;
 
   const LivePortfolio({
     required this.portfolio,
@@ -18,5 +20,7 @@ class LivePortfolio {
     required this.returnPercent,
     this.todayPL = 0.0,
     this.todayReturnPercent = 0.0,
+    this.isStale = false,
+    this.isPriceUnavailable = false,
   });
 }

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme/app_radius.dart';
@@ -16,6 +18,18 @@ class ChatMessageModel {
     required this.isUser,
     required this.time,
   });
+
+  Map<String, dynamic> toJson() => {
+    'text': text,
+    'isUser': isUser,
+    'time': time.toIso8601String(),
+  };
+
+  factory ChatMessageModel.fromJson(Map<String, dynamic> json) => ChatMessageModel(
+    text: json['text'] as String? ?? '',
+    isUser: json['isUser'] as bool? ?? false,
+    time: DateTime.tryParse(json['time'] as String? ?? '') ?? DateTime.now(),
+  );
 }
 
 class AdvisorChatPage extends ConsumerStatefulWidget {
@@ -35,26 +49,67 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   final List<ChatMessageModel> _messages = [
     ChatMessageModel(
       text: "Namaste! Main hoon **NV Advisor** 🤖\n\n"
-          "Aapka personal AI hedge-fund co-pilot. Main aapke portfolio holdings, live P&L, NV conviction scores aur Indian market trends ko real-time analyze karke personalized advice deta hoon.\n\n"
-          "Aap mujhse koi bhi financial ya portfolio question pooch sakte hain!",
+          "Aapka personal AI hedge-fund co-pilot. Main aapke portfolio holdings, live P&L, NV conviction scores, **Peer Comparisons**, aur **Forensic Risk Audits** ko real-time analyze karta hoon.\n\n"
+          "Aap mujhse koi bhi portfolio ya stock question pooch sakte hain!",
       isUser: false,
       time: DateTime.now(),
     ),
   ];
 
   final List<String> _quickSuggestions = [
+    "Mere portfolio ki 3 sabse badi galtiyan aur risk batao",
+    "Tata Motors vs Maruti kisme better growth hai?",
+    "Titan vs Trent comparison",
+    "UltraTech ka rate aur NV score kya hai?",
     "Mera portfolio performance kaisa hai?",
-    "Aapke hisaab se sabse weak stock kaunsa hai?",
-    "Top conviction holding kaunsi hai?",
     "Nifty 50 aur market ka trend kya hai?",
-    "Portfolio risk aur concentration balance kaise karein?",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodayHistory();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadTodayHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final now = DateTime.now();
+      final dateKey = "chat_history_${now.year}_${now.month}_${now.day}";
+      final raw = prefs.getString(dateKey);
+      if (raw != null && raw.isNotEmpty) {
+        final List<dynamic> list = jsonDecode(raw);
+        if (list.isNotEmpty) {
+          final loaded = list.map((item) => ChatMessageModel.fromJson(item as Map<String, dynamic>)).toList();
+          setState(() {
+            _messages.clear();
+            _messages.addAll(loaded);
+          });
+          _scrollToBottom();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error loading today chat history: $e");
+    }
+  }
+
+  Future<void> _saveTodayHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final now = DateTime.now();
+      final dateKey = "chat_history_${now.year}_${now.month}_${now.day}";
+      final encoded = jsonEncode(_messages.map((m) => m.toJson()).toList());
+      await prefs.setString(dateKey, encoded);
+    } catch (e) {
+      debugPrint("Error saving today chat history: $e");
+    }
   }
 
   void _scrollToBottom() {
@@ -85,13 +140,10 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
       _isTyping = true;
     });
     _scrollToBottom();
+    _saveTodayHistory();
 
     try {
-      final user = Supabase.instance.client.auth.currentUser;
-      final reply = await _backendService.chatWithAdvisor(
-        text,
-        userId: user?.id,
-      );
+      final reply = await _backendService.chatWithAdvisor(text);
 
       if (mounted) {
         setState(() {
@@ -105,9 +157,11 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           _isTyping = false;
         });
         _scrollToBottom();
+        _saveTodayHistory();
       }
 
       // Save to Supabase ChatMessages if logged in
+      final user = Supabase.instance.client.auth.currentUser;
       if (user != null) {
         try {
           await Supabase.instance.client.from('ChatMessages').insert([
@@ -141,8 +195,185 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           _isTyping = false;
         });
         _scrollToBottom();
+        _saveTodayHistory();
       }
     }
+  }
+
+  void _showTodayHistoryModal() {
+    final now = DateTime.now();
+    final todayMessages = _messages.where((m) =>
+      m.time.year == now.year &&
+      m.time.month == now.month &&
+      m.time.day == now.day
+    ).toList();
+
+    final userQuestions = <Map<String, dynamic>>[];
+    for (int i = 0; i < todayMessages.length; i++) {
+      if (todayMessages[i].isUser) {
+        String answerSnippet = "No reply yet";
+        if (i + 1 < todayMessages.length && !todayMessages[i + 1].isUser) {
+          answerSnippet = todayMessages[i + 1].text;
+        }
+        userQuestions.add({
+          "question": todayMessages[i].text,
+          "time": todayMessages[i].time,
+          "answer": answerSnippet,
+        });
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF16181D),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollCtrl) {
+            return Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 10, bottom: 6),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+                          SizedBox(width: 8),
+                          Text(
+                            "Today's History (Aaj ki History)",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE5A93C).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "${userQuestions.length} Queries",
+                          style: const TextStyle(
+                            color: Color(0xFFE5A93C),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(color: Color(0xFF26282E), height: 1),
+                Expanded(
+                  child: userQuestions.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white38, size: 40),
+                              const SizedBox(height: 12),
+                              Text(
+                                "Aaj abhi tak koi conversation nahi hui.",
+                                style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          controller: scrollCtrl,
+                          padding: const EdgeInsets.all(16),
+                          itemCount: userQuestions.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final item = userQuestions[index];
+                            final time = item["time"] as DateTime;
+                            final timeStr = "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+                            return InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                _controller.text = item["question"];
+                              },
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1E2026),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xFF2C2F36)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Q: ${item['question']}",
+                                            style: const TextStyle(
+                                              color: Color(0xFFE5A93C),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          timeStr,
+                                          style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      item["answer"],
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(alpha: 0.7),
+                                        fontSize: 12,
+                                        height: 1.3,
+                                      ),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -230,6 +461,11 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         ),
         actions: [
           IconButton(
+            tooltip: "Aaj ki History",
+            icon: const Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+            onPressed: _showTodayHistoryModal,
+          ),
+          IconButton(
             tooltip: "Clear Chat",
             icon: const Icon(Icons.delete_outline_rounded, color: Colors.white54, size: 20),
             onPressed: () {
@@ -243,6 +479,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                   ),
                 );
               });
+              _saveTodayHistory();
             },
           ),
           const SizedBox(width: 8),
@@ -339,6 +576,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
             ),
           Flexible(
             child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.85,
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: isUser
@@ -396,32 +636,138 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
     );
   }
 
+  Widget _buildMarkdownTable(List<String> tableLines) {
+    if (tableLines.isEmpty) return const SizedBox.shrink();
+
+    final List<List<String>> rows = [];
+    for (final line in tableLines) {
+      final trimmed = line.trim();
+      // Skip markdown separator line e.g. | :--- | :--- |
+      if (trimmed.replaceAll(RegExp(r'[\s|:-]'), '').isEmpty) {
+        continue;
+      }
+      final cells = trimmed
+          .split('|')
+          .map((c) => c.trim())
+          .where((c) => c.isNotEmpty)
+          .toList();
+      if (cells.isNotEmpty) {
+        rows.add(cells);
+      }
+    }
+
+    if (rows.isEmpty) return const SizedBox.shrink();
+
+    final headers = rows.first;
+    final dataRows = rows.skip(1).toList();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF191B20),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF2C2F36)),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Table(
+            defaultColumnWidth: const IntrinsicColumnWidth(),
+            border: TableBorder.symmetric(
+              inside: const BorderSide(color: Color(0xFF26282E), width: 1),
+            ),
+            children: [
+              TableRow(
+                decoration: const BoxDecoration(
+                  color: Color(0xFF20232B),
+                ),
+                children: headers.map((h) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  child: Text(
+                    h.replaceAll('**', ''),
+                    style: const TextStyle(
+                      color: Color(0xFFE5A93C),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                    softWrap: true,
+                  ),
+                )).toList(),
+              ),
+              ...dataRows.map((r) => TableRow(
+                children: List.generate(headers.length, (i) {
+                  final text = i < r.length ? r[i] : '';
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: Text(
+                      text.replaceAll('**', ''),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                      softWrap: true,
+                    ),
+                  );
+                }),
+              )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _formatMessageText(String rawText, bool isUser) {
     final lines = rawText.split('\n');
+    final List<Widget> widgets = [];
+    final List<String> currentTableLines = [];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines.map((line) {
-        final trimmed = line.trim();
-        if (trimmed.isEmpty) {
-          return const SizedBox(height: 6);
-        }
+    void flushTable() {
+      if (currentTableLines.isNotEmpty) {
+        widgets.add(_buildMarkdownTable(List.from(currentTableLines)));
+        currentTableLines.clear();
+      }
+    }
 
-        // Section divider ---
-        if (trimmed == '---' || trimmed == '***') {
-          return const Padding(
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      final trimmed = line.trim();
+
+      // Check if markdown table row
+      if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 2) {
+        currentTableLines.add(trimmed);
+        continue;
+      } else {
+        flushTable();
+      }
+
+      if (trimmed.isEmpty) {
+        widgets.add(const SizedBox(height: 6));
+        continue;
+      }
+
+      // Section divider ---
+      if (trimmed == '---' || trimmed == '***') {
+        widgets.add(
+          const Padding(
             padding: EdgeInsets.symmetric(vertical: 6),
             child: Divider(color: Color(0xFF2C2F36), height: 1),
-          );
-        }
+          ),
+        );
+        continue;
+      }
 
-        // Headings: ### or ## or #
-        if (trimmed.startsWith('#')) {
-          final cleanTitle = trimmed.replaceAll(RegExp(r'^#+\s*'), '').replaceAll('**', '');
-          return Padding(
+      // Headings: ### or ## or #
+      if (trimmed.startsWith('#')) {
+        final cleanTitle = trimmed.replaceAll(RegExp(r'^#+\s*'), '').replaceAll('**', '');
+        widgets.add(
+          Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 4),
             child: Text(
               cleanTitle,
+              softWrap: true,
+              textWidthBasis: TextWidthBasis.parent,
               style: const TextStyle(
                 color: Color(0xFFE5A93C),
                 fontSize: 15,
@@ -429,18 +775,21 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 letterSpacing: -0.2,
               ),
             ),
-          );
-        }
+          ),
+        );
+        continue;
+      }
 
-        // Blockquotes: >
-        final isQuote = trimmed.startsWith('>');
-        final contentText = isQuote ? trimmed.substring(1).trim() : line;
+      // Blockquotes: >
+      final isQuote = trimmed.startsWith('>');
+      final contentText = isQuote ? trimmed.substring(1).trim() : line;
 
-        // Parse inline **bold**
-        final spans = _parseInlineSpans(contentText, isUser);
+      // Parse inline **bold**
+      final spans = _parseInlineSpans(contentText, isUser);
 
-        if (isQuote) {
-          return Container(
+      if (isQuote) {
+        widgets.add(
+          Container(
             margin: const EdgeInsets.symmetric(vertical: 4),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
@@ -450,8 +799,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 left: BorderSide(color: Color(0xFFE5A93C), width: 3),
               ),
             ),
-            child: RichText(
-              text: TextSpan(
+            child: Text.rich(
+              TextSpan(
                 style: const TextStyle(
                   color: Color(0xFFD6DADF),
                   fontSize: 13,
@@ -460,14 +809,19 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 ),
                 children: spans,
               ),
+              softWrap: true,
+              textWidthBasis: TextWidthBasis.parent,
             ),
-          );
-        }
+          ),
+        );
+        continue;
+      }
 
-        return Padding(
+      widgets.add(
+        Padding(
           padding: const EdgeInsets.only(bottom: 3),
-          child: RichText(
-            text: TextSpan(
+          child: Text.rich(
+            TextSpan(
               style: TextStyle(
                 color: isUser ? Colors.white : const Color(0xFFE1E5EA),
                 fontSize: 14,
@@ -475,9 +829,18 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               ),
               children: spans,
             ),
+            softWrap: true,
+            textWidthBasis: TextWidthBasis.parent,
           ),
-        );
-      }).toList(),
+        ),
+      );
+    }
+
+    flushTable();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
     );
   }
 

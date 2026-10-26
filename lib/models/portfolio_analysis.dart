@@ -12,6 +12,11 @@ class PortfolioAnalysis {
   final int profitStocks;
   final int lossStocks;
 
+  // Holdings with no price at all (left out of every total) and holdings
+  // priced from the Supabase fallback instead of a live quote.
+  final int unpricedStocks;
+  final int staleStocks;
+
   final double healthScore;
   final double riskScore;
 
@@ -28,6 +33,8 @@ class PortfolioAnalysis {
     required this.totalStocks,
     required this.profitStocks,
     required this.lossStocks,
+    this.unpricedStocks = 0,
+    this.staleStocks = 0,
     required this.healthScore,
     required this.riskScore,
     required this.biggestWinner,

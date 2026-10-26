@@ -39,7 +39,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
   final _avgPriceController = TextEditingController();
   final _qtyFocusNode = FocusNode();
 
-  String? _selectedYahooSymbol;
   double? _liveLtp;
   bool _fetchingLtp = false;
 
@@ -59,7 +58,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
       _companyController.text = widget.initialCompanyName?.isNotEmpty == true
           ? widget.initialCompanyName!
           : SymbolUtils.getDisplayName(sym);
-      _selectedYahooSymbol = SymbolUtils.getYahooSymbol(sym);
       if (widget.initialPrice != null && widget.initialPrice! > 0) {
         _avgPriceController.text = widget.initialPrice!.toStringAsFixed(2);
         _liveLtp = widget.initialPrice;
@@ -113,7 +111,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     setState(() {
       _instrumentController.text = cleanSym;
       _companyController.text = stock.companyName;
-      _selectedYahooSymbol = yfSym;
       _suggestions = [];
       _fetchingLtp = true;
     });
@@ -174,7 +171,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     });
 
     try {
-      final yfSymbol = _selectedYahooSymbol ?? SymbolUtils.getYahooSymbol(instrument);
       final repository = PortfolioRepository();
 
       await repository.addHolding(
@@ -187,7 +183,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
       // Trigger instant single-stock onboarding in backend (Price, Tech, Fund, Score)
       BackendService().onboardStock(
         instrument: instrument,
-        yahooSymbol: yfSymbol,
       ).catchError((_) {});
 
       // Refresh providers

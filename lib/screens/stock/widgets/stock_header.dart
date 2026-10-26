@@ -16,6 +16,8 @@ class StockHeader extends StatelessWidget {
   final String? trend;
   final bool isSaved;
   final VoidCallback? onSaveToggle;
+  final double? todayPL;
+  final double? todayReturnPercent;
 
   const StockHeader({
     super.key,
@@ -29,6 +31,8 @@ class StockHeader extends StatelessWidget {
     this.trend,
     this.isSaved = false,
     this.onSaveToggle,
+    this.todayPL,
+    this.todayReturnPercent,
   });
 
   @override
@@ -281,41 +285,65 @@ class StockHeader extends StatelessWidget {
             height: 8,
           ),
 
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 7,
-              ),
-              decoration: BoxDecoration(
-                color:
-                    gainColor.withValues(
-                  alpha: .12,
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              if (status == 'PORTFOLIO') ...[
+                // 1. All-Time P&L Badge for Holding
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6.5),
+                  decoration: BoxDecoration(
+                    color: (netPL >= 0 ? AppColors.success : AppColors.danger).withValues(alpha: .12),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Text(
+                    "All-Time: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: netPL >= 0 ? AppColors.success : AppColors.danger,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.5,
+                    ),
+                  ),
                 ),
-                borderRadius:
-                    BorderRadius.circular(
-                  50,
-                ),
-              ),
-              child: Text(
-                status == 'PORTFOLIO'
-                    ? "All-Time: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})"
-                    : (returnPercent == 0 && netPL == 0)
+                // 2. Day's P&L Badge for Holding
+                if (todayPL != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6.5),
+                    decoration: BoxDecoration(
+                      color: ((todayPL ?? 0) >= 0 ? AppColors.success : AppColors.danger).withValues(alpha: .12),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      "Today: ${_money(todayPL!, signed: true)}   (${_percent(todayReturnPercent ?? 0.0, signed: true)})",
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: (todayPL ?? 0) >= 0 ? AppColors.success : AppColors.danger,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+              ] else ...[
+                // Google Finance Style Day Situation for Non-Portfolio (Discovery / Watchlist)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: gainColor.withValues(alpha: .12),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Text(
+                    (returnPercent == 0 && netPL == 0)
                         ? "0.00% (₹0.00 today)"
                         : "${isProfit ? '▲' : '▼'} ${returnPercent.abs().toStringAsFixed(2)}%   ${isProfit ? '+' : '-'}₹${netPL.abs().toStringAsFixed(2)} today",
-                style: AppTypography
-                    .bodyMedium
-                    .copyWith(
-                  color: gainColor,
-                  fontWeight:
-                      FontWeight.bold,
-                  fontSize: 13,
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: gainColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              ],
+            ],
           ),
 
           const SizedBox(

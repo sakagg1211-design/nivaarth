@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/symbol_utils.dart';
 import '../../../models/stock_score.dart';
 
 class AiScoreCard extends StatelessWidget {
@@ -53,57 +54,56 @@ class AiScoreCard extends StatelessWidget {
         children: [
 
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-
               Container(
-                height: 42,
-                width: 42,
+                height: 40,
+                width: 40,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(
                     alpha: .10,
                   ),
-                  borderRadius:
-                      BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.auto_awesome,
                   color: AppColors.primary,
+                  size: 20,
                 ),
               ),
-
               const SizedBox(
-                width: AppSpacing.md,
+                width: AppSpacing.sm,
               ),
-
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-
                     Text(
                       "NV Score",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTypography.titleLarge.copyWith(
-                        fontWeight:
-                            FontWeight.w800,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.2,
                       ),
                     ),
-
-                    const SizedBox(
-                      height: 2,
-                    ),
-
+                    const SizedBox(height: 1),
                     Text(
-                      "Nivaarth quantitative conviction score",
-                      style: AppTypography.bodySmall,
+                      "Quantitative Conviction Score",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
               ),
-
+              const SizedBox(width: AppSpacing.xs),
               _RecommendationChip(
-                recommendation:
-                    score.recommendation,
+                recommendation: score.recommendation,
               ),
             ],
           ),
@@ -701,15 +701,56 @@ class AiScoreCard extends StatelessWidget {
   }
 
   String _summary() {
-    if (score.overallScore >= 80) {
-      return "Business quality and financial strength remain excellent. Long-term outlook continues to be attractive.";
+    final rec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
+    final bq = score.businessQuality;
+    final val = score.valuation;
+    final tech = score.technical;
+    final risk = score.risk;
+    final growth = score.growth;
+
+    // 1. Critical Risk / High Pledging Override (e.g. SEPC, A2ZINFRA)
+    if (risk == 0 || rec.contains("HIGH RISK") || rec.contains("FLAG") || rec.contains("AVOID")) {
+      return "Critical risk threshold breached (elevated promoter share encumbrance or capital distress). Quant safety framework strictly enforces capital preservation over short-term price swings.";
+    }
+
+    // 2. High Quality Business with Premium Valuation Overhang (e.g. TITAN)
+    if (bq >= 15 && val <= 5) {
+      if (tech <= 4) {
+        return "Core business franchise & ROE remain superior, but shares trade at a premium valuation multiple with short-term chart consolidation. Research score reflects valuation overhang rather than business weakness.";
+      }
+      return "Exceptional industry moat and capital compounding, but current market multiple leaves modest margin of safety for fresh allocation.";
+    }
+
+    // 3. High Growth with Low Operating Hurdle / Margin Expansion Awaited (e.g. CCAVENUE)
+    if (growth >= 14 && bq < 12) {
+      return "Robust top-line revenue expansion, but operating return on capital (ROCE) remains below the 8% cost-of-capital hurdle. Framework awaits operating margin expansion before accumulate eligibility.";
+    }
+
+    // 4. Strong Fundamentals awaiting Technical Dip / Confirmation (e.g. NBCC, COALINDIA)
+    if (score.overallScore >= 70 && tech <= 5) {
+      return "Pristine balance sheet, strong solvency, and high return on capital. Price is in a short-term consolidation dip; model suggests monitoring for technical base stabilization.";
+    }
+
+    // 5. Overvalued with Technical Breakdown (e.g. ASIANPAINT)
+    if (rec.contains("TRIM") || rec.contains("ELEVATED VALUATION")) {
+      return "Extended valuation multiple coupled with moving average breakdown indicates ongoing consolidation. Framework suggests disciplined portfolio review.";
+    }
+
+    // 6. Below Capital Efficiency Hurdle (e.g. TITAGARH)
+    if (rec.contains("BELOW HURDLE") || bq < 10) {
+      return "Return on capital (ROCE/ROE) remains below institutional hurdle rates against prevailing multiples. Capital allocation efficiency requires quarterly monitoring.";
+    }
+
+    // 7. General High Conviction Accumulate
+    if (score.overallScore >= 75) {
+      return "Superior capital efficiency, pristine solvency, and attractive risk-reward alignment. Quantitative composite remains in institutional accumulation territory.";
     }
 
     if (score.overallScore >= 60) {
-      return "Overall fundamentals remain healthy. Monitor quarterly earnings and valuation before increasing allocation.";
+      return "Healthy underlying business fundamentals with balanced risk-reward. Monitor quarterly execution and entry valuation before increasing allocation.";
     }
 
-    return "Current NV conviction score indicates elevated risk. Review technical trend, valuation and business quality before fresh buying.";
+    return "Current conviction score reflects mixed factor balance across valuation, quality, and momentum. Prudent research discipline suggested before fresh capital commitment.";
   }
 }
 
@@ -825,12 +866,14 @@ class _RecommendationChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = _color();
+    final formatted = SymbolUtils.toCompliantVerdict(recommendation);
+    final Color color = _color(formatted);
 
     return Container(
+      constraints: const BoxConstraints(maxWidth: 140),
       padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 8,
+        horizontal: 10,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         color: color.withValues(
@@ -839,30 +882,36 @@ class _RecommendationChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           24,
         ),
+        border: Border.all(
+          color: color.withValues(alpha: .30),
+        ),
       ),
       child: Text(
-        recommendation.toUpperCase(),
+        formatted,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: AppTypography.bodySmall.copyWith(
           color: color,
           fontWeight: FontWeight.bold,
           letterSpacing: .3,
+          fontSize: 10.5,
         ),
       ),
     );
   }
 
-  Color _color() {
-    final rec = recommendation.toUpperCase();
-    if (rec.contains("OUTPERFORM") || rec.contains("BUY")) {
-      return AppColors.success;
-    }
-    if (rec.contains("MODERATE STRENGTH") || rec.contains("ACCUMULATE")) {
+  Color _color(String formattedRec) {
+    final upper = formattedRec.toUpperCase();
+    if (upper.contains("ROBUST") || upper.contains("ACCUMULATE") || upper.contains("OUTPERFORM") || upper == "BUY") {
       return const Color(0xFF4ADE80);
     }
-    if (rec.contains("HIGH RISK") || rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+    if (upper.contains("DIP") || upper.contains("WAIT FOR DIP")) {
+      return const Color(0xFF38BDF8); // Cyan/blue
+    }
+    if (upper.contains("HIGH RISK") || upper.contains("FLAG") || upper.contains("AVOID") || upper.contains("SELL")) {
       return AppColors.danger;
     }
-    if (rec.contains("ELEVATED RISK") || rec.contains("CAUTION") || rec.contains("REDUCE")) {
+    if (upper.contains("TRIM") || upper.contains("BELOW HURDLE") || upper.contains("EXTENDED") || upper.contains("ELEVATED")) {
       return Colors.orange;
     }
     return AppColors.warning;

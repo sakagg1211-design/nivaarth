@@ -18,6 +18,12 @@ class LivePortfolioRepository {
     final portfolio = await portfolioRepository.getPortfolio();
     if (portfolio.isEmpty) return [];
 
+    // Fallback: Fetch Supabase LatestPrices to NEVER silently assume avgPrice
+    final dbPricesList = await priceRepository.getPrices();
+    final dbPrices = {
+      for (final p in dbPricesList) SymbolUtils.normalize(p.instrument): p,
+    };
+
     // Fetch live quotes in parallel for all holdings using MarketQuoteService
     final quotes = await Future.wait(
       portfolio.map((s) => MarketQuoteService.instance.fetchLiveQuote(s.instrument)),
@@ -32,28 +38,41 @@ class LivePortfolioRepository {
     return portfolio.map((stock) {
       final clean = SymbolUtils.normalize(stock.instrument);
       final quote = quoteMap[clean];
+      final dbPrice = dbPrices[clean];
 
-      double currentPrice = (quote != null && quote.currentPrice > 0)
+      final double? livePrice = (quote != null && quote.currentPrice > 0)
           ? quote.currentPrice
-          : (stock.avgPrice > 0 ? stock.avgPrice : 0.0);
+          : null;
+      final bool isStale = livePrice == null;
+
+      final double currentPrice = livePrice ??
+          ((dbPrice != null && dbPrice.currentPrice > 0)
+              ? dbPrice.currentPrice
+              : 0.0);
+
+      final bool isPriceUnavailable = currentPrice == 0.0;
 
       final double currentValue = currentPrice * stock.qty;
-      final double netPL = currentValue - stock.totalInvested;
-      final double returnPercent = stock.totalInvested == 0
+      final double netPL = isPriceUnavailable
+          ? 0.0
+          : (currentValue - stock.totalInvested);
+      final double returnPercent = (stock.totalInvested == 0 || isPriceUnavailable)
           ? 0.0
           : (netPL / stock.totalInvested) * 100.0;
 
       // Authentic 1D P&L calculation directly from verified NSE previous close
       final double prevClose = (quote != null && quote.previousClose > 0)
           ? quote.previousClose
-          : currentPrice;
+          : (dbPrice != null && dbPrice.previousClose > 0
+              ? dbPrice.previousClose
+              : currentPrice);
 
-      final double dayPointChange = (currentPrice > 0 && prevClose > 0)
+      final double dayPointChange = (currentPrice > 0 && prevClose > 0 && !isPriceUnavailable)
           ? (currentPrice - prevClose)
           : 0.0;
 
       final double todayPL = dayPointChange * stock.qty;
-      final double todayReturnPercent = prevClose > 0
+      final double todayReturnPercent = (prevClose > 0 && !isPriceUnavailable)
           ? (dayPointChange / prevClose) * 100.0
           : 0.0;
 
@@ -65,6 +84,8 @@ class LivePortfolioRepository {
         returnPercent: returnPercent,
         todayPL: todayPL,
         todayReturnPercent: todayReturnPercent,
+        isStale: isStale,
+        isPriceUnavailable: isPriceUnavailable,
       );
     }).toList();
   }

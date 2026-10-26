@@ -174,8 +174,40 @@ class PortfolioCard extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
+                        if (stock.isPriceUnavailable)
+                          const Text(
+                            'Price unavailable',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFFFB74D),
+                            ),
+                          )
+                        else
                         Row(
                           children: [
+                            if (stock.isStale) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0x26FFB74D),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                                child: const Text(
+                                  'DELAYED',
+                                  style: TextStyle(
+                                    fontSize: 8.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFFFB74D),
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                            ],
                             Text(
                               Formatters.currency(stock.currentPrice),
                               style: const TextStyle(

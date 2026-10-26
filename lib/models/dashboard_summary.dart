@@ -11,6 +11,8 @@ class DashboardSummary {
   final double todayReturnPercent;
 
   final int totalStocks;
+  final int unpricedStocks;
+  final int staleStocks;
 
   final LivePortfolio biggestWinner;
   final LivePortfolio biggestLoser;
@@ -43,6 +45,8 @@ final String portfolioHealthStatus;
     this.todayPnL = 0.0,
     this.todayReturnPercent = 0.0,
     required this.totalStocks,
+    this.unpricedStocks = 0,
+    this.staleStocks = 0,
     required this.biggestWinner,
     required this.biggestLoser,
     required this.portfolioHealth,

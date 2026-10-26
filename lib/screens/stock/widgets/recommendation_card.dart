@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/symbol_utils.dart';
 import '../../../core/utils/verdict_narrative_engine.dart';
 import '../../../models/stock_score.dart';
 
@@ -80,9 +81,12 @@ class RecommendationCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       "NV Verdict",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTypography.titleLarge.copyWith(
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.2,
@@ -91,17 +95,22 @@ class RecommendationCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       narrative.convictionLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTypography.caption.copyWith(
                         color: AppColors.textTertiary,
+                        fontSize: 11,
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: AppSpacing.xs),
               Container(
+                constraints: const BoxConstraints(maxWidth: 140),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 7,
+                  horizontal: 10,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
                   color: recColor.withValues(alpha: 0.12),
@@ -111,11 +120,14 @@ class RecommendationCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  score.recommendation,
+                  SymbolUtils.toCompliantVerdict(score.recommendation),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTypography.labelMedium.copyWith(
                     color: recColor,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
+                    letterSpacing: 0.3,
+                    fontSize: 10.5,
                   ),
                 ),
               ),
@@ -396,20 +408,17 @@ class RecommendationCard extends StatelessWidget {
   }
 
   Color _recommendationColor() {
-    final rec = score.recommendation.toUpperCase();
-    if (rec.contains("STRONG OUTPERFORM") || rec.contains("STRONG BUY")) {
+    final rec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
+    if (rec.contains("ROBUST") || rec.contains("ACCUMULATE") || rec.contains("STRONG OUTPERFORM") || rec.contains("OUTPERFORM") || rec == "BUY") {
       return AppColors.success;
     }
-    if (rec.contains("OUTPERFORM") || rec == "BUY") {
-      return AppColors.success;
+    if (rec.contains("DIP") || rec.contains("WAIT FOR DIP")) {
+      return const Color(0xFF38BDF8);
     }
-    if (rec.contains("MODERATE STRENGTH") || rec.contains("ACCUMULATE")) {
-      return const Color(0xFF4ADE80);
-    }
-    if (rec.contains("HIGH RISK") || rec.contains("UNDERPERFORM") || rec.contains("SELL")) {
+    if (rec.contains("HIGH RISK") || rec.contains("FLAG") || rec.contains("AVOID") || rec.contains("SELL") || rec.contains("UNDERPERFORM")) {
       return AppColors.danger;
     }
-    if (rec.contains("ELEVATED RISK") || rec.contains("CAUTION") || rec.contains("REDUCE")) {
+    if (rec.contains("TRIM") || rec.contains("BELOW HURDLE") || rec.contains("EXTENDED") || rec.contains("ELEVATED") || rec.contains("CAUTION")) {
       return const Color(0xFFFF7043);
     }
     return AppColors.warning;

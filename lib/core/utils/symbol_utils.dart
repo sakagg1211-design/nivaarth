@@ -686,29 +686,61 @@ class SymbolUtils {
     return results;
   }
 
-  /// Normalizes legacy or non-compliant recommendation strings to SEBI-compliant
-  /// quantitative factor bands (e.g. STRONG OUTPERFORM, OUTPERFORM, MODERATE STRENGTH).
+  /// Normalizes legacy or raw backend recommendation strings to clean, human-friendly,
+  /// SEBI-compliant research labels that never break UI card headers.
   static String toCompliantVerdict(String? raw) {
     if (raw == null || raw.trim().isEmpty) return 'NEUTRAL / WATCH';
     final upper = raw.trim().toUpperCase();
-    if (upper == 'STRONG BUY' || upper == 'STRONG OUTPERFORM') {
-      return 'STRONG OUTPERFORM';
+
+    // Canonical Quant Engine v2.0 Signals (Objective Research & Factor Rankings)
+    if (upper == 'ACCUMULATE_CANDIDATE' || upper == 'ACCUMULATE' || upper == 'ROBUST PROFILE') {
+      return 'ROBUST PROFILE';
     }
-    if (upper == 'BUY' || upper == 'OUTPERFORM') {
-      return 'OUTPERFORM';
+    if (upper == 'WATCH_WEAK_TREND' || upper == 'WAIT FOR DIP') {
+      return 'WAIT FOR DIP';
     }
-    if (upper == 'ACCUMULATE' || upper == 'MODERATE STRENGTH' || upper == 'MODERATE') {
-      return 'MODERATE STRENGTH';
+    if (upper == 'HOLD_WAIT_FOR_BETTER_ENTRY' || upper == 'FAIR VALUE / HOLD' || upper == 'FAIR VALUE / CORE') {
+      return 'FAIR VALUE / CORE';
     }
-    if (upper == 'HOLD' || upper.contains('HOLD') || upper == 'NEUTRAL' || upper.contains('WATCH')) {
+    if (upper == 'HOLD_VALUATION_EXTENDED' || upper == 'EXTENDED VALUE' || upper == 'EXTENDED VALUATION') {
+      return 'EXTENDED VALUE';
+    }
+    if (upper == 'REVIEW_FOR_TRIM' || upper == 'REVIEW TO TRIM' || upper == 'ELEVATED VALUATION') {
+      return 'ELEVATED VALUATION';
+    }
+    if (upper == 'NOT_ELIGIBLE_FOR_ACCUMULATE' || upper == 'BELOW HURDLE') {
+      return 'BELOW HURDLE';
+    }
+    if (upper == 'AVOID_HIGH_RISK_OVERRIDE' || upper == 'HIGH RISK' || upper == 'SELL' || upper == 'AVOID' || upper == 'HIGH RISK / AVOID' || upper == 'HIGH RISK FLAG') {
+      return 'HIGH RISK FLAG';
+    }
+    if (upper == 'WATCH_FURTHER_RESEARCH' || upper == 'UNDER RESEARCH' || upper == 'NEUTRAL / WATCH' || upper == 'NEUTRAL' || upper == 'WATCH') {
       return 'NEUTRAL / WATCH';
     }
+    if (upper == 'WATCH_VALUATION_UNAVAILABLE' || upper == 'LOSS MAKING / WATCH' || upper == 'NEGATIVE EARNINGS') {
+      return 'NEGATIVE EARNINGS';
+    }
+    if (upper == 'QUALITY_UNAVAILABLE' || upper == 'DATA_STALE_SUPPRESSED' || upper == 'RISK_UNCONFIRMED_SUPPRESSED') {
+      return 'DATA PENDING';
+    }
+
+    // Legacy Support
+    if (upper == 'STRONG BUY' || upper == 'STRONG OUTPERFORM') {
+      return 'ROBUST PROFILE';
+    }
+    if (upper == 'BUY' || upper == 'OUTPERFORM') {
+      return 'ROBUST PROFILE';
+    }
+    if (upper == 'MODERATE STRENGTH' || upper == 'MODERATE') {
+      return 'MODERATE STRENGTH';
+    }
+    if (upper == 'HOLD' || upper.contains('HOLD') || upper == 'NEUTRAL') {
+      return 'FAIR VALUE / CORE';
+    }
     if (upper == 'REDUCE' || upper == 'CAUTION' || upper == 'ELEVATED RISK') {
-      return 'ELEVATED RISK';
+      return 'ELEVATED VALUATION';
     }
-    if (upper == 'SELL' || upper == 'UNDERPERFORM' || upper == 'HIGH RISK') {
-      return 'HIGH RISK';
-    }
-    return upper;
+
+    return upper.replaceAll('_', ' ');
   }
 }

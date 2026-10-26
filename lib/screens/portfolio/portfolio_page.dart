@@ -216,6 +216,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
             double totalPnL = 0;
 
             for (final stock in stocks) {
+              // No price at all: invested would count but value would be 0.
+              if (stock.isPriceUnavailable) continue;
               totalInvested += stock.portfolio.totalInvested;
               totalCurrentValue += stock.currentValue;
               totalPnL += stock.netPL;
@@ -431,16 +433,27 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               final isTwoCol = constraints.maxWidth >= 540;
-                              final crossAxisCount = isTwoCol ? 2 : 1;
+
+                              if (!isTwoCol) {
+                                return ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: sortedStocks.length,
+                                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                                  itemBuilder: (context, index) {
+                                    return PortfolioCard(stock: sortedStocks[index]);
+                                  },
+                                );
+                              }
 
                               return GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
-                                  mainAxisExtent: 148,
+                                  mainAxisExtent: 185,
                                 ),
                                 itemCount: sortedStocks.length,
                                 itemBuilder: (context, index) {

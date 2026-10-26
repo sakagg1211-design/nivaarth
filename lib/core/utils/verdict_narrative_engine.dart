@@ -101,6 +101,11 @@ class VerdictNarrativeEngine {
             ? score.companyName.trim()
             : SymbolUtils.getDisplayName(cleanSym);
 
+    // Prevent duplicate ticker like "Infibeam Avenues (CCAVENUE) (CCAVENUE)"
+    final displayName = resolvedName.toUpperCase().contains(cleanSym)
+        ? resolvedName
+        : '$resolvedName ($cleanSym)';
+
     final resolvedSector = SymbolUtils.getSector(cleanSym, dbSector: sector);
 
     // -------------------------------------------------------------
@@ -112,7 +117,7 @@ class VerdictNarrativeEngine {
         archetypeIcon: '🛡️',
         analystBriefing: score.analystVerdict?.trim().isNotEmpty == true
             ? score.analystVerdict!.trim()
-            : '$resolvedName ($cleanSym) operates as an institutional-grade passive investment vehicle tracking $resolvedSector. Backed by underlying physical assets or index baskets, it eliminates single-company credit and governance risks while providing essential macroeconomic hedging.',
+            : '$displayName operates as an institutional-grade passive investment vehicle tracking $resolvedSector. Backed by underlying physical assets or index baskets, it eliminates single-company credit and governance risks while providing essential macroeconomic hedging.',
         primaryCatalyst: VerdictSignal(
           title: 'Systemic Diversification & Zero Credit Risk',
           description:
@@ -170,7 +175,7 @@ class VerdictNarrativeEngine {
         archetypeIcon = '🏛️';
         briefingText = score.analystVerdict?.trim().isNotEmpty == true
             ? score.analystVerdict!.trim()
-            : '$resolvedName ($cleanSym) demonstrates exceptional balance sheet solvency (${score.financialStrength}/25) backed by sovereign infrastructure patronage. Current sideways price action reflects healthy long-term base building following multi-quarter order-book expansion.';
+            : '$displayName demonstrates exceptional balance sheet solvency (${score.financialStrength}/25) backed by sovereign infrastructure patronage. Current sideways price action reflects healthy long-term base building following multi-quarter order-book expansion.';
         primaryCatalyst = VerdictSignal(
           title: 'Sovereign Moat & Financial Solvency',
           description:
@@ -200,7 +205,7 @@ class VerdictNarrativeEngine {
         archetypeIcon = '⚡';
         briefingText = score.analystVerdict?.trim().isNotEmpty == true
             ? score.analystVerdict!.trim()
-            : '$resolvedName ($cleanSym) is benefiting from sustained institutional sponsorship and national capex tailwinds. Robust technical momentum (${score.technical}/10) is firmly supported by clean balance-sheet solvency (${score.financialStrength}/25).';
+            : '$displayName is benefiting from sustained institutional sponsorship and national capex tailwinds. Robust technical momentum (${score.technical}/10) is firmly supported by clean balance-sheet solvency (${score.financialStrength}/25).';
         primaryCatalyst = VerdictSignal(
           title: 'Institutional Order Inflow & Momentum',
           description:
@@ -232,7 +237,7 @@ class VerdictNarrativeEngine {
         archetypeIcon = '💎';
         briefingText = score.analystVerdict?.trim().isNotEmpty == true
             ? score.analystVerdict!.trim()
-            : '$resolvedName ($cleanSym) commands elite business quality (${score.businessQuality}/25) with top-quartile return metrics and fortress solvency (${score.financialStrength}/25). However, elevated market multiples leave limited cushion for execution slippage.';
+            : '$displayName commands elite business quality (${score.businessQuality}/25) with top-quartile return metrics and fortress solvency (${score.financialStrength}/25). However, elevated market multiples leave limited cushion for execution slippage.';
         primaryCatalyst = VerdictSignal(
           title: 'Industry-Leading Return Ratios & Moat',
           description:
@@ -262,7 +267,7 @@ class VerdictNarrativeEngine {
         archetypeIcon = '🚀';
         briefingText = score.analystVerdict?.trim().isNotEmpty == true
             ? score.analystVerdict!.trim()
-            : '$resolvedName ($cleanSym) combines top-decile operational quality (${score.businessQuality}/25), pristine financial health (${score.financialStrength}/25), and sensible entry valuation (${score.valuation}/15). An institutional core compounder candidate.';
+            : '$displayName combines top-decile operational quality (${score.businessQuality}/25), pristine financial health (${score.financialStrength}/25), and sensible entry valuation (${score.valuation}/15). An institutional core compounder candidate.';
         primaryCatalyst = VerdictSignal(
           title: 'Durable Moat & Capital Efficiency',
           description:
@@ -293,7 +298,7 @@ class VerdictNarrativeEngine {
       archetypeIcon = '⚖️';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
           ? score.analystVerdict!.trim()
-          : '$resolvedName ($cleanSym) is in an active tug-of-war: technical trend momentum (${score.technical}/10) remains resilient, but elevated earnings valuation (${score.valuation}/15) caps upside velocity without accelerating profit growth.';
+          : '$displayName is in an active tug-of-war: technical trend momentum (${score.technical}/10) remains resilient, but elevated earnings valuation (${score.valuation}/15) caps upside velocity without accelerating profit growth.';
       primaryCatalyst = VerdictSignal(
         title: 'Technical Momentum & Relative Strength',
         description:
@@ -323,7 +328,7 @@ class VerdictNarrativeEngine {
       archetypeIcon = '📉';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
           ? score.analystVerdict!.trim()
-          : '$resolvedName ($cleanSym) trades at an attractive valuation multiple (${score.valuation}/15) offering significant margin of safety. While technical momentum (${score.technical}/10) is currently subdued, downside appears structurally cushioned.';
+          : '$displayName trades at an attractive valuation multiple (${score.valuation}/15) offering significant margin of safety. While technical momentum (${score.technical}/10) is currently subdued, downside appears structurally cushioned.';
       primaryCatalyst = VerdictSignal(
         title: 'Valuation Margin of Safety',
         description:
@@ -353,7 +358,7 @@ class VerdictNarrativeEngine {
       archetypeIcon = '🔥';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
           ? score.analystVerdict!.trim()
-          : '$resolvedName ($cleanSym) is in an aggressive upward impulse, powered by accelerating quarterly growth (${score.growth}/20) and bullish technical alignment (${score.technical}/10). Strong institutional volume sponsorship is evident.';
+          : '$displayName is in an aggressive upward impulse, powered by accelerating quarterly growth (${score.growth}/20) and bullish technical alignment (${score.technical}/10). Strong institutional volume sponsorship is evident.';
       primaryCatalyst = VerdictSignal(
         title: 'Growth Acceleration & Price Impulse',
         description:
@@ -383,7 +388,7 @@ class VerdictNarrativeEngine {
       archetypeIcon = '📊';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
           ? score.analystVerdict!.trim()
-          : '$resolvedName ($cleanSym) exhibits a balanced profile in $resolvedSector with stable baseline operations (${score.businessQuality}/25 BQ). Ongoing business execution is steady, but clear catalytic triggers are required for decisive re-rating.';
+          : '$displayName exhibits a balanced profile in $resolvedSector with stable baseline operations (${score.businessQuality}/25 BQ). Ongoing business execution is steady, but clear catalytic triggers are required for decisive re-rating.';
       primaryCatalyst = VerdictSignal(
         title: 'Operational Baseline in $resolvedSector',
         description:
@@ -413,7 +418,7 @@ class VerdictNarrativeEngine {
       archetypeIcon = '⚠️';
       briefingText = score.analystVerdict?.trim().isNotEmpty == true
           ? score.analystVerdict!.trim()
-          : '$resolvedName ($cleanSym) reflects elevated quantitative caution with an overall score of ${score.overallScore}/100. Subdued fundamentals or decelerating technical momentum suggest a disciplined capital preservation stance.';
+          : '$displayName reflects elevated quantitative caution with an overall score of ${score.overallScore}/100. Subdued fundamentals or decelerating technical momentum suggest a disciplined capital preservation stance.';
       primaryCatalyst = VerdictSignal(
         title: 'Potential Operational Sunk-Cost Floor',
         description:
@@ -440,15 +445,29 @@ class VerdictNarrativeEngine {
       );
     }
 
+    final compliantRec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
+
     String convictionLabel;
-    if (score.overallScore >= 75) {
-      convictionLabel = 'Institutional High-Conviction';
+    if (compliantRec.contains('HIGH RISK') || compliantRec.contains('FLAG') || compliantRec.contains('AVOID')) {
+      convictionLabel = 'Critical Risk Factor Breached';
+    } else if (compliantRec.contains('BELOW HURDLE')) {
+      convictionLabel = 'Below Hurdle Rate (ROCE < 8%)';
+    } else if (compliantRec.contains('EXTENDED VALUE')) {
+      convictionLabel = 'Valuation Multiple Overhang';
+    } else if (compliantRec.contains('WAIT FOR DIP') || compliantRec.contains('DIP')) {
+      convictionLabel = 'Consolidation / Base Setup';
+    } else if (compliantRec.contains('ELEVATED VALUATION') || compliantRec.contains('TRIM')) {
+      convictionLabel = 'Valuation Stretched / Consolidating';
+    } else if (compliantRec.contains('NEUTRAL') || compliantRec.contains('WATCH')) {
+      convictionLabel = 'Neutral / Quarterly Monitor';
+    } else if (score.overallScore >= 75) {
+      convictionLabel = 'High Quantitative Factor Rank';
     } else if (score.overallScore >= 60) {
-      convictionLabel = 'Institutional Accumulate';
+      convictionLabel = 'Robust Factor Profile';
     } else if (score.overallScore >= 45) {
-      convictionLabel = 'Neutral Allocation';
+      convictionLabel = 'Neutral Factor Profile';
     } else {
-      convictionLabel = 'Defensive Risk Management';
+      convictionLabel = 'Defensive Risk Profile';
     }
 
     return VerdictNarrative(

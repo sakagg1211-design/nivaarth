@@ -12,6 +12,8 @@ class PortfolioHeroCard extends StatelessWidget {
   final int holdings;
   final double aiConfidence;
   final bool isMarketOpen;
+  final int unpricedHoldings;
+  final int staleHoldings;
 
   const PortfolioHeroCard({
     super.key,
@@ -24,7 +26,19 @@ class PortfolioHeroCard extends StatelessWidget {
     required this.holdings,
     required this.aiConfidence,
     this.isMarketOpen = false,
+    this.unpricedHoldings = 0,
+    this.staleHoldings = 0,
   });
+
+  String? get _priceNote {
+    if (unpricedHoldings > 0) {
+      return '$unpricedHoldings stock ka price nahi mila — total mein shaamil nahi';
+    }
+    if (staleHoldings > 0) {
+      return '$staleHoldings stock ka live price nahi mila — pichhla saved price dikh raha hai';
+    }
+    return null;
+  }
 
   bool get isProfit => netPnL >= 0;
 
@@ -158,6 +172,30 @@ class PortfolioHeroCard extends StatelessWidget {
               ),
             ],
           ),
+
+          if (_priceNote != null) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 14,
+                  color: Color(0xFFFFB74D),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    _priceNote!,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFFFB74D),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

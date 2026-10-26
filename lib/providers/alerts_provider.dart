@@ -80,7 +80,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
 
       // 2. If no alerts from DB, query backend smart alert service
       if (alerts.isEmpty) {
-        final backendAlerts = await _backendService.getSmartAlerts(userId: userId);
+        final backendAlerts = await _backendService.getSmartAlerts();
         if (backendAlerts.isNotEmpty) {
           alerts = backendAlerts.map((item) => UserAlert.fromJson(item)).toList();
         }

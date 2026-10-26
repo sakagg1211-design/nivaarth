@@ -53,11 +53,27 @@ class PortfolioAnalyzer {
 
     int profitStocks = 0;
     int lossStocks = 0;
+    int unpricedStocks = 0;
+    int staleStocks = 0;
 
-    LivePortfolio biggestWinner = portfolio.first;
-    LivePortfolio biggestLoser = portfolio.first;
+    // Holdings with no price would add their invested amount but zero value,
+    // so every total below is computed over priced holdings only.
+    final priced =
+        portfolio.where((s) => !s.isPriceUnavailable).toList();
+
+    LivePortfolio biggestWinner =
+        priced.isNotEmpty ? priced.first : portfolio.first;
+    LivePortfolio biggestLoser = biggestWinner;
 
     for (final stock in portfolio) {
+      if (stock.isPriceUnavailable) {
+        unpricedStocks++;
+        continue;
+      }
+      if (stock.isStale) {
+        staleStocks++;
+      }
+
       totalInvested += stock.portfolio.totalInvested;
       currentValue += stock.currentValue;
       previousPortfolioValue += (stock.currentValue - stock.todayPL);
@@ -88,8 +104,9 @@ class PortfolioAnalyzer {
         ? (finalTodayPnL / previousPortfolioValue) * 100
         : 0.0;
 
-    final double riskScore =
-        (lossStocks / portfolio.length) * 100;
+    final double riskScore = priced.isEmpty
+        ? 0
+        : (lossStocks / priced.length) * 100;
 
     return PortfolioAnalysis(
       totalInvested: totalInvested,
@@ -101,6 +118,8 @@ class PortfolioAnalyzer {
       totalStocks: portfolio.length,
       profitStocks: profitStocks,
       lossStocks: lossStocks,
+      unpricedStocks: unpricedStocks,
+      staleStocks: staleStocks,
 
       // Portfolio Health is now handled by PortfolioHealthEngine
       healthScore: 0,

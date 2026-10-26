@@ -45,13 +45,40 @@ class PortfolioRepository {
       throw Exception("User must be authenticated to add portfolio holdings.");
     }
 
+    final cleanSym = instrument.trim().toUpperCase();
+
+    // 1. Duplicate check: prevent duplicate holdings for same user
+    final existing = await client
+        .from('Portfolio')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('Instrument', cleanSym)
+        .limit(1)  // older duplicate rows would make maybeSingle() throw
+        .maybeSingle();
+
+    if (existing != null) {
+      throw Exception('Ye stock pehle se portfolio mein hai. Usko Edit karke quantity badlo.');
+    }
+
+    // 2. Universe check: verify symbol is a genuine NSE listed stock
+    final valid = await client
+        .from('ScreenerFundamentals')
+        .select('Instrument')
+        .eq('Instrument', cleanSym)
+        .limit(1)
+        .maybeSingle();
+
+    if (valid == null) {
+      throw Exception('Ye symbol NSE list mein nahi mila. Search se stock chuno.');
+    }
+
     final totalInvested = qty * avgPrice;
 
     final Map<String, dynamic> payload = {
       'user_id': user.id,
-      'Instrument': instrument.trim().toUpperCase(),
+      'Instrument': cleanSym,
       'Company_name': companyName.trim(),
-      'YahooSymbol': SymbolUtils.getYahooSymbol(instrument),
+      'YahooSymbol': SymbolUtils.getYahooSymbol(cleanSym),
       'Qty': qty,
       'Avg Price': avgPrice,
       'Total Invested': totalInvested,
@@ -76,17 +103,13 @@ class PortfolioRepository {
     }
 
     final totalInvested = qty * avgPrice;
+    // Task 2.6: Only save fundamental parameters (Qty, Avg Price, Total Invested).
+    // Current Val & Net P&L are derived dynamically at runtime to prevent stale DB state.
     final Map<String, dynamic> updates = {
       'Qty': qty,
       'Avg Price': avgPrice,
       'Total Invested': totalInvested,
     };
-
-    if (currentPrice != null && currentPrice > 0) {
-      final currentVal = qty * currentPrice;
-      updates['Current Val'] = currentVal;
-      updates['Net P&L'] = currentVal - totalInvested;
-    }
 
     // Strict ownership verification: id AND user_id must match
     await client

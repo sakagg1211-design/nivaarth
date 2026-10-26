@@ -23,6 +23,7 @@ import 'widgets/investment_thesis_card.dart';
 import 'widgets/ai_score_card.dart';
 import 'widgets/recommendation_card.dart';
 import 'widgets/news_card.dart';
+import '../portfolio/widgets/add_holding_sheet.dart';
 import '../../services/backend_service.dart';
 
 class StockDetailPage extends ConsumerStatefulWidget {
@@ -58,6 +59,19 @@ class _StockDetailPageState
     });
   }
 
+  void _openAddHolding(BuildContext context, String symbol, String companyName, double price) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AddHoldingSheet(
+        initialInstrument: symbol,
+        initialCompanyName: companyName,
+        initialPrice: price,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -72,7 +86,9 @@ class _StockDetailPageState
       ),
     );
 
-    final isOwned = portfolio.qty > 0;
+    final isOwned = portfolio.qty > 0 || portfolio.status == 'PORTFOLIO';
+
+    final liveQuote = ref.watch(liveQuoteProvider(cleanSym)).value;
 
     // Preserving 100% accurate database values for owned portfolio assets
     final double displayPrice;
@@ -84,7 +100,6 @@ class _StockDetailPageState
       displayChange = stock.netPL;
       displayReturnPercent = stock.returnPercent;
     } else {
-      final liveQuote = ref.watch(liveQuoteProvider(cleanSym)).value;
       displayPrice = (liveQuote != null && liveQuote.currentPrice > 0)
           ? liveQuote.currentPrice
           : (stock.currentPrice > 0 ? stock.currentPrice : SymbolUtils.getEstimatedPrice(cleanSym));
@@ -95,6 +110,22 @@ class _StockDetailPageState
           ? liveQuote.changePercent
           : stock.returnPercent;
     }
+
+    final double? todayPL = isOwned
+        ? (stock.todayPL != 0
+            ? stock.todayPL
+            : ((liveQuote != null && liveQuote.previousClose > 0)
+                ? (displayPrice - liveQuote.previousClose) * portfolio.qty
+                : 0.0))
+        : null;
+
+    final double? todayReturnPercent = isOwned
+        ? (stock.todayReturnPercent != 0
+            ? stock.todayReturnPercent
+            : ((liveQuote != null && liveQuote.previousClose > 0)
+                ? ((displayPrice - liveQuote.previousClose) / liveQuote.previousClose) * 100
+                : 0.0))
+        : null;
 
     final isProfit = displayChange >= 0;
 
@@ -136,6 +167,47 @@ class _StockDetailPageState
           ),
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => _openAddHolding(
+                context,
+                portfolio.instrument,
+                portfolio.companyName,
+                displayPrice,
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isOwned ? const Color(0x2600E676) : const Color(0x1F38BDF8),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isOwned ? const Color(0x4D00E676) : const Color(0x4D38BDF8),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isOwned ? Icons.account_balance_wallet_rounded : Icons.add_business_rounded,
+                      color: isOwned ? const Color(0xFF00E676) : const Color(0xFF38BDF8),
+                      size: 15,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      isOwned ? 'Holding' : '+ Port',
+                      style: TextStyle(
+                        color: isOwned ? const Color(0xFF00E676) : const Color(0xFF38BDF8),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: InkWell(
@@ -220,7 +292,7 @@ class _StockDetailPageState
               companyName:
                   portfolio.companyName,
               status:
-                  portfolio.status,
+                  isOwned ? 'PORTFOLIO' : portfolio.status,
               currentPrice:
                   displayPrice,
               netPL:
@@ -231,6 +303,8 @@ class _StockDetailPageState
                   isProfit,
               trend: computedTrend,
               isSaved: isSaved,
+              todayPL: todayPL,
+              todayReturnPercent: todayReturnPercent,
               onSaveToggle: () {
                 final notifier = ref.read(watchlistProvider.notifier);
                 if (isSaved) {

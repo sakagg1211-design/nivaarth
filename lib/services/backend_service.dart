@@ -3,9 +3,18 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BackendService {
   static const String baseUrl = "https://nivaarth-backend.onrender.com";
+
+  Map<String, String> _authHeaders() {
+    final token = Supabase.instance.client.auth.currentSession?.accessToken;
+    return {
+      "Content-Type": "application/json",
+      if (token != null) "Authorization": "Bearer $token",
+    };
+  }
 
   Future<void> startAutomation() async {
     debugPrint("🚀 STEP 1 : startAutomation() called");
@@ -16,7 +25,7 @@ class BackendService {
 
     try {
       final response = await http
-          .post(url)
+          .post(url, headers: _authHeaders())
           .timeout(const Duration(seconds: 10));
 
       debugPrint("📡 Status Code : ${response.statusCode}");
@@ -39,7 +48,7 @@ class BackendService {
       debugPrint("🎉 Backend automation completed");
     } on TimeoutException {
       throw Exception(
-        "Backend request timed out. Render may be waking up or automation is taking longer than expected.",
+        "Server se jawab nahi aaya, thodi der baad try karo.",
       );
     } catch (e) {
       debugPrint("❌ Backend Error: $e");
@@ -49,18 +58,15 @@ class BackendService {
 
   Future<void> onboardStock({
     required String instrument,
-    String? yahooSymbol,
   }) async {
     final url = Uri.parse("$baseUrl/automation/onboard-stock");
     try {
       final response = await http
           .post(
             url,
-            headers: {"Content-Type": "application/json"},
+            headers: _authHeaders(),
             body: jsonEncode({
               "instrument": instrument,
-              "yahoo_symbol": yahooSymbol,
-              "sync": true,
             }),
           )
           .timeout(const Duration(seconds: 15));
@@ -71,16 +77,15 @@ class BackendService {
     }
   }
 
-  Future<String> chatWithAdvisor(String message, {String? userId}) async {
+  Future<String> chatWithAdvisor(String message) async {
     final url = Uri.parse("$baseUrl/ai/chat");
     try {
       final response = await http
           .post(
             url,
-            headers: {"Content-Type": "application/json"},
+            headers: _authHeaders(),
             body: jsonEncode({
               "message": message,
-              "user_id": userId,
             }),
           )
           .timeout(const Duration(seconds: 40));
@@ -88,6 +93,8 @@ class BackendService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data["reply"] ?? "Unable to analyze response.";
+      } else if (response.statusCode == 429) {
+        return "Ghante ki limit poori ho gayi, thodi der baad try karo.";
       } else {
         throw Exception("Server returned ${response.statusCode}");
       }
@@ -97,10 +104,12 @@ class BackendService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSmartAlerts({String? userId}) async {
-    final uri = Uri.parse("$baseUrl/ai/alerts${userId != null ? '?user_id=$userId' : ''}");
+  Future<List<Map<String, dynamic>>> getSmartAlerts() async {
+    final uri = Uri.parse("$baseUrl/ai/alerts");
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(uri, headers: _authHeaders())
+          .timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final list = data["alerts"] as List?;

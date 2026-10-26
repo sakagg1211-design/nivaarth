@@ -153,7 +153,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       addedPrice: price,
       latestPrice: price,
       dayChangePercent: dayChangePercent ?? 0.0,
-      volume: '154.2 k',
+      volume: '—',
       returnPercent: 0.0,
       trackedDate: _formatToday(),
       technicalTag: tag,
@@ -170,7 +170,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     required String symbol,
     required String companyName,
     required double price,
-    int score = 0,
+    int? score,
     String tag = '',
   }) {
     final sym = SymbolUtils.normalize(symbol);
@@ -179,27 +179,28 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String computedTag;
     final String takeaway;
+    final sVal = score ?? 0;
     if (tag.isNotEmpty && tag != 'BUY' && tag != 'PENDING') {
       computedTag = SymbolUtils.toCompliantVerdict(tag);
-    } else if (score >= 80) {
+    } else if (sVal >= 80) {
       computedTag = 'STRONG OUTPERFORM';
-    } else if (score >= 70) {
+    } else if (sVal >= 70) {
       computedTag = 'OUTPERFORM';
-    } else if (score >= 60) {
+    } else if (sVal >= 60) {
       computedTag = 'MODERATE STRENGTH';
-    } else if (score >= 45) {
+    } else if (sVal >= 45) {
       computedTag = 'NEUTRAL / WATCH';
-    } else if (score >= 35) {
+    } else if (sVal >= 35) {
       computedTag = 'ELEVATED RISK';
-    } else if (score > 0) {
+    } else if (sVal > 0) {
       computedTag = 'HIGH RISK';
     } else {
       computedTag = 'NEUTRAL / WATCH';
     }
 
-    if (score >= 75) {
+    if (sVal >= 75) {
       takeaway = 'High conviction leader in $sector. Strong balance sheet & institutional backing.';
-    } else if (score >= 60) {
+    } else if (sVal >= 60) {
       takeaway = 'Positive multi-quarter momentum in $sector; attractive accumulation zone.';
     } else {
       takeaway = 'Consolidating above support levels in $sector; watchful accumulation.';
@@ -212,7 +213,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       addedPrice: price,
       latestPrice: price,
       dayChangePercent: 0.0,
-      volume: '154.2 k',
+      volume: '—',
       returnPercent: 0.0,
       trackedDate: _formatToday(),
       technicalTag: computedTag,
@@ -235,7 +236,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
         final sym = SymbolUtils.normalize(item.instrument);
         double freshPrice = item.latestPrice;
         double changePct = item.dayChangePercent;
-        int freshScore = item.score;
+        int? freshScore = item.score;
         String freshTag = item.technicalTag;
 
         // 1. Fetch live market quote (Never use stale database tables for live prices)

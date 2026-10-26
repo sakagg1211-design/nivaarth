@@ -1,7 +1,7 @@
 class WatchlistItem {
   final String instrument;
   final String companyName;
-  final int score;
+  final int? score;
   final double addedPrice;
   final double latestPrice;
   final double dayChangePercent;
@@ -14,7 +14,7 @@ class WatchlistItem {
   const WatchlistItem({
     required this.instrument,
     required this.companyName,
-    required this.score,
+    this.score,
     required this.addedPrice,
     required this.latestPrice,
     required this.dayChangePercent,
@@ -45,11 +45,11 @@ class WatchlistItem {
     return WatchlistItem(
       instrument: json['instrument']?.toString() ?? '',
       companyName: json['company_name']?.toString() ?? '',
-      score: (json['score'] as num?)?.toInt() ?? 0,
+      score: (json['score'] as num?)?.toInt(),
       addedPrice: (json['added_price'] as num?)?.toDouble() ?? 0.0,
       latestPrice: (json['latest_price'] as num?)?.toDouble() ?? 0.0,
       dayChangePercent: (json['day_change_percent'] as num?)?.toDouble() ?? 0.0,
-      volume: json['volume']?.toString() ?? '154.2 k',
+      volume: json['volume']?.toString() ?? '—',
       returnPercent: (json['return_percent'] as num?)?.toDouble() ?? 0.0,
       trackedDate: json['tracked_date']?.toString() ?? '',
       technicalTag: json['technical_tag']?.toString() ?? 'MONITORED',

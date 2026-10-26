@@ -279,7 +279,9 @@ class WatchlistTableView extends StatelessWidget {
                     border: Border.all(color: const Color(0x33E5A93C)),
                   ),
                   child: Text(
-                    '${item.score}',
+                    (item.score != null && item.score! > 0)
+                        ? '${item.score}'
+                        : '—',
                     style: const TextStyle(
                       color: Color(0xFFE5A93C),
                       fontWeight: FontWeight.w800,

@@ -1,48 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../services/backend_service.dart';
+import '../../../providers/live_portfolio_provider.dart';
 import '../../screens/home/home_page.dart';
 
-class SyncLoadingPage extends StatefulWidget {
+class SyncLoadingPage extends ConsumerStatefulWidget {
   const SyncLoadingPage({super.key});
 
   @override
-  State<SyncLoadingPage> createState() => _SyncLoadingPageState();
+  ConsumerState<SyncLoadingPage> createState() => _SyncLoadingPageState();
 }
 
-class _SyncLoadingPageState extends State<SyncLoadingPage>
+class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
     with SingleTickerProviderStateMixin {
-  final BackendService backendService = BackendService();
-
   late AnimationController _controller;
 
-  double progress = 0;
-
-  String currentStep = "Preparing Portfolio...";
+  double progress = 0.2;
+  String currentStep = "Loading Portfolio...";
 
   final List<_SyncStep> steps = [
     _SyncStep(
-      title: "Authenticating",
+      title: "Verifying Authentication",
+      completed: true,
+    ),
+    _SyncStep(
+      title: "Loading Portfolio Holdings",
       completed: false,
     ),
     _SyncStep(
-      title: "Fetching Market Prices",
+      title: "Syncing Latest Prices & Health",
       completed: false,
     ),
     _SyncStep(
-      title: "Technical Analysis",
-      completed: false,
-    ),
-    _SyncStep(
-      title: "Fundamental Analysis",
-      completed: false,
-    ),
-    _SyncStep(
-      title: "NV Portfolio Scoring",
+      title: "Portfolio Ready",
       completed: false,
     ),
   ];
@@ -69,84 +63,27 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
 
   Future<void> _startSync() async {
     try {
-      setState(() {
-        currentStep = "Authenticating...";
-        progress = 0.10;
-      });
-
-      await Future.delayed(const Duration(seconds: 1));
-
       if (!mounted) return;
-
-      setState(() {
-        steps[0].completed = true;
-        currentStep = "Fetching Latest Market Prices...";
-        progress = 0.25;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      if (!mounted) return;
-
       setState(() {
         steps[1].completed = true;
-        currentStep = "Running Technical Analysis...";
-        progress = 0.45;
+        currentStep = "Fetching Latest Market Prices...";
+        progress = 0.50;
       });
 
-      await Future.delayed(const Duration(milliseconds: 800));
+      // Genuine live data fetch via Riverpod provider (No backend pipeline hammer)
+      await ref.read(livePortfolioProvider.future);
 
       if (!mounted) return;
-
       setState(() {
         steps[2].completed = true;
-        currentStep = "Running Technical Analysis...";
-        progress = 0.45;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      if (!mounted) return;
-
-      setState(() {
         steps[3].completed = true;
-        currentStep = "Reading Fundamental Data...";
-        progress = 0.65;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      if (!mounted) return;
-
-      setState(() {
-        currentStep = "Generating NV Portfolio Insights...";
-        progress = 0.85;
-      });
-
-      // ================================
-      // REAL BACKEND CALL
-      // ================================
-
-    try {
-  await backendService.startAutomation();
-} catch (e, s) {
-  debugPrint("❌ AUTOMATION ERROR");
-  debugPrint(e.toString());
-  debugPrint(s.toString());
-}
-
-     if (!mounted) return;
-
-      setState(() {
-        steps[4].completed = true;
         currentStep = "Portfolio Ready";
         progress = 1.0;
       });
 
-      await Future.delayed(const Duration(milliseconds: 700));
+      await Future.delayed(const Duration(milliseconds: 300));
 
       if (!mounted) return;
-
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -159,7 +96,8 @@ class _SyncLoadingPageState extends State<SyncLoadingPage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.toString()),
+          content: Text("Notice: Using cached portfolio ($e)"),
+          backgroundColor: AppColors.surfaceSecondary,
         ),
       );
 

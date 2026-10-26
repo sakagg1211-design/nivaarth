@@ -1,3 +1,4 @@
+import '../core/utils/symbol_utils.dart';
 import '../models/live_portfolio.dart';
 import '../models/stock_score.dart';
 
@@ -89,20 +90,30 @@ for (final score in scores) {
     List<LivePortfolio> portfolio,
     List<StockScore> scores,
   ) {
-    final portfolioOnly =
-        portfolioScores(portfolio, scores);
-
-    if (portfolioOnly.isEmpty) {
+    if (portfolio.isEmpty || scores.isEmpty) {
       return 0;
     }
 
-    double total = 0;
+    final scoreMap = {
+      for (final s in scores) SymbolUtils.normalize(s.instrument): s,
+    };
 
-    for (final stock in portfolioOnly) {
-      total += stock.overallScore;
+    double weighted = 0;
+    double totalValue = 0;
+
+    for (final h in portfolio) {
+      final key = SymbolUtils.normalize(h.portfolio.instrument);
+      final s = scoreMap[key];
+      if (s == null) continue;
+
+      final val = h.currentValue > 0 ? h.currentValue : h.portfolio.totalInvested;
+      if (val <= 0) continue;
+
+      weighted += s.overallScore * val;
+      totalValue += val;
     }
 
-    return total / portfolioOnly.length;
+    return totalValue == 0 ? 0 : (weighted / totalValue);
   }
 
   int strongBuyCount(
