@@ -11,7 +11,7 @@ class StockRepository {
     final response = await client
         .from('StockScores')
         .select()
-        .order('OverallScore', ascending: false);
+        .order('OverallScore', ascending: false, nullsFirst: false);
 
     return response
         .map<StockScore>((e) => StockScore.fromJson(e))
@@ -31,7 +31,7 @@ class StockRepository {
           .from('StockScores')
           .select()
           .or('Instrument.ilike.%$cleanQ%,company_name.ilike.%$cleanQ%')
-          .order('OverallScore', ascending: false);
+          .order('OverallScore', ascending: false, nullsFirst: false);
 
       for (final e in response) {
         final score = StockScore.fromJson(e);

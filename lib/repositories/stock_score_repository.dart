@@ -11,7 +11,7 @@ class StockScoreRepository {
     final response = await client
         .from("StockScores")
         .select()
-        .order("OverallScore", ascending: false);
+        .order("OverallScore", ascending: false, nullsFirst: false);
 
     return response
         .map<StockScore>(
