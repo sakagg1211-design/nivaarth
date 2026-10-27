@@ -187,7 +187,7 @@ class VerdictNarrativeEngine {
         primaryRisk: VerdictSignal(
           title: isHold ? 'Holding Company Discount Persistence' : (isIns ? 'Actuarial Claims / Surrender Risk' : 'Interest Rate Sensitivity'),
           description: isHold
-              ? 'Holding company market price historically trades at a persistent 30-60% discount to underlying intrinsic NAV.'
+              ? 'Holding company share prices often trade below the value of their underlying holdings; the gap varies by company and over time.'
               : (isIns
                   ? 'Regulatory commission caps and sudden mortality/morbidity claims spikes can pressure quarterly margins.'
                   : 'Rising benchmark yields increase the discount rate and compress trust capital value.'),
@@ -196,10 +196,10 @@ class VerdictNarrativeEngine {
         ),
         playbook: TacticalPlaybook(
           existingHoldersGuideline: isOwned
-              ? 'Currently in your portfolio. Track underlying holdings NAV and quarterly dividend distributions. Quantitative 1-100 score is withheld for this specialized vehicle.'
-              : 'Hold based on underlying asset quality and specialized NAV research rather than standard quant score.',
+              ? 'Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.'
+              : 'The 1-100 score is not calculated for this category because standard operating ratios do not apply.',
           freshCapitalGuideline:
-              'Evaluate strictly through asset-class specific metrics (NAV discount for Holding Cos, EV/VNB for Insurance, Yield for REITs).',
+              'Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).',
           keyMonitorable: isHold
               ? 'Market value of core subsidiary holdings and parent capital allocation track record.'
               : (isIns ? 'VNB margins, persistency ratios, and solvency margin ratio.' : 'Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec.'),

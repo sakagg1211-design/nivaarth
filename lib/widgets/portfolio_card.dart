@@ -337,7 +337,7 @@ class PortfolioCard extends ConsumerWidget {
                 children: [
                   _CompactMetric(
                     label: 'Qty',
-                    value: '${portfolio.qty}',
+                    value: isPrivacy ? '••••' : '${portfolio.qty}',
                   ),
                   _CompactMetric(
                     label: 'Avg',

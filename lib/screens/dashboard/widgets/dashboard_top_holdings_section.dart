@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../models/live_portfolio.dart';
+import '../../../providers/privacy_provider.dart';
 import '../../stock/stock_detail_page.dart';
 
-class DashboardTopHoldingsSection extends StatelessWidget {
+class DashboardTopHoldingsSection extends ConsumerWidget {
   final List<LivePortfolio> holdings;
   final VoidCallback? onViewAll;
 
@@ -16,8 +18,9 @@ class DashboardTopHoldingsSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (holdings.isEmpty) return const SizedBox.shrink();
+    final isPrivacy = ref.watch(privacyModeProvider);
 
     // 1. Calculate Real Sector Allocation using SymbolUtils.getSector
     final Map<String, double> sectorTotals = {};
@@ -207,7 +210,9 @@ class DashboardTopHoldingsSection extends StatelessWidget {
           final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
 
           String valStr;
-          if (h.currentValue >= 100000) {
+          if (isPrivacy) {
+            valStr = '₹ ••••';
+          } else if (h.currentValue >= 100000) {
             valStr = '₹${(h.currentValue / 100000).toStringAsFixed(2)} L';
           } else if (h.currentValue >= 1000) {
             valStr = '₹${(h.currentValue / 1000).toStringAsFixed(1)}K';

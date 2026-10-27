@@ -481,7 +481,7 @@ class DashboardHeader extends ConsumerWidget {
           icon: isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded,
           tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',
           iconColor: isPrivacy ? const Color(0xFFE5A93C) : null,
-          onTap: () => ref.read(privacyModeProvider.notifier).update((s) => !s),
+          onTap: () => ref.read(privacyModeProvider.notifier).toggle(),
         ),
         const SizedBox(width: 8),
         // Action 1: Info / Profile Menu

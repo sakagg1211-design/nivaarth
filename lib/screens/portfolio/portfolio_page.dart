@@ -277,7 +277,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () => ref.read(privacyModeProvider.notifier).update((s) => !s),
+                                    onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
                                     icon: Icon(isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded),
                                     color: isPrivacy ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
                                     tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',

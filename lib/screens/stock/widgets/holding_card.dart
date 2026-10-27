@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../models/live_portfolio.dart';
+import '../../../providers/privacy_provider.dart';
 
-class HoldingCard extends StatelessWidget {
+class HoldingCard extends ConsumerWidget {
   final LivePortfolio stock;
 
   const HoldingCard({
@@ -15,8 +17,10 @@ class HoldingCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final portfolio = stock.portfolio;
+    final isPrivacy = ref.watch(privacyModeProvider);
+    const masked = '••••••';
 
     final bool isProfit =
         stock.netPL >= 0;
@@ -127,13 +131,13 @@ class HoldingCard extends StatelessWidget {
 
           _HoldingRow(
             "Quantity",
-            portfolio.qty.toString(),
+            isPrivacy ? masked : portfolio.qty.toString(),
             Icons.inventory_2_outlined,
           ),
 
           _HoldingRow(
             "Average Price",
-            _money(portfolio.avgPrice),
+            isPrivacy ? masked : _money(portfolio.avgPrice),
             Icons.payments_outlined,
           ),
 
@@ -145,21 +149,23 @@ class HoldingCard extends StatelessWidget {
 
           _HoldingRow(
             "Invested Value",
-            _money(portfolio.totalInvested),
+            isPrivacy ? masked : _money(portfolio.totalInvested),
             Icons.account_balance_wallet_outlined,
           ),
                     _HoldingRow(
             "Current Value",
-            _money(stock.currentValue),
+            isPrivacy ? masked : _money(stock.currentValue),
             Icons.savings_outlined,
           ),
 
           _HoldingRow(
             "Net P&L",
-            _money(
-              stock.netPL,
-              signed: true,
-            ),
+            isPrivacy
+                ? masked
+                : _money(
+                    stock.netPL,
+                    signed: true,
+                  ),
             Icons.trending_up,
             valueColor: isProfit
                 ? AppColors.success
@@ -180,7 +186,9 @@ class HoldingCard extends StatelessWidget {
 
           _HoldingRow(
             "Day's P&L",
-            '${_money(stock.todayPL, signed: true)} (${_percent(stock.todayReturnPercent, signed: true)})',
+            isPrivacy
+                ? '$masked (${_percent(stock.todayReturnPercent, signed: true)})'
+                : '${_money(stock.todayPL, signed: true)} (${_percent(stock.todayReturnPercent, signed: true)})',
             Icons.today_outlined,
             valueColor: stock.todayPL >= 0
                 ? AppColors.success
