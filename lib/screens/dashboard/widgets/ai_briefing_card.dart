@@ -77,10 +77,10 @@ class AIBriefingCard extends StatelessWidget {
                   border: Border.all(color: const Color(0x33E5A93C)),
                 ),
                 child: Text(
-                  '${ai.confidence}%',
+                  '${ai.confidence}% Confidence',
                   style: const TextStyle(
                     color: Color(0xFFE5A93C),
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

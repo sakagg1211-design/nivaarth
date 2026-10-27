@@ -155,7 +155,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                   todayPnL: data.todayPnL,
                                   todayReturnPercent: data.todayReturnPercent,
                                   holdings: data.totalStocks,
-                                  aiConfidence: 74,
+                                  aiConfidence: data.aiRecommendation.confidence.toDouble(),
                                   isMarketOpen: isMarketOpen,
                                   unpricedHoldings: data.unpricedStocks,
                                   staleHoldings: data.staleStocks,

@@ -8,6 +8,7 @@ import '../models/live_portfolio.dart';
 import '../providers/dashboard_provider.dart';
 import '../providers/live_portfolio_provider.dart';
 import '../providers/portfolio_provider.dart';
+import '../providers/privacy_provider.dart';
 import '../repositories/portfolio_repository.dart';
 import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
@@ -88,6 +89,7 @@ class PortfolioCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isPrivacy = ref.watch(privacyModeProvider);
     final portfolio = stock.portfolio;
     final isProfit = stock.netPL >= 0;
     final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
@@ -314,7 +316,7 @@ class PortfolioCard extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(AppRadius.pill),
                         ),
                         child: Text(
-                          Formatters.percent(stock.returnPercent, signed: true),
+                          isPrivacy ? '••••' : Formatters.percent(stock.returnPercent, signed: true),
                           style: TextStyle(
                             color: tone,
                             fontWeight: FontWeight.w800,
@@ -339,15 +341,15 @@ class PortfolioCard extends ConsumerWidget {
                   ),
                   _CompactMetric(
                     label: 'Avg',
-                    value: Formatters.currency(portfolio.avgPrice),
+                    value: isPrivacy ? '••••' : Formatters.currency(portfolio.avgPrice),
                   ),
                   _CompactMetric(
                     label: 'Value',
-                    value: Formatters.currency0(stock.currentValue),
+                    value: isPrivacy ? '••••••' : Formatters.currency0(stock.currentValue),
                   ),
                   _CompactMetric(
                     label: 'Total P&L',
-                    value: Formatters.currency0(stock.netPL, signed: true),
+                    value: isPrivacy ? '••••••' : Formatters.currency0(stock.netPL, signed: true),
                     valueColor: tone,
                     alignEnd: true,
                   ),
@@ -377,7 +379,9 @@ class PortfolioCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '${Formatters.currency0(stock.todayPL, signed: true)} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
+                      isPrivacy
+                          ? '••••••'
+                          : '${Formatters.currency0(stock.todayPL, signed: true)} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
                       style: TextStyle(
                         fontSize: 11,
                         color: dayTone,

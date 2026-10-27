@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/live_portfolio.dart';
 import '../../providers/live_portfolio_provider.dart';
+import '../../providers/privacy_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
 import 'widgets/add_holding_sheet.dart';
@@ -93,6 +94,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   @override
   Widget build(BuildContext context) {
     final portfolioAsync = ref.watch(livePortfolioProvider);
+    final isPrivacy = ref.watch(privacyModeProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
@@ -275,6 +277,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                     ),
                                   ),
                                   IconButton(
+                                    onPressed: () => ref.read(privacyModeProvider.notifier).update((s) => !s),
+                                    icon: Icon(isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded),
+                                    color: isPrivacy ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+                                    tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',
+                                  ),
+                                  IconButton(
                                     onPressed: _openAddHoldingSheet,
                                     icon: const Icon(Icons.add_circle_outline_rounded),
                                     color: const Color(0xFFE5A93C),
@@ -302,6 +310,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                 totalReturn: totalReturn,
                                 isProfit: isProfit,
                                 stocks: sortedStocks,
+                                isPrivacy: isPrivacy,
                               ),
 
                               const SizedBox(height: 16),
@@ -502,6 +511,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
   final double totalReturn;
   final bool isProfit;
   final List<LivePortfolio> stocks;
+  final bool isPrivacy;
 
   const _SummaryAndHeatmapSection({
     required this.totalStocks,
@@ -511,6 +521,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
     required this.totalReturn,
     required this.isProfit,
     required this.stocks,
+    this.isPrivacy = false,
   });
 
   @override
@@ -552,7 +563,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          Formatters.currency0(totalCurrentValue),
+                          isPrivacy ? '₹ ••••••' : Formatters.currency0(totalCurrentValue),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
@@ -576,7 +587,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            Formatters.percent(totalReturn, signed: true),
+                            isPrivacy ? '••••' : Formatters.percent(totalReturn, signed: true),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
@@ -584,7 +595,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            Formatters.currency0(totalPnL, signed: true),
+                            isPrivacy ? '••••••' : Formatters.currency0(totalPnL, signed: true),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -610,7 +621,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   children: [
-                    _InlineMetric('Invested', Formatters.currency0(totalInvested)),
+                    _InlineMetric('Invested', isPrivacy ? '••••••' : Formatters.currency0(totalInvested)),
                     Container(width: 1, height: 26, color: const Color(0xFF282A30)),
                     _InlineMetric('Holdings', '$totalStocks Positions'),
                     Container(width: 1, height: 26, color: const Color(0xFF282A30)),

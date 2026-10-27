@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
+import '../../../providers/privacy_provider.dart';
 
-class PortfolioHeroCard extends StatelessWidget {
+class PortfolioHeroCard extends ConsumerWidget {
   final double currentValue;
   final double investedValue;
   final double netPnL;
@@ -57,7 +59,8 @@ class PortfolioHeroCard extends StatelessWidget {
   bool get isProfit => netPnL >= 0;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPrivacy = ref.watch(privacyModeProvider);
     final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
     final pnlBadgeBg = isProfit
         ? const Color(0x1F00E676)
@@ -99,7 +102,7 @@ class PortfolioHeroCard extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              Formatters.currency0(currentValue),
+              isPrivacy ? '₹ ••••••' : Formatters.currency0(currentValue),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 34,
@@ -131,7 +134,9 @@ class PortfolioHeroCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${Formatters.currency0(netPnL, signed: true)} (${Formatters.percent(returnPercent, signed: true)})',
+                      isPrivacy
+                          ? '•••••• (••••)'
+                          : '${Formatters.currency0(netPnL, signed: true)} (${Formatters.percent(returnPercent, signed: true)})',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -177,7 +182,9 @@ class PortfolioHeroCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${isDayUp ? '+' : '-'}${Formatters.currency0(todayPnL.abs())}  ${isDayUp ? '+' : ''}${todayReturnPercent.toStringAsFixed(2)}%',
+                isPrivacy
+                    ? '••••••'
+                    : '${isDayUp ? '+' : '-'}${Formatters.currency0(todayPnL.abs())}  ${isDayUp ? '+' : ''}${todayReturnPercent.toStringAsFixed(2)}%',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,

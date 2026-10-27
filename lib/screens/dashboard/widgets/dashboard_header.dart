@@ -10,6 +10,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../providers/alerts_provider.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
+import '../../../providers/privacy_provider.dart';
 import '../../../providers/watchlist_provider.dart';
 import '../../../services/auth_service.dart';
 import '../../login/welcome_screen.dart';
@@ -409,6 +410,7 @@ class DashboardHeader extends ConsumerWidget {
     final displayName = _getUserDisplayName();
     final alertsAsync = ref.watch(alertsProvider);
     final unreadCount = alertsAsync.value?.where((a) => !a.isRead).length ?? 0;
+    final isPrivacy = ref.watch(privacyModeProvider);
 
     String greeting;
     if (hour < 12) {
@@ -473,7 +475,15 @@ class DashboardHeader extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
+        // Action 0: Privacy Mode Toggle
+        _HeaderIconButton(
+          icon: isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+          tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',
+          iconColor: isPrivacy ? const Color(0xFFE5A93C) : null,
+          onTap: () => ref.read(privacyModeProvider.notifier).update((s) => !s),
+        ),
+        const SizedBox(width: 8),
         // Action 1: Info / Profile Menu
         _HeaderIconButton(
           icon: Icons.info_outline_rounded,
@@ -514,6 +524,7 @@ class _HeaderIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool hasBadge;
   final int badgeCount;
+  final Color? iconColor;
 
   const _HeaderIconButton({
     required this.icon,
@@ -521,6 +532,7 @@ class _HeaderIconButton extends StatelessWidget {
     required this.onTap,
     this.hasBadge = false,
     this.badgeCount = 0,
+    this.iconColor,
   });
 
   @override
@@ -547,7 +559,7 @@ class _HeaderIconButton extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 19,
-                color: hasBadge ? const Color(0xFFE5A93C) : const Color(0xFFC7CDD6),
+                color: iconColor ?? (hasBadge ? const Color(0xFFE5A93C) : const Color(0xFFC7CDD6)),
               ),
             ),
             if (hasBadge)
