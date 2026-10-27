@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
   final String action;
-  final double aiConfidence;
+  // Share of scoring inputs actually available for scored holdings (0-100); null = none scored
+  final double? dataCoverage;
   final String healthStatus;
   final VoidCallback? onOpenAdvisor;
 
@@ -11,7 +12,7 @@ class PortfolioHealthCard extends StatelessWidget {
     super.key,
     required this.healthScore,
     required this.action,
-    this.aiConfidence = 91,
+    this.dataCoverage,
     this.healthStatus = 'Needs Attention',
     this.onOpenAdvisor,
   });
@@ -82,7 +83,7 @@ class PortfolioHealthCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Body: Circular Ring + Analysis Text & AI Confidence statement + CTA
+          // Body: Circular Ring + Analysis Text & data coverage + CTA
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -134,7 +135,7 @@ class PortfolioHealthCard extends StatelessWidget {
 
               const SizedBox(width: 20),
 
-              // Status, AI Confidence statement and CTA
+              // Data coverage, status and CTA
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,43 +143,15 @@ class PortfolioHealthCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Builder(
-                          builder: (context) {
-                            final confInt = aiConfidence.round().clamp(60, 99);
-                            final String confTier = confInt >= 88 ? 'HIGH CONVICTION' : (confInt >= 75 ? 'OPTIMAL' : 'MODERATE');
-                            final Color confColor = confInt >= 88
-                                ? const Color(0xFF8B5CF6)
-                                : (confInt >= 75 ? const Color(0xFF38BDF8) : const Color(0xFFE5A93C));
-
-                            return Row(
-                              children: [
-                                Text(
-                                  'NV Confidence: $confInt%',
-                                  style: TextStyle(
-                                    color: confColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                  decoration: BoxDecoration(
-                                    color: confColor.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    confTier,
-                                    style: TextStyle(
-                                      color: confColor,
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                        Text(
+                          dataCoverage == null
+                              ? 'Data coverage: —'
+                              : 'Data coverage: ${dataCoverage!.round()}%',
+                          style: const TextStyle(
+                            color: Color(0xFF8E929B),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),

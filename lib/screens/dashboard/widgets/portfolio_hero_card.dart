@@ -13,7 +13,6 @@ class PortfolioHeroCard extends ConsumerWidget {
   final double todayPnL;
   final double todayReturnPercent;
   final int holdings;
-  final double aiConfidence;
   final bool isMarketOpen;
   final int unpricedHoldings;
   final int staleHoldings;
@@ -28,7 +27,6 @@ class PortfolioHeroCard extends ConsumerWidget {
     this.todayPnL = 0.0,
     this.todayReturnPercent = 0.0,
     required this.holdings,
-    required this.aiConfidence,
     this.isMarketOpen = false,
     this.unpricedHoldings = 0,
     this.staleHoldings = 0,

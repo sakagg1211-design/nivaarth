@@ -5,10 +5,13 @@ import '../../../models/ai_recommendation.dart';
 
 class AIBriefingCard extends StatelessWidget {
   final AIRecommendation ai;
+  // Value-weighted data coverage of scored holdings (0-100); null when none scored
+  final double? dataCoverage;
 
   const AIBriefingCard({
     super.key,
     required this.ai,
+    this.dataCoverage,
   });
 
   Color get color {
@@ -29,7 +32,7 @@ class AIBriefingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final confidence = (ai.confidence / 100).clamp(0.0, 1.0).toDouble();
+    final coverage = ((dataCoverage ?? 0) / 100).clamp(0.0, 1.0).toDouble();
 
     return Container(
       width: double.infinity,
@@ -42,7 +45,7 @@ class AIBriefingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: AI Verdict + Sparkle icon + 92% Confidence pill
+          // Header: AI Verdict + Sparkle icon + data coverage pill
           Row(
             children: [
               Container(
@@ -77,7 +80,9 @@ class AIBriefingCard extends StatelessWidget {
                   border: Border.all(color: const Color(0x33E5A93C)),
                 ),
                 child: Text(
-                  '${ai.confidence}% Confidence',
+                  dataCoverage == null
+                      ? 'Data coverage —'
+                      : '${dataCoverage!.round()}% Data coverage',
                   style: const TextStyle(
                     color: Color(0xFFE5A93C),
                     fontSize: 11,
@@ -119,7 +124,7 @@ class AIBriefingCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: confidence,
+              value: coverage,
               minHeight: 6,
               color: color,
               backgroundColor: const Color(0xFF23252B),

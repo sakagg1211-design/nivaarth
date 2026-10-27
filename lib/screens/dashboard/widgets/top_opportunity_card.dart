@@ -311,7 +311,7 @@ class TopOpportunityCard extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _MetricTile(
-                          title: "Confidence",
+                          title: "Data coverage",
                           value: stock.confidence,
                         ),
                       ),
@@ -463,8 +463,8 @@ String _metricStatus(String title, int value) {
       return value >= 8 ? "Bullish" : "Weak";
     case "Risk":
       return value <= 2 ? "Low Risk" : "High Risk";
-    case "Confidence":
-      return value >= 70 ? "High AI" : "Medium AI";
+    case "Data coverage":
+      return value >= 70 ? "Most data" : "Partial data";
     default:
       return "";
   }

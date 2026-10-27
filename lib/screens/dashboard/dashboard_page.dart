@@ -155,7 +155,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                   todayPnL: data.todayPnL,
                                   todayReturnPercent: data.todayReturnPercent,
                                   holdings: data.totalStocks,
-                                  aiConfidence: data.aiRecommendation.confidence.toDouble(),
                                   isMarketOpen: isMarketOpen,
                                   unpricedHoldings: data.unpricedStocks,
                                   staleHoldings: data.staleStocks,
@@ -168,7 +167,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                 PortfolioHealthCard(
                                   healthScore: data.portfolioHealth,
                                   action: data.aiRecommendation.recommendation.label,
-                                  aiConfidence: data.aiRecommendation.confidence.toDouble(),
+                                  dataCoverage: data.dataCoverage,
                                   onOpenAdvisor: widget.onOpenAdvisor ?? () {
                                     Navigator.push(
                                       context,
@@ -238,7 +237,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                                 const SizedBox(height: 12),
 
                                 // AI Verdict & Health Insights Card (Reasons + Actions)
-                                AIBriefingCard(ai: data.aiRecommendation),
+                                AIBriefingCard(
+                                  ai: data.aiRecommendation,
+                                  dataCoverage: data.dataCoverage,
+                                ),
 
                                 const SizedBox(height: 22),
 

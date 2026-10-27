@@ -292,7 +292,7 @@ class AiScoreCard extends StatelessWidget {
                         const Spacer(),
 
                         Text(
-                          "${score.confidence}% Confidence",
+                          "${score.confidence}% Data coverage",
                           style: AppTypography.bodySmall
                               .copyWith(
                             fontWeight:

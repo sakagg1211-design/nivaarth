@@ -27,8 +27,6 @@ enum RecommendationType {
 class AIRecommendation {
   final RecommendationType recommendation;
 
-  final int confidence;
-
   final String title;
 
   final String summary;
@@ -39,7 +37,6 @@ class AIRecommendation {
 
   const AIRecommendation({
     required this.recommendation,
-    required this.confidence,
     required this.title,
     required this.summary,
     required this.reasons,

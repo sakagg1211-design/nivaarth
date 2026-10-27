@@ -96,6 +96,7 @@ final StockScore weakestHolding =
       unpricedStocks: analysis.unpricedStocks,
       staleStocks: analysis.staleStocks,
       pricesAsOf: analysis.pricesAsOf,
+      dataCoverage: stockScoreEngine.getDataCoverage(portfolio, scores),
       biggestWinner: analysis.biggestWinner,
       biggestLoser: analysis.biggestLoser,
       portfolioHealth: health.overall,

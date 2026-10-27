@@ -392,7 +392,7 @@ class RecommendationCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  "Confidence: ${score.confidence}% • Synthesized from 6 quantitative pillars",
+                  "Data coverage: ${score.confidence}% • Synthesized from 6 quantitative pillars",
                   style: const TextStyle(
                     color: Color(0xFF757A85),
                     fontSize: 11,

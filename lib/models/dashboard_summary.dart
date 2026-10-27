@@ -15,6 +15,9 @@ class DashboardSummary {
   final int staleStocks;
   final DateTime? pricesAsOf;
 
+  // Value-weighted data coverage of scored holdings (0-100), null when none scored
+  final double? dataCoverage;
+
   final LivePortfolio biggestWinner;
   final LivePortfolio biggestLoser;
 
@@ -49,6 +52,7 @@ final String portfolioHealthStatus;
     this.unpricedStocks = 0,
     this.staleStocks = 0,
     this.pricesAsOf,
+    this.dataCoverage,
     required this.biggestWinner,
     required this.biggestLoser,
     required this.portfolioHealth,

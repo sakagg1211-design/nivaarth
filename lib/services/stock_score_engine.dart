@@ -114,6 +114,34 @@ class StockScoreEngine {
     return totalValue == 0 ? 0 : (weighted / totalValue);
   }
 
+  /// Value-weighted share of the scoring inputs that were actually available
+  /// (backend DataCoverage, stored in StockScores.Confidence). Excluded stocks
+  /// carry no coverage, so they are skipped. Null when nothing is scored.
+  double? getDataCoverage(
+    List<LivePortfolio> portfolio,
+    List<StockScore> scores,
+  ) {
+    final scoreMap = {
+      for (final s in scores) SymbolUtils.normalize(s.instrument): s,
+    };
+
+    double weighted = 0;
+    double totalValue = 0;
+
+    for (final h in portfolio) {
+      final s = scoreMap[SymbolUtils.normalize(h.portfolio.instrument)];
+      if (s == null || s.overallScore == null) continue;
+
+      final val = h.currentValue > 0 ? h.currentValue : h.portfolio.totalInvested;
+      if (val <= 0) continue;
+
+      weighted += s.confidence * val;
+      totalValue += val;
+    }
+
+    return totalValue == 0 ? null : (weighted / totalValue);
+  }
+
   int strongBuyCount(
     List<LivePortfolio> portfolio,
     List<StockScore> scores,
