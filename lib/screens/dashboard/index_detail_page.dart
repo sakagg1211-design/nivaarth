@@ -262,7 +262,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                       ),
                       error: (error, stack) => const Center(
                         child: Text(
-                          'Index chart streaming in real-time...',
+                          'Index chart unavailable right now',
                           style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                         ),
                       ),

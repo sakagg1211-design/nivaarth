@@ -34,7 +34,8 @@ class MarketQuoteService {
         : Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$path');
   }
 
-  /// Returns true if Indian markets are currently closed (before 9:15 AM, after 4:30 PM IST, or weekends)
+  /// Cache rule, not a "market open" check (that is core/utils/market_hours.dart): quotes are
+  /// treated as settled from 4:30 PM IST, an hour after the close, and until 9:15 AM / weekends.
   bool isMarketClosedIST() {
     final nowIst = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
     // Saturday (6) or Sunday (7)

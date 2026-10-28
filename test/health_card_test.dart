@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:mobile/core/utils/market_hours.dart';
 import 'package:mobile/screens/dashboard/widgets/portfolio_health_card.dart';
 
 void main() {
   test('Live only during the NSE session (IST)', () {
     // 2026-10-29 is a Thursday
-    expect(PortfolioHealthCard.isMarketOpenIst(DateTime.utc(2026, 10, 29, 4, 0)), isTrue); // 09:30 IST
-    expect(PortfolioHealthCard.isMarketOpenIst(DateTime.utc(2026, 10, 29, 3, 30)), isFalse); // 09:00 IST
-    expect(PortfolioHealthCard.isMarketOpenIst(DateTime.utc(2026, 10, 29, 10, 1)), isFalse); // 15:31 IST
-    expect(PortfolioHealthCard.isMarketOpenIst(DateTime.utc(2026, 10, 31, 5, 0)), isFalse); // Saturday
+    expect(isMarketOpenIst(DateTime.utc(2026, 10, 29, 4, 0)), isTrue); // 09:30 IST
+    expect(isMarketOpenIst(DateTime.utc(2026, 10, 29, 3, 30)), isFalse); // 09:00 IST
+    expect(isMarketOpenIst(DateTime.utc(2026, 10, 29, 10, 1)), isFalse); // 15:31 IST
+    expect(isMarketOpenIst(DateTime.utc(2026, 10, 31, 5, 0)), isFalse); // Saturday
   });
 
   test('status follows the score instead of a fixed placeholder', () {
