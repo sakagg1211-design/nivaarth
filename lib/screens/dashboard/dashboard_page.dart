@@ -16,6 +16,7 @@ import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 import '../portfolio/widgets/add_holding_sheet.dart';
+import '../../core/utils/error_messages.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final VoidCallback? onOpenAdvisor;
@@ -103,7 +104,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           error: (e, _) => _ScreenState(
             icon: Icons.error_outline_rounded,
             title: 'Dashboard unavailable',
-            message: e.toString(),
+            message: ErrorMessages.friendly(e),
             action: ElevatedButton(
               onPressed: () => ref.invalidate(dashboardProvider),
               child: const Text('Try Again'),

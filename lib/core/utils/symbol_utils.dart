@@ -112,6 +112,8 @@ class SymbolUtils {
     'CEAT': 'CEAT',
     'BALKRISHNA': 'BALKRISIND',
     'BALKRISIND': 'BALKRISIND',
+    // Renamed NSE tickers: the old symbol resolves to the current one
+    'ZOMATO': 'ETERNAL',
   };
 
   static String normalize(String symbol) {
@@ -214,7 +216,7 @@ class SymbolUtils {
     'ASIANPAINT': 'Asian Paints Limited',
     'ULTRACEMCO': 'UltraTech Cement Limited',
     'NESTLEIND': 'Nestle India Limited',
-    'ZOMATO': 'Zomato Limited',
+    'ETERNAL': 'Eternal Limited',
     'PAYTM': 'One97 Communications (Paytm)',
     'HAL': 'Hindustan Aeronautics Limited',
     'BEL': 'Bharat Electronics Limited',
@@ -375,7 +377,7 @@ class SymbolUtils {
     'KALYANKJIL': 'Gems & Jewellery',
     'VAIBHAVGBL': 'E-Commerce & Retail',
     'FIRSTCRY': 'Consumer E-Commerce',
-    'ZOMATO': 'Consumer Internet Services',
+    'ETERNAL': 'Consumer Internet Services',
     'BHARTIARTL': 'Telecommunications',
     'IDEA': 'Telecommunications',
     'HAL': 'Aerospace & Defence',
@@ -434,7 +436,7 @@ class SymbolUtils {
     'IRFC': 'Railway Asset Leasing & Finance',
     'IREDA': 'Clean Energy Financing',
     'CDSL': 'Securities Depository Services',
-    'ZOMATO': 'Online Food Delivery & Quick Commerce',
+    'ETERNAL': 'Online Food Delivery & Quick Commerce',
     'KEI': 'Extra High Voltage Cables & EPC',
     'APOLLOTYRE': 'Automotive Radial Tires Manufacturing',
     'MRF': 'Automotive Tyres & Rubber Pre-cures',
@@ -503,111 +505,6 @@ class SymbolUtils {
     if (clean == 'ACC') return 'Cement & Clinker Manufacturing';
 
     return 'Market Leader Operations';
-  }
-
-  static double getEstimatedPrice(String symbol) {
-    final clean = normalize(symbol);
-    const prices = <String, double>{
-      'ABB': 7850.00,
-      'ACC': 2420.00,
-      'AARTIIND': 510.00,
-      'TATAPOWER': 342.15,
-      'TATAMOTORS': 924.00,
-      'TATASTEEL': 158.20,
-      'TATATECH': 1012.00,
-      'TATACONSUM': 1145.00,
-      'TATAELXSI': 7480.00,
-      'TATACHEM': 1080.00,
-      'TCS': 4155.00,
-      'POLYCAB': 6580.00,
-      'HAVELLS': 1845.00,
-      'DIXON': 15200.00,
-      'TRENT': 7120.00,
-      'DMART': 3890.00,
-      'PIDILITIND': 3040.00,
-      'HEROMOTOCO': 4850.00,
-      'EICHERMOT': 4920.00,
-      'BAJAJ-AUTO': 9200.00,
-      'INDUSINDBK': 1020.00,
-      'MUTHOOTFIN': 1880.00,
-      'MANAPPURAM': 155.00,
-      'HERCULES': 117.85,
-      'RELIANCE': 1285.00,
-      'INFY': 1890.00,
-      'HDFCBANK': 1690.00,
-      'ICICIBANK': 1260.00,
-      'SBIN': 795.00,
-      'BHARTIARTL': 1680.00,
-      'ITC': 490.00,
-      'LT': 3650.00,
-      'MARUTI': 12400.00,
-      'SUNPHARMA': 1860.00,
-      'TITAN': 3420.00,
-      'ADANIENT': 2950.00,
-      'ADANIPORTS': 1360.00,
-      'ADANIPOWER': 645.00,
-      'ADANIGREEN': 1780.00,
-      'ATGL': 720.00,
-      'WIPRO': 540.00,
-      'HCLTECH': 1820.00,
-      'AXISBANK': 1180.00,
-      'KOTAKBANK': 1760.00,
-      'NTPC': 390.00,
-      'POWERGRID': 325.00,
-      'JSWSTEEL': 960.00,
-      'ASIANPAINT': 2480.00,
-      'ULTRACEMCO': 10675.00,
-      'NESTLEIND': 2320.00,
-      'ZOMATO': 260.00,
-      'PAYTM': 760.00,
-      'HAL': 4380.00,
-      'BEL': 290.00,
-      'BHEL': 230.00,
-      'IRFC': 150.00,
-      'SUZLON': 58.00,
-      'YESBANK': 20.50,
-      'IDEA': 9.20,
-      'ONGC': 255.00,
-      'IRCTC': 860.00,
-      'IREDA': 210.00,
-      'CDSL': 1480.00,
-      'DLF': 840.00,
-      'TECHM': 1650.00,
-      'DIVISLAB': 5890.00,
-      'CIPLA': 1530.00,
-      'DRREDDY': 6580.00,
-      'APOLLOHOSP': 7100.00,
-      'VEDL': 480.00,
-      'HINDALCO': 670.00,
-      'CHOLAFIN': 1420.00,
-      'SHRIRAMFIN': 3150.00,
-      'COALINDIA': 445.00,
-      'CANBK': 102.00,
-      'BANKBARODA': 242.00,
-      'PNB': 98.00,
-      'FEDERALBNK': 195.00,
-      'PERSISTENT': 5480.00,
-      'COFORGE': 7850.00,
-      'LTIM': 5980.00,
-      'KPITTECH': 1590.00,
-      'KALYANKJIL': 685.00,
-      'KEI': 4585.00,
-      'APOLLOTYRE': 400.05,
-      'MRF': 132000.00,
-      'CEAT': 2840.00,
-      'BALKRISIND': 2790.00,
-      'IRCON': 214.50,
-      'RPOWER': 39.80,
-    };
-
-    return prices[clean] ?? 0.0;
-  }
-
-  static String getEstimatedThesis(String symbol) {
-    final clean = normalize(symbol);
-    final sector = getSector(clean);
-    final compName = getDisplayName(clean);
-    return "Consolidated industry leader $compName in $sector. Demonstrates resilient cash flows, competitive operating margins, and strong medium-term earnings trajectory.";
   }
 
   static List<MapEntry<String, String>> searchUniverse(String query) {

@@ -125,20 +125,20 @@ class MarketQuoteService {
       }
     } catch (_) {}
 
-    // 4. Fallback to verified static baseline or uninitialized (0.0) state
+    // 4. Last cached quote, else 0.0 ("no price"); the UI shows that as unavailable,
+    // never a made-up number
     if (_quoteCache.containsKey(clean)) {
       return _quoteCache[clean]!;
     }
 
-    final baselinePrice = SymbolUtils.getEstimatedPrice(clean);
     final fallbackQuote = LiveMarketQuote(
       symbol: clean,
-      currentPrice: baselinePrice,
-      previousClose: baselinePrice,
+      currentPrice: 0.0,
+      previousClose: 0.0,
       change: 0.0,
       changePercent: 0.0,
-      dayHigh: baselinePrice,
-      dayLow: baselinePrice,
+      dayHigh: 0.0,
+      dayLow: 0.0,
       volume: 0,
       timestamp: DateTime.now(),
     );

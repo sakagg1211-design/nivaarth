@@ -102,7 +102,7 @@ class _StockDetailPageState
     } else {
       displayPrice = (liveQuote != null && liveQuote.currentPrice > 0)
           ? liveQuote.currentPrice
-          : (stock.currentPrice > 0 ? stock.currentPrice : SymbolUtils.getEstimatedPrice(cleanSym));
+          : stock.currentPrice;
       displayChange = (liveQuote != null && liveQuote.currentPrice > 0)
           ? liveQuote.change
           : stock.netPL;

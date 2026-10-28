@@ -111,7 +111,7 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sym = SymbolUtils.normalize(stock.instrument);
     if (isSaved(sym)) return false;
 
-    final price = customPrice ?? SymbolUtils.getEstimatedPrice(sym);
+    final price = customPrice ?? 0.0;
     final compName = stock.companyName.isNotEmpty &&
             stock.companyName.toUpperCase() != sym
         ? stock.companyName

@@ -42,13 +42,8 @@ class StockScoreEngine {
         .where((s) => s.overallScore != null)
         .toList();
 
+    // Only the user's own holdings: a stock they do not hold is never shown here
     if (portfolioOnly.isEmpty) {
-      final scoredOnly = scores.where((s) => s.overallScore != null).toList();
-      if (scoredOnly.isNotEmpty) {
-        final sorted = List<StockScore>.from(scoredOnly)
-          ..sort((a, b) => (b.overallScore ?? -1).compareTo(a.overallScore ?? -1));
-        return sorted.first;
-      }
       return StockScore.empty();
     }
 
@@ -67,13 +62,8 @@ class StockScoreEngine {
         .where((s) => s.overallScore != null)
         .toList();
 
+    // Only the user's own holdings: a stock they do not hold is never shown here
     if (portfolioOnly.isEmpty) {
-      final scoredOnly = scores.where((s) => s.overallScore != null).toList();
-      if (scoredOnly.isNotEmpty) {
-        final sorted = List<StockScore>.from(scoredOnly)
-          ..sort((a, b) => (a.overallScore ?? 999).compareTo(b.overallScore ?? 999));
-        return sorted.first;
-      }
       return StockScore.empty();
     }
 

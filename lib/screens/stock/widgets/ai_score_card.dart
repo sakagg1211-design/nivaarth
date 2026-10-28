@@ -6,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../models/stock_score.dart';
+import '../score_methodology_page.dart';
 
 class AiScoreCard extends StatelessWidget {
   final StockScore score;
@@ -90,7 +91,7 @@ class AiScoreCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      "Quantitative Conviction Score",
+                      "Rules-based research score",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.bodySmall.copyWith(
@@ -101,7 +102,18 @@ class AiScoreCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.xs),
+              IconButton(
+                tooltip: 'How the NV Score works',
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(
+                  Icons.info_outline_rounded,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ScoreMethodologyPage()),
+                ),
+              ),
               _RecommendationChip(
                 recommendation: score.recommendation,
               ),

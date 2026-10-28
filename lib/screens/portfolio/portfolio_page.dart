@@ -10,6 +10,7 @@ import '../../providers/privacy_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
 import 'widgets/add_holding_sheet.dart';
+import '../../core/utils/error_messages.dart';
 
 enum PortfolioSortOption {
   alphabetical,
@@ -148,7 +149,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
           error: (e, _) => _PortfolioState(
             icon: Icons.error_outline_rounded,
             title: 'Portfolio unavailable',
-            message: e.toString(),
+            message: ErrorMessages.friendly(e),
             action: ElevatedButton(
               onPressed: () => ref.invalidate(livePortfolioProvider),
               child: const Text('Try Again'),

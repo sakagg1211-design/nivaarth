@@ -17,6 +17,9 @@ class DashboardSignalsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Missing data shows a dash, never a placeholder stock or number
+    const dash = '—';
+
     // 1. Biggest Winner
     final winnerSym = SymbolUtils.normalize(summary.biggestWinner.portfolio.instrument);
     final winnerPct = summary.biggestWinner.returnPercent;
@@ -25,13 +28,10 @@ class DashboardSignalsGrid extends StatelessWidget {
     final weakestSym = SymbolUtils.normalize(summary.biggestLoser.portfolio.instrument);
     final weakestPct = summary.biggestLoser.returnPercent;
 
-    // 3. Top Opportunity
-    final oppSym = SymbolUtils.normalize(summary.topOpportunity.instrument.isNotEmpty
-        ? summary.topOpportunity.instrument
-        : summary.biggestWinner.portfolio.instrument);
-    final oppScore = (summary.topOpportunity.overallScore != null && summary.topOpportunity.overallScore! > 0)
-        ? summary.topOpportunity.overallScore!
-        : 64;
+    // 3. Strongest holding: highest NV score among the user's own holdings
+    final strongSym = SymbolUtils.normalize(summary.topOpportunity.instrument);
+    final strongScore = summary.topOpportunity.overallScore;
+    final hasStrong = strongSym.isNotEmpty && strongScore != null;
 
     // 4. Diversification Score & Distinct Sector Count
     final Set<String> distinctSectors = {};
@@ -42,7 +42,7 @@ class DashboardSignalsGrid extends StatelessWidget {
       );
       distinctSectors.add(s);
     }
-    final int sectorCount = distinctSectors.isNotEmpty ? distinctSectors.length : 12;
+    final int sectorCount = distinctSectors.length;
 
     // Comprehensive Diversification Score out of 100
     // Ideal diversification for 30+ holdings is 8-15 sectors
@@ -65,8 +65,8 @@ class DashboardSignalsGrid extends StatelessWidget {
             Expanded(
               child: _SignalMicroCard(
                 title: 'BIGGEST WINNER',
-                subtitle: winnerSym.isEmpty ? 'RELIANCE' : winnerSym,
-                value: Formatters.percent(winnerPct, signed: true),
+                subtitle: winnerSym.isEmpty ? dash : winnerSym,
+                value: winnerSym.isEmpty ? dash : Formatters.percent(winnerPct, signed: true),
                 valueColor: winnerPct >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252),
               ),
             ),
@@ -74,8 +74,8 @@ class DashboardSignalsGrid extends StatelessWidget {
             Expanded(
               child: _SignalMicroCard(
                 title: 'WEAKEST',
-                subtitle: weakestSym.isEmpty ? 'RELIANCE' : weakestSym,
-                value: Formatters.percent(weakestPct, signed: true),
+                subtitle: weakestSym.isEmpty ? dash : weakestSym,
+                value: weakestSym.isEmpty ? dash : Formatters.percent(weakestPct, signed: true),
                 valueColor: weakestPct < 0 ? const Color(0xFFFF5252) : const Color(0xFF00E676),
               ),
             ),
@@ -87,9 +87,9 @@ class DashboardSignalsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _SignalMicroCard(
-                title: 'TOP OPPORTUNITY',
-                subtitle: oppSym.isEmpty ? 'RELIANCE' : oppSym,
-                value: '$oppScore/100',
+                title: 'STRONGEST HOLDING',
+                subtitle: hasStrong ? strongSym : 'Not assessed',
+                value: hasStrong ? '$strongScore/100' : dash,
                 valueColor: const Color(0xFFE5A93C),
               ),
             ),
@@ -97,8 +97,8 @@ class DashboardSignalsGrid extends StatelessWidget {
             Expanded(
               child: _SignalMicroCard(
                 title: 'DIVERSIFICATION',
-                subtitle: '$sectorCount sectors',
-                value: '$computedDivScore/100',
+                subtitle: sectorCount == 0 ? 'No holdings' : '$sectorCount sectors',
+                value: sectorCount == 0 ? dash : '$computedDivScore/100',
                 valueColor: const Color(0xFF00E676),
               ),
             ),

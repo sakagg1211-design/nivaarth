@@ -13,6 +13,7 @@ import '../../providers/watchlist_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../stock/stock_detail_page.dart';
 import 'widgets/watchlist_table_view.dart';
+import '../../core/utils/error_messages.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -228,7 +229,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     error: (e, _) => _SearchState(
                       icon: Icons.error_outline_rounded,
                       title: 'Search unavailable',
-                      message: e.toString(),
+                      message: ErrorMessages.friendly(e),
                     ),
                     data: (stocks) {
                       if (query.isEmpty) {
@@ -291,7 +292,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               final liveQuote = ref.read(liveQuoteProvider(cleanSym)).value;
                               final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                   ? liveQuote.currentPrice
-                                  : SymbolUtils.getEstimatedPrice(cleanSym);
+                                  : 0.0;
 
                               final displayName = stock.companyName.isNotEmpty && stock.companyName.toUpperCase() != cleanSym
                                   ? stock.companyName
@@ -312,7 +313,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                       sector: SymbolUtils.getSector(cleanSym),
                                       industry: SymbolUtils.getIndustry(cleanSym),
                                       status: 'WATCHLIST',
-                                      investmentThesis: SymbolUtils.getEstimatedThesis(cleanSym),
+                                      investmentThesis: '',
                                     ),
                                     currentPrice: livePrice,
                                     currentValue: 0.0,
@@ -405,7 +406,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
                                           final rawPrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.currentPrice
-                                              : SymbolUtils.getEstimatedPrice(stock.instrument);
+                                              : 0.0;
                                           final savePrice = rawPrice > 0 ? rawPrice : 0.0;
                                           final changePct = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.changePercent
@@ -649,9 +650,7 @@ class _LivePriceColumn extends ConsumerWidget {
 
     return quoteAsync.when(
       data: (quote) {
-        final price = quote.currentPrice > 0
-            ? quote.currentPrice
-            : SymbolUtils.getEstimatedPrice(clean);
+        final price = quote.currentPrice;
         final isPos = quote.change >= 0;
         final hasChange = quote.changePercent != 0.0 || quote.change != 0.0;
         final changeText = hasChange
@@ -701,21 +700,20 @@ class _LivePriceColumn extends ConsumerWidget {
         );
       },
       loading: () {
-        final estPrice = SymbolUtils.getEstimatedPrice(clean);
-        return Column(
+        return const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : 'Syncing...',
+              'Syncing...',
               style: TextStyle(
-                color: estPrice > 0 ? Colors.white : const Color(0xFF8E929B),
+                color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
                 fontSize: 13.5,
               ),
             ),
-            const SizedBox(height: 2),
-            const Text(
+            SizedBox(height: 2),
+            Text(
               'Live NSE',
               style: TextStyle(
                 color: Color(0xFF8E929B),
@@ -727,21 +725,20 @@ class _LivePriceColumn extends ConsumerWidget {
         );
       },
       error: (error, stack) {
-        final estPrice = SymbolUtils.getEstimatedPrice(clean);
-        return Column(
+        return const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              estPrice > 0 ? '₹${estPrice.toStringAsFixed(2)}' : '—',
-              style: const TextStyle(
+              '—',
+              style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
                 fontSize: 13.5,
               ),
             ),
-            const SizedBox(height: 2),
-            const Text(
+            SizedBox(height: 2),
+            Text(
               'Offline',
               style: TextStyle(
                 color: Color(0xFF8E929B),

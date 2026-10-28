@@ -222,7 +222,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           final liveQuote = ref.read(liveQuoteProvider(sym)).value;
           final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
               ? liveQuote.currentPrice
-              : SymbolUtils.getEstimatedPrice(sym);
+              : 0.0;
 
           final targetStock = matchingHolding ??
               LivePortfolio(
@@ -239,7 +239,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   sector: SymbolUtils.getSector(sym),
                   industry: SymbolUtils.getIndustry(sym),
                   status: 'WATCHLIST',
-                  investmentThesis: SymbolUtils.getEstimatedThesis(sym),
+                  investmentThesis: '',
                 ),
                 currentPrice: livePrice,
                 currentValue: 0.0,
