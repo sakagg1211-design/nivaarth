@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/layout/breakpoints.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../services/backend_service.dart';
@@ -486,39 +487,84 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Quick suggestions chips
-            _buildSuggestionsBar(),
-
-            // Chat conversation
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.md,
-                ),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final msg = _messages[index];
-                  return _buildMessageBubble(msg);
-                },
-              ),
+        child: Center(
+          child: ConstrainedBox(
+            // Wide screens: one readable chat column instead of edge-to-edge.
+            constraints: BoxConstraints(
+              maxWidth: Breakpoints.isDesktop(context) ? 860 : double.infinity,
             ),
-
-            // Typing Indicator
-            if (_isTyping) _buildTypingIndicator(),
-
-            // Bottom Input Field
-            _buildInputBar(),
-          ],
+            child: SizedBox(width: double.infinity, child: _buildChatColumn()),
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildChatColumn() {
+    return Column(
+      children: [
+        // Quick suggestions chips
+        _buildSuggestionsBar(),
+
+        // Chat conversation
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            itemCount: _messages.length,
+            itemBuilder: (context, index) {
+              final msg = _messages[index];
+              return _buildMessageBubble(msg);
+            },
+          ),
+        ),
+
+        // Typing Indicator
+        if (_isTyping) _buildTypingIndicator(),
+
+        // Bottom Input Field
+        _buildInputBar(),
+      ],
+    );
+  }
+
+  Widget _buildSuggestionChip(String prompt) {
+    return ActionChip(
+      label: Text(
+        prompt,
+        style: const TextStyle(
+          color: Color(0xFFD6DADF),
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      backgroundColor: const Color(0xFF191B20),
+      side: const BorderSide(color: Color(0xFF2C2F37)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      onPressed: () => _sendMessage(prompt),
+    );
+  }
+
   Widget _buildSuggestionsBar() {
+    // Wide screens have room to show every prompt; phones scroll sideways.
+    if (Breakpoints.isDesktop(context)) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 10, AppSpacing.lg, 4),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final prompt in _quickSuggestions) _buildSuggestionChip(prompt),
+          ],
+        ),
+      );
+    }
+
     return Container(
       height: 48,
       margin: const EdgeInsets.only(top: 6, bottom: 4),
@@ -527,25 +573,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         scrollDirection: Axis.horizontal,
         itemCount: _quickSuggestions.length,
         separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final prompt = _quickSuggestions[index];
-          return ActionChip(
-            label: Text(
-              prompt,
-              style: const TextStyle(
-                color: Color(0xFFD6DADF),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            backgroundColor: const Color(0xFF191B20),
-            side: const BorderSide(color: Color(0xFF2C2F37)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-            ),
-            onPressed: () => _sendMessage(prompt),
-          );
-        },
+        itemBuilder: (context, index) =>
+            _buildSuggestionChip(_quickSuggestions[index]),
       ),
     );
   }
@@ -577,7 +606,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           Flexible(
             child: Container(
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.85,
+                maxWidth: Breakpoints.isDesktop(context)
+                    ? 700
+                    : MediaQuery.of(context).size.width * 0.85,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/layout/breakpoints.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/utils/market_hours.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
@@ -54,16 +56,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     }
   }
 
-  bool _checkIsMarketOpen() {
-    final now = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30)); // IST
-    if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
-      return false;
-    }
-    final startMinutes = 9 * 60 + 15;
-    final endMinutes = 15 * 60 + 30;
-    final currentMinutes = now.hour * 60 + now.minute;
-    return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
-  }
+  bool _checkIsMarketOpen() => isMarketOpenIst(DateTime.now());
 
   Future<void> _refreshDashboard() async {
     if (_isRefreshing) return;
@@ -112,6 +105,114 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           ),
           data: (data) {
             final liveStocks = portfolioAsync.value ?? [];
+            final isDesktop = Breakpoints.isDesktop(context);
+            final hasHoldings = data.totalStocks > 0;
+
+            // 2. Compact Portfolio Value Card
+            final hero = PortfolioHeroCard(
+              currentValue: data.currentValue,
+              investedValue: data.totalInvested,
+              netPnL: data.totalPnL,
+              returnPercent: data.returnPercent,
+              todayPnL: data.todayPnL,
+              todayReturnPercent: data.todayReturnPercent,
+              holdings: data.totalStocks,
+              isMarketOpen: isMarketOpen,
+              unpricedHoldings: data.unpricedStocks,
+              staleHoldings: data.staleStocks,
+              pricesAsOf: data.pricesAsOf,
+            );
+
+            // 3. Compact AI Portfolio Health Gauge Card
+            final health = PortfolioHealthCard(
+              healthScore: data.portfolioHealth,
+              action: data.aiRecommendation.recommendation.label,
+              dataCoverage: data.dataCoverage,
+              onOpenAdvisor: widget.onOpenAdvisor ?? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AdvisorChatPage()),
+                );
+              },
+            );
+
+            // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
+            final signals = DashboardSignalsGrid(
+              summary: data,
+              holdings: liveStocks,
+            );
+
+            // 5. Today's AI Briefing & Insight Column (Attached Image 2)
+            final briefing = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildBriefingHeading(),
+                const SizedBox(height: 12),
+                // AI Verdict & Health Insights Card (Reasons + Actions)
+                AIBriefingCard(
+                  ai: data.aiRecommendation,
+                  dataCoverage: data.dataCoverage,
+                ),
+              ],
+            );
+
+            // 6. Sector Allocation Preview & Top Holdings List
+            final topHoldings = DashboardTopHoldingsSection(
+              holdings: liveStocks,
+              onViewAll: () {
+                // Switch to Portfolio tab if embedded in HomePage
+                final homeState = context.findAncestorStateOfType<State<HomePage>>();
+                if (homeState != null) {
+                  // ignore: invalid_use_of_protected_member
+                  homeState.setState(() {
+                    // ignore: avoid_dynamic_calls
+                    (homeState as dynamic).currentIndex = 1;
+                  });
+                }
+              },
+            );
+
+            final List<Widget> body;
+            if (!hasHoldings) {
+              body = [_buildNewUserOnboardingCard(context)];
+            } else if (isDesktop) {
+              // Wide screens: valuation stack on the left, briefing on the right.
+              body = [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          hero,
+                          const SizedBox(height: 14),
+                          health,
+                          const SizedBox(height: 14),
+                          signals,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(flex: 6, child: briefing),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                topHoldings,
+              ];
+            } else {
+              body = [
+                hero,
+                const SizedBox(height: 14),
+                health,
+                const SizedBox(height: 14),
+                signals,
+                const SizedBox(height: 22),
+                briefing,
+                const SizedBox(height: 22),
+                topHoldings,
+              ];
+            }
 
             return RefreshIndicator(
               onRefresh: _refreshDashboard,
@@ -124,13 +225,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 24 : 16,
                         vertical: 14,
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 540),
+                          constraints: BoxConstraints(
+                            maxWidth: isDesktop ? double.infinity : 540,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -144,123 +247,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
 
                               const SizedBox(height: 14),
 
-                              if (data.totalStocks == 0) ...[
-                                _buildNewUserOnboardingCard(context),
-                              ] else ...[
-                                // 2. Compact Portfolio Value Card
-                                PortfolioHeroCard(
-                                  currentValue: data.currentValue,
-                                  investedValue: data.totalInvested,
-                                  netPnL: data.totalPnL,
-                                  returnPercent: data.returnPercent,
-                                  todayPnL: data.todayPnL,
-                                  todayReturnPercent: data.todayReturnPercent,
-                                  holdings: data.totalStocks,
-                                  isMarketOpen: isMarketOpen,
-                                  unpricedHoldings: data.unpricedStocks,
-                                  staleHoldings: data.staleStocks,
-                                  pricesAsOf: data.pricesAsOf,
-                                ),
-
-                                const SizedBox(height: 14),
-
-                                // 3. Compact AI Portfolio Health Gauge Card
-                                PortfolioHealthCard(
-                                  healthScore: data.portfolioHealth,
-                                  action: data.aiRecommendation.recommendation.label,
-                                  dataCoverage: data.dataCoverage,
-                                  onOpenAdvisor: widget.onOpenAdvisor ?? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => const AdvisorChatPage()),
-                                    );
-                                  },
-                                ),
-
-                                const SizedBox(height: 14),
-
-                                // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
-                                DashboardSignalsGrid(
-                                  summary: data,
-                                  holdings: liveStocks,
-                                ),
-                              ],
-
-                              if (data.totalStocks > 0) ...[
-                                const SizedBox(height: 22),
-
-                                // 5. Today's AI Briefing & Insight Column (Attached Image 2)
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'NV Briefing',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: -0.4,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 3,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0x1FE5A93C),
-                                        borderRadius: BorderRadius.circular(6),
-                                        border: Border.all(
-                                          color: const Color(0x33E5A93C),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'TODAY',
-                                        style: TextStyle(
-                                          color: Color(0xFFE5A93C),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  'Signals ranked by conviction and risk.',
-                                  style: TextStyle(
-                                    color: Color(0xFF8E929B),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-
-                                // AI Verdict & Health Insights Card (Reasons + Actions)
-                                AIBriefingCard(
-                                  ai: data.aiRecommendation,
-                                  dataCoverage: data.dataCoverage,
-                                ),
-
-                                const SizedBox(height: 22),
-
-                                // 6. Sector Allocation Preview & Top Holdings List
-                                DashboardTopHoldingsSection(
-                                  holdings: liveStocks,
-                                  onViewAll: () {
-                                    // Switch to Portfolio tab if embedded in HomePage
-                                    final homeState = context.findAncestorStateOfType<State<HomePage>>();
-                                    if (homeState != null) {
-                                      // ignore: invalid_use_of_protected_member
-                                      homeState.setState(() {
-                                        // ignore: avoid_dynamic_calls
-                                        (homeState as dynamic).currentIndex = 1;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
+                              ...body,
 
                               const SizedBox(height: 24),
                             ],
@@ -275,6 +262,56 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildBriefingHeading() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'NV Briefing',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.4,
+              ),
+            ),
+            SizedBox(width: 8),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color(0x1FE5A93C),
+                borderRadius: BorderRadius.all(Radius.circular(6)),
+                border: Border.fromBorderSide(BorderSide(color: Color(0x33E5A93C))),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                child: Text(
+                  'TODAY',
+                  style: TextStyle(
+                    color: Color(0xFFE5A93C),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Signals ranked by conviction and risk.',
+          style: TextStyle(
+            color: Color(0xFF8E929B),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 

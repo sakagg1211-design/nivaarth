@@ -55,10 +55,7 @@ class WatchlistTableView extends StatelessWidget {
                   const Text(
                     'Search any stock and tap "+ Save" to track it here.\nPull down to sync and refresh.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF757A85),
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Color(0xFF757A85), fontSize: 12),
                   ),
                 ],
               ),
@@ -68,45 +65,52 @@ class WatchlistTableView extends StatelessWidget {
       );
     }
 
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        child: SizedBox(
-          width: 780,
-          child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length + 1, // +1 for Header row
-          separatorBuilder: (context, index) => const Divider(
-            color: Color(0xFF23252B),
-            height: 1,
-            thickness: 1,
+    // Phones scroll the 780px table sideways; wider screens stretch it to fit,
+    // giving the extra room to the company name and the takeaway text.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth > _minTableWidth;
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: SizedBox(
+              width: wide ? constraints.maxWidth : _minTableWidth,
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: items.length + 1, // +1 for Header row
+                separatorBuilder: (context, index) => const Divider(
+                  color: Color(0xFF23252B),
+                  height: 1,
+                  thickness: 1,
+                ),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return _buildTableHeader(wide);
+                  }
+
+                  final item = items[index - 1];
+                  return _buildTableRow(context, item, wide);
+                },
+              ),
+            ),
           ),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return _buildTableHeader();
-            }
+        );
+      },
+    );
+  }
 
-            final item = items[index - 1];
-            return _buildTableRow(context, item);
-          },
-        ),
-      ),
-    ),
-  );
-}
-
-  Widget _buildTableHeader() {
+  Widget _buildTableHeader(bool wide) {
     return Container(
       color: const Color(0xFF131418),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      child: const Row(
+      child: Row(
         children: [
           SizedBox(
-            width: 150,
-            child: Text(
+            width: _companyWidth(wide),
+            child: const Text(
               'Company ⬍',
               style: TextStyle(
                 color: Color(0xFF8E929B),
@@ -115,7 +119,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 60,
             child: Text(
               'Score ⬍',
@@ -126,7 +130,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 90,
             child: Text(
               'Added Price',
@@ -137,7 +141,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 105,
             child: Text(
               'Latest Price ⬍\nChange',
@@ -149,7 +153,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 110,
             child: Text(
               'Returns ⬍\nTracked Date',
@@ -161,7 +165,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Text(
               'Technical & Things you should know',
               style: TextStyle(
@@ -171,7 +175,7 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 44,
             child: Text(
               'Action',
@@ -188,11 +192,19 @@ class WatchlistTableView extends StatelessWidget {
     );
   }
 
-  Widget _buildTableRow(BuildContext context, WatchlistItem item) {
+  static const double _minTableWidth = 780;
+
+  double _companyWidth(bool wide) => wide ? 220 : 150;
+
+  Widget _buildTableRow(BuildContext context, WatchlistItem item, bool wide) {
     final isPos = item.dayChangePercent >= 0;
-    final changeColor = isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final changeColor = isPos
+        ? const Color(0xFF00E676)
+        : const Color(0xFFFF5252);
     final isRetPos = item.returnPercent >= 0;
-    final retColor = isRetPos ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final retColor = isRetPos
+        ? const Color(0xFF00E676)
+        : const Color(0xFFFF5252);
 
     return InkWell(
       onTap: () {
@@ -238,7 +250,7 @@ class WatchlistTableView extends StatelessWidget {
           children: [
             // Company Name
             SizedBox(
-              width: 150,
+              width: _companyWidth(wide),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -272,7 +284,10 @@ class WatchlistTableView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0x1FE5A93C),
                     borderRadius: BorderRadius.circular(6),
@@ -381,29 +396,43 @@ class WatchlistTableView extends StatelessWidget {
                 children: [
                   Builder(
                     builder: (context) {
-                      final compliantTag = SymbolUtils.toCompliantVerdict(item.technicalTag);
+                      final compliantTag = SymbolUtils.toCompliantVerdict(
+                        item.technicalTag,
+                      );
                       final upper = compliantTag.toUpperCase();
                       final Color tagBg;
-                      if (upper.contains('STRONG') || upper.contains('OUTPERFORM')) {
+                      if (upper.contains('STRONG') ||
+                          upper.contains('OUTPERFORM')) {
                         tagBg = const Color(0xFF00E676);
-                      } else if (upper.contains('MODERATE') || upper.contains('STRENGTH')) {
+                      } else if (upper.contains('MODERATE') ||
+                          upper.contains('STRENGTH')) {
                         tagBg = const Color(0xFF4ADE80);
-                      } else if (upper.contains('WATCH') || upper.contains('NEUTRAL') || upper.contains('RANGE')) {
+                      } else if (upper.contains('WATCH') ||
+                          upper.contains('NEUTRAL') ||
+                          upper.contains('RANGE')) {
                         tagBg = const Color(0xFFE5A93C);
-                      } else if (upper.contains('ELEVATED') || upper.contains('RISK') && !upper.contains('HIGH')) {
+                      } else if (upper.contains('ELEVATED') ||
+                          upper.contains('RISK') && !upper.contains('HIGH')) {
                         tagBg = const Color(0xFFFF9800);
-                      } else if (upper.contains('HIGH RISK') || upper.contains('UNDERPERFORM') || upper.contains('AVOID')) {
+                      } else if (upper.contains('HIGH RISK') ||
+                          upper.contains('UNDERPERFORM') ||
+                          upper.contains('AVOID')) {
                         tagBg = const Color(0xFFFF5252);
                       } else {
                         tagBg = const Color(0xFF282A30);
                       }
 
-                      final Color textColor = (tagBg == const Color(0xFF00E676) || tagBg == const Color(0xFF4ADE80))
+                      final Color textColor =
+                          (tagBg == const Color(0xFF00E676) ||
+                              tagBg == const Color(0xFF4ADE80))
                           ? Colors.black
                           : Colors.white;
 
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: tagBg,
                           borderRadius: BorderRadius.circular(4),
@@ -424,7 +453,7 @@ class WatchlistTableView extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item.keyTakeaway,
-                      maxLines: 2,
+                      maxLines: wide ? 3 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Color(0xFFC9D1D8),
