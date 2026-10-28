@@ -49,66 +49,17 @@ class MarketIndicesBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildShimmer() {
-    return const Row(
-      children: [
-        Expanded(
-          child: _IndexPill(
-            symbol: '^NSEI',
-            name: 'NIFTY 50',
-            value: 22520.45,
-            pointChange: 288.65,
-            changePercent: 1.30,
-            dayHigh: 22580.75,
-            dayLow: 22294.75,
-            isLive: false,
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: _IndexPill(
-            symbol: '^BSESN',
-            name: 'SENSEX',
-            value: 72472.33,
-            pointChange: 879.09,
-            changePercent: 1.23,
-            dayHigh: 72669.20,
-            dayLow: 71739.49,
-            isLive: false,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildShimmer() => _placeholder('Loading…');
 
-  Widget _buildFallback() {
-    return const Row(
+  Widget _buildFallback() => _placeholder('Unavailable');
+
+  /// Before data arrives (or if it cannot be fetched) the pills show a dash, never a number
+  Widget _placeholder(String status) {
+    return Row(
       children: [
-        Expanded(
-          child: _IndexPill(
-            symbol: '^NSEI',
-            name: 'NIFTY 50',
-            value: 22520.45,
-            pointChange: 288.65,
-            changePercent: 1.30,
-            dayHigh: 22580.75,
-            dayLow: 22294.75,
-            isLive: false,
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: _IndexPill(
-            symbol: '^BSESN',
-            name: 'SENSEX',
-            value: 72472.33,
-            pointChange: 879.09,
-            changePercent: 1.23,
-            dayHigh: 72669.20,
-            dayLow: 71739.49,
-            isLive: false,
-          ),
-        ),
+        Expanded(child: _IndexPill.empty(symbol: '^NSEI', name: 'NIFTY 50', status: status)),
+        const SizedBox(width: 10),
+        Expanded(child: _IndexPill.empty(symbol: '^BSESN', name: 'SENSEX', status: status)),
       ],
     );
   }
@@ -123,6 +74,8 @@ class _IndexPill extends StatelessWidget {
   final double dayHigh;
   final double dayLow;
   final bool isLive;
+  // Shown instead of the change badge when there is no value (loading / unavailable)
+  final String emptyStatus;
 
   const _IndexPill({
     required this.symbol,
@@ -133,10 +86,20 @@ class _IndexPill extends StatelessWidget {
     required this.dayHigh,
     required this.dayLow,
     required this.isLive,
-  });
+  }) : emptyStatus = 'Unavailable';
+
+  const _IndexPill.empty({required this.symbol, required this.name, required String status})
+      : value = 0,
+        pointChange = 0,
+        changePercent = 0,
+        dayHigh = 0,
+        dayLow = 0,
+        isLive = false,
+        emptyStatus = status;
 
   @override
   Widget build(BuildContext context) {
+    final hasValue = value > 0;
     final isUp = pointChange >= 0;
     final tone = isUp ? const Color(0xFF00E676) : const Color(0xFFFF5252);
     final toneBg = isUp ? const Color(0x1F00E676) : const Color(0x26FF5252);
@@ -206,7 +169,7 @@ class _IndexPill extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    Formatters.number(value.round()),
+                    hasValue ? Formatters.number(value.round()) : '—',
                     style: const TextStyle(
                       fontSize: 16.5,
                       fontWeight: FontWeight.w900,
@@ -215,36 +178,42 @@ class _IndexPill extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
+                  if (hasValue)
                   Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: toneBg,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
-                              size: 14,
-                              color: tone,
-                            ),
-                            Text(
-                              '${isUp ? '+' : '-'}${pointChange.abs().toStringAsFixed(1)} (${changePercent.abs().toStringAsFixed(2)}%)',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w800,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: toneBg,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
+                                size: 14,
                                 color: tone,
                               ),
-                            ),
-                          ],
+                              Text(
+                                '${isUp ? '+' : '-'}${pointChange.abs().toStringAsFixed(1)} (${changePercent.abs().toStringAsFixed(2)}%)',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: tone,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                    )
+                  else
+                    Text(
+                      emptyStatus,
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
                     ),
-                  ),
                 ],
               ),
 
@@ -254,7 +223,7 @@ class _IndexPill extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'H: ${Formatters.number(dayHigh.round())}',
+                    'H: ${hasValue ? Formatters.number(dayHigh.round()) : '—'}',
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -263,7 +232,7 @@ class _IndexPill extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'L: ${Formatters.number(dayLow.round())}',
+                    'L: ${hasValue ? Formatters.number(dayLow.round()) : '—'}',
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,

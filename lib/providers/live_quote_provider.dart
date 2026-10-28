@@ -25,3 +25,8 @@ class ChartQuery {
 final stockChartProvider = FutureProvider.family<List<double>, ChartQuery>((ref, query) async {
   return MarketQuoteService.instance.fetchChartPoints(query.symbol, query.range);
 });
+
+/// One year of daily closes and the 52-week range (null when Yahoo could not be reached)
+final dailyHistoryProvider = FutureProvider.family<DailyHistory?, String>((ref, symbol) async {
+  return MarketQuoteService.instance.fetchDailyHistory(symbol);
+});

@@ -33,15 +33,24 @@ class PortfolioHeroCard extends ConsumerWidget {
     this.pricesAsOf,
   });
 
-  String? get _asOfLabel {
-    final t = pricesAsOf?.toLocal();
-    if (t == null) return null;
-    final now = DateTime.now();
-    final sameDay = t.year == now.year && t.month == now.month && t.day == now.day;
+  String? get _asOfLabel => asOfLabel(pricesAsOf, isMarketOpen: isMarketOpen);
+
+  /// During the session: the time of the oldest holding price. Once the market is closed the
+  /// prices are that day's closing prices (official close is 3:30 PM IST, loaded from the NSE
+  /// bhavcopy in the evening), so the label names the day instead of the last refresh time.
+  static String? asOfLabel(DateTime? pricesAsOf, {required bool isMarketOpen, DateTime? now}) {
+    if (pricesAsOf == null) return null;
+    const ist = Duration(hours: 5, minutes: 30);
+    final t = pricesAsOf.toUtc().add(ist);
+    final n = (now ?? DateTime.now()).toUtc().add(ist);
+    final sameDay = t.year == n.year && t.month == n.month && t.day == n.day;
+    if (!isMarketOpen) {
+      return sameDay
+          ? 'Market closed · today\'s closing prices'
+          : 'Market closed · closing prices of ${DateFormat('d MMM').format(t)}';
+    }
     final time = DateFormat('h:mm a').format(t);
-    return sameDay
-        ? 'Prices as of $time'
-        : 'Prices as of ${DateFormat('d MMM').format(t)}, $time';
+    return sameDay ? 'Prices as of $time' : 'Prices as of ${DateFormat('d MMM').format(t)}, $time';
   }
 
   String? get _priceNote {

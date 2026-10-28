@@ -139,7 +139,9 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       tag = 'HIGH RISK';
     }
 
-    if (stock.isExcluded) {
+    if (stock.isExcluded && stock.recommendation.toUpperCase().contains('DATA REVIEW')) {
+      takeaway = 'Source data under review; no score until it is verified.';
+    } else if (stock.isExcluded) {
       takeaway = 'Specialized asset class ($sector); standard quantitative scoring withheld.';
     } else if (scoreVal != null && scoreVal >= 80) {
       takeaway = 'Market leader in $sector with resilient operating margins & robust ROE.';

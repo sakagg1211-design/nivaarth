@@ -9,8 +9,16 @@ import '../../core/theme/app_typography.dart';
 class ScoreMethodologyPage extends StatelessWidget {
   const ScoreMethodologyPage({super.key});
 
+  static const double _maxTextWidth = 860;
+
   @override
   Widget build(BuildContext context) {
+    // Keep lines readable on wide screens; padding (not a box) so the whole page still scrolls.
+    final width = MediaQuery.sizeOf(context).width;
+    final side = width > _maxTextWidth + 2 * AppSpacing.lg
+        ? (width - _maxTextWidth) / 2
+        : AppSpacing.lg;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -19,7 +27,7 @@ class ScoreMethodologyPage extends StatelessWidget {
         title: const Text('How the NV Score works'),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xxl),
+        padding: EdgeInsets.fromLTRB(side, AppSpacing.sm, side, AppSpacing.xxl),
         children: const [
           _Section(
             title: 'What the score is',
@@ -74,6 +82,8 @@ class ScoreMethodologyPage extends StatelessWidget {
               _Row('Insurance, holding companies, REITs / InvITs', 'No score. Their accounts do not fit '
                   'these ratios; they need embedded value, NAV or yield instead.'),
               _Row('ETFs', 'Valuation is set to a neutral 60.'),
+              _Row('Data under review', 'No score when our stored fundamentals fail a check against exchange '
+                  'data (market cap or price of a different company). It returns once the data is corrected.'),
             ],
           ),
           _Section(

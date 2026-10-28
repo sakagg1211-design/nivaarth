@@ -7,6 +7,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../models/stock_score.dart';
 import '../score_methodology_page.dart';
+import 'score_breakdown_section.dart';
 
 class AiScoreCard extends StatelessWidget {
   final StockScore score;
@@ -239,7 +240,9 @@ class AiScoreCard extends StatelessWidget {
                         children: [
                           if (score.isExcluded)
                             _buildInstitutionalBadge(
-                              label: "Score Excluded",
+                              label: score.recommendation.toUpperCase().contains("DATA REVIEW")
+                                  ? "Data Under Review"
+                                  : "Score Excluded",
                               icon: Icons.block_outlined,
                               color: Colors.amber,
                             ),
@@ -376,14 +379,16 @@ class AiScoreCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                "NV Analytics",
+                "Why this score",
                 style: AppTypography.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => _showExplainableAiSheet(context),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ScoreMethodologyPage()),
+                ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -397,7 +402,7 @@ class AiScoreCard extends StatelessWidget {
                       Icon(Icons.psychology_outlined, size: 14, color: Color(0xFFE5A93C)),
                       SizedBox(width: 4),
                       Text(
-                        "Methodology ℹ️",
+                        "Methodology",
                         style: TextStyle(
                           color: Color(0xFFE5A93C),
                           fontSize: 11,
@@ -415,311 +420,10 @@ class AiScoreCard extends StatelessWidget {
             height: AppSpacing.lg,
           ),
 
-          _ScoreTile(
-            title: "Business Quality",
-            subtitle: "ROCE, ROE, Moat & Operating Margins",
-            value: score.businessQuality,
-            maxScore: 25,
-            color: Colors.blue,
-            icon: Icons.business_center_outlined,
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          _ScoreTile(
-            title: "Financial Strength",
-            subtitle: "Solvency, Debt-to-Equity & Interest Cover",
-            value: score.financialStrength,
-            maxScore: 25,
-            color: AppColors.success,
-            icon: Icons.account_balance_wallet_outlined,
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          _ScoreTile(
-            title: "Growth",
-            subtitle: "3-Yr Sales CAGR & Profit Compounding",
-            value: score.growth,
-            maxScore: 20,
-            color: Colors.orange,
-            icon: Icons.trending_up,
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          _ScoreTile(
-            title: "Valuation",
-            subtitle: "PE vs 5-Yr Avg Multiple & Price-to-Book",
-            value: score.valuation,
-            maxScore: 15,
-            color: Colors.deepPurple,
-            icon: Icons.payments_outlined,
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          _ScoreTile(
-            title: "Technical",
-            subtitle: "50/200 EMA Alignment, RSI & Volume",
-            value: score.technical,
-            maxScore: 10,
-            color: Colors.teal,
-            icon: Icons.show_chart,
-          ),
-
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
-
-          _ScoreTile(
-            title: "Risk & Volatility",
-            subtitle: "Beta vs Nifty 50 & Drawdown Resilience",
-            value: score.risk,
-            maxScore: 5,
-            color: AppColors.danger,
-            icon: Icons.warning_amber_rounded,
-          ),
+          ScoreBreakdownSection(breakdown: score.scoreBreakdown),
 
           const SizedBox(
             height: AppSpacing.xl,
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showExplainableAiSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.85,
-          ),
-          decoration: const BoxDecoration(
-            color: Color(0xFF131418),
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppRadius.sheet),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Center(
-                child: Container(
-                  height: 4,
-                  width: 38,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2E3138),
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0x1FE5A93C),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.psychology_outlined,
-                        color: Color(0xFFE5A93C),
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Explainable AI Methodology',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            '100-Point Quantitative Conviction Matrix',
-                            style: TextStyle(
-                              color: Color(0xFF8E929B),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white54),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(color: Color(0xFF23252B), height: 24),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                  child: Column(
-                    children: [
-                      _buildPillarExplainer(
-                        name: 'Business Quality',
-                        pts: '25 Pts (25%)',
-                        color: Colors.blue,
-                        metrics: 'ROCE > 20%, ROE > 15%, Operating Profit Margin consistency, moat & industry leadership.',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildPillarExplainer(
-                        name: 'Financial Strength',
-                        pts: '25 Pts (25%)',
-                        color: AppColors.success,
-                        metrics: 'Debt-to-Equity (< 0.5x), Interest Coverage (> 3.5x), solvency ratios, zero pledging.',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildPillarExplainer(
-                        name: 'Growth',
-                        pts: '20 Pts (20%)',
-                        color: Colors.orange,
-                        metrics: '3-Year Compounded Sales CAGR (> 12%), PAT Compounding (> 15%), revenue durability.',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildPillarExplainer(
-                        name: 'Valuation',
-                        pts: '15 Pts (15%)',
-                        color: Colors.deepPurple,
-                        metrics: 'Current P/E vs 5-Year Historical Average PE multiple, Price-to-Book & sector discount/premium.',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildPillarExplainer(
-                        name: 'Technical Momentum',
-                        pts: '10 Pts (10%)',
-                        color: Colors.teal,
-                        metrics: '50-Day & 200-Day EMA alignment, RSI-14 momentum range (45-65), volume trend confirmation.',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildPillarExplainer(
-                        name: 'Risk & Volatility',
-                        pts: '5 Pts (5%)',
-                        color: AppColors.danger,
-                        metrics: '1-Year Beta relative to Nifty 50, maximum peak-to-trough drawdown protection.',
-                      ),
-                      const SizedBox(height: 18),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF17191E),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFF262830)),
-                        ),
-                        child: const Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.shield_outlined, size: 16, color: Color(0xFFE5A93C)),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'SEBI Compliance Note: Nivaarth scores are computed using rule-based quantitative models. They provide objective mathematical visibility into fundamental & technical strength without human bias or direct investment tips.',
-                                style: TextStyle(
-                                  color: Color(0xFF8E929B),
-                                  fontSize: 11,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildPillarExplainer({
-    required String name,
-    required String pts,
-    required Color color,
-    required String metrics,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF17191E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF262830)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 8,
-                width: 8,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  pts,
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            metrics,
-            style: const TextStyle(
-              color: Color(0xFF8E929B),
-              fontSize: 11.5,
-              height: 1.35,
-            ),
           ),
         ],
       ),
@@ -796,6 +500,9 @@ class AiScoreCard extends StatelessWidget {
   String _summary() {
     if (score.isExcluded) {
       final rec = score.recommendation.toUpperCase();
+      if (rec.contains("DATA REVIEW")) {
+        return "The source data for this stock did not match the exchange (market cap or price belong to a different company), so it is being reviewed. No score is shown rather than a score built on wrong numbers.";
+      }
       if (rec.contains("INSURANCE")) {
         return "Life and General Insurance firms operate on actuarial float and statutory accounting. Quantitative 1-100 scoring is withheld until dedicated Embedded Value (EV) models are integrated.";
       } else if (rec.contains("HOLDING")) {
@@ -803,7 +510,7 @@ class AiScoreCard extends StatelessWidget {
       } else if (rec.contains("REIT") || rec.contains("INVIT")) {
         return "Real Estate & Infrastructure Investment Trusts operate on distribution yield and Net Asset Value (NAV). Standard industrial scoring is withheld.";
       }
-      return "Quantitative conviction score withheld: specialized asset-class valuation framework required.";
+      return "The 1-100 score is not calculated for this stock: its accounts need a specialised valuation method.";
     }
 
     final rec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
@@ -856,109 +563,6 @@ class AiScoreCard extends StatelessWidget {
     }
 
     return "Current conviction score reflects mixed factor balance across valuation, quality, and momentum. Prudent research discipline suggested before fresh capital commitment.";
-  }
-}
-
-class _ScoreTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int value;
-  final int maxScore;
-  final Color color;
-  final IconData icon;
-
-  const _ScoreTile({
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.maxScore,
-    required this.color,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final double progress = (value / maxScore).clamp(0.0, 1.0);
-
-    return Container(
-      padding: const EdgeInsets.all(
-        AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(
-          AppRadius.lg,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 20,
-                color: color,
-              ),
-
-              const SizedBox(
-                width: AppSpacing.sm,
-              ),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTypography.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Color(0xFF757A85),
-                        fontSize: 10.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Text(
-                "$value / $maxScore",
-                style: AppTypography.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: AppSpacing.sm,
-          ),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(
-              AppRadius.lg,
-            ),
-            child: LinearProgressIndicator(
-              minHeight: 7,
-              value: progress,
-              backgroundColor:
-                  AppColors.outline.withValues(
-                alpha: .20,
-              ),
-              valueColor:
-                  AlwaysStoppedAnimation(color),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

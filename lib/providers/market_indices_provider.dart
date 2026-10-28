@@ -23,6 +23,17 @@ class MarketIndexItem {
     required this.dayLow,
     required this.isLive,
   });
+
+  /// value 0 means "no price": the UI shows a dash instead of a number
+  const MarketIndexItem.unavailable(this.name)
+      : value = 0,
+        pointChange = 0,
+        changePercent = 0,
+        dayHigh = 0,
+        dayLow = 0,
+        isLive = false;
+
+  bool get isAvailable => value > 0;
 }
 
 class MarketIndicesState {
@@ -92,15 +103,8 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       isLive: hasPrev,
     );
   } else {
-    niftyItem = const MarketIndexItem(
-      name: 'NIFTY 50',
-      value: 22520.45,
-      pointChange: 288.65,
-      changePercent: 1.30,
-      dayHigh: 22580.75,
-      dayLow: 22294.75,
-      isLive: false,
-    );
+    // No live quote and no saved price: show it as unavailable, never a made-up level
+    niftyItem = const MarketIndexItem.unavailable('NIFTY 50');
   }
 
   // 2. Resolve SENSEX
@@ -130,15 +134,7 @@ final marketIndicesProvider = FutureProvider<MarketIndicesState>((ref) async {
       isLive: hasPrev,
     );
   } else {
-    sensexItem = const MarketIndexItem(
-      name: 'SENSEX',
-      value: 72472.33,
-      pointChange: 879.09,
-      changePercent: 1.23,
-      dayHigh: 72669.20,
-      dayLow: 71739.49,
-      isLive: false,
-    );
+    sensexItem = const MarketIndexItem.unavailable('SENSEX');
   }
 
   return MarketIndicesState(

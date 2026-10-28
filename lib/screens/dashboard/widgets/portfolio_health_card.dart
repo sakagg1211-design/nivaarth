@@ -5,7 +5,8 @@ class PortfolioHealthCard extends StatelessWidget {
   final String action;
   // Share of scoring inputs actually available for scored holdings (0-100); null = none scored
   final double? dataCoverage;
-  final String healthStatus;
+  // When null the status is derived from the score (same bands as PortfolioHealthEngine)
+  final String? healthStatus;
   final VoidCallback? onOpenAdvisor;
 
   const PortfolioHealthCard({
@@ -13,14 +14,34 @@ class PortfolioHealthCard extends StatelessWidget {
     required this.healthScore,
     required this.action,
     this.dataCoverage,
-    this.healthStatus = 'Needs Attention',
+    this.healthStatus,
     this.onOpenAdvisor,
   });
+
+  /// PortfolioHealthEngine's bands, so the card never shows a fixed placeholder status
+  static String statusFor(int score) {
+    if (score >= 90) return 'Excellent';
+    if (score >= 80) return 'Strong';
+    if (score >= 70) return 'Good';
+    if (score >= 60) return 'Average';
+    return 'Weak';
+  }
+
+  /// NSE cash session, Mon-Fri 09:15-15:30 IST (exchange holidays are not known here)
+  static bool isMarketOpenIst(DateTime nowUtc) {
+    final ist = nowUtc.toUtc().add(const Duration(hours: 5, minutes: 30));
+    if (ist.weekday == DateTime.saturday || ist.weekday == DateTime.sunday) return false;
+    final minutes = ist.hour * 60 + ist.minute;
+    return minutes >= 9 * 60 + 15 && minutes <= 15 * 60 + 30;
+  }
 
   @override
   Widget build(BuildContext context) {
     final score = healthScore.round().clamp(0, 100);
     const gaugeColor = Color(0xFFE5A93C);
+    final status = healthStatus ?? statusFor(score);
+    final live = isMarketOpenIst(DateTime.now());
+    final badgeColor = live ? const Color(0xFF00E676) : const Color(0xFF8E929B);
 
     return Container(
       width: double.infinity,
@@ -37,7 +58,7 @@ class PortfolioHealthCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header: Sparkle + "AI PORTFOLIO HEALTH" + "Live" badge
+          // Header: title + market badge ("Live" only while NSE is open)
           Row(
             children: [
               const Icon(
@@ -59,20 +80,20 @@ class PortfolioHealthCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0x1F00E676),
+                  color: badgeColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.circle, size: 6, color: Color(0xFF00E676)),
-                    SizedBox(width: 4),
+                    Icon(Icons.circle, size: 6, color: badgeColor),
+                    const SizedBox(width: 4),
                     Text(
-                      'Live',
+                      live ? 'Live' : 'Market closed',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF00E676),
+                        color: badgeColor,
                       ),
                     ),
                   ],
@@ -157,7 +178,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Status: $healthStatus',
+                      'Status: $status',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -166,7 +187,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     const Text(
-                      'Nivaarth engine actively tracking risk & quality.',
+                      'Average NV Score of your scored holdings, weighted by value.',
                       style: TextStyle(
                         color: Color(0xFF8E929B),
                         fontSize: 11.5,
@@ -179,7 +200,7 @@ class PortfolioHealthCard extends StatelessWidget {
                           () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Nivaarth Advisor is monitoring portfolio risk.'),
+                                content: Text('Open NV Advisor from the bottom bar.'),
                                 duration: Duration(seconds: 2),
                               ),
                             );
@@ -224,13 +245,15 @@ class PortfolioHealthCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFF282A30)),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.check_circle_outline_rounded, size: 14, color: Color(0xFF00E676)),
-                SizedBox(width: 8),
+                const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFF8E929B)),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Multi-factor balance active • Risk hedging monitored',
+                    live
+                        ? 'Market open: prices refresh every few minutes. NV Scores update every evening.'
+                        : 'Market closed: prices are the last close. NV Scores update every evening.',
                     style: TextStyle(
                       color: Color(0xFFC7CDD6),
                       fontSize: 11,

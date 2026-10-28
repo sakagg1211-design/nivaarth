@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/layout/breakpoints.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/formatters.dart';
@@ -96,6 +97,11 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   Widget build(BuildContext context) {
     final portfolioAsync = ref.watch(livePortfolioProvider);
     final isPrivacy = ref.watch(privacyModeProvider);
+    final isDesktop = Breakpoints.isDesktop(context);
+    // Phone keeps its narrow reading widths; wide screens use the shell's column.
+    final double headerMaxWidth = isDesktop ? double.infinity : 680;
+    final double gridMaxWidth = isDesktop ? double.infinity : 880;
+    final double sidePadding = isDesktop ? 24 : 16;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
@@ -252,15 +258,15 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                   slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
+                      padding: EdgeInsets.fromLTRB(
+                        sidePadding,
                         16,
-                        16,
-                        16,
+                        sidePadding,
                         12,
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 680),
+                          constraints: BoxConstraints(maxWidth: headerMaxWidth),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -430,19 +436,20 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                     ),
                   ),
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
-                      16,
+                    padding: EdgeInsets.fromLTRB(
+                      sidePadding,
                       0,
-                      16,
+                      sidePadding,
                       84, // Extra padding for Floating Action Button
                     ),
                     sliver: SliverToBoxAdapter(
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 880),
+                          constraints: BoxConstraints(maxWidth: gridMaxWidth),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               final isTwoCol = constraints.maxWidth >= 540;
+                              final columns = constraints.maxWidth >= 1050 ? 3 : 2;
 
                               if (!isTwoCol) {
                                 return ListView.separated(
@@ -459,8 +466,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                               return GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: columns,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
                                   mainAxisExtent: 185,
@@ -532,7 +539,9 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 680),
+        constraints: BoxConstraints(
+          maxWidth: Breakpoints.isDesktop(context) ? double.infinity : 680,
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFF16171B),
@@ -631,48 +640,10 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                 ),
               ),
 
-              // Heatmap Visual Strip
+              // Heatmap Visual Strip (overall return or today's move)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(
-                              Icons.grid_view_rounded,
-                              size: 13,
-                              color: Color(0xFFE5A93C),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Return Heatmap',
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '${stocks.where((s) => s.returnPercent >= 0).length} Up • ${stocks.where((s) => s.returnPercent < 0).length} Down',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF757A85),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    // Heatmap Chips
-                    _PortfolioHeatmapGrid(stocks: stocks),
-                  ],
-                ),
+                child: _ReturnHeatmap(stocks: stocks),
               ),
             ],
           ),
@@ -729,10 +700,129 @@ class _InlineMetric extends StatelessWidget {
   }
 }
 
-class _PortfolioHeatmapGrid extends StatelessWidget {
+/// Which return the heatmap colours: since purchase, or today's move
+enum _HeatmapMode { overall, today }
+
+class _ReturnHeatmap extends StatefulWidget {
   final List<LivePortfolio> stocks;
 
-  const _PortfolioHeatmapGrid({required this.stocks});
+  const _ReturnHeatmap({required this.stocks});
+
+  @override
+  State<_ReturnHeatmap> createState() => _ReturnHeatmapState();
+}
+
+class _ReturnHeatmapState extends State<_ReturnHeatmap> {
+  _HeatmapMode _mode = _HeatmapMode.overall;
+  // Biggest gainers first (all green, then red); tap the sort chip to show losers first
+  bool _gainersFirst = true;
+
+  double _value(LivePortfolio s) =>
+      _mode == _HeatmapMode.overall ? s.returnPercent : s.todayReturnPercent;
+
+  @override
+  Widget build(BuildContext context) {
+    final stocks = List<LivePortfolio>.from(widget.stocks)
+      ..sort((a, b) => _gainersFirst ? _value(b).compareTo(_value(a)) : _value(a).compareTo(_value(b)));
+    final up = stocks.where((s) => _value(s) >= 0).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.grid_view_rounded, size: 13, color: Color(0xFFE5A93C)),
+            const SizedBox(width: 5),
+            const Text(
+              'Return Heatmap',
+              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Colors.white),
+            ),
+            const Spacer(),
+            Text(
+              '$up Up • ${stocks.length - up} Down',
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF757A85)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            _modeChip('Overall', _HeatmapMode.overall),
+            const SizedBox(width: 6),
+            _modeChip("Today's P&L", _HeatmapMode.today),
+            const Spacer(),
+            InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => setState(() => _gainersFirst = !_gainersFirst),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _gainersFirst ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
+                      size: 13,
+                      color: const Color(0xFF8E929B),
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      _gainersFirst ? 'Gainers first' : 'Losers first',
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _PortfolioHeatmapGrid(
+          stocks: stocks,
+          value: _value,
+          // A day's move is much smaller than a holding's lifetime return, so its colour bands are tighter
+          strong: _mode == _HeatmapMode.overall ? 25 : 3,
+          mild: _mode == _HeatmapMode.overall ? 5 : 1,
+        ),
+      ],
+    );
+  }
+
+  Widget _modeChip(String label, _HeatmapMode mode) {
+    final selected = _mode == mode;
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: () => setState(() => _mode = mode),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0x1FE5A93C) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: selected ? const Color(0xFFE5A93C) : const Color(0xFF2E3138)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: selected ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PortfolioHeatmapGrid extends StatelessWidget {
+  final List<LivePortfolio> stocks;
+  final double Function(LivePortfolio) value;
+  final double strong;
+  final double mild;
+
+  const _PortfolioHeatmapGrid({
+    required this.stocks,
+    required this.value,
+    required this.strong,
+    required this.mild,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -748,23 +838,21 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
       );
     }
 
-    final displayStocks = stocks;
-
     return Wrap(
       spacing: 6,
       runSpacing: 6,
-      children: displayStocks.map((stock) {
-        final ret = stock.returnPercent;
+      children: stocks.map((stock) {
+        final ret = value(stock);
         final isProf = ret >= 0;
 
         Color bg;
         Color fg;
 
         if (isProf) {
-          if (ret > 25) {
+          if (ret > strong) {
             bg = const Color(0xFF0C9F6E);
             fg = Colors.white;
-          } else if (ret > 5) {
+          } else if (ret > mild) {
             bg = const Color(0xFF10B981);
             fg = Colors.white;
           } else {
@@ -772,10 +860,10 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
             fg = const Color(0xFF6EE7B7);
           }
         } else {
-          if (ret < -25) {
+          if (ret < -strong) {
             bg = const Color(0xFFDC2626);
             fg = Colors.white;
-          } else if (ret < -5) {
+          } else if (ret < -mild) {
             bg = const Color(0xFFEF4444);
             fg = Colors.white;
           } else {

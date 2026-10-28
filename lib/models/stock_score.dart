@@ -17,6 +17,8 @@ class StockScore {
   final bool debtNotAssessed;
   final bool provisionalCreditPending;
   final bool provisionalBrokerMTF;
+  /// How OverallScore was built (backend build_score_breakdown, migration 11); null on older rows
+  final Map<String, dynamic>? scoreBreakdown;
 
   bool get isExcluded => overallScore == null;
 
@@ -37,6 +39,7 @@ class StockScore {
     this.debtNotAssessed = false,
     this.provisionalCreditPending = false,
     this.provisionalBrokerMTF = false,
+    this.scoreBreakdown,
   });
 
   factory StockScore.empty() {
@@ -124,6 +127,9 @@ class StockScore {
           json["provisional_credit_pending"] == true,
       provisionalBrokerMTF: json["ProvisionalBrokerMTF"] == true ||
           json["provisional_broker_mtf"] == true,
+      scoreBreakdown: json["score_breakdown"] is Map
+          ? Map<String, dynamic>.from(json["score_breakdown"] as Map)
+          : null,
     );
   }
 }

@@ -150,6 +150,37 @@ class VerdictNarrativeEngine {
     // -------------------------------------------------------------
     if (score.isExcluded) {
       final rec = score.recommendation.toUpperCase();
+
+      // Source data failed the exchange cross-check: say so plainly, no asset-class story
+      if (rec.contains('DATA REVIEW')) {
+        return VerdictNarrative(
+          archetypeTag: 'Data Under Review',
+          archetypeIcon: '🔍',
+          analystBriefing: 'The fundamentals we hold for $displayName did not match exchange data: the market '
+              'cap or price belongs to a different company. The score is withheld until the data is corrected.',
+          primaryCatalyst: const VerdictSignal(
+            title: 'What we checked',
+            description: 'Stored market cap and price were compared with the NSE closing price and an independent market-cap source.',
+            scoreLabel: 'Check: Failed',
+            isPositive: false,
+          ),
+          primaryRisk: const VerdictSignal(
+            title: 'Why no score',
+            description: 'A score built on another company\'s numbers would be misleading, so none is shown.',
+            scoreLabel: 'Score: Withheld',
+            isPositive: false,
+          ),
+          playbook: TacticalPlaybook(
+            existingHoldersGuideline: isOwned
+                ? 'Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is withheld.'
+                : 'Only the NV Score is withheld; the live price is unaffected.',
+            freshCapitalGuideline: 'Check the company\'s latest results on the NSE / BSE website until the data is corrected.',
+            keyMonitorable: 'The score returns automatically once the data passes the check.',
+          ),
+          convictionLabel: 'Data Under Review',
+        );
+      }
+
       final isHold = rec.contains('HOLDING');
       final isIns = rec.contains('INSURANCE');
       final isReit = rec.contains('REIT') || rec.contains('INVIT');

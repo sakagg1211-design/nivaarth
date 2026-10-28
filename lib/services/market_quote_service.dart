@@ -1,9 +1,20 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
 import '../models/live_market_quote.dart';
+
+/// One year of daily data for an index or stock: the 52-week range and the closes that the
+/// technical indicators are computed from.
+class DailyHistory {
+  final double? high52;
+  final double? low52;
+  final List<double> closes; // oldest first
+
+  const DailyHistory({required this.high52, required this.low52, required this.closes});
+}
 
 class MarketQuoteService {
   MarketQuoteService._();
@@ -13,6 +24,15 @@ class MarketQuoteService {
   final Map<String, DateTime> _cacheTime = {};
   final Map<String, List<double>> _chartPointsCache = {};
   final Duration _cacheTtl = const Duration(seconds: 45);
+
+  /// Yahoo chart endpoint. Browsers block direct Yahoo calls (no CORS headers),
+  /// so the web build uses the same-origin proxy in beta-web/_worker.js.
+  Uri _yahooChartUri(String symbol, String range, String interval) {
+    final path = '${Uri.encodeComponent(symbol)}?range=$range&interval=$interval';
+    return kIsWeb
+        ? Uri.base.resolve('/api/yahoo/chart/$path')
+        : Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$path');
+  }
 
   /// Returns true if Indian markets are currently closed (before 9:15 AM, after 4:30 PM IST, or weekends)
   bool isMarketClosedIST() {
@@ -47,7 +67,7 @@ class MarketQuoteService {
 
     // 2. Query Yahoo symbol (supports stocks and indices like ^NSEI, ^BSESN)
     final querySymbol = SymbolUtils.getYahooSymbol(clean);
-    final url = Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$querySymbol?range=1d&interval=1d');
+    final url = _yahooChartUri(querySymbol, '1d', '1d');
 
     try {
       final response = await http.get(
@@ -71,7 +91,7 @@ class MarketQuoteService {
       // Retry with BSE symbol if NSE fails
       try {
         final bseSymbol = '$clean.BO';
-        final bseUrl = Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$bseSymbol?range=1d&interval=1d');
+        final bseUrl = _yahooChartUri(bseSymbol, '1d', '1d');
         final bseResponse = await http.get(
           bseUrl,
           headers: {'User-Agent': 'Mozilla/5.0'},
@@ -190,7 +210,7 @@ class MarketQuoteService {
         yInterval = '1d';
     }
 
-    final url = Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$nseSymbol?range=$yRange&interval=$yInterval');
+    final url = _yahooChartUri(nseSymbol, yRange, yInterval);
 
     try {
       final response = await http.get(
@@ -224,5 +244,35 @@ class MarketQuoteService {
     }
 
     return const [];
+  }
+
+  /// One year of daily candles from Yahoo. The 52-week range is Yahoo's own figure when given,
+  /// else the year's highest high / lowest low. Null when nothing could be fetched.
+  Future<DailyHistory?> fetchDailyHistory(String rawSymbol) async {
+    final symbol = SymbolUtils.getYahooSymbol(SymbolUtils.normalize(rawSymbol));
+    try {
+      final response = await http
+          .get(_yahooChartUri(symbol, '1y', '1d'), headers: {'User-Agent': 'Mozilla/5.0'})
+          .timeout(const Duration(seconds: 8));
+      if (response.statusCode != 200) return null;
+      final result = jsonDecode(response.body)['chart']?['result']?[0];
+      final meta = result?['meta'] as Map?;
+      final quote = result?['indicators']?['quote']?[0] as Map?;
+      List<double> nums(dynamic list) =>
+          (list as List? ?? const []).whereType<num>().map((v) => v.toDouble()).toList();
+      final closes = nums(quote?['close']);
+      final highs = nums(quote?['high']);
+      final lows = nums(quote?['low']);
+      if (closes.isEmpty) return null;
+      final metaHigh = (meta?['fiftyTwoWeekHigh'] as num?)?.toDouble();
+      final metaLow = (meta?['fiftyTwoWeekLow'] as num?)?.toDouble();
+      return DailyHistory(
+        high52: metaHigh ?? (highs.isEmpty ? null : highs.reduce((a, b) => a > b ? a : b)),
+        low52: metaLow ?? (lows.isEmpty ? null : lows.reduce((a, b) => a < b ? a : b)),
+        closes: closes,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 }
