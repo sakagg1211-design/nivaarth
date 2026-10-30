@@ -23,9 +23,34 @@ class LiveMarketQuote {
 
   bool get isPositive => change >= 0;
 
-  factory LiveMarketQuote.fromYahooMeta(String symbol, Map<String, dynamic> meta) {
+  /// Close of the last daily candle from a trading day before the one of [tradeSecs] (IST),
+  /// or null. Yahoo's chartPreviousClose for indices can lag a day (on 30 Oct 2026 NIFTY's was
+  /// the 28 Oct close), which made the day change about 3x too large.
+  static double? previousSessionClose(List<dynamic>? timestamps, List<dynamic>? closes, int? tradeSecs) {
+    if (timestamps == null || closes == null || tradeSecs == null) return null;
+    const istOffset = 19800;
+    int istDay(int secs) => (secs + istOffset) ~/ 86400;
+    final tradeDay = istDay(tradeSecs);
+    double? prev;
+    for (var i = 0; i < timestamps.length && i < closes.length; i++) {
+      final t = timestamps[i];
+      final c = closes[i];
+      if (t is num && c is num && istDay(t.toInt()) < tradeDay) prev = c.toDouble();
+    }
+    return prev;
+  }
+
+  /// [timestamps] / [closes] are the daily candles of a range=5d&interval=1d chart; when given,
+  /// the previous close comes from them instead of the meta fields.
+  factory LiveMarketQuote.fromYahooMeta(
+    String symbol,
+    Map<String, dynamic> meta, {
+    List<dynamic>? timestamps,
+    List<dynamic>? closes,
+  }) {
     final price = (meta['regularMarketPrice'] as num?)?.toDouble() ?? 0.0;
-    final prevClose = (meta['previousClose'] as num?)?.toDouble() ??
+    final prevClose = previousSessionClose(timestamps, closes, (meta['regularMarketTime'] as num?)?.toInt()) ??
+        (meta['previousClose'] as num?)?.toDouble() ??
         (meta['chartPreviousClose'] as num?)?.toDouble() ??
         price;
     final change = price - prevClose;

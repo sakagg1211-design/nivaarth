@@ -68,7 +68,8 @@ class MarketQuoteService {
 
     // 2. Query Yahoo symbol (supports stocks and indices like ^NSEI, ^BSESN)
     final querySymbol = SymbolUtils.getYahooSymbol(clean);
-    final url = _yahooChartUri(querySymbol, '1d', '1d');
+    // 5 daily candles: the previous close is taken from them (see LiveMarketQuote.previousSessionClose)
+    final url = _yahooChartUri(querySymbol, '5d', '1d');
 
     try {
       final response = await http.get(
@@ -82,7 +83,12 @@ class MarketQuoteService {
         final meta = result?['meta'];
 
         if (meta != null && meta['regularMarketPrice'] != null) {
-          final quote = LiveMarketQuote.fromYahooMeta(clean, meta as Map<String, dynamic>);
+          final quote = LiveMarketQuote.fromYahooMeta(
+            clean,
+            meta as Map<String, dynamic>,
+            timestamps: result?['timestamp'] as List?,
+            closes: result?['indicators']?['quote']?[0]?['close'] as List?,
+          );
           _quoteCache[clean] = quote;
           _cacheTime[clean] = DateTime.now();
           return quote;
@@ -92,7 +98,7 @@ class MarketQuoteService {
       // Retry with BSE symbol if NSE fails
       try {
         final bseSymbol = '$clean.BO';
-        final bseUrl = _yahooChartUri(bseSymbol, '1d', '1d');
+        final bseUrl = _yahooChartUri(bseSymbol, '5d', '1d');
         final bseResponse = await http.get(
           bseUrl,
           headers: {'User-Agent': 'Mozilla/5.0'},
@@ -103,7 +109,12 @@ class MarketQuoteService {
           final result = data['chart']?['result']?[0];
           final meta = result?['meta'];
           if (meta != null && meta['regularMarketPrice'] != null) {
-            final quote = LiveMarketQuote.fromYahooMeta(clean, meta as Map<String, dynamic>);
+            final quote = LiveMarketQuote.fromYahooMeta(
+            clean,
+            meta as Map<String, dynamic>,
+            timestamps: result?['timestamp'] as List?,
+            closes: result?['indicators']?['quote']?[0]?['close'] as List?,
+          );
             _quoteCache[clean] = quote;
             _cacheTime[clean] = DateTime.now();
             return quote;
