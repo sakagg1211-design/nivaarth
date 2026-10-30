@@ -16,16 +16,14 @@ class AIBriefingCard extends StatelessWidget {
 
   Color get color {
     switch (ai.recommendation) {
-      case RecommendationType.strongBuy:
-      case RecommendationType.buy:
+      case RecommendationType.strong:
+      case RecommendationType.healthy:
         return const Color(0xFF00E676);
-      case RecommendationType.accumulate:
-        return const Color(0xFF38BDF8);
-      case RecommendationType.hold:
+      case RecommendationType.stable:
         return const Color(0xFFE5A93C);
-      case RecommendationType.reduce:
+      case RecommendationType.drawdown:
         return const Color(0xFFFF9800);
-      case RecommendationType.sell:
+      case RecommendationType.deepDrawdown:
         return const Color(0xFFFF5252);
     }
   }
@@ -183,9 +181,9 @@ class AIBriefingCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // Actions Section with green check icons
+          // Factual checks (never instructions)
           const Text(
-            'Actions',
+            'What to check',
             style: TextStyle(
               color: Colors.white,
               fontSize: 14,

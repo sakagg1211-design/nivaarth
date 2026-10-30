@@ -1,25 +1,23 @@
+/// Where the portfolio stands against its cost; a state, never a buy / sell call
 enum RecommendationType {
-  strongBuy,
-  buy,
-  accumulate,
-  hold,
-  reduce,
-  sell;
+  strong,
+  healthy,
+  stable,
+  drawdown,
+  deepDrawdown;
 
   String get label {
     switch (this) {
-      case RecommendationType.strongBuy:
-        return 'STRONG OUTPERFORM';
-      case RecommendationType.buy:
-        return 'OUTPERFORM';
-      case RecommendationType.accumulate:
-        return 'MODERATE STRENGTH';
-      case RecommendationType.hold:
-        return 'NEUTRAL / WATCH';
-      case RecommendationType.reduce:
-        return 'ELEVATED RISK';
-      case RecommendationType.sell:
-        return 'HIGH RISK';
+      case RecommendationType.strong:
+        return 'STRONG';
+      case RecommendationType.healthy:
+        return 'HEALTHY';
+      case RecommendationType.stable:
+        return 'STABLE';
+      case RecommendationType.drawdown:
+        return 'IN DRAWDOWN';
+      case RecommendationType.deepDrawdown:
+        return 'BELOW COST';
     }
   }
 }
@@ -33,6 +31,7 @@ class AIRecommendation {
 
   final List<String> reasons;
 
+  /// Factual "what to check" items (shown under "What to check")
   final List<String> actions;
 
   const AIRecommendation({

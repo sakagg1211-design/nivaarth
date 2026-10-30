@@ -397,7 +397,7 @@ class WeakestHoldingCard extends StatelessWidget {
                   _ReasonRow(
                     icon: Icons.analytics_outlined,
                     color: const Color(0xFF60A5FA),
-                    text: "NV conviction is below preferred level",
+                    text: "NV Score is below 55 (the quality hurdle band)",
                   ),
 
                   const SizedBox(height: 24),

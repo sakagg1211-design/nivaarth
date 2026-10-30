@@ -50,7 +50,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   final List<ChatMessageModel> _messages = [
     ChatMessageModel(
       text: "Namaste! Main hoon **NV Advisor** 🤖\n\n"
-          "Aapka personal AI hedge-fund co-pilot. Main aapke portfolio holdings, live P&L, NV conviction scores, **Peer Comparisons**, aur **Forensic Risk Audits** ko real-time analyze karta hoon.\n\n"
+          "Main aapka research assistant hoon. Aapke portfolio holdings, P&L, NV Scores, **Peer Comparisons** aur **Risk Checks** ke numbers samjhata hoon; khareedne ya bechne ki salah nahi deta.\n\n"
           "Aap mujhse koi bhi portfolio ya stock question pooch sakte hain!",
       isUser: false,
       time: DateTime.now(),
@@ -449,7 +449,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     ],
                   ),
                   Text(
-                    "Quantitative Hedge-Fund Copilot",
+                    "Research assistant for your holdings",
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 11,

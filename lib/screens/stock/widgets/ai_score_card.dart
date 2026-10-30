@@ -513,56 +513,25 @@ class AiScoreCard extends StatelessWidget {
       return "The 1-100 score is not calculated for this stock: its accounts need a specialised valuation method.";
     }
 
-    final rec = SymbolUtils.toCompliantVerdict(score.recommendation).toUpperCase();
-    final bq = score.businessQuality;
-    final val = score.valuation;
-    final tech = score.technical;
-    final risk = score.risk;
-    final growth = score.growth;
-
-    // 1. Critical Risk / High Pledging Override (e.g. SEPC, A2ZINFRA)
-    if (risk == 0 || rec.contains("HIGH RISK") || rec.contains("FLAG") || rec.contains("AVOID")) {
-      return "Critical risk threshold breached (elevated promoter share encumbrance or capital distress). Quant safety framework strictly enforces capital preservation over short-term price swings.";
+    // Built from the score breakdown: which pillars are high or low, with their numbers
+    final pillars = ((score.scoreBreakdown?['pillars'] as List?) ?? const [])
+        .whereType<Map>()
+        .where((p) => p['score'] is num)
+        .toList()
+      ..sort((x, y) => (y['score'] as num).compareTo(x['score'] as num));
+    if (pillars.isEmpty) {
+      return "NV Score ${score.overallScore ?? '—'}/100. The pillar breakdown appears after the next score update.";
     }
-
-    // 2. High Quality Business with Premium Valuation Overhang (e.g. TITAN)
-    if (bq >= 15 && val <= 5) {
-      if (tech <= 4) {
-        return "Core business franchise & ROE remain superior, but shares trade at a premium valuation multiple with short-term chart consolidation. Research score reflects valuation overhang rather than business weakness.";
-      }
-      return "Exceptional industry moat and capital compounding, but current market multiple leaves modest margin of safety for fresh allocation.";
+    String line(Map p) => "${p['label']} ${(p['score'] as num).round()}/100";
+    final text = StringBuffer("NV Score ${score.overallScore}/100. Highest: ${line(pillars.first)}");
+    if (pillars.length > 1) text.write("; lowest: ${line(pillars.last)}");
+    text.write(".");
+    if (score.scoreBreakdown?['risk_cap'] != null) {
+      text.write(" A risk check failed, which caps the score at ${score.scoreBreakdown!['risk_cap']}.");
+    } else if (score.scoreBreakdown?['hurdle_factor'] != null) {
+      text.write(" Quality is below 55, so the score is scaled down.");
     }
-
-    // 3. High Growth with Low Operating Hurdle / Margin Expansion Awaited (e.g. CCAVENUE)
-    if (growth >= 14 && bq < 12) {
-      return "Robust top-line revenue expansion, but operating return on capital (ROCE) remains below the 8% cost-of-capital hurdle. Framework awaits operating margin expansion before accumulate eligibility.";
-    }
-
-    // 4. Strong Fundamentals awaiting Technical Confirmation
-    if (score.overallScore != null && score.overallScore! >= 70 && tech <= 5) {
-      return "Business fundamentals demonstrate healthy return on capital. Technical momentum data remains under active tracking; framework awaits moving average base confirmation.";
-    }
-
-    // 5. Overvalued with Technical Breakdown (e.g. ASIANPAINT)
-    if (rec.contains("TRIM") || rec.contains("ELEVATED VALUATION")) {
-      return "Extended valuation multiple coupled with moving average breakdown indicates ongoing consolidation. Framework suggests disciplined portfolio review.";
-    }
-
-    // 6. Below Capital Efficiency Hurdle (e.g. TITAGARH)
-    if (rec.contains("BELOW HURDLE") || bq < 10) {
-      return "Return on capital (ROCE/ROE) remains below institutional hurdle rates against prevailing multiples. Capital allocation efficiency requires quarterly monitoring.";
-    }
-
-    // 7. General High Conviction Accumulate
-    if (score.overallScore != null && score.overallScore! >= 75) {
-      return "Superior capital efficiency, pristine solvency, and attractive risk-reward alignment. Quantitative composite remains in institutional accumulation territory.";
-    }
-
-    if (score.overallScore != null && score.overallScore! >= 60) {
-      return "Healthy underlying business fundamentals with balanced risk-reward. Monitor quarterly execution and entry valuation before increasing allocation.";
-    }
-
-    return "Current conviction score reflects mixed factor balance across valuation, quality, and momentum. Prudent research discipline suggested before fresh capital commitment.";
+    return text.toString();
   }
 }
 

@@ -545,7 +545,7 @@ class _StockDetailPageState
                 ),
                 const SizedBox(height: 14),
                 const Text(
-                  'Evaluating 6 institutional pillars: Business Quality, Financial Strength, Growth, Valuation, Technical & Risk.',
+                  'Scoring quality, valuation and price trend from the latest data.',
                   style: TextStyle(
                     color: Color(0xFF757A85),
                     fontSize: 11.5,

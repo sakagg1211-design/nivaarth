@@ -123,34 +123,26 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final scoreVal = stock.overallScore;
     if (stock.recommendation.isNotEmpty && stock.recommendation != 'PENDING') {
       tag = SymbolUtils.toCompliantVerdict(stock.recommendation);
-    } else if (scoreVal != null && scoreVal >= 80) {
-      tag = 'STRONG OUTPERFORM';
-    } else if (scoreVal != null && scoreVal >= 70) {
-      tag = 'OUTPERFORM';
-    } else if (scoreVal != null && scoreVal >= 60) {
-      tag = 'MODERATE STRENGTH';
-    } else if (scoreVal != null && scoreVal >= 45) {
-      tag = 'NEUTRAL / WATCH';
-    } else if (scoreVal != null && scoreVal >= 35) {
-      tag = 'ELEVATED RISK';
     } else if (stock.isExcluded) {
       tag = 'SCORE EXCLUDED';
     } else {
-      tag = 'HIGH RISK';
+      tag = _scoreBand(scoreVal);
     }
 
+    // Facts only: the pillar scores when known, never a story about the company
+    final pillars = ((stock.scoreBreakdown?['pillars'] as List?) ?? const [])
+        .whereType<Map>()
+        .where((p) => p['score'] is num)
+        .map((p) => "${p['label']} ${(p['score'] as num).round()}")
+        .toList();
     if (stock.isExcluded && stock.recommendation.toUpperCase().contains('DATA REVIEW')) {
       takeaway = 'Source data under review; no score until it is verified.';
     } else if (stock.isExcluded) {
       takeaway = 'Specialized asset class ($sector); standard quantitative scoring withheld.';
-    } else if (scoreVal != null && scoreVal >= 80) {
-      takeaway = 'Market leader in $sector with resilient operating margins & robust ROE.';
-    } else if (scoreVal != null && scoreVal >= 60) {
-      takeaway = 'Steady compounding in $sector; healthy quarterly volume & earnings support.';
-    } else if (scoreVal != null && scoreVal >= 45) {
-      takeaway = 'Trading within fair valuation band in $sector; monitor margin expansion.';
+    } else if (pillars.isNotEmpty) {
+      takeaway = 'NV Score $scoreVal/100 · ${pillars.join(' · ')}';
     } else {
-      takeaway = 'Elevated leverage or cyclical contraction; wait for price stabilization.';
+      takeaway = scoreVal == null ? 'No NV Score yet ($sector).' : 'NV Score $scoreVal/100 ($sector).';
     }
 
     final newItem = WatchlistItem(
@@ -186,32 +178,12 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String computedTag;
     final String takeaway;
-    final sVal = score ?? 0;
     if (tag.isNotEmpty && tag != 'BUY' && tag != 'PENDING') {
       computedTag = SymbolUtils.toCompliantVerdict(tag);
-    } else if (sVal >= 80) {
-      computedTag = 'STRONG OUTPERFORM';
-    } else if (sVal >= 70) {
-      computedTag = 'OUTPERFORM';
-    } else if (sVal >= 60) {
-      computedTag = 'MODERATE STRENGTH';
-    } else if (sVal >= 45) {
-      computedTag = 'NEUTRAL / WATCH';
-    } else if (sVal >= 35) {
-      computedTag = 'ELEVATED RISK';
-    } else if (sVal > 0) {
-      computedTag = 'HIGH RISK';
     } else {
-      computedTag = 'NEUTRAL / WATCH';
+      computedTag = _scoreBand(score);
     }
-
-    if (sVal >= 75) {
-      takeaway = 'High conviction leader in $sector. Strong balance sheet & institutional backing.';
-    } else if (sVal >= 60) {
-      takeaway = 'Positive multi-quarter momentum in $sector; attractive accumulation zone.';
-    } else {
-      takeaway = 'Consolidating above support levels in $sector; watchful accumulation.';
-    }
+    takeaway = score == null ? 'No NV Score yet ($sector).' : 'NV Score $score/100 ($sector).';
 
     final newItem = WatchlistItem(
       instrument: sym,
@@ -356,3 +328,12 @@ final watchlistProvider =
     StateNotifierProvider<WatchlistNotifier, List<WatchlistItem>>((ref) {
   return WatchlistNotifier();
 });
+
+/// Score bands from the methodology page (85 / 70 / 55); a band, not a recommendation
+String _scoreBand(int? score) {
+  if (score == null) return 'NOT SCORED';
+  if (score >= 85) return 'SCORE: EXCELLENT';
+  if (score >= 70) return 'SCORE: STRONG';
+  if (score >= 55) return 'SCORE: AVERAGE';
+  return 'SCORE: WEAK';
+}

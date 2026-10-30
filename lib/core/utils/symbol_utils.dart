@@ -504,7 +504,7 @@ class SymbolUtils {
     if (clean == 'ABB') return 'Heavy Electrical & Industrial Automation';
     if (clean == 'ACC') return 'Cement & Clinker Manufacturing';
 
-    return 'Market Leader Operations';
+    return 'Industry not available';
   }
 
   static List<MapEntry<String, String>> searchUniverse(String query) {

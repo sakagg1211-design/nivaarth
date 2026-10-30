@@ -1,172 +1,71 @@
+import '../core/utils/formatters.dart';
+import '../core/utils/symbol_utils.dart';
 import '../models/ai_recommendation.dart';
 import '../models/portfolio_analysis.dart';
 
+/// Dashboard "NV Verdict": a factual summary of the portfolio's numbers. It states what the
+/// data shows and what to look at; it never tells the user to buy, sell, hold or add.
 class RecommendationEngine {
   AIRecommendation generate(
     PortfolioAnalysis analysis,
   ) {
-    RecommendationType recommendation;
-    String title;
-    String summary;
+    final RecommendationType state;
+    final String title;
+    final String summary;
+    final ret = analysis.returnPercent;
+    final retText = Formatters.percent(ret, signed: true);
 
-    final List<String> reasons = [];
-    final List<String> actions = [];
-
-    // =========================
-    // RULE 1
-    // Excellent Portfolio
-    // =========================
-
-    if (analysis.returnPercent >= 20 &&
-        analysis.healthScore >= 80) {
-      recommendation = RecommendationType.strongBuy;
-
-      title = "Excellent Portfolio";
-
-      summary =
-          "Your portfolio is performing exceptionally well.";
-
-      reasons.add(
-        "Overall return is above 20%.",
-      );
-
-      reasons.add(
-        "Health Score is excellent.",
-      );
-
-      reasons.add(
-        "${analysis.profitStocks} stocks are profitable.",
-      );
-
-      actions.add(
-        "Continue holding quality businesses.",
-      );
-
-      actions.add(
-        "Review profit booking near resistance zones.",
-      );
+    if (ret >= 20 && analysis.healthScore >= 80) {
+      state = RecommendationType.strong;
+      title = 'Strong Returns';
+      summary = 'Your holdings are $retText above their total cost.';
+    } else if (ret >= 10) {
+      state = RecommendationType.healthy;
+      title = 'Positive Returns';
+      summary = 'Your holdings are $retText above their total cost.';
+    } else if (ret >= 0) {
+      state = RecommendationType.stable;
+      title = 'Near Cost';
+      summary = 'Your holdings are $retText against their total cost.';
+    } else if (ret >= -10) {
+      state = RecommendationType.drawdown;
+      title = 'Mild Drawdown';
+      summary = 'Your holdings are $retText below their total cost.';
+    } else {
+      state = RecommendationType.deepDrawdown;
+      title = 'Below Cost';
+      summary = 'Your holdings are $retText below their total cost.';
     }
 
-    // =========================
-    // RULE 2
-    // Healthy
-    // =========================
+    final reasons = <String>[
+      'Overall return: $retText.',
+      '${analysis.profitStocks} of ${analysis.totalStocks} holdings are above their buy price.',
+      'NV Health Index ${analysis.healthScore.round()}/100 (value-weighted average NV Score).',
+    ];
 
-    else if (analysis.returnPercent >= 10) {
-      recommendation = RecommendationType.buy;
-
-      title = "Healthy Portfolio";
-
-      summary =
-          "Portfolio is generating healthy returns.";
-
-      reasons.add(
-        "Positive portfolio performance.",
-      );
-
-      actions.add(
-        "Continue steady accumulation.",
-      );
+    final checks = <String>[];
+    if (analysis.lossStocks > 0) {
+      checks.add('${analysis.lossStocks} holdings are below their buy price; each one\'s "Why this score" shows its lowest pillar.');
     }
-
-    // =========================
-    // RULE 3
-    // Stable
-    // =========================
-
-    else if (analysis.returnPercent >= 0) {
-      recommendation = RecommendationType.hold;
-
-      title = "Stable Portfolio";
-
-      summary =
-          "Portfolio is stable.";
-
-      reasons.add(
-        "Portfolio remains profitable.",
-      );
-
-      actions.add(
-        "Monitor weak performers.",
-      );
-
-      actions.add(
-        "Continue disciplined investing.",
-      );
+    if (analysis.totalStocks > 0 && analysis.biggestLoser.returnPercent < 0) {
+      final sym = SymbolUtils.normalize(analysis.biggestLoser.portfolio.instrument);
+      checks.add('Largest fall: $sym (${Formatters.percent(analysis.biggestLoser.returnPercent, signed: true)}).');
     }
-
-    // =========================
-    // RULE 4
-    // Weak
-    // =========================
-
-    else if (analysis.returnPercent >= -10) {
-      recommendation =
-          RecommendationType.accumulate;
-
-
-      title = "Temporary Weakness";
-
-      summary =
-          "Current drawdown appears manageable.";
-
-      reasons.add(
-        "Drawdown is still within normal market bands.",
-      );
-
-      actions.add(
-        "Maintain investment horizon; avoid panic selling.",
-      );
-
-      actions.add(
-        "Accumulate only fundamentally sound businesses.",
-      );
+    if (analysis.unpricedStocks > 0) {
+      checks.add('${analysis.unpricedStocks} holdings have no current price and are left out of the totals.');
+    } else if (analysis.staleStocks > 0) {
+      checks.add('${analysis.staleStocks} holdings show their last saved price, not a live one.');
     }
-
-    // =========================
-    // RULE 5
-    // High Risk
-    // =========================
-
-    else {
-      recommendation = RecommendationType.reduce;
-
-      title = "Portfolio Needs Attention";
-
-      summary =
-          "Risk metrics have increased across holdings.";
-
-      reasons.add(
-        "Portfolio return dropped below -10%.",
-      );
-
-      reasons.add(
-        "${analysis.lossStocks} holdings are currently in loss.",
-      );
-
-      reasons.add(
-        "Risk score is elevated.",
-      );
-
-      actions.add(
-        "Review risk exposure on underperforming holdings.",
-      );
-
-      actions.add(
-        "Consider preserving cash liquidity.",
-      );
-
-      actions.add(
-        "Avoid aggressive averaging in falling cyclical stocks.",
-      );
+    if (checks.isEmpty) {
+      checks.add('No holding is below its buy price.');
     }
 
     return AIRecommendation(
-      recommendation: recommendation,
+      recommendation: state,
       title: title,
       summary: summary,
       reasons: reasons,
-      actions: actions,
+      actions: checks,
     );
   }
 }

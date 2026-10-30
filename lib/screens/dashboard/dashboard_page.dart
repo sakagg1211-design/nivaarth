@@ -304,7 +304,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
         ),
         SizedBox(height: 4),
         Text(
-          'Signals ranked by conviction and risk.',
+          'What the numbers of your holdings show today.',
           style: TextStyle(
             color: Color(0xFF8E929B),
             fontSize: 13,
@@ -366,7 +366,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Institutional AI Intelligence Engine Active',
+                      'Nivaarth research tools',
                       style: TextStyle(
                         color: Color(0xFF8E929B),
                         fontSize: 11.5,
@@ -392,20 +392,20 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           const SizedBox(height: 12),
           _buildOnboardingBullet(
             icon: Icons.auto_awesome_rounded,
-            title: 'Deterministic 100-Point Conviction Scoring',
-            subtitle: 'Quality (25), Solvency (25), Growth (20), Valuation (15), Tech (10)',
+            title: 'Rules-based NV Score (0-100)',
+            subtitle: 'Quality 50%, Valuation 30%, Price trend 20%',
           ),
           const SizedBox(height: 8),
           _buildOnboardingBullet(
             icon: Icons.shield_outlined,
             title: 'Dynamic Portfolio Health & Risk Radar',
-            subtitle: 'Real-time concentration limits, factor diversification & drift alerts',
+            subtitle: 'Concentration, sector mix and holdings below their buy price',
           ),
           const SizedBox(height: 8),
           _buildOnboardingBullet(
             icon: Icons.psychology_outlined,
             title: 'NV Advisor Contextual Co-Pilot',
-            subtitle: 'Ask questions about your holdings with institutional quantitative models',
+            subtitle: 'Ask about your holdings; answers use your data and NV Scores',
           ),
 
           const SizedBox(height: 18),

@@ -85,7 +85,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               ),
               const SizedBox(height: 4),
               const Text(
-                'Instant price discovery, NV conviction & watchlist tracking.',
+                'Prices, NV Scores and watchlist tracking.',
                 style: TextStyle(
                   color: Color(0xFF8E929B),
                   fontSize: 12.5,
@@ -236,7 +236,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         return const _SearchState(
                           icon: Icons.search_rounded,
                           title: 'Start with a symbol',
-                          message: 'Search any stock to view 100-point conviction score.',
+                          message: 'Search any stock to see its NV Score.',
                         );
                       }
 

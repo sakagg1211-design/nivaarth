@@ -94,7 +94,7 @@ class RecommendationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      narrative.convictionLabel,
+                      narrative.profileLabel,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.caption.copyWith(
@@ -232,7 +232,7 @@ class RecommendationCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                "INSTITUTIONAL BRIEFING",
+                                "DATA SUMMARY",
                                 style: TextStyle(
                                   color: recColor,
                                   fontSize: 11,
@@ -285,7 +285,7 @@ class RecommendationCard extends StatelessWidget {
           const SizedBox(height: 18),
 
           // -------------------------------------------------------------------
-          // 5. TACTICAL PLAYBOOK (HOLDERS vs FRESH CAPITAL)
+          // 5. WHAT THE DATA SHOWS / NUMBER TO WATCH
           // -------------------------------------------------------------------
           Container(
             width: double.infinity,
@@ -346,22 +346,22 @@ class RecommendationCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Existing Position Directive
+                // What the numbers show
                 _PlaybookRow(
                   icon: Icons.account_balance_wallet_outlined,
                   iconColor: const Color(0xFFE5A93C),
-                  title: "Existing Position Holders",
-                  guideline: narrative.playbook.existingHoldersGuideline,
+                  title: "What the data shows",
+                  guideline: narrative.playbook.dataShows,
                 ),
 
                 const SizedBox(height: 12),
 
-                // Fresh Capital Directive
+                // The input holding the score down
                 _PlaybookRow(
                   icon: Icons.add_chart_rounded,
                   iconColor: const Color(0xFF00E676),
-                  title: "Fresh Capital Buyers",
-                  guideline: narrative.playbook.freshCapitalGuideline,
+                  title: "Number to watch",
+                  guideline: narrative.playbook.toWatch,
                 ),
 
                 const SizedBox(height: 12),
@@ -370,8 +370,8 @@ class RecommendationCard extends StatelessWidget {
                 _PlaybookRow(
                   icon: Icons.remove_red_eye_outlined,
                   iconColor: const Color(0xFFA78BFA),
-                  title: "Key Monitorable Metric",
-                  guideline: narrative.playbook.keyMonitorable,
+                  title: "What updates the score",
+                  guideline: narrative.playbook.updatesWith,
                 ),
               ],
             ),
