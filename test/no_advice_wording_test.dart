@@ -29,6 +29,8 @@ const bannedPhrases = [
   'avoid panic',
   'institutional backing',
   'institutional accumulation',
+  'consider rebalancing',
+  'optimal diversification',
 ];
 
 final _stringLiteral = RegExp(r'''(['"])((?:\\.|(?!\1).)*)\1''');

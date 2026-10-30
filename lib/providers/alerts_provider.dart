@@ -103,7 +103,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
               alerts.add(UserAlert(
                 id: 'local_conc_${h.portfolio.instrument}',
                 title: 'Weight Alert: ${h.portfolio.instrument}',
-                message: '${h.portfolio.instrument} accounts for ${weight.toStringAsFixed(1)}% of your portfolio value. Consider rebalancing to maintain optimal diversification.',
+                message: '${h.portfolio.instrument} accounts for ${weight.toStringAsFixed(1)}% of your portfolio value, above the 25% concentration line.',
                 type: AlertType.portfolioRisk,
                 severity: AlertSeverity.warning,
                 symbol: h.portfolio.instrument,
@@ -117,8 +117,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             0,
             UserAlert(
               id: 'local_health_active',
-              title: 'NV Quantitative Guardian Active 🟢',
-              message: 'Data-backed models are actively monitoring ${holdings.length} tracked positions for technical momentum and risk limits.',
+              title: 'Portfolio checks on',
+              message: 'Concentration is checked across your ${holdings.length} holdings each time alerts load.',
               type: AlertType.system,
               severity: AlertSeverity.info,
               isRead: false,

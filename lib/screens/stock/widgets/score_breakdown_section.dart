@@ -20,9 +20,9 @@ class ScoreBreakdownSection extends StatelessWidget {
   };
 
   static const _pillarHints = {
-    'quality': 'Return on capital, debt and cash conversion',
+    'quality': 'Return on capital, debt, cash conversion and 5-year growth',
     'valuation': 'P/E vs sector peers and earnings yield',
-    'momentum': 'Price trend, RSI and MACD',
+    'momentum': '12-month return, latest month left out, ranked against all stocks',
   };
 
   @override
@@ -179,9 +179,14 @@ class _MathCard extends StatelessWidget {
       rows.add(MapEntry('Risk flag', 'Score capped at $riskCap (pledge, net worth or debt check failed)'));
     } else {
       rows.add(MapEntry('Weighted score', _num(breakdown['weighted'], digits: 1)));
+      // v2.4 breakdowns carry a multiplier; v2.5 caps the score instead
       final hurdle = breakdown['hurdle_factor'] as num?;
       if (hurdle != null) {
         rows.add(MapEntry('Quality hurdle', '× ${hurdle.toStringAsFixed(2)} (quality below 55)'));
+      }
+      final qualityCap = breakdown['quality_cap'];
+      if (qualityCap != null) {
+        rows.add(MapEntry('Quality hurdle', 'Capped at $qualityCap (quality below 55)'));
       }
       final cap = breakdown['provisional_cap'];
       if (cap != null) {

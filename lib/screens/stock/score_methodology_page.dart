@@ -32,7 +32,7 @@ class ScoreMethodologyPage extends StatelessWidget {
           _Section(
             title: 'What the score is',
             body: 'A 0-100 score built only from published numbers: return on capital, debt, cash flow, '
-                'valuation and price trend. The same rules apply to every stock, and no person picks '
+                'growth, valuation and the 12-month price return. The same rules apply to every stock, and no person picks '
                 'or adjusts a score. It describes a company\'s financial profile; it is not a forecast '
                 'and not a buy or sell call.',
           ),
@@ -50,18 +50,21 @@ class ScoreMethodologyPage extends StatelessWidget {
             body: 'The overall score is a weighted mix. If a pillar has no data it is left out and '
                 'its weight is shared by the others; it is never filled with a guessed value.',
             rows: [
-              _Row('Quality  50%', 'Return on capital (ROCE, or ROE for banks) 50, debt to equity 30, '
-                  'operating cash flow vs profit 20'),
+              _Row('Quality  55%', 'Return on capital (ROCE, or ROE for banks) 40, debt to equity 25, '
+                  'operating cash flow vs profit 15, 5-year sales and profit growth 20 (full marks at 20% '
+                  'a year sales and 25% profit; shrinking scores 0)'),
               _Row('Valuation  30%', 'P/E compared with sector peers 60, earnings yield vs the 10-year '
                   'government bond (7%) 40'),
-              _Row('Momentum  20%', 'Price vs 50 and 200 day averages 50, RSI 30, MACD 20'),
+              _Row('Momentum  15%', 'Price return over the last 12 months, leaving out the latest month, '
+                  'ranked against every scored stock (6 months for stocks listed under a year). RSI, '
+                  'MACD and moving averages are shown for information and are not scored.'),
             ],
           ),
           _Section(
             title: 'Quality hurdle',
-            body: 'When the quality pillar is below 55, the overall score is scaled down in proportion '
-                '(never below 40% of its value). A cheap stock with weak returns on capital cannot '
-                'score high. If quality data is missing it is currently counted as neutral (50).',
+            body: 'When the quality pillar is below 55, the overall score is capped at 54. A cheap stock '
+                'or a strong price run cannot lift a weak business into the strong bands. If quality '
+                'data is missing it is currently counted as neutral (50).',
           ),
           _Section(
             title: 'Risk flags',
@@ -89,6 +92,9 @@ class ScoreMethodologyPage extends StatelessWidget {
           _Section(
             title: 'Labels',
             rows: [
+              _Row('Positive trend', 'Momentum rank 50+. A stock already on the positive side keeps it '
+                  'until the rank falls below 45; one on the weak side needs 55 to cross, so a label does '
+                  'not flip on small daily moves.'),
               _Row('HIGH STRENGTH PROFILE', 'Quality 70+, valuation 65+, positive trend'),
               _Row('CONSOLIDATION', 'Quality 70+, valuation 65+, weak trend'),
               _Row('FAIR VALUE / CORE', 'Quality 70+, valuation 35-64'),
@@ -97,7 +103,8 @@ class ScoreMethodologyPage extends StatelessWidget {
               _Row('NEUTRAL / WATCH', 'Quality 55-69'),
               _Row('BELOW HURDLE', 'Quality below 55'),
               _Row('NEGATIVE EARNINGS', 'Quality 70+, but the company is loss-making'),
-              _Row('MOMENTUM / VALUATION UNAVAILABLE', 'Quality 70+, but price-trend or valuation data is missing'),
+              _Row('MOMENTUM / VALUATION UNAVAILABLE', 'Quality 70+, but under 6 months of price history '
+                  'or no valuation data'),
               _Row('UNCONFIRMED RISK', 'Pledge data is missing, so the risk check could not run'),
               _Row('DATA PENDING', 'Not enough data to score yet'),
             ],
@@ -106,8 +113,9 @@ class ScoreMethodologyPage extends StatelessWidget {
             title: 'Data and freshness',
             body: 'Fundamentals come from a dataset compiled from companies\' published results; where a '
                 'figure is missing, debt, '
-                'cash flow and margin are taken from Yahoo Finance. Prices come from Yahoo Finance and '
-                'can be delayed. Scores are recalculated every night. Data can be incomplete or wrong; '
+                'cash flow and margin are taken from Yahoo Finance. Closing prices come from the NSE '
+                'daily bhavcopy; prices during market hours come from Yahoo Finance and can be delayed. '
+                'Scores are recalculated after each trading day\'s close. Data can be incomplete or wrong; '
                 'check the company\'s filings before relying on any number.',
           ),
           _Section(

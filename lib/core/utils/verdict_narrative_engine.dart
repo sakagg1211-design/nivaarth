@@ -87,7 +87,7 @@ class VerdictNarrativeEngine {
         archetypeIcon: '🧺',
         analystBriefing: '$displayName is an exchange-traded fund that tracks $resolvedSector. Its price follows the '
             'underlying basket, so company-level ratios such as ROCE do not apply; the NV Score gives it a fixed '
-            'quality of 75 and valuation of 60 and scores only its price trend.',
+            'quality of 75 and valuation of 60 and scores only its 12-month return rank.',
         primaryCatalyst: const VerdictSignal(
           title: 'Diversified basket',
           description: 'Holds many securities (or a commodity), so the results of one company move it less than a single stock.',
@@ -102,10 +102,10 @@ class VerdictNarrativeEngine {
         ),
         playbook: TacticalPlaybook(
           dataShows: isOwned
-              ? 'In your portfolio. NV Score ${score.overallScore ?? '—'}/100, set mostly by its price trend.'
-              : 'NV Score ${score.overallScore ?? '—'}/100, set mostly by its price trend.',
+              ? 'In your portfolio. NV Score ${score.overallScore ?? '—'}/100, set mostly by its 12-month return rank.'
+              : 'NV Score ${score.overallScore ?? '—'}/100, set mostly by its 12-month return rank.',
           toWatch: 'Tracking difference against its benchmark and the expense ratio (from the fund house factsheet).',
-          updatesWith: 'Prices update the trend pillar daily.',
+          updatesWith: 'Daily closing prices update the 12-month return rank.',
         ),
         profileLabel: 'Exchange-Traded Fund',
       );
@@ -248,6 +248,7 @@ class VerdictNarrativeEngine {
     final strongest = scored.first;
     final weakest = scored.last;
     final hurdle = b['hurdle_factor'] as num?;
+    final qualityCap = b['quality_cap'];
     final riskCap = b['risk_cap'];
     final cap = b['provisional_cap'];
 
@@ -260,6 +261,8 @@ class VerdictNarrativeEngine {
     }
     if (riskCap != null) {
       briefing.write(' A risk check failed (pledge, net worth or debt), which caps the score at $riskCap.');
+    } else if (qualityCap != null) {
+      briefing.write(' Quality is below 55, so the score is capped at $qualityCap.');
     } else if (hurdle != null) {
       briefing.write(' Quality is below 55, so the weighted score is multiplied by ${hurdle.toStringAsFixed(2)}.');
     }
@@ -296,7 +299,8 @@ class VerdictNarrativeEngine {
   }
 
   static const String _updatesWith =
-      'Quarterly results update return on capital, debt and cash flow; prices update valuation and trend daily.';
+      'Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update '
+      'valuation and the 12-month return rank.';
 
   static String _num(dynamic v) => v is num ? v.round().toString() : '—';
 
