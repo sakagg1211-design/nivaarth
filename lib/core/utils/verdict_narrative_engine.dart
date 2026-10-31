@@ -262,7 +262,7 @@ class VerdictNarrativeEngine {
     if (riskCap != null) {
       briefing.write(' A risk check failed (pledge, net worth or debt), which caps the score at $riskCap.');
     } else if (qualityCap != null) {
-      briefing.write(' Quality is below 55, so the score is capped at $qualityCap.');
+      briefing.write(' Its quality pillar caps the score at $qualityCap (54 below quality 55, no cap from 65).');
     } else if (hurdle != null) {
       briefing.write(' Quality is below 55, so the weighted score is multiplied by ${hurdle.toStringAsFixed(2)}.');
     }

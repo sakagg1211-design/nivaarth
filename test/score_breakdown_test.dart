@@ -51,7 +51,7 @@ void main() {
     expect(find.text('Quality  ·  55% weight'), findsOneWidget);
     expect(find.text('Momentum  ·  15% weight'), findsOneWidget);
     expect(find.text('60.0'), findsOneWidget);
-    expect(find.text('Capped at 54 (quality below 55)'), findsOneWidget);
+    expect(find.text('Capped at 54 (54 below quality 55, rising to no cap at 65)'), findsOneWidget);
     expect(find.text('54 / 100'), findsOneWidget);
     await tester.tap(find.text('Momentum  ·  15% weight'));
     await tester.pumpAndSettle();

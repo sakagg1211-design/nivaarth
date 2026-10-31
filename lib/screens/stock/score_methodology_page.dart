@@ -50,11 +50,12 @@ class ScoreMethodologyPage extends StatelessWidget {
             body: 'The overall score is a weighted mix. If a pillar has no data it is left out and '
                 'its weight is shared by the others; it is never filled with a guessed value.',
             rows: [
-              _Row('Quality  55%', 'Return on capital (ROCE, or ROE for banks) 40, debt to equity 25, '
-                  'operating cash flow vs profit 15, 5-year sales and profit growth 20 (full marks at 20% '
-                  'a year sales and 25% profit; shrinking scores 0)'),
-              _Row('Valuation  30%', 'P/E compared with sector peers 60, earnings yield vs the 10-year '
-                  'government bond (7%) 40'),
+              _Row('Quality  55%', 'Return on capital (ROCE) 40, debt to equity 25, operating cash flow '
+                  'vs profit 15, 5-year sales and profit growth 20 (full marks at 20% a year sales and 25% '
+                  'profit; shrinking scores 0). ROCE and debt count half on a fixed scale and half on the '
+                  'rank among companies in the same industry (15 or more), else the same sector.'),
+              _Row('Valuation  30%', 'P/E compared with companies in the same industry 60, earnings yield '
+                  'vs the 10-year government bond (7%) 40'),
               _Row('Momentum  15%', 'Price return over the last 12 months, leaving out the latest month, '
                   'ranked against every scored stock (6 months for stocks listed under a year). RSI, '
                   'MACD and moving averages are shown for information and are not scored.'),
@@ -62,9 +63,11 @@ class ScoreMethodologyPage extends StatelessWidget {
           ),
           _Section(
             title: 'Quality hurdle',
-            body: 'When the quality pillar is below 55, the overall score is capped at 54. A cheap stock '
-                'or a strong price run cannot lift a weak business into the strong bands. If quality '
-                'data is missing it is currently counted as neutral (50).',
+            body: 'When the quality pillar is below 55, the overall score is capped at 54. From quality 55 '
+                'to 65 the cap rises step by step (about 4.6 points per quality point) and disappears at '
+                '65, so a small change in quality never makes the score jump. A cheap stock or a strong '
+                'price run cannot lift a weak business into the strong bands. If quality data is missing '
+                'it is currently counted as neutral (50).',
           ),
           _Section(
             title: 'Risk flags',
@@ -80,8 +83,11 @@ class ScoreMethodologyPage extends StatelessWidget {
           _Section(
             title: 'Special cases',
             rows: [
-              _Row('Banks, NBFCs, brokers', 'Capped at 75 until loan-quality and credit data are added. '
-                  'A "provisional" badge shows on these.'),
+              _Row('Banks and NBFCs', 'Quality is return on equity 30, return on assets 25, net interest '
+                  'margin 15 (banks only), leverage 10 and growth 20. Loan quality (NPA) is not assessed yet, '
+                  'so the score is capped at 75 and shows a "provisional" badge.'),
+              _Row('Brokers', 'Debt is not scored (margin funding borrowings); capped at 75 with a '
+                  '"provisional" badge.'),
               _Row('Insurance, holding companies, REITs / InvITs', 'No score. Their accounts do not fit '
                   'these ratios; they need embedded value, NAV or yield instead.'),
               _Row('ETFs', 'Valuation is set to a neutral 60.'),

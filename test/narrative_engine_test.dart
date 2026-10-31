@@ -48,12 +48,12 @@ void main() {
     expect(n.playbook.dataShows, startsWith('In your portfolio.'));
   });
 
-  test('v2.5 quality cap is explained in the briefing', () {
+  test('the quality cap is explained in the briefing', () {
     final b = Map<String, dynamic>.from(breakdown)
       ..['final'] = 54
       ..['quality_cap'] = 54;
     final n = VerdictNarrativeEngine.generate(score: motherson(b: b));
-    expect(n.analystBriefing, contains('capped at 54'));
+    expect(n.analystBriefing, contains('caps the score at 54'));
     expect(n.playbook.updatesWith, contains('12-month return rank'));
   });
 

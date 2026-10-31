@@ -186,7 +186,7 @@ class _MathCard extends StatelessWidget {
       }
       final qualityCap = breakdown['quality_cap'];
       if (qualityCap != null) {
-        rows.add(MapEntry('Quality hurdle', 'Capped at $qualityCap (quality below 55)'));
+        rows.add(MapEntry('Quality cap', 'Capped at $qualityCap (54 below quality 55, rising to no cap at 65)'));
       }
       final cap = breakdown['provisional_cap'];
       if (cap != null) {
