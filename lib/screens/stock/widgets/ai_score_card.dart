@@ -240,9 +240,11 @@ class AiScoreCard extends StatelessWidget {
                         children: [
                           if (score.isExcluded)
                             _buildInstitutionalBadge(
-                              label: score.recommendation.toUpperCase().contains("DATA REVIEW")
-                                  ? "Data Under Review"
-                                  : "Score Excluded",
+                              label: score.isDataPending
+                                  ? "Data Pending"
+                                  : (score.recommendation.toUpperCase().contains("DATA REVIEW")
+                                      ? "Data Under Review"
+                                      : "Score Excluded"),
                               icon: Icons.block_outlined,
                               color: Colors.amber,
                             ),
@@ -498,6 +500,9 @@ class AiScoreCard extends StatelessWidget {
   }
 
   String _summary() {
+    if (score.isDataPending) {
+      return "No NV Score yet: ${score.pendingReason ?? 'not enough quality data'}. The score needs at least 3 of 4 quality inputs and is not built on assumed values.";
+    }
     if (score.isExcluded) {
       final rec = score.recommendation.toUpperCase();
       if (rec.contains("DATA REVIEW")) {

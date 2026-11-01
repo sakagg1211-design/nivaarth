@@ -20,7 +20,37 @@ class StockScore {
   /// How OverallScore was built (backend build_score_breakdown, migration 11); null on older rows
   final Map<String, dynamic>? scoreBreakdown;
 
+  /// No score: either an excluded asset class / data review, or (v2.7) not enough data yet
   bool get isExcluded => overallScore == null;
+
+  /// v2.7: no score because quality data is missing, not because the stock is excluded
+  bool get isDataPending =>
+      overallScore == null &&
+      (scoreBreakdown?['pending'] != null || recommendation.toUpperCase().contains('DATA PENDING'));
+
+  /// Why the score is pending, from the backend breakdown
+  String? get pendingReason => scoreBreakdown?['pending']?.toString();
+
+  /// Pillar score 0-100 (quality, valuation, momentum) from the score breakdown, or null
+  int? pillarScore(String key) {
+    for (final p in (scoreBreakdown?['pillars'] as List?) ?? const []) {
+      if (p is Map && p['key'] == key && p['score'] is num) return (p['score'] as num).round();
+    }
+    return null;
+  }
+
+  /// Quality inputs with data, e.g. (3, 4), from the score breakdown, or null
+  (int, int)? get qualityCoverage {
+    for (final p in (scoreBreakdown?['pillars'] as List?) ?? const []) {
+      if (p is Map && p['key'] == 'quality' && p['parts'] is List) {
+        final parts = (p['parts'] as List).whereType<Map>().toList();
+        if (parts.length < 2) return null;
+        final withData = parts.where((x) => x['status'] == 'VALID' || x['status'] == 'CONFIRMED_FAIL').length;
+        return (withData, parts.length);
+      }
+    }
+    return null;
+  }
 
   const StockScore({
     required this.instrument,

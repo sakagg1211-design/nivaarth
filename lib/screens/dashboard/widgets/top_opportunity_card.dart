@@ -263,17 +263,11 @@ class TopOpportunityCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: _MetricTile(
-                          title: "Business",
-                          value: stock.businessQuality,
-                        ),
+                        child: _MetricTile.pillar("Quality", stock.pillarScore("quality")),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _MetricTile(
-                          title: "Financial",
-                          value: stock.financialStrength,
-                        ),
+                        child: _MetricTile.pillar("Valuation", stock.pillarScore("valuation")),
                       ),
                     ],
                   ),
@@ -283,37 +277,11 @@ class TopOpportunityCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: _MetricTile(
-                          title: "Growth",
-                          value: stock.growth,
-                        ),
+                        child: _MetricTile.pillar("Momentum", stock.pillarScore("momentum")),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _MetricTile(
-                          title: "Technical",
-                          value: stock.technical,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _MetricTile(
-                          title: "Risk",
-                          value: stock.risk,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _MetricTile(
-                          title: "Data coverage",
-                          value: stock.confidence,
-                        ),
+                        child: _MetricTile.coverage(stock.qualityCoverage),
                       ),
                     ],
                   ),
@@ -377,17 +345,41 @@ class TopOpportunityCard extends StatelessWidget {
 
 class _MetricTile extends StatelessWidget {
   final String title;
-  final int value;
+  final String display;
+  final String status;
+  final Color accent;
 
   const _MetricTile({
     required this.title,
-    required this.value,
+    required this.display,
+    required this.status,
+    required this.accent,
   });
+
+  /// A pillar of the NV Score (0-100) from the score breakdown; facts only
+  factory _MetricTile.pillar(String title, int? value) {
+    return _MetricTile(
+      title: title,
+      display: value == null ? "—" : "$value",
+      status: value == null ? "No data" : (value >= 70 ? "High" : (value >= 50 ? "Middle" : "Low")),
+      accent: value == null
+          ? Colors.white38
+          : (value >= 70 ? const Color(0xFF22C55E) : (value >= 50 ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B))),
+    );
+  }
+
+  /// How many quality inputs had data (v2.7: fewer than 3 of 4 limits the score)
+  factory _MetricTile.coverage((int, int)? c) {
+    return _MetricTile(
+      title: "Quality data",
+      display: c == null ? "—" : "${c.$1}/${c.$2}",
+      status: c == null ? "Not shown" : (c.$1 >= 3 ? "Enough inputs" : "Limited inputs"),
+      accent: c == null || c.$1 < 3 ? const Color(0xFFF59E0B) : const Color(0xFF22C55E),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final accent = _metricColor(title, value);
-
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 14,
@@ -417,7 +409,7 @@ class _MetricTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _metricStatus(title, value),
+                  status,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -437,10 +429,10 @@ class _MetricTile extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Text(
-              "$value",
+              display,
               style: TextStyle(
                 color: accent,
-                fontSize: 16,
+                fontSize: display.length > 3 ? 12 : 16,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -448,42 +440,6 @@ class _MetricTile extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-String _metricStatus(String title, int value) {
-  switch (title) {
-    case "Business":
-      return value >= 15 ? "Excellent" : "Average";
-    case "Financial":
-      return value >= 15 ? "Strong" : "Average";
-    case "Growth":
-      return value >= 12 ? "Growing" : "Slow";
-    case "Technical":
-      return value >= 8 ? "Bullish" : "Weak";
-    case "Risk":
-      return value <= 2 ? "Low Risk" : "High Risk";
-    case "Data coverage":
-      return value >= 70 ? "Most data" : "Partial data";
-    default:
-      return "";
-  }
-}
-
-Color _metricColor(String title, int value) {
-  switch (title) {
-    case "Risk":
-      return value <= 2 ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
-    case "Technical":
-      return value >= 8 ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B);
-    default:
-      if (value >= 15) {
-        return const Color(0xFF22C55E);
-      }
-      if (value >= 10) {
-        return const Color(0xFF3B82F6);
-      }
-      return const Color(0xFFF59E0B);
   }
 }
 

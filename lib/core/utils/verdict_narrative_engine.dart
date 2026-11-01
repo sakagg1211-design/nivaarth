@@ -114,6 +114,37 @@ class VerdictNarrativeEngine {
     // -------------------------------------------------------------
     // 1B. EXCLUDED ASSET CLASS PATH (HOLDING CO, INSURANCE, REIT)
     // -------------------------------------------------------------
+    if (score.isDataPending) {
+      final why = score.pendingReason ?? 'Not enough quality data yet';
+      return VerdictNarrative(
+        archetypeTag: 'Data Pending',
+        archetypeIcon: '⏳',
+        analystBriefing: 'No NV Score for $displayName yet: $why. A score built on too few inputs '
+            'would be misleading, so none is shown.',
+        primaryCatalyst: VerdictSignal(
+          title: 'What is missing',
+          description: '$why. The score needs at least 3 of 4 quality inputs (return on capital, debt, '
+              'cash conversion, growth).',
+          scoreLabel: 'Score: Pending',
+          isPositive: false,
+        ),
+        primaryRisk: const VerdictSignal(
+          title: 'Why no score',
+          description: 'Missing inputs are not filled with assumed values.',
+          scoreLabel: 'Inputs: Incomplete',
+          isPositive: false,
+        ),
+        playbook: TacticalPlaybook(
+          dataShows: isOwned
+              ? 'Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is pending.'
+              : 'Only the NV Score is pending; the live price is unaffected.',
+          toWatch: 'The next annual results of the company, which usually fill the missing inputs.',
+          updatesWith: 'The score appears automatically once enough data is available.',
+        ),
+        profileLabel: 'Data Pending',
+      );
+    }
+
     if (score.isExcluded) {
       final rec = score.recommendation.toUpperCase();
 

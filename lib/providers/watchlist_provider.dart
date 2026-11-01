@@ -135,7 +135,9 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
         .where((p) => p['score'] is num)
         .map((p) => "${p['label']} ${(p['score'] as num).round()}")
         .toList();
-    if (stock.isExcluded && stock.recommendation.toUpperCase().contains('DATA REVIEW')) {
+    if (stock.isDataPending) {
+      takeaway = 'Not enough data for an NV Score yet${stock.pendingReason != null ? ' (${stock.pendingReason})' : ''}.';
+    } else if (stock.isExcluded && stock.recommendation.toUpperCase().contains('DATA REVIEW')) {
       takeaway = 'Source data under review; no score until it is verified.';
     } else if (stock.isExcluded) {
       takeaway = 'Specialized asset class ($sector); standard quantitative scoring withheld.';

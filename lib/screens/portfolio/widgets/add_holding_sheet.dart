@@ -371,9 +371,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                                     color: Colors.amber.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: const Text(
-                                    'EXCLUDED',
-                                    style: TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.w700),
+                                  child: Text(
+                                    item.isDataPending ? 'DATA PENDING' : 'EXCLUDED',
+                                    style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.w700),
                                   ),
                                 )
                               : null),

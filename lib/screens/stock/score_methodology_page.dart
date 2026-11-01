@@ -47,15 +47,17 @@ class ScoreMethodologyPage extends StatelessWidget {
           ),
           _Section(
             title: 'Three pillars',
-            body: 'The overall score is a weighted mix. If a pillar has no data it is left out and '
-                'its weight is shared by the others; it is never filled with a guessed value.',
+            body: 'The overall score is a weighted mix. If valuation or momentum has no data it is left '
+                'out and its weight is shared by the others; it is never filled with a guessed value.',
             rows: [
               _Row('Quality  55%', 'Return on capital (ROCE) 40, debt to equity 25, operating cash flow '
                   'vs profit 15, 5-year sales and profit growth 20 (full marks at 20% a year sales and 25% '
                   'profit; shrinking scores 0). ROCE and debt count half on a fixed scale and half on the '
                   'rank among companies in the same industry (15 or more), else the same sector.'),
-              _Row('Valuation  30%', 'P/E compared with companies in the same industry 60, earnings yield '
-                  'vs the 10-year government bond (7%) 40'),
+              _Row('Valuation  30%', 'P/E compared with companies in the same industry 60, and P/E compared '
+                  'with its own 5-year average P/E 40 (0.7x or lower full marks, 1.0x half, 1.5x or '
+                  'higher none). A loss-making company scores 0. Without a 5-year average, the earnings '
+                  'yield vs the 10-year government bond (7%) is used instead.'),
               _Row('Momentum  15%', 'Price return over the last 12 months, leaving out the latest month, '
                   'ranked against every scored stock (6 months for stocks listed under a year). RSI, '
                   'MACD and moving averages are shown for information and are not scored.'),
@@ -66,8 +68,13 @@ class ScoreMethodologyPage extends StatelessWidget {
             body: 'When the quality pillar is below 55, the overall score is capped at 54. From quality 55 '
                 'to 65 the cap rises step by step (about 4.6 points per quality point) and disappears at '
                 '65, so a small change in quality never makes the score jump. A cheap stock or a strong '
-                'price run cannot lift a weak business into the strong bands. If quality data is missing '
-                'it is currently counted as neutral (50).',
+                'price run cannot lift a weak business into the strong bands.',
+          ),
+          _Section(
+            title: 'Minimum data',
+            body: 'Quality needs at least 3 of its 4 inputs (return on capital, debt, cash flow, growth). '
+                'With 2 inputs the overall score is capped at 60; with fewer, or without return on capital, '
+                'no score is shown and the stock reads DATA PENDING. Missing inputs are never assumed.',
           ),
           _Section(
             title: 'Risk flags',
@@ -76,9 +83,16 @@ class ScoreMethodologyPage extends StatelessWidget {
             rows: [
               _Row('Pledge', '75% or more of promoter shares pledged, or pledged shares at 25% or more '
                   'of the company'),
-              _Row('Net worth', 'Zero or negative shareholder equity'),
+              _Row('Net worth', 'Zero or negative shareholder equity (held for review instead when the '
+                  'price-to-book in the fundamentals dataset is positive)'),
               _Row('Debt', 'A negative debt-to-equity figure (a data anomaly)'),
             ],
+          ),
+          _Section(
+            title: 'Reviewed pledges',
+            body: 'Some large pledges are checked against exchange filings. When the promoter is a '
+                'private-equity owner that pledged its stake for its own holding-company loan, the pledge '
+                'is shown as a note and does not trigger the flag. Every other pledge follows the rule above.',
           ),
           _Section(
             title: 'Special cases',
@@ -118,8 +132,9 @@ class ScoreMethodologyPage extends StatelessWidget {
           _Section(
             title: 'Data and freshness',
             body: 'Fundamentals come from a dataset compiled from companies\' published results; where a '
-                'figure is missing, debt, '
-                'cash flow and margin are taken from Yahoo Finance. Closing prices come from the NSE '
+                'figure is missing, debt and '
+                'cash flow are taken from Yahoo Finance; net worth, margins and bank balance-sheet figures '
+                'come from Yahoo Finance. Closing prices come from the NSE '
                 'daily bhavcopy; prices during market hours come from Yahoo Finance and can be delayed. '
                 'Scores are recalculated after each trading day\'s close. Data can be incomplete or wrong; '
                 'check the company\'s filings before relying on any number.',
