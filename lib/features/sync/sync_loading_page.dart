@@ -96,7 +96,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Notice: Using cached portfolio ($e)"),
+          content: const Text('Portfolio abhi load nahi hua. Portfolio tab me Try Again dabao.'),
           backgroundColor: AppColors.surfaceSecondary,
         ),
       );

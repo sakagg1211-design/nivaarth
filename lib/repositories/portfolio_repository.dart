@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../core/utils/symbol_utils.dart';
 import '../models/portfolio.dart';
 
+/// Reads the per-stock Portfolio summary. Holdings change only through trades
+/// (TradeRepository / migration 16), never by editing Qty or Avg here.
 class PortfolioRepository {
   final SupabaseClient client = Supabase.instance.client;
 
@@ -19,7 +20,23 @@ class PortfolioRepository {
       sym.endsWith('IETF') ||
       sym.endsWith('ETF');
 
+  // Fully sold holdings stay in the table with Status CLOSED. Live rows hold
+  // 'Active', 'ACTIVE' and 'CORE', so test for CLOSED, not for ACTIVE.
+  static bool isClosed(Portfolio p) => p.status.toUpperCase() == 'CLOSED';
+
+  /// Open holdings only.
   Future<List<Portfolio>> getPortfolio() async {
+    final all = await _getAll();
+    return all.where((p) => !isClosed(p)).toList();
+  }
+
+  /// Fully sold holdings, for the Closed positions section.
+  Future<List<Portfolio>> getClosedPositions() async {
+    final all = await _getAll();
+    return all.where(isClosed).toList();
+  }
+
+  Future<List<Portfolio>> _getAll() async {
     final user = client.auth.currentUser;
 
     // Strict multi-tenancy: Unauthenticated queries must NEVER leak data
@@ -28,6 +45,9 @@ class PortfolioRepository {
       return const [];
     }
 
+    // A failed read is rethrown, not turned into an empty list: an empty list shows
+    // "No Portfolio Holdings Yet", which reads as lost data. The screens show
+    // "Portfolio unavailable · Try Again" for an error.
     try {
       final userResponse = await client
           .from("Portfolio")
@@ -40,108 +60,21 @@ class PortfolioRepository {
           .toList();
     } catch (e) {
       debugPrint("Error fetching user portfolio: $e");
-      return const [];
+      rethrow;
     }
   }
 
-  Future<void> addHolding({
-    required String instrument,
-    required String companyName,
-    required int qty,
-    required double avgPrice,
-    String sector = 'General',
-    String industry = 'Diversified',
-  }) async {
-    final user = client.auth.currentUser;
-    if (user == null) {
-      throw Exception("User must be authenticated to add portfolio holdings.");
-    }
-
-    final cleanSym = instrument.trim().toUpperCase();
-
-    // 1. Duplicate check: prevent duplicate holdings for same user
-    final existing = await client
-        .from('Portfolio')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('Instrument', cleanSym)
-        .limit(1)  // older duplicate rows would make maybeSingle() throw
-        .maybeSingle();
-
-    if (existing != null) {
-      throw Exception('Ye stock pehle se portfolio mein hai. Usko Edit karke quantity badlo.');
-    }
-
-    // 2. Universe check: verify symbol is a genuine NSE listed stock or ETF
-    final valid = _isListedEtf(cleanSym) ? true : await client
+  /// Throws unless [sym] is a listed NSE stock (ScreenerFundamentals) or a known ETF.
+  Future<void> checkListed(String sym) async {
+    if (_isListedEtf(sym)) return;
+    final valid = await client
         .from('ScreenerFundamentals')
         .select('Instrument')
-        .eq('Instrument', cleanSym)
+        .eq('Instrument', sym)
         .limit(1)
         .maybeSingle();
-
     if (valid == null) {
       throw Exception('Ye symbol NSE list mein nahi mila. Search se stock chuno.');
     }
-
-    final totalInvested = qty * avgPrice;
-
-    final Map<String, dynamic> payload = {
-      'user_id': user.id,
-      'Instrument': cleanSym,
-      'Company_name': companyName.trim(),
-      'YahooSymbol': SymbolUtils.getYahooSymbol(cleanSym),
-      'Qty': qty,
-      'Avg Price': avgPrice,
-      'Total Invested': totalInvested,
-      'Sector': sector,
-      'Industry': industry,
-      'Status': 'ACTIVE',
-      'Investment_thesis': 'Added manually via portfolio manager.',
-    };
-
-    await client.from('Portfolio').insert(payload);
-  }
-
-  Future<void> updateHolding({
-    required String id,
-    required int qty,
-    required double avgPrice,
-    double? currentPrice,
-  }) async {
-    final user = client.auth.currentUser;
-    if (user == null) {
-      throw Exception("User must be authenticated to update portfolio holdings.");
-    }
-
-    final totalInvested = qty * avgPrice;
-    // Task 2.6: Only save fundamental parameters (Qty, Avg Price, Total Invested).
-    // Current Val & Net P&L are derived dynamically at runtime to prevent stale DB state.
-    final Map<String, dynamic> updates = {
-      'Qty': qty,
-      'Avg Price': avgPrice,
-      'Total Invested': totalInvested,
-    };
-
-    // Strict ownership verification: id AND user_id must match
-    await client
-        .from('Portfolio')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id);
-  }
-
-  Future<void> deleteHolding(String id) async {
-    final user = client.auth.currentUser;
-    if (user == null) {
-      throw Exception("User must be authenticated to delete portfolio holdings.");
-    }
-
-    // Strict ownership verification: id AND user_id must match
-    await client
-        .from('Portfolio')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
   }
 }

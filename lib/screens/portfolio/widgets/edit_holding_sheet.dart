@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/holding_math.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../models/live_portfolio.dart';
+import '../../../models/trade.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/portfolio_provider.dart';
-import '../../../repositories/portfolio_repository.dart';
+import '../../../repositories/trade_repository.dart';
+import 'trade_widgets.dart';
 
-/// Modal bottom sheet dialog for modifying or deleting an existing holding
+/// "Trade jodo" sheet for a held stock: add a buy or sell, see the trades behind the holding,
+/// remove a trade or the whole stock. Qty and average are never typed in directly; the database
+/// rebuilds them from the trades (migration 16).
 class EditHoldingSheet extends ConsumerStatefulWidget {
   final LivePortfolio stock;
 
@@ -25,8 +31,13 @@ class EditHoldingSheet extends ConsumerStatefulWidget {
 }
 
 class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
-  late final TextEditingController _qtyController;
-  late final TextEditingController _avgPriceController;
+  final _qtyController = TextEditingController();
+  final _priceController = TextEditingController();
+  final _repository = TradeRepository();
+
+  TradeSide _side = TradeSide.buy;
+  DateTime _tradeDate = DateTime.now();
+  late Future<List<Trade>> _tradesFuture;
 
   bool _loading = false;
   String? _errorMessage;
@@ -34,37 +45,58 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
   @override
   void initState() {
     super.initState();
-    _qtyController = TextEditingController(text: widget.stock.portfolio.qty.toString());
-    _avgPriceController = TextEditingController(text: widget.stock.portfolio.avgPrice.toStringAsFixed(2));
+    if (widget.stock.currentPrice > 0) {
+      _priceController.text = widget.stock.currentPrice.toStringAsFixed(2);
+    }
+    _tradesFuture = _repository.getTrades(widget.stock.portfolio.instrument);
   }
 
   @override
   void dispose() {
     _qtyController.dispose();
-    _avgPriceController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
-  int get _parsedQty => int.tryParse(_qtyController.text.trim()) ?? 0;
-  double get _parsedAvgPrice => double.tryParse(_avgPriceController.text.trim()) ?? 0.0;
-  double get _livePrice => widget.stock.currentPrice > 0 ? widget.stock.currentPrice : _parsedAvgPrice;
+  String get _instrument => widget.stock.portfolio.instrument;
 
-  double get _newInvested => _parsedQty * _parsedAvgPrice;
-  double get _newCurrentVal => _parsedQty * _livePrice;
-  double get _newNetPL => _newCurrentVal - _newInvested;
-  double get _newReturnPct => _newInvested > 0 ? (_newNetPL / _newInvested) * 100.0 : 0.0;
+  HoldingSummary get _current => HoldingSummary(
+        qty: widget.stock.portfolio.qty.toDouble(),
+        totalInvested: widget.stock.portfolio.totalInvested,
+        avgPrice: widget.stock.portfolio.avgPrice,
+        realizedPl: widget.stock.portfolio.realizedPl,
+      );
 
-  Future<void> _handleSave() async {
-    final qty = _parsedQty;
-    final avgPrice = _parsedAvgPrice;
+  void _refreshProviders() {
+    ref.invalidate(portfolioProvider);
+    ref.invalidate(livePortfolioProvider);
+    ref.invalidate(dashboardProvider);
+  }
 
-    if (qty <= 0) {
-      setState(() => _errorMessage = 'Quantity must be greater than 0.');
+  Future<void> _closeWith(String message, Color color) async {
+    _refreshProviders();
+    if (!mounted) return;
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: color),
+    );
+  }
+
+  Future<void> _handleAddTrade() async {
+    final qty = int.tryParse(_qtyController.text.trim());
+    final price = double.tryParse(_priceController.text.trim());
+
+    if (qty == null || qty <= 0) {
+      setState(() => _errorMessage = 'Quantity 0 se zyada honi chahiye.');
       return;
     }
-
-    if (avgPrice <= 0) {
-      setState(() => _errorMessage = 'Average buy price must be greater than 0.');
+    if (price == null || price <= 0) {
+      setState(() => _errorMessage = 'Price 0 se zyada hona chahiye.');
+      return;
+    }
+    if (_side == TradeSide.sell && qty > widget.stock.portfolio.qty) {
+      setState(() => _errorMessage =
+          'Itne shares nahi hain: ${widget.stock.portfolio.qty} hain, $qty bech rahe ho.');
       return;
     }
 
@@ -74,38 +106,29 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     });
 
     try {
-      final repository = PortfolioRepository();
-      await repository.updateHolding(
-        id: widget.stock.portfolio.id,
+      await _repository.addTrade(
+        instrument: _instrument,
+        side: _side,
         qty: qty,
-        avgPrice: avgPrice,
-        currentPrice: _livePrice,
+        price: price,
+        tradeDate: _tradeDate,
       );
-
-      // Refresh providers
-      ref.invalidate(portfolioProvider);
-      ref.invalidate(livePortfolioProvider);
-      ref.invalidate(dashboardProvider);
-
-      if (!mounted) return;
-      Navigator.pop(context);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.stock.portfolio.instrument} updated successfully!'),
-          backgroundColor: const Color(0xFF0C9F6E),
-        ),
+      await _closeWith(
+        _side == TradeSide.buy
+            ? '$_instrument: $qty shares jud gaye, average update ho gaya.'
+            : '$_instrument: $qty shares ki sell darj ho gayi.',
+        const Color(0xFF0C9F6E),
       );
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Failed to update holding: $e';
+        _errorMessage = TradeRepository.message(e);
         _loading = false;
       });
     }
   }
 
-  Future<void> _handleDelete() async {
+  Future<bool> _confirm(String title, String body, String action) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -118,16 +141,15 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
           children: [
             const Icon(Icons.delete_forever_rounded, color: Color(0xFFFF5252), size: 24),
             const SizedBox(width: 8),
-            Text(
-              'Remove ${widget.stock.portfolio.instrument}?',
-              style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         ),
-        content: Text(
-          'Are you sure you want to delete ${widget.stock.portfolio.instrument} from your portfolio? This action cannot be undone.',
-          style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5),
-        ),
+        content: Text(body, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -140,55 +162,84 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(action, style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
     );
+    return confirmed == true;
+  }
 
-    if (confirmed != true) return;
+  Future<void> _handleDeleteTrade(Trade trade) async {
+    final ok = await _confirm(
+      trade.isOpening ? 'Shuruaati holding hatayein?' : 'Ye trade hatayein?',
+      trade.isOpening
+          // The OPENING trade is the whole holding from before Trade jodo; removing it
+          // drops those shares, which is rarely what the user means.
+          ? 'Ye aapki Trade jodo se pehle ki holding hai: ${_plainQty(trade.qty)} shares @ '
+              '${Formatters.currency(trade.price)}. Hatane se ye ${_plainQty(trade.qty)} shares '
+              'portfolio se hat jayenge.\n\nShares beche hain to isse mat hatao, SELL trade daalo.'
+          : '${trade.side == TradeSide.buy ? 'BUY' : 'SELL'} ${_plainQty(trade.qty)} @ '
+              '${Formatters.currency(trade.price)} (${DateFormat('d MMM yyyy').format(trade.tradeDate)}). '
+              'Holding baaki trades se dobara banegi.',
+      trade.isOpening ? 'Haan, hatao' : 'Hatao',
+    );
+    if (!ok) return;
 
     setState(() {
       _loading = true;
       _errorMessage = null;
     });
-
     try {
-      final repository = PortfolioRepository();
-      await repository.deleteHolding(widget.stock.portfolio.id);
-
-      // Refresh providers
-      ref.invalidate(portfolioProvider);
-      ref.invalidate(livePortfolioProvider);
-      ref.invalidate(dashboardProvider);
-
-      if (!mounted) return;
-      Navigator.pop(context);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.stock.portfolio.instrument} removed from portfolio.'),
-          backgroundColor: const Color(0xFFFF5252),
-        ),
-      );
+      await _repository.deleteTrade(trade.id);
+      await _closeWith('$_instrument: trade hata diya.', const Color(0xFFFF5252));
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Failed to delete holding: $e';
+        _errorMessage = TradeRepository.message(e);
         _loading = false;
       });
     }
   }
 
+  Future<void> _handleDeleteStock() async {
+    final ok = await _confirm(
+      'Remove $_instrument?',
+      '$_instrument aur uske saare trades portfolio se hat jayenge. Ye wapas nahi hoga.\n\n'
+          'Shares bech diye hain? To Delete nahi, SELL trade daalo, taaki trade history '
+          'aur "pichhli baar" ka hisaab bacha rahe.',
+      'Delete',
+    );
+    if (!ok) return;
+
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+    try {
+      await _repository.deleteHolding(_instrument);
+      await _closeWith('$_instrument removed from portfolio.', const Color(0xFFFF5252));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = TradeRepository.message(e);
+        _loading = false;
+      });
+    }
+  }
+
+  static String _plainQty(double v) =>
+      v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
+
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final portfolio = widget.stock.portfolio;
     final displayName = SymbolUtils.getDisplayName(
-      widget.stock.portfolio.instrument,
-      dbCompanyName: widget.stock.portfolio.companyName,
+      portfolio.instrument,
+      dbCompanyName: portfolio.companyName,
     );
-    final isProfit = _newNetPL >= 0;
-    final toneColor = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final livePrice = widget.stock.currentPrice;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -231,7 +282,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: const Icon(
-                    Icons.edit_note_rounded,
+                    Icons.swap_vert_rounded,
                     color: Colors.black,
                     size: 22,
                   ),
@@ -242,7 +293,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Edit ${widget.stock.portfolio.instrument}',
+                        'Trade jodo · ${portfolio.instrument}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -263,7 +314,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                 ),
                 IconButton(
                   tooltip: 'Delete Holding',
-                  onPressed: _loading ? null : _handleDelete,
+                  onPressed: _loading ? null : _handleDeleteStock,
                   icon: const Icon(
                     Icons.delete_outline_rounded,
                     color: Color(0xFFFF5252),
@@ -275,102 +326,89 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
 
             const SizedBox(height: AppSpacing.md),
 
-            // Live Price Pill
+            // Current holding
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E2024),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: const Color(0xFF282A30)),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  const Text(
-                    'Current Market Price (LTP)',
-                    style: TextStyle(color: Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    Formatters.currency(_livePrice),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                  _infoRow('Holding', '${portfolio.qty} @ ${Formatters.currency(portfolio.avgPrice)}'),
+                  const SizedBox(height: 6),
+                  _infoRow('Total Invested', Formatters.currency(portfolio.totalInvested)),
+                  if (portfolio.realizedPl != 0) ...[
+                    const SizedBox(height: 6),
+                    _infoRow(
+                      'Realized P&L (avg cost)',
+                      Formatters.currency(portfolio.realizedPl, signed: true),
+                      color: portfolio.realizedPl >= 0
+                          ? const Color(0xFF00E676)
+                          : const Color(0xFFFF5252),
                     ),
-                  ),
+                  ],
+                  if (livePrice > 0) ...[
+                    const SizedBox(height: 6),
+                    _infoRow('Current Market Price (LTP)', Formatters.currency(livePrice)),
+                  ],
                 ],
               ),
             ),
 
             const SizedBox(height: AppSpacing.lg),
 
-            // Inputs
+            // Buy / Sell
             Row(
               children: [
-                // Qty
+                Expanded(child: _sideButton(TradeSide.buy, 'BUY', const Color(0xFF00E676))),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: _sideButton(TradeSide.sell, 'SELL', const Color(0xFFFF5252))),
+              ],
+            ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            Row(
+              children: [
                 Expanded(
                   child: TextField(
                     controller: _qtyController,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
                     decoration: _inputDecoration('Quantity', Icons.pin_outlined),
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                // Avg Price
                 Expanded(
                   child: TextField(
-                    controller: _avgPriceController,
+                    controller: _priceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Avg Buy Price (₹)', Icons.currency_rupee_rounded),
-                    onChanged: (_) => setState(() {}),
+                    decoration: _inputDecoration(
+                      _side == TradeSide.buy ? 'Buy Price (₹)' : 'Sell Price (₹)',
+                      Icons.currency_rupee_rounded,
+                    ),
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                 ),
               ],
             ),
 
             const SizedBox(height: AppSpacing.md),
+            TradeDateField(
+              date: _tradeDate,
+              onChanged: (d) => setState(() => _tradeDate = d),
+            ),
 
-            // Live Calculated Preview
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF121316),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF23252B)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Invested', style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
-                      Text(Formatters.currency(_newInvested), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Current Value', style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
-                      Text(Formatters.currency(_newCurrentVal), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  const Divider(height: 14, color: Color(0xFF23252B)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Estimated P&L', style: TextStyle(color: Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w600)),
-                      Text(
-                        '${Formatters.currency(_newNetPL, signed: true)} (${Formatters.percent(_newReturnPct, signed: true)})',
-                        style: TextStyle(color: toneColor, fontSize: 13, fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            const SizedBox(height: AppSpacing.md),
+            TradePreview(
+              start: _current,
+              side: _side,
+              qty: int.tryParse(_qtyController.text.trim()),
+              price: double.tryParse(_priceController.text.trim()),
             ),
 
             if (_errorMessage != null) ...[
@@ -391,50 +429,160 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
 
             const SizedBox(height: AppSpacing.lg),
 
-            // Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFFF5252),
-                      side: const BorderSide(color: Color(0x66FF5252)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                    ),
-                    onPressed: _loading ? null : _handleDelete,
-                    child: const Text('Delete Stock', style: TextStyle(fontWeight: FontWeight.w700)),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE5A93C),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE5A93C),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                onPressed: _loading ? null : _handleAddTrade,
+                child: _loading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                      )
+                    : const Text('Trade jodo', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            // Trade history
+            const Text(
+              'Trades',
+              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            FutureBuilder<List<Trade>>(
+              future: _tradesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Center(
+                      child: SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
                     ),
-                    onPressed: _loading ? null : _handleSave,
-                    child: _loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
-                          )
-                        : const Text('Save Changes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
-                  ),
-                ),
-              ],
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Text(
+                    'Trades load nahi hue: ${TradeRepository.message(snapshot.error!)}',
+                    style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12),
+                  );
+                }
+                final trades = snapshot.data ?? const <Trade>[];
+                if (trades.isEmpty) {
+                  return const Text(
+                    'Abhi koi trade darj nahi hai. Pehla trade jodte hi aapka abhi ka holding '
+                    '"Shuruaati holding" trade ban jayega.',
+                    style: TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                  );
+                }
+                return Column(
+                  children: [
+                    for (final t in trades.reversed) _tradeRow(t),
+                  ],
+                );
+              },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _tradeRow(Trade t) {
+    final isBuy = t.side == TradeSide.buy;
+    final tone = isBuy ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF121316),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFF23252B)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: tone.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              isBuy ? 'BUY' : 'SELL',
+              style: TextStyle(color: tone, fontSize: 10.5, fontWeight: FontWeight.w800),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_plainQty(t.qty)} @ ${Formatters.currency(t.price)}',
+                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  t.isOpening
+                      ? '${DateFormat('d MMM yyyy').format(t.tradeDate)} · Shuruaati holding'
+                      : DateFormat('d MMM yyyy').format(t.tradeDate),
+                  style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11.5),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'Trade hatao',
+            onPressed: _loading ? null : () => _handleDeleteTrade(t),
+            icon: const Icon(Icons.close_rounded, color: Color(0xFF8E929B), size: 18),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sideButton(TradeSide side, String label, Color color) {
+    final selected = _side == side;
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: selected ? color.withValues(alpha: 0.14) : Colors.transparent,
+        foregroundColor: selected ? color : const Color(0xFF8E929B),
+        side: BorderSide(color: selected ? color : const Color(0xFF282A30)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      onPressed: _loading
+          ? null
+          : () => setState(() {
+                _side = side;
+                _errorMessage = null;
+              }),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w800)),
+    );
+  }
+
+  Widget _infoRow(String label, String value, {Color? color}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: TextStyle(color: color ?? Colors.white, fontSize: 13, fontWeight: FontWeight.w800),
+        ),
+      ],
     );
   }
 

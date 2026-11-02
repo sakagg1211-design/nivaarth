@@ -8,6 +8,9 @@ class Portfolio {
   final double avgPrice;
   final double totalInvested;
 
+  // Realized P&L of all sells (average cost), rebuilt from Trades
+  final double realizedPl;
+
   // Existing Database Fields
   final double? currentValue;
   final double? netPL;
@@ -25,6 +28,7 @@ class Portfolio {
     required this.qty,
     required this.avgPrice,
     required this.totalInvested,
+    this.realizedPl = 0,
     required this.currentValue,
     required this.netPL,
     required this.sector,
@@ -49,6 +53,8 @@ class Portfolio {
 
       totalInvested:
           (json["Total Invested"] as num?)?.toDouble() ?? 0,
+
+      realizedPl: (json["realized_pl"] as num?)?.toDouble() ?? 0,
 
       currentValue:
           (json["Current Val"] as num?)?.toDouble(),

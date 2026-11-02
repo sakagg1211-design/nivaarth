@@ -10,6 +10,7 @@ import '../../providers/live_portfolio_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
+import 'trade_book_page.dart';
 import 'widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
 
@@ -64,6 +65,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const AddHoldingSheet(),
+    );
+  }
+
+  void _openTradeBook() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const TradeBookPage()),
     );
   }
 
@@ -214,6 +222,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                           style: TextStyle(fontWeight: FontWeight.w800),
                         ),
                       ),
+                      // Everything sold: the trades are still in the Trade book
+                      TextButton.icon(
+                        onPressed: _openTradeBook,
+                        icon: const Icon(Icons.receipt_long_rounded, size: 18),
+                        label: const Text('Trade book dekho'),
+                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                      ),
                     ],
                   ),
                 ),
@@ -282,6 +297,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                         letterSpacing: -0.5,
                                       ),
                                     ),
+                                  ),
+                                  IconButton(
+                                    onPressed: _openTradeBook,
+                                    icon: const Icon(Icons.receipt_long_rounded),
+                                    color: const Color(0xFF8E929B),
+                                    tooltip: 'Trade book',
                                   ),
                                   IconButton(
                                     onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),

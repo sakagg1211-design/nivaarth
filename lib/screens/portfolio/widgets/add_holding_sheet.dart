@@ -1,21 +1,28 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/holding_math.dart';
 import '../../../core/utils/symbol_utils.dart';
+import '../../../models/portfolio.dart';
 import '../../../models/stock_score.dart';
+import '../../../models/trade.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/portfolio_provider.dart';
+import '../../../providers/privacy_provider.dart';
 import '../../../providers/stock_provider.dart';
-import '../../../repositories/portfolio_repository.dart';
-import '../../../repositories/price_repository.dart';
+import '../../../repositories/trade_repository.dart';
 import '../../../services/backend_service.dart';
+import '../../../services/market_quote_service.dart';
+import 'trade_widgets.dart';
 
-/// Modal bottom sheet dialog for adding a stock holding with live autocomplete search
+/// Modal bottom sheet for adding a stock with live autocomplete search. Saves a BUY trade:
+/// a new stock is added, a stock already held gets the weighted average.
 class AddHoldingSheet extends ConsumerStatefulWidget {
   final String? initialInstrument;
   final String? initialCompanyName;
@@ -38,6 +45,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
   final _qtyController = TextEditingController();
   final _avgPriceController = TextEditingController();
   final _qtyFocusNode = FocusNode();
+  DateTime _tradeDate = DateTime.now();
+  final Set<String> _pastRoundShownFor = {};
 
   double? _liveLtp;
   bool _fetchingLtp = false;
@@ -62,6 +71,10 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
         _avgPriceController.text = widget.initialPrice!.toStringAsFixed(2);
         _liveLtp = widget.initialPrice;
       }
+      // Opened from a stock page: the stock is already chosen
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showPastRoundIfAny(sym);
+      });
     }
   }
 
@@ -106,7 +119,6 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
   Future<void> _selectStock(StockScore stock) async {
     final cleanSym = SymbolUtils.normalize(stock.instrument);
-    final yfSym = SymbolUtils.getYahooSymbol(stock.instrument);
 
     setState(() {
       _instrumentController.text = cleanSym;
@@ -115,33 +127,133 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
       _fetchingLtp = true;
     });
 
-    // Fetch live market price if available in PriceRepository
+    // Price of this one stock: Yahoo live quote, else its LatestPrices row (both inside
+    // fetchLiveQuote). The old code read all of LatestPrices, which stops at 1,000 rows,
+    // so most stocks showed no price.
+    double? price;
     try {
-      final prices = await PriceRepository().getPrices();
-      final match = prices.firstWhere(
-        (p) =>
-            p.instrument.trim().toUpperCase() == cleanSym ||
-            p.instrument.trim().toUpperCase() == yfSym,
-        orElse: () => prices.first,
-      );
-
-      if (match.instrument.trim().toUpperCase() == cleanSym ||
-          match.instrument.trim().toUpperCase() == yfSym) {
-        if (match.currentPrice > 0) {
-          setState(() {
-            _liveLtp = match.currentPrice;
-            if (_avgPriceController.text.isEmpty) {
-              _avgPriceController.text = match.currentPrice.toStringAsFixed(2);
-            }
-          });
-        }
-      }
+      final quote = await MarketQuoteService.instance.fetchLiveQuote(cleanSym);
+      if (quote.currentPrice > 0) price = quote.currentPrice;
     } catch (_) {}
 
-    setState(() => _fetchingLtp = false);
+    if (!mounted) return;
+    setState(() {
+      _fetchingLtp = false;
+      _liveLtp = price;
+      if (price != null && _avgPriceController.text.isEmpty) {
+        _avgPriceController.text = price.toStringAsFixed(2);
+      }
+    });
 
     // Shift focus to Quantity
     _qtyFocusNode.requestFocus();
+
+    await _showPastRoundIfAny(cleanSym);
+  }
+
+  /// If the user bought this stock before and sold all of it, tell them what that last round
+  /// looked like. Facts from their own trades only; no advice. Shown once per stock per sheet.
+  Future<void> _showPastRoundIfAny(String sym) async {
+    if (!_pastRoundShownFor.add(sym)) return;
+    List<TradeRound> rounds;
+    try {
+      rounds = HoldingMath.completedRounds(await TradeRepository().getTrades(sym));
+    } catch (_) {
+      return;
+    }
+    if (rounds.isEmpty || !mounted) return;
+
+    final last = rounds.last;
+    final hide = ref.read(privacyModeProvider);
+    final day = DateFormat('d MMM yyyy');
+    String qty(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
+    final plColor = last.realizedPl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+
+    Widget line(String label, String value, {Color? color}) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  value,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: color ?? Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E2024),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF282A30)),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '$sym: pichhli baar',
+                style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${day.format(last.firstBuy)} se ${day.format(last.lastSell)} '
+              '(${last.daysHeld} din)',
+              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12.5),
+            ),
+            const SizedBox(height: 14),
+            line('Kharida', hide ? '••••' : '${qty(last.qtyBought)} @ ${Formatters.currency(last.avgBuy)} (avg)'),
+            line('Becha', hide ? '••••' : '${qty(last.qtySold)} @ ${Formatters.currency(last.avgSell)} (avg)'),
+            line(
+              'Realized P&L',
+              hide ? '••••' : Formatters.currency(last.realizedPl, signed: true),
+              color: hide ? null : plColor,
+            ),
+            if (rounds.length > 1)
+              Text(
+                'Ye stock aap ${rounds.length} baar poora bech chuke ho; upar sabse aakhri baar ka hisaab hai.',
+                style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Theek hai', style: TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The open holding of the typed symbol, if the user already owns it.
+  Portfolio? _heldHolding() {
+    final sym = _instrumentController.text.trim().toUpperCase();
+    if (sym.isEmpty) return null;
+    final holdings = ref.read(portfolioProvider).valueOrNull ?? const <Portfolio>[];
+    for (final p in holdings) {
+      if (p.instrument.trim().toUpperCase() == sym) return p;
+    }
+    return null;
   }
 
   Future<void> _handleSubmit() async {
@@ -149,6 +261,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     final company = _companyController.text.trim();
     final qty = int.tryParse(_qtyController.text.trim());
     final avgPrice = double.tryParse(_avgPriceController.text.trim());
+    final held = _heldHolding();
 
     if (instrument.isEmpty) {
       setState(() => _errorMessage = 'Please search and select a stock symbol.');
@@ -171,19 +284,21 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     });
 
     try {
-      final repository = PortfolioRepository();
-
-      await repository.addHolding(
+      await TradeRepository().addTrade(
         instrument: instrument,
-        companyName: company.isEmpty ? instrument : company,
+        side: TradeSide.buy,
         qty: qty,
-        avgPrice: avgPrice,
+        price: avgPrice,
+        tradeDate: _tradeDate,
+        companyName: company.isEmpty ? instrument : company,
       );
 
       // Trigger instant single-stock onboarding in backend (Price, Tech, Fund, Score)
-      BackendService().onboardStock(
-        instrument: instrument,
-      ).catchError((_) {});
+      if (held == null) {
+        BackendService().onboardStock(
+          instrument: instrument,
+        ).catchError((_) {});
+      }
 
       // Refresh providers
       ref.invalidate(portfolioProvider);
@@ -195,14 +310,16 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$instrument added to portfolio successfully!'),
+          content: Text(held == null
+              ? '$instrument added to portfolio successfully!'
+              : '$instrument: $qty shares jud gaye, average update ho gaya.'),
           backgroundColor: const Color(0xFF0C9F6E),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Failed to add holding: $e';
+        _errorMessage = TradeRepository.message(e);
         _loading = false;
       });
     }
@@ -211,6 +328,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    ref.watch(portfolioProvider); // rebuild once holdings load, for the "already held" preview
+    final held = _heldHolding();
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -298,7 +417,10 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                       )
                     : null,
               ),
-              onChanged: _onSearchChanged,
+              onChanged: (text) {
+                _onSearchChanged(text);
+                setState(() {});
+              },
             ),
 
             // Suggestions Dropdown
@@ -419,7 +541,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     const Icon(Icons.show_chart_rounded, size: 15, color: Color(0xFFE5A93C)),
                     const SizedBox(width: 6),
                     Text(
-                      'Live Market LTP: ${Formatters.currency(_liveLtp!)}',
+                      'Current Price: ${Formatters.currency(_liveLtp!)}',
                       style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 11.5, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(width: 8),
@@ -451,9 +573,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
                     decoration: _inputDecoration('Quantity', Icons.pin_outlined),
-                    onChanged: (_) {
-                      if (_errorMessage != null) setState(() => _errorMessage = null);
-                    },
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -463,14 +583,36 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     controller: _avgPriceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Avg Buy Price (₹)', Icons.currency_rupee_rounded),
-                    onChanged: (_) {
-                      if (_errorMessage != null) setState(() => _errorMessage = null);
-                    },
+                    decoration: _inputDecoration(
+                      held == null ? 'Avg Buy Price (₹)' : 'Buy Price (₹)',
+                      Icons.currency_rupee_rounded,
+                    ),
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                 ),
               ],
             ),
+
+            const SizedBox(height: AppSpacing.md),
+            TradeDateField(
+              date: _tradeDate,
+              onChanged: (d) => setState(() => _tradeDate = d),
+            ),
+
+            if (held != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              TradePreview(
+                start: HoldingSummary(
+                  qty: held.qty.toDouble(),
+                  totalInvested: held.totalInvested,
+                  avgPrice: held.avgPrice,
+                  realizedPl: held.realizedPl,
+                ),
+                side: TradeSide.buy,
+                qty: int.tryParse(_qtyController.text.trim()),
+                price: double.tryParse(_avgPriceController.text.trim()),
+              ),
+            ],
 
             if (_errorMessage != null) ...[
               const SizedBox(height: AppSpacing.md),
@@ -511,9 +653,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                           color: Colors.black,
                         ),
                       )
-                    : const Text(
-                        'Add to Portfolio',
-                        style: TextStyle(
+                    : Text(
+                        held == null ? 'Add to Portfolio' : 'Portfolio me jodo (avg update)',
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                         ),

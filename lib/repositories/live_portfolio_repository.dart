@@ -19,7 +19,9 @@ class LivePortfolioRepository {
     if (portfolio.isEmpty) return [];
 
     // Fallback: Fetch Supabase LatestPrices to NEVER silently assume avgPrice
-    final dbPricesList = await priceRepository.getPrices();
+    final dbPricesList = await priceRepository.getPricesFor(
+      portfolio.map((s) => SymbolUtils.normalize(s.instrument)).toSet().toList(),
+    );
     final dbPrices = {
       for (final p in dbPricesList) SymbolUtils.normalize(p.instrument): p,
     };

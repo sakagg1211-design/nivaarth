@@ -9,7 +9,7 @@ import '../providers/dashboard_provider.dart';
 import '../providers/live_portfolio_provider.dart';
 import '../providers/portfolio_provider.dart';
 import '../providers/privacy_provider.dart';
-import '../repositories/portfolio_repository.dart';
+import '../repositories/trade_repository.dart';
 import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
 
@@ -41,7 +41,9 @@ class PortfolioCard extends ConsumerWidget {
           ],
         ),
         content: Text(
-          'Are you sure you want to delete ${stock.portfolio.instrument} from your portfolio?',
+          '${stock.portfolio.instrument} aur uske saare trades portfolio se hat jayenge.\n\n'
+          'Shares bech diye hain? To Delete nahi, stock kholkar SELL trade daalo, taaki '
+          'trade history aur "pichhli baar" ka hisaab bacha rahe.',
           style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5),
         ),
         actions: [
@@ -63,7 +65,7 @@ class PortfolioCard extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await PortfolioRepository().deleteHolding(stock.portfolio.id);
+      await TradeRepository().deleteHolding(stock.portfolio.instrument);
       ref.invalidate(portfolioProvider);
       ref.invalidate(livePortfolioProvider);
       ref.invalidate(dashboardProvider);
