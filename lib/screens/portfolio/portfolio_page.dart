@@ -10,6 +10,8 @@ import '../../providers/live_portfolio_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
+import 'closed_positions_page.dart';
+import 'import_trades_page.dart';
 import 'trade_book_page.dart';
 import 'widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
@@ -65,6 +67,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const AddHoldingSheet(),
+    );
+  }
+
+  void _openClosedPositions() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ClosedPositionsPage()),
     );
   }
 
@@ -229,6 +238,21 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         label: const Text('Trade book dekho'),
                         style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
                       ),
+                      TextButton.icon(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ImportTradesPage()),
+                        ),
+                        icon: const Icon(Icons.upload_file_rounded, size: 18),
+                        label: const Text('Zerodha tradebook import'),
+                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                      ),
+                      TextButton.icon(
+                        onPressed: _openClosedPositions,
+                        icon: const Icon(Icons.inventory_2_outlined, size: 18),
+                        label: const Text('Closed positions'),
+                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                      ),
                     ],
                   ),
                 ),
@@ -297,6 +321,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                         letterSpacing: -0.5,
                                       ),
                                     ),
+                                  ),
+                                  IconButton(
+                                    onPressed: _openClosedPositions,
+                                    icon: const Icon(Icons.inventory_2_outlined),
+                                    color: const Color(0xFF8E929B),
+                                    tooltip: 'Closed positions',
                                   ),
                                   IconButton(
                                     onPressed: _openTradeBook,

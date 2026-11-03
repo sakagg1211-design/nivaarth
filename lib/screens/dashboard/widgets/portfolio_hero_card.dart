@@ -17,6 +17,8 @@ class PortfolioHeroCard extends ConsumerWidget {
   final int unpricedHoldings;
   final int staleHoldings;
   final DateTime? pricesAsOf;
+  // Refreshed now but no trade for 15+ minutes (thinly traded), during the session
+  final List<String> quietHoldings;
 
   const PortfolioHeroCard({
     super.key,
@@ -31,7 +33,31 @@ class PortfolioHeroCard extends ConsumerWidget {
     this.unpricedHoldings = 0,
     this.staleHoldings = 0,
     this.pricesAsOf,
+    this.quietHoldings = const [],
   });
+
+  /// Stocks refreshed in this refresh whose last trade is more than [after] older than the
+  /// newest trade among the holdings (market open only): their price is the last trade, not a
+  /// refresh that failed. Measured against the newest trade, not the clock, so a quote feed that
+  /// is a few minutes late for every stock does not mark all of them.
+  static List<String> quietStocks(Iterable<({String symbol, DateTime? lastTrade, DateTime? fetchedAt})> stocks,
+      {required bool isMarketOpen, Duration after = const Duration(minutes: 15)}) {
+    if (!isMarketOpen) return const [];
+    final fresh = stocks.where((s) => s.lastTrade != null && s.fetchedAt != null).toList();
+    if (fresh.isEmpty) return const [];
+    final newest = fresh.map((s) => s.lastTrade!).reduce((a, b) => a.isAfter(b) ? a : b);
+    return [
+      for (final s in fresh)
+        if (newest.difference(s.lastTrade!) > after) s.symbol,
+    ];
+  }
+
+  static String? quietNote(List<String> names) {
+    if (names.isEmpty) return null;
+    final shown = names.take(3).join(', ');
+    final more = names.length > 3 ? ' +${names.length - 3}' : '';
+    return '${names.length} stock me 15 min se koi trade nahi hua ($shown$more) — price aakhri trade ka hai';
+  }
 
   String? get _asOfLabel => asOfLabel(pricesAsOf, isMarketOpen: isMarketOpen);
 
@@ -61,7 +87,7 @@ class PortfolioHeroCard extends ConsumerWidget {
     if (staleHoldings > 0) {
       return '$staleHoldings stock is refresh me update nahi hue — pichhla saved price dikh raha hai';
     }
-    return null;
+    return quietNote(quietHoldings);
   }
 
   bool get isProfit => netPnL >= 0;

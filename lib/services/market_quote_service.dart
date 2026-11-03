@@ -27,6 +27,10 @@ class MarketQuoteService {
   /// NSE bhavcopy previous close and its trading day, from LatestPrices (migration 19)
   final Map<String, (double, DateTime)> _officialPrev = {};
   static const int _batchSize = 8;
+  /// Stocks whose NSE previous close was looked up (found or not), so a single quote for a
+  /// searched stock asks LatestPrices once, not on every refresh
+  final Set<String> _officialLooked = {};
+  DateTime? _lookedDay;
 
   /// Yahoo chart endpoint. Browsers block direct Yahoo calls (no CORS headers),
   /// so the web build uses the same-origin proxy in beta-web/_worker.js.
@@ -57,11 +61,13 @@ class MarketQuoteService {
   Future<void> loadOfficialPrevCloses(Iterable<String> symbols) async {
     final list = symbols.map(SymbolUtils.normalize).where((s) => s.isNotEmpty).toSet().toList();
     if (list.isEmpty) return;
+    _resetLookupsIfNewDay();
     try {
       final rows = await Supabase.instance.client
           .from('LatestPrices')
           .select('Instrument,PreviousClose,PrevCloseDate')
           .inFilter('Instrument', list);
+      _officialLooked.addAll(list);
       for (final r in rows) {
         final prev = (r['PreviousClose'] as num?)?.toDouble();
         final date = DateTime.tryParse(r['PrevCloseDate']?.toString() ?? '');
@@ -71,6 +77,15 @@ class MarketQuoteService {
         }
       }
     } catch (_) {}
+  }
+
+  /// A new IST day has a new previous close: look every stock up again
+  void _resetLookupsIfNewDay() {
+    final today = LiveMarketQuote.istDate(DateTime.now());
+    if (_lookedDay != today) {
+      _officialLooked.clear();
+      _lookedDay = today;
+    }
   }
 
   LiveMarketQuote _withOfficial(LiveMarketQuote q) {
@@ -118,6 +133,12 @@ class MarketQuoteService {
           return _quoteCache[clean]!;
         }
       }
+    }
+
+    // NSE previous close for a stock opened on its own (search, stock page): looked up once a day
+    _resetLookupsIfNewDay();
+    if (!_officialLooked.contains(clean) && !clean.startsWith('^')) {
+      await loadOfficialPrevCloses([clean]);
     }
 
     // 2. Query Yahoo symbol (supports stocks and indices like ^NSEI, ^BSESN)

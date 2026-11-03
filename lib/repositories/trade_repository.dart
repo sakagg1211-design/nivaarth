@@ -87,6 +87,52 @@ class TradeRepository {
     });
   }
 
+  /// Broker trade ids already imported, so a tradebook loaded twice adds nothing new
+  Future<Set<String>> importedTradeIds(String broker) async {
+    final userId = _requireUser();
+    const page = 1000;
+    final ids = <String>{};
+    for (var start = 0;; start += page) {
+      final rows = await client
+          .from('Trades')
+          .select('external_trade_id')
+          .eq('user_id', userId)
+          .eq('broker_name', broker)
+          .not('external_trade_id', 'is', null)
+          .order('id')
+          .range(start, start + page - 1);
+      ids.addAll(rows.map((r) => r['external_trade_id'].toString()));
+      if (rows.length < page) return ids;
+    }
+  }
+
+  /// One tradebook trade (source IMPORT). Returns the new trade id, so a failed stock can be
+  /// rolled back.
+  Future<String> importTrade({
+    required String instrument,
+    required TradeSide side,
+    required double qty,
+    required double price,
+    required DateTime tradeDate,
+    required String broker,
+    required String externalTradeId,
+  }) async {
+    _requireUser();
+    final sym = instrument.trim().toUpperCase();
+    final id = await client.rpc('add_trade', params: {
+      'p_instrument': sym,
+      'p_side': side == TradeSide.sell ? 'SELL' : 'BUY',
+      'p_qty': qty,
+      'p_price': price,
+      'p_trade_date': _day.format(tradeDate),
+      'p_broker_name': broker,
+      'p_yahoo_symbol': SymbolUtils.getYahooSymbol(sym),
+      'p_source': 'IMPORT',
+      'p_external_trade_id': externalTradeId,
+    });
+    return id.toString();
+  }
+
   /// Removing the last trade of a stock removes the holding too.
   Future<void> deleteTrade(String tradeId) async {
     _requireUser();

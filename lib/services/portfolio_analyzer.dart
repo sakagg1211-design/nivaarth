@@ -1,3 +1,4 @@
+import '../core/utils/market_hours.dart';
 import '../models/live_portfolio.dart';
 import '../models/portfolio.dart';
 import '../models/portfolio_analysis.dart';
@@ -133,7 +134,9 @@ class PortfolioAnalyzer {
       lossStocks: lossStocks,
       unpricedStocks: unpricedStocks,
       staleStocks: staleStocks,
-      pricesAsOf: refreshedAt ?? pricesAsOf,
+      // Session: the refresh time. Closed: the last trade time, so a refresh at 8 AM still says
+      // "closing prices of 3 Nov", not "today's"
+      pricesAsOf: (isMarketOpenIst(DateTime.now().toUtc()) ? refreshedAt : null) ?? pricesAsOf,
 
       // Portfolio Health is now handled by PortfolioHealthEngine
       healthScore: 0,

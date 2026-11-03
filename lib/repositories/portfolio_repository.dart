@@ -64,6 +64,20 @@ class PortfolioRepository {
     }
   }
 
+  /// Which of these symbols are in Nivaarth's stock list (one query, for an import preview)
+  Future<Set<String>> listedAmong(Iterable<String> symbols) async {
+    final list = symbols.map((s) => s.trim().toUpperCase()).where((s) => s.isNotEmpty).toSet().toList();
+    final out = <String>{for (final s in list) if (_isListedEtf(s)) s};
+    for (var i = 0; i < list.length; i += 200) {
+      final rows = await client
+          .from('ScreenerFundamentals')
+          .select('Instrument')
+          .inFilter('Instrument', list.sublist(i, i + 200 > list.length ? list.length : i + 200));
+      out.addAll(rows.map((r) => r['Instrument'].toString().toUpperCase()));
+    }
+    return out;
+  }
+
   /// Throws unless [sym] is a listed NSE stock (ScreenerFundamentals) or a known ETF.
   Future<void> checkListed(String sym) async {
     if (_isListedEtf(sym)) return;

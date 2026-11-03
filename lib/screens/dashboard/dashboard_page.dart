@@ -132,6 +132,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               unpricedHoldings: data.unpricedStocks,
               staleHoldings: data.staleStocks,
               pricesAsOf: data.pricesAsOf,
+              quietHoldings: PortfolioHeroCard.quietStocks(
+                liveStocks.where((s) => !s.isStale).map((s) => (
+                      symbol: s.portfolio.instrument,
+                      lastTrade: s.priceTime,
+                      fetchedAt: s.fetchedAt,
+                    )),
+                isMarketOpen: isMarketOpen,
+              ),
             );
 
             // 3. Compact AI Portfolio Health Gauge Card

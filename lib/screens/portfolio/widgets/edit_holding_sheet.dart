@@ -12,6 +12,7 @@ import '../../../models/trade.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/portfolio_provider.dart';
+import '../../../providers/privacy_provider.dart';
 import '../../../repositories/trade_repository.dart';
 import 'trade_widgets.dart';
 
@@ -105,6 +106,18 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
       _errorMessage = null;
     });
 
+    // What this sell does to the holding, for the popup after it is saved (same math as the database)
+    final p = widget.stock.portfolio;
+    final before = HoldingSummary(
+      qty: p.qty.toDouble(),
+      totalInvested: p.totalInvested,
+      avgPrice: p.avgPrice,
+      realizedPl: p.realizedPl,
+    );
+    final after = _side == TradeSide.sell
+        ? HoldingMath.apply(before, TradeSide.sell, qty.toDouble(), price)
+        : null;
+
     try {
       await _repository.addTrade(
         instrument: _instrument,
@@ -113,6 +126,17 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
         price: price,
         tradeDate: _tradeDate,
       );
+      if (after != null && mounted) {
+        await showSellResult(
+          context,
+          instrument: _instrument,
+          qty: qty,
+          price: price,
+          before: before,
+          after: after,
+          hide: ref.read(privacyModeProvider),
+        );
+      }
       await _closeWith(
         _side == TradeSide.buy
             ? '$_instrument: $qty shares jud gaye, average update ho gaya.'
@@ -607,4 +631,57 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
       ),
     );
   }
+}
+
+
+/// After a sell: its realized P&L (average cost), the shares left and their average, which a
+/// sell does not change. A full exit says the stock moved to Closed positions.
+Future<void> showSellResult(
+  BuildContext context, {
+  required String instrument,
+  required int qty,
+  required double price,
+  required HoldingSummary before,
+  required HoldingSummary after,
+  required bool hide,
+}) {
+  final pl = after.realizedPl - before.realizedPl;
+  final cost = before.avgPrice * qty;
+  final pct = cost > 0 ? pl / cost * 100 : null;
+  final tone = pl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+  String money(num v, {bool signed = false}) => hide ? '••••' : Formatters.currency(v, signed: signed);
+  final left = after.qty == after.qty.roundToDouble() ? after.qty.toStringAsFixed(0) : after.qty.toString();
+  return showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: const Color(0xFF1E2024),
+      title: Text('$instrument: $qty shares beche', style: const TextStyle(color: Colors.white, fontSize: 17)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Is sell ka realized P&L', style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+          const SizedBox(height: 4),
+          Text(
+            '${money(pl, signed: true)}${pct != null && !hide ? '  (${Formatters.percent(pct, signed: true)})' : ''}',
+            style: TextStyle(color: hide ? Colors.white70 : tone, fontSize: 20, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 6),
+          Text('$qty @ ${money(price)} becha, average ${money(before.avgPrice)} tha.',
+              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+          const SizedBox(height: 14),
+          Text(
+            after.isClosed
+                ? 'Saare shares bik gaye. $instrument ab Closed positions me hai.'
+                : 'Bache: $left shares @ ${money(after.avgPrice)} (sell se average nahi badalta). '
+                    'Invested ab ${money(after.totalInvested)}.',
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Theek hai')),
+      ],
+    ),
+  );
 }

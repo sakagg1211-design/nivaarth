@@ -7,11 +7,15 @@ import '../../core/utils/holding_math.dart';
 import '../../models/trade.dart';
 import '../../providers/privacy_provider.dart';
 import '../../repositories/trade_repository.dart';
+import 'import_trades_page.dart';
 
 /// Day-wise list of every buy and sell of the user, newest day first, with what was bought
 /// and sold each day and the realized P&L (average cost) of each sell.
 class TradeBookPage extends ConsumerStatefulWidget {
-  const TradeBookPage({super.key});
+  /// Opens with the search set to this (a stock symbol from Closed positions)
+  final String? initialQuery;
+
+  const TradeBookPage({super.key, this.initialQuery});
 
   @override
   ConsumerState<TradeBookPage> createState() => _TradeBookPageState();
@@ -28,6 +32,10 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
   void initState() {
     super.initState();
     _tradesFuture = TradeRepository().getAllTrades();
+    if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
+      _searchController.text = widget.initialQuery!;
+      _query = widget.initialQuery!;
+    }
   }
 
   @override
@@ -54,6 +62,15 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
         elevation: 0,
         title: const Text('Trade book', style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => const ImportTradesPage()));
+              if (mounted) _reload();
+            },
+            icon: const Icon(Icons.upload_file_rounded),
+            color: const Color(0xFF8E929B),
+            tooltip: 'Zerodha tradebook import',
+          ),
           IconButton(
             onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
             icon: Icon(hide ? Icons.visibility_off_rounded : Icons.visibility_rounded),
