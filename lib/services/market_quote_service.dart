@@ -24,6 +24,9 @@ class MarketQuoteService {
   final Map<String, DateTime> _cacheTime = {};
   final Map<String, List<double>> _chartPointsCache = {};
   final Duration _cacheTtl = const Duration(seconds: 45);
+  /// NSE bhavcopy previous close and its trading day, from LatestPrices (migration 19)
+  final Map<String, (double, DateTime)> _officialPrev = {};
+  static const int _batchSize = 8;
 
   /// Yahoo chart endpoint. Browsers block direct Yahoo calls (no CORS headers),
   /// so the web build uses the same-origin proxy in beta-web/_worker.js.
@@ -48,13 +51,64 @@ class MarketQuoteService {
     return minutes < marketOpen || minutes >= marketCloseSettled;
   }
 
+  /// Loads the NSE previous close (PreviousClose + PrevCloseDate) for these stocks from
+  /// LatestPrices. Before migration 19 the date column is missing; then nothing is loaded and
+  /// Yahoo's previous close stays.
+  Future<void> loadOfficialPrevCloses(Iterable<String> symbols) async {
+    final list = symbols.map(SymbolUtils.normalize).where((s) => s.isNotEmpty).toSet().toList();
+    if (list.isEmpty) return;
+    try {
+      final rows = await Supabase.instance.client
+          .from('LatestPrices')
+          .select('Instrument,PreviousClose,PrevCloseDate')
+          .inFilter('Instrument', list);
+      for (final r in rows) {
+        final prev = (r['PreviousClose'] as num?)?.toDouble();
+        final date = DateTime.tryParse(r['PrevCloseDate']?.toString() ?? '');
+        final sym = SymbolUtils.normalize(r['Instrument']?.toString() ?? '');
+        if (prev != null && prev > 0 && date != null && sym.isNotEmpty) {
+          _officialPrev[sym] = (prev, DateTime(date.year, date.month, date.day));
+        }
+      }
+    } catch (_) {}
+  }
+
+  LiveMarketQuote _withOfficial(LiveMarketQuote q) {
+    final o = _officialPrev[q.symbol];
+    return o == null ? q : q.withOfficialPreviousClose(o.$1, o.$2);
+  }
+
+  /// Quotes for many stocks: NSE previous closes loaded first, then Yahoo in batches of 8
+  /// (all at once made some requests time out), and one more try for those that failed.
+  /// [force] skips the 45-second cache, as a pull-to-refresh should.
+  Future<Map<String, LiveMarketQuote>> fetchMany(Iterable<String> symbols, {bool force = false}) async {
+    final list = symbols.map(SymbolUtils.normalize).where((s) => s.isNotEmpty).toSet().toList();
+    final out = <String, LiveMarketQuote>{};
+    if (list.isEmpty) return out;
+    await loadOfficialPrevCloses(list);
+    Future<void> run(List<String> syms, bool skipCache) async {
+      for (var i = 0; i < syms.length; i += _batchSize) {
+        final batch = syms.sublist(i, i + _batchSize > syms.length ? syms.length : i + _batchSize);
+        final quotes = await Future.wait(batch.map((s) => fetchLiveQuote(s, force: skipCache)));
+        for (var j = 0; j < batch.length; j++) {
+          out[batch[j]] = quotes[j];
+        }
+      }
+    }
+
+    await run(list, force);
+    final failed = list.where((s) => !(out[s]?.isFresh ?? false)).toList();
+    if (failed.isNotEmpty && !isMarketClosedIST()) await run(failed, true);
+    return out;
+  }
+
   /// Fetches real-time live market price from Yahoo Finance
-  Future<LiveMarketQuote> fetchLiveQuote(String rawSymbol) async {
+  Future<LiveMarketQuote> fetchLiveQuote(String rawSymbol, {bool force = false}) async {
     final clean = SymbolUtils.normalize(rawSymbol);
     final isClosed = isMarketClosedIST();
 
     // 1. Check valid cache (if market is closed, cache never expires until market opens)
-    if (_quoteCache.containsKey(clean)) {
+    if (!force && _quoteCache.containsKey(clean)) {
       if (isClosed) {
         return _quoteCache[clean]!;
       }
@@ -83,12 +137,12 @@ class MarketQuoteService {
         final meta = result?['meta'];
 
         if (meta != null && meta['regularMarketPrice'] != null) {
-          final quote = LiveMarketQuote.fromYahooMeta(
+          final quote = _withOfficial(LiveMarketQuote.fromYahooMeta(
             clean,
             meta as Map<String, dynamic>,
             timestamps: result?['timestamp'] as List?,
             closes: result?['indicators']?['quote']?[0]?['close'] as List?,
-          );
+          ));
           _quoteCache[clean] = quote;
           _cacheTime[clean] = DateTime.now();
           return quote;
@@ -109,12 +163,12 @@ class MarketQuoteService {
           final result = data['chart']?['result']?[0];
           final meta = result?['meta'];
           if (meta != null && meta['regularMarketPrice'] != null) {
-            final quote = LiveMarketQuote.fromYahooMeta(
+            final quote = _withOfficial(LiveMarketQuote.fromYahooMeta(
             clean,
             meta as Map<String, dynamic>,
             timestamps: result?['timestamp'] as List?,
             closes: result?['indicators']?['quote']?[0]?['close'] as List?,
-          );
+          ));
             _quoteCache[clean] = quote;
             _cacheTime[clean] = DateTime.now();
             return quote;
@@ -138,6 +192,8 @@ class MarketQuoteService {
           final dbHigh = (res['DayHigh'] as num?)?.toDouble() ?? dbPrice;
           final dbLow = (res['DayLow'] as num?)?.toDouble() ?? dbPrice;
           final dbVol = (res['Volume'] as num?)?.toInt() ?? 0;
+          final dbTime = DateTime.tryParse(res['LastUpdated']?.toString() ?? '');
+          final dbPrevDate = DateTime.tryParse(res['PrevCloseDate']?.toString() ?? '');
 
           final quote = LiveMarketQuote(
             symbol: clean,
@@ -148,10 +204,13 @@ class MarketQuoteService {
             dayHigh: dbHigh,
             dayLow: dbLow,
             volume: dbVol,
-            timestamp: DateTime.now(),
+            // When the database price was set, not now: a fallback must not look fresh
+            timestamp: dbTime ?? DateTime.now(),
+            previousCloseDate: dbPrevDate,
+            fetchedAt: DateTime.now(),
+            source: 'database',
           );
-          _quoteCache[clean] = quote;
-          _cacheTime[clean] = DateTime.now();
+          // Not cached: the next refresh tries Yahoo again
           return quote;
         }
       }
@@ -160,7 +219,7 @@ class MarketQuoteService {
     // 4. Last cached quote, else 0.0 ("no price"); the UI shows that as unavailable,
     // never a made-up number
     if (_quoteCache.containsKey(clean)) {
-      return _quoteCache[clean]!;
+      return _quoteCache[clean]!.asCached();
     }
 
     final fallbackQuote = LiveMarketQuote(
@@ -173,6 +232,7 @@ class MarketQuoteService {
       dayLow: 0.0,
       volume: 0,
       timestamp: DateTime.now(),
+      source: 'none',
     );
 
     return fallbackQuote;

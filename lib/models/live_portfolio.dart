@@ -16,6 +16,9 @@ class LivePortfolio {
   // LatestPrices.LastUpdated for the Supabase fallback.
   final DateTime? priceTime;
 
+  // When this refresh fetched the live quote; null when it was not refreshed now
+  final DateTime? fetchedAt;
+
   const LivePortfolio({
     required this.portfolio,
     required this.currentPrice,
@@ -27,5 +30,6 @@ class LivePortfolio {
     this.isStale = false,
     this.isPriceUnavailable = false,
     this.priceTime,
+    this.fetchedAt,
   });
 }

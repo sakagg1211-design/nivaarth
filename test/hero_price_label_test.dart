@@ -9,7 +9,7 @@ void main() {
   test('during the session it shows the refresh time', () {
     expect(
       PortfolioHeroCard.asOfLabel(lastRefresh, isMarketOpen: true, now: DateTime.utc(2026, 10, 28, 9, 50)),
-      'Prices as of 3:13 PM',
+      'Refreshed at 3:13 PM',
     );
   });
 

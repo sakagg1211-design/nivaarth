@@ -35,7 +35,8 @@ class PortfolioHeroCard extends ConsumerWidget {
 
   String? get _asOfLabel => asOfLabel(pricesAsOf, isMarketOpen: isMarketOpen);
 
-  /// During the session: the time of the oldest holding price. Once the market is closed the
+  /// During the session: when the live prices were last refreshed (v1.0.12: the refresh time,
+  /// not a quiet stock's last trade time). Once the market is closed the
   /// prices are that day's closing prices (official close is 3:30 PM IST, loaded from the NSE
   /// bhavcopy in the evening), so the label names the day instead of the last refresh time.
   static String? asOfLabel(DateTime? pricesAsOf, {required bool isMarketOpen, DateTime? now}) {
@@ -50,7 +51,7 @@ class PortfolioHeroCard extends ConsumerWidget {
           : 'Market closed · closing prices of ${DateFormat('d MMM').format(t)}';
     }
     final time = DateFormat('h:mm a').format(t);
-    return sameDay ? 'Prices as of $time' : 'Prices as of ${DateFormat('d MMM').format(t)}, $time';
+    return sameDay ? 'Refreshed at $time' : 'Refreshed ${DateFormat('d MMM').format(t)}, $time';
   }
 
   String? get _priceNote {
@@ -58,7 +59,7 @@ class PortfolioHeroCard extends ConsumerWidget {
       return '$unpricedHoldings stock ka price nahi mila — total mein shaamil nahi';
     }
     if (staleHoldings > 0) {
-      return '$staleHoldings stock ka live price nahi mila — pichhla saved price dikh raha hai';
+      return '$staleHoldings stock is refresh me update nahi hue — pichhla saved price dikh raha hai';
     }
     return null;
   }

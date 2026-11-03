@@ -36,11 +36,9 @@ class MarketSyncService {
         if (clean.isNotEmpty) symbolsToSync.add(clean);
       }
 
-      // 2. Parallel pre-fetch live quotes across the union
+      // 2. Fresh quotes for the union (cache skipped: this is a refresh), in batches with a retry
       if (symbolsToSync.isNotEmpty) {
-        await Future.wait(
-          symbolsToSync.map((sym) => MarketQuoteService.instance.fetchLiveQuote(sym)),
-        );
+        await MarketQuoteService.instance.fetchMany(symbolsToSync, force: true);
       }
 
       // 3. Atomically refresh providers using fresh in-memory cached quotes

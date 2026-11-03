@@ -56,6 +56,7 @@ class PortfolioAnalyzer {
     int unpricedStocks = 0;
     int staleStocks = 0;
     DateTime? pricesAsOf;
+    DateTime? refreshedAt;
 
     // Holdings with no price would add their invested amount but zero value,
     // so every total below is computed over priced holdings only.
@@ -73,6 +74,13 @@ class PortfolioAnalyzer {
       }
       if (stock.isStale) {
         staleStocks++;
+      }
+      // Refresh time of the live quotes (not a quiet stock's last trade time, which kept the
+      // label at 11:11 after an 11:40 refresh); only when no quote was refreshed, the oldest
+      // saved price time
+      final f = stock.fetchedAt;
+      if (f != null && (refreshedAt == null || f.isBefore(refreshedAt))) {
+        refreshedAt = f;
       }
       final t = stock.priceTime;
       if (t != null && (pricesAsOf == null || t.isBefore(pricesAsOf))) {
@@ -125,7 +133,7 @@ class PortfolioAnalyzer {
       lossStocks: lossStocks,
       unpricedStocks: unpricedStocks,
       staleStocks: staleStocks,
-      pricesAsOf: pricesAsOf,
+      pricesAsOf: refreshedAt ?? pricesAsOf,
 
       // Portfolio Health is now handled by PortfolioHealthEngine
       healthScore: 0,

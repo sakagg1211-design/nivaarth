@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,21 +35,30 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     with WidgetsBindingObserver {
   bool _isRefreshing = false;
   DateTime _lastUpdated = DateTime.now();
+  // While the market is open and the app is in front, prices refresh every 2 minutes
+  static const _autoRefreshEvery = Duration(minutes: 2);
+  Timer? _autoRefresh;
+  bool _inForeground = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _autoRefresh = Timer.periodic(_autoRefreshEvery, (_) {
+      if (mounted && _inForeground && _checkIsMarketOpen()) _refreshDashboard();
+    });
   }
 
   @override
   void dispose() {
+    _autoRefresh?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    _inForeground = state == AppLifecycleState.resumed;
     if (state == AppLifecycleState.resumed) {
       final difference = DateTime.now().difference(_lastUpdated);
       if (difference.inMinutes >= 5) {

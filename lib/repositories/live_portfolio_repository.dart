@@ -26,16 +26,9 @@ class LivePortfolioRepository {
       for (final p in dbPricesList) SymbolUtils.normalize(p.instrument): p,
     };
 
-    // Fetch live quotes in parallel for all holdings using MarketQuoteService
-    final quotes = await Future.wait(
-      portfolio.map((s) => MarketQuoteService.instance.fetchLiveQuote(s.instrument)),
-    );
-
-    final Map<String, LiveMarketQuote> quoteMap = {};
-    for (int i = 0; i < portfolio.length; i++) {
-      final sym = SymbolUtils.normalize(portfolio[i].instrument);
-      quoteMap[sym] = quotes[i];
-    }
+    // Live quotes in batches (a pull-to-refresh has just fetched them; the 45 s cache serves them)
+    final Map<String, LiveMarketQuote> quoteMap =
+        await MarketQuoteService.instance.fetchMany(portfolio.map((s) => s.instrument));
 
     return portfolio.map((stock) {
       final clean = SymbolUtils.normalize(stock.instrument);
@@ -45,7 +38,8 @@ class LivePortfolioRepository {
       final double? livePrice = (quote != null && quote.currentPrice > 0)
           ? quote.currentPrice
           : null;
-      final bool isStale = livePrice == null;
+      // Stale = not refreshed now: no quote, the database fallback, or an older kept quote
+      final bool isStale = livePrice == null || !quote!.isFresh;
 
       final double currentPrice = livePrice ??
           ((dbPrice != null && dbPrice.currentPrice > 0)
@@ -62,8 +56,9 @@ class LivePortfolioRepository {
           ? 0.0
           : (netPL / stock.totalInvested) * 100.0;
 
-      // Authentic 1D P&L calculation directly from verified NSE previous close
-      final double prevClose = (quote != null && quote.previousClose > 0)
+      // Previous close: the quote's (NSE bhavcopy close where available, see
+      // LiveMarketQuote.withOfficialPreviousClose), else LatestPrices
+      final double prevClose = (quote != null && quote.currentPrice > 0 && quote.previousClose > 0)
           ? quote.previousClose
           : (dbPrice != null && dbPrice.previousClose > 0
               ? dbPrice.previousClose
@@ -90,7 +85,8 @@ class LivePortfolioRepository {
         isPriceUnavailable: isPriceUnavailable,
         priceTime: isPriceUnavailable
             ? null
-            : (isStale ? dbPrice?.lastUpdated : quote?.timestamp),
+            : (livePrice == null ? dbPrice?.lastUpdated : quote?.timestamp),
+        fetchedAt: isStale ? null : quote.fetchedAt,
       );
     }).toList();
   }
