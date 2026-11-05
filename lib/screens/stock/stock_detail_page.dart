@@ -9,10 +9,12 @@ import '../../core/utils/symbol_utils.dart';
 import '../../models/live_portfolio.dart';
 import '../../models/stock_score.dart';
 
+import '../../providers/listing_provider.dart';
 import '../../providers/live_quote_provider.dart';
 import '../../providers/stock_score_provider.dart';
 import '../../providers/watchlist_provider.dart';
 
+import '../../widgets/listing_badges.dart';
 import 'widgets/stock_header.dart';
 import 'widgets/stock_line_chart.dart';
 import 'widgets/chart_card.dart';
@@ -200,6 +202,12 @@ class _StockDetailPageState
               );
             }
           },
+        ),
+
+        // SME / Z / T2T badges and how old the fundamentals are
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: ListingInfoStrip(info: ref.watch(listingInfoProvider(cleanSym)).value),
         ),
 
         const SizedBox(

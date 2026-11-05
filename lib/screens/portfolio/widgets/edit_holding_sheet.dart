@@ -545,7 +545,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              isBuy ? 'BUY' : 'SELL',
+              t.source == 'CORP_ACT' ? 'BONUS' : (isBuy ? 'BUY' : 'SELL'),
               style: TextStyle(color: tone, fontSize: 10.5, fontWeight: FontWeight.w800),
             ),
           ),

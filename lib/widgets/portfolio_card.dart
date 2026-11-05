@@ -6,12 +6,14 @@ import '../core/utils/formatters.dart';
 import '../core/utils/symbol_utils.dart';
 import '../models/live_portfolio.dart';
 import '../providers/dashboard_provider.dart';
+import '../providers/listing_provider.dart';
 import '../providers/live_portfolio_provider.dart';
 import '../providers/portfolio_provider.dart';
 import '../providers/privacy_provider.dart';
 import '../repositories/trade_repository.dart';
 import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
+import 'listing_badges.dart';
 
 class PortfolioCard extends ConsumerWidget {
   final LivePortfolio stock;
@@ -156,15 +158,26 @@ class PortfolioCard extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          cleanSymbol,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                cleanSymbol,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            ListingBadges(
+                              info: ref.watch(heldListingProvider).value?[cleanSymbol],
+                              dense: true,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 1),
                         Text(

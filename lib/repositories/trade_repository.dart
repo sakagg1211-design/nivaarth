@@ -133,6 +133,29 @@ class TradeRepository {
     return id.toString();
   }
 
+  /// Extra shares from a bonus or split the user confirmed: a price-0 BUY (source CORP_ACT,
+  /// migration 20) keyed by the event id, so the same event is never added twice.
+  Future<void> addCorporateAction({
+    required String instrument,
+    required int extraShares,
+    required DateTime exDate,
+    required String eventId,
+    String? note,
+  }) async {
+    _requireUser();
+    await client.rpc('add_trade', params: {
+      'p_instrument': instrument.trim().toUpperCase(),
+      'p_side': 'BUY',
+      'p_qty': extraShares,
+      'p_price': 0,
+      'p_trade_date': _day.format(exDate),
+      'p_broker_name': 'Corporate action',
+      'p_source': 'CORP_ACT',
+      'p_external_trade_id': eventId,
+      'p_note': note,
+    });
+  }
+
   /// Removing the last trade of a stock removes the holding too.
   Future<void> deleteTrade(String tradeId) async {
     _requireUser();

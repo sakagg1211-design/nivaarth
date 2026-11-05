@@ -8,6 +8,7 @@ import '../../core/utils/formatters.dart';
 import '../../models/live_portfolio.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/privacy_provider.dart';
+import '../../services/corporate_action_prompt.dart';
 import '../../services/market_sync_service.dart';
 import '../../widgets/portfolio_card.dart';
 import 'closed_positions_page.dart';
@@ -113,6 +114,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   @override
   Widget build(BuildContext context) {
     final portfolioAsync = ref.watch(livePortfolioProvider);
+    // Once per app session, after the holdings load: ask about bonus/split events
+    if (portfolioAsync.hasValue && (portfolioAsync.value?.isNotEmpty ?? false)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) CorporateActionPrompt.checkOnce(context, ref);
+      });
+    }
     final isPrivacy = ref.watch(privacyModeProvider);
     final isDesktop = Breakpoints.isDesktop(context);
     // Phone keeps its narrow reading widths; wide screens use the shell's column.

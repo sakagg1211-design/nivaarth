@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +34,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
     });
     final picked = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: const ['csv'],
+      allowedExtensions: const ['csv', 'xlsx'],
     );
     if (picked.isEmpty) return;
     final file = picked.first;
@@ -47,8 +45,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
     });
     try {
       // readAsBytes works on Android and on web (where there is no file path)
-      final text = utf8.decode(await file.readAsBytes(), allowMalformed: true);
-      final plan = await _importer.prepare(text);
+      final plan = await _importer.prepareFile(file.name, await file.readAsBytes());
       if (!mounted) return;
       setState(() => _plan = plan);
     } catch (e) {
@@ -103,11 +100,11 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Zerodha tradebook (CSV)',
+                      const Text('Zerodha tradebook (CSV ya Excel)',
                           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
                       const SizedBox(height: 6),
                       const Text(
-                        'Console → Reports → Tradebook → Segment: Equity → Download CSV. '
+                        'Console → Reports → Tradebook → Segment: Equity → Download (CSV ya XLSX). '
                         'Pehle preview dikhega; "Import karo" dabane tak kuch save nahi hoga. '
                         'Ek hi file dobara daaloge to pehle wale trades dobara nahi judenge.',
                         style: TextStyle(color: Color(0xFF8E929B), fontSize: 12),
@@ -116,7 +113,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
                       ElevatedButton.icon(
                         onPressed: _busy ? null : _pick,
                         icon: const Icon(Icons.upload_file_rounded),
-                        label: Text(_fileName == null ? 'CSV file chuno' : 'Doosri file chuno'),
+                        label: Text(_fileName == null ? 'File chuno (CSV / XLSX)' : 'Doosri file chuno'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE5A93C),
                           foregroundColor: Colors.black,

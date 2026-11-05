@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import '../core/import/xlsx_rows.dart';
 import '../core/import/zerodha_tradebook.dart';
 import '../models/portfolio.dart';
 import '../models/trade.dart';
@@ -25,8 +29,17 @@ class TradebookImporter {
       : trades = trades ?? TradeRepository(),
         portfolio = portfolio ?? PortfolioRepository();
 
-  Future<ImportPlan> prepare(String csvText) async {
-    final parsed = ZerodhaTradebook.parse(csvText);
+  /// A Console tradebook file: Excel (.xlsx) or CSV
+  Future<ImportPlan> prepareFile(String fileName, Uint8List bytes) {
+    final parsed = fileName.toLowerCase().endsWith('.xlsx')
+        ? ZerodhaTradebook.parseTable(xlsxRows(bytes))
+        : ZerodhaTradebook.parse(utf8.decode(bytes, allowMalformed: true));
+    return preparePlan(parsed);
+  }
+
+  Future<ImportPlan> prepare(String csvText) => preparePlan(ZerodhaTradebook.parse(csvText));
+
+  Future<ImportPlan> preparePlan(ParsedTradebook parsed) async {
     final symbols = parsed.trades.map((t) => t.symbol).toSet();
     final results = await Future.wait([
       trades.importedTradeIds(broker),

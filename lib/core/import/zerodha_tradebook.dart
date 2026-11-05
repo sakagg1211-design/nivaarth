@@ -53,12 +53,31 @@ class ZerodhaTradebook {
 
   static ParsedTradebook parse(String text) {
     final lines = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
+    return parseTable([for (final l in lines) splitCsvLine(l)]);
+  }
+
+  /// "Trade Date" (Excel export) and "trade_date" (CSV) are the same column
+  static String header(String h) => h.trim().toLowerCase().replaceAll(RegExp(r'[\s-]+'), '_');
+
+  /// yyyy-mm-dd (CSV, Excel date cells) or dd-mm-yyyy / dd/mm/yyyy (Excel text cells)
+  static DateTime? date(String v) {
+    final t = v.trim();
+    final iso = DateTime.tryParse(t);
+    if (iso != null) return iso;
+    final m = RegExp(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})').firstMatch(t);
+    if (m == null) return null;
+    return DateTime(int.parse(m.group(3)!), int.parse(m.group(2)!), int.parse(m.group(1)!));
+  }
+
+  /// Rows of a CSV file or an Excel sheet. Title rows above the header (Console's Excel export
+  /// has some) are passed over.
+  static ParsedTradebook parseTable(List<List<String>> table) {
     final trades = <ImportedTrade>[];
     final skipped = <SkippedRow>[];
     var headerAt = -1;
     late Map<String, int> col;
-    for (var i = 0; i < lines.length; i++) {
-      final cells = splitCsvLine(lines[i]).map((c) => c.trim().toLowerCase()).toList();
+    for (var i = 0; i < table.length; i++) {
+      final cells = table[i].map(header).toList();
       if (required.every(cells.contains)) {
         headerAt = i;
         col = {for (var j = 0; j < cells.length; j++) cells[j]: j};
@@ -67,16 +86,16 @@ class ZerodhaTradebook {
     }
     if (headerAt < 0) {
       throw const FormatException(
-          'Ye Zerodha tradebook CSV nahi lagti: symbol, trade_date, trade_type, quantity, price, trade_id columns nahi mile.');
+          'Ye Zerodha tradebook nahi lagti: symbol, trade_date, trade_type, quantity, price, trade_id columns nahi mile.');
     }
     String cell(List<String> row, String name) {
       final j = col[name];
       return j == null || j >= row.length ? '' : row[j].trim();
     }
 
-    for (var i = headerAt + 1; i < lines.length; i++) {
-      if (lines[i].trim().isEmpty) continue;
-      final row = splitCsvLine(lines[i]);
+    for (var i = headerAt + 1; i < table.length; i++) {
+      final row = table[i];
+      if (row.every((c) => c.trim().isEmpty)) continue;
       final line = i + 1;
       final segment = cell(row, 'segment').toUpperCase();
       if (segment.isNotEmpty && segment != 'EQ') {
@@ -84,12 +103,12 @@ class ZerodhaTradebook {
         continue;
       }
       final symbol = cell(row, 'symbol').toUpperCase();
-      final date = DateTime.tryParse(cell(row, 'trade_date'));
+      final day = date(cell(row, 'trade_date'));
       final type = cell(row, 'trade_type').toLowerCase();
       final qty = double.tryParse(cell(row, 'quantity').replaceAll(',', ''));
       final price = double.tryParse(cell(row, 'price').replaceAll(',', ''));
       final tradeId = cell(row, 'trade_id');
-      if (symbol.isEmpty || date == null || qty == null || qty <= 0 || price == null || price <= 0 ||
+      if (symbol.isEmpty || day == null || qty == null || qty <= 0 || price == null || price <= 0 ||
           tradeId.isEmpty || (type != 'buy' && type != 'sell')) {
         skipped.add(SkippedRow(line, 'Row padhi nahi ja saki'));
         continue;
@@ -97,11 +116,11 @@ class ZerodhaTradebook {
       trades.add(ImportedTrade(
         symbol: symbol,
         isin: cell(row, 'isin').toUpperCase(),
-        date: DateTime(date.year, date.month, date.day),
+        date: DateTime(day.year, day.month, day.day),
         side: type == 'sell' ? TradeSide.sell : TradeSide.buy,
         qty: qty,
         price: price,
-        tradeId: tradeId,
+        tradeId: tradeId.endsWith('.0') ? tradeId.substring(0, tradeId.length - 2) : tradeId,
         exchange: cell(row, 'exchange').toUpperCase(),
         executedAt: DateTime.tryParse(cell(row, 'order_execution_time')),
       ));

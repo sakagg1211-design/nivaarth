@@ -221,6 +221,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
     final subtitle = [
       '$qty @ ${hide ? '••••' : Formatters.currency(t.price)}',
       if (t.isOpening) 'Shuruaati holding',
+      if (t.source == 'CORP_ACT') 'Bonus/split ke shares',
       if (t.brokerName != 'Manual') t.brokerName,
     ].join(' · ');
 
@@ -242,7 +243,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
               borderRadius: BorderRadius.circular(5),
             ),
             child: Text(
-              isBuy ? 'BUY' : 'SELL',
+              t.source == 'CORP_ACT' ? 'BONUS' : (isBuy ? 'BUY' : 'SELL'),
               textAlign: TextAlign.center,
               style: TextStyle(color: tone, fontSize: 10.5, fontWeight: FontWeight.w800),
             ),
