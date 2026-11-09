@@ -409,7 +409,7 @@ class DashboardHeader extends ConsumerWidget {
     final hour = DateTime.now().hour;
     final displayName = _getUserDisplayName();
     final alertsAsync = ref.watch(alertsProvider);
-    final unreadCount = alertsAsync.value?.where((a) => !a.isRead).length ?? 0;
+    final unreadCount = alertsAsync.valueOrNull?.where((a) => !a.isRead).length ?? 0;
     final isPrivacy = ref.watch(privacyModeProvider);
 
     String greeting;

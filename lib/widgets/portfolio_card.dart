@@ -174,7 +174,7 @@ class PortfolioCard extends ConsumerWidget {
                             ),
                             const SizedBox(width: 6),
                             ListingBadges(
-                              info: ref.watch(heldListingProvider).value?[cleanSymbol],
+                              info: ref.watch(heldListingProvider).valueOrNull?[cleanSymbol],
                               dense: true,
                             ),
                           ],

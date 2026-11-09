@@ -115,7 +115,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   Widget build(BuildContext context) {
     final portfolioAsync = ref.watch(livePortfolioProvider);
     // Once per app session, after the holdings load: ask about bonus/split events
-    if (portfolioAsync.hasValue && (portfolioAsync.value?.isNotEmpty ?? false)) {
+    if (portfolioAsync.hasValue && (portfolioAsync.valueOrNull?.isNotEmpty ?? false)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) CorporateActionPrompt.checkOnce(context, ref);
       });

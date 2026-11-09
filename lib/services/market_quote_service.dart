@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
+import '../models/chart_point.dart';
 import '../models/live_market_quote.dart';
 
 /// One year of daily data for an index or stock: the 52-week range and the closes that the
@@ -22,7 +23,7 @@ class MarketQuoteService {
 
   final Map<String, LiveMarketQuote> _quoteCache = {};
   final Map<String, DateTime> _cacheTime = {};
-  final Map<String, List<double>> _chartPointsCache = {};
+  final Map<String, List<ChartPoint>> _chartPointsCache = {};
   final Duration _cacheTtl = const Duration(seconds: 45);
   /// NSE bhavcopy previous close and its trading day, from LatestPrices (migration 19)
   final Map<String, (double, DateTime)> _officialPrev = {};
@@ -260,7 +261,7 @@ class MarketQuoteService {
   }
 
   /// Fetches historical price points for charting
-  Future<List<double>> fetchChartPoints(String rawSymbol, String range) async {
+  Future<List<ChartPoint>> fetchChartSeries(String rawSymbol, String range) async {
     final clean = SymbolUtils.normalize(rawSymbol);
     final cacheKey = '$clean:${range.toUpperCase()}';
 
@@ -315,19 +316,14 @@ class MarketQuoteService {
         final data = jsonDecode(response.body);
         final result = data['chart']?['result']?[0];
         final quotes = result?['indicators']?['quote']?[0];
-        final closeList = quotes?['close'] as List?;
-
-        if (closeList != null && closeList.isNotEmpty) {
-          final validPoints = <double>[];
-          for (final c in closeList) {
-            if (c != null && c is num) {
-              validPoints.add(c.toDouble());
-            }
-          }
-          if (validPoints.length >= 2) {
-            _chartPointsCache[cacheKey] = validPoints;
-            return validPoints;
-          }
+        final validPoints = ChartPoint.fromYahoo(
+          result?['timestamp'] as List?,
+          quotes?['close'] as List?,
+          quotes?['volume'] as List?,
+        );
+        if (validPoints.length >= 2) {
+          _chartPointsCache[cacheKey] = validPoints;
+          return validPoints;
         }
       }
     } catch (_) {}

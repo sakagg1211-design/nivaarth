@@ -40,8 +40,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
 
     // Extract latest index data from provider
     final isNifty = widget.name.toUpperCase().contains('NIFTY');
-    final indexData = indicesAsync.value != null
-        ? (isNifty ? indicesAsync.value!.nifty : indicesAsync.value!.sensex)
+    final indexData = indicesAsync.valueOrNull != null
+        ? (isNifty ? indicesAsync.valueOrNull!.nifty : indicesAsync.valueOrNull!.sensex)
         : null;
 
     // No made-up level while loading or when unavailable: value 0 shows as a dash
@@ -268,8 +268,9 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                       ),
                       data: (points) {
                         return StockLineChart(
-                          points: points,
+                          series: points,
                           isPositive: isUp,
+                          range: _selectedRange,
                         );
                       },
                     ),

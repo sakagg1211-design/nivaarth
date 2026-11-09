@@ -18,6 +18,7 @@ import 'widgets/dashboard_signals_grid.dart';
 import 'widgets/dashboard_top_holdings_section.dart';
 import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
+import 'widgets/allocation_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 import '../portfolio/widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
@@ -115,7 +116,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             ),
           ),
           data: (data) {
-            final liveStocks = portfolioAsync.value ?? [];
+            final liveStocks = portfolioAsync.valueOrNull ?? [];
             final isDesktop = Breakpoints.isDesktop(context);
             final hasHoldings = data.totalStocks > 0;
 
@@ -213,7 +214,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Expanded(flex: 6, child: briefing),
+                    Expanded(
+                      flex: 6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          briefing,
+                          if (hasHoldings) ...[const SizedBox(height: 14), const AllocationCard()],
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 22),
@@ -226,6 +236,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 health,
                 const SizedBox(height: 14),
                 signals,
+                if (hasHoldings) ...[const SizedBox(height: 14), const AllocationCard()],
                 const SizedBox(height: 22),
                 briefing,
                 const SizedBox(height: 22),

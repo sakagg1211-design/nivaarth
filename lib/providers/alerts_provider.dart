@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,8 +16,18 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
   final Ref ref;
   final BackendService _backendService = BackendService();
 
+  Timer? _reload;
+
   AlertsNotifier(this.ref) : super(const AsyncValue.loading()) {
     fetchAlerts();
+    // Price alerts are checked every 5 minutes, so an open app looks on the same beat
+    _reload = Timer.periodic(const Duration(minutes: 5), (_) => fetchAlerts());
+  }
+
+  @override
+  void dispose() {
+    _reload?.cancel();
+    super.dispose();
   }
 
   String _getReadStorageKey() {
@@ -78,18 +90,17 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
         }
       }
 
-      // 2. If no alerts from DB, query backend smart alert service
-      if (alerts.isEmpty) {
+      // 2. Smart alerts from the backend, alongside any stored ones (a triggered price alert
+      // is a stored row and must not hide them)
+      try {
         final backendAlerts = await _backendService.getSmartAlerts();
-        if (backendAlerts.isNotEmpty) {
-          alerts = backendAlerts.map((item) => UserAlert.fromJson(item)).toList();
-        }
-      }
+        alerts = [...alerts, ...backendAlerts.map((item) => UserAlert.fromJson(item))];
+      } catch (_) {}
 
       // 3. Fallback: Synthesize local smart alerts from user's live holdings
       if (alerts.isEmpty) {
         final portfolioAsync = ref.read(livePortfolioProvider);
-        final holdings = portfolioAsync.value ?? [];
+        final holdings = portfolioAsync.valueOrNull ?? [];
 
         if (holdings.isNotEmpty) {
           double totalVal = 0.0;
@@ -149,9 +160,9 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
         return a;
       }).toList();
 
-      state = AsyncValue.data(mappedAlerts);
+      if (mounted) state = AsyncValue.data(mappedAlerts);
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      if (mounted) state = AsyncValue.error(e, st);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/chart_point.dart';
 import '../models/live_market_quote.dart';
 import '../services/market_quote_service.dart';
 
@@ -22,8 +23,8 @@ class ChartQuery {
   int get hashCode => Object.hash(symbol, range);
 }
 
-final stockChartProvider = FutureProvider.family<List<double>, ChartQuery>((ref, query) async {
-  return MarketQuoteService.instance.fetchChartPoints(query.symbol, query.range);
+final stockChartProvider = FutureProvider.family<List<ChartPoint>, ChartQuery>((ref, query) async {
+  return MarketQuoteService.instance.fetchChartSeries(query.symbol, query.range);
 });
 
 /// One year of daily closes and the 52-week range (null when Yahoo could not be reached)

@@ -1,19 +1,41 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../../../models/chart_point.dart';
+
+/// Date text for the crosshair, at the precision the selected range has.
+String chartDateLabel(DateTime time, String range) {
+  switch (range.toUpperCase()) {
+    case '1D':
+      return DateFormat('h:mm a').format(time);
+    case '1W':
+      return DateFormat('d MMM, h:mm a').format(time);
+    case 'ALL':
+      return DateFormat('MMM yyyy').format(time);
+    default:
+      return DateFormat('d MMM yyyy').format(time);
+  }
+}
+
+/// Volume in lakh/crore style (12.3L, 1.5Cr).
+String chartVolumeLabel(int volume) => NumberFormat.compact(locale: 'en_IN').format(volume);
 
 class StockLineChart extends StatelessWidget {
-  final List<double> points;
+  final List<ChartPoint> series;
   final bool isPositive;
+  final String range;
 
   const StockLineChart({
     super.key,
-    required this.points,
+    required this.series,
     required this.isPositive,
+    required this.range,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (points.length < 2) {
+    if (series.length < 2) {
       return const Center(
         child: Text(
           'Chart updating...',
@@ -22,10 +44,11 @@ class StockLineChart extends StatelessWidget {
       );
     }
 
-    double minY = points.reduce((a, b) => a < b ? a : b);
-    double maxY = points.reduce((a, b) => a > b ? a : b);
+    final closes = series.map((p) => p.close).toList();
+    double minY = closes.reduce((a, b) => a < b ? a : b);
+    double maxY = closes.reduce((a, b) => a > b ? a : b);
 
-    // Give a 5% breathing room on top and bottom
+    // Give a little breathing room on top and bottom
     final padding = (maxY - minY) * 0.08;
     if (padding > 0) {
       minY -= padding;
@@ -37,8 +60,8 @@ class StockLineChart extends StatelessWidget {
 
     final chartColor = isPositive ? const Color(0xFF00E676) : const Color(0xFFFF5252);
     final spots = <FlSpot>[];
-    for (int i = 0; i < points.length; i++) {
-      spots.add(FlSpot(i.toDouble(), points[i]));
+    for (int i = 0; i < series.length; i++) {
+      spots.add(FlSpot(i.toDouble(), series[i].close));
     }
 
     return LineChart(
@@ -50,17 +73,44 @@ class StockLineChart extends StatelessWidget {
         borderData: FlBorderData(show: false),
         lineTouchData: LineTouchData(
           handleBuiltInTouches: true,
+          // Always land on the nearest bar, however few bars the range has
+          touchSpotThreshold: 100000,
+          getTouchLineEnd: (_, _) => maxY,
+          getTouchedSpotIndicator: (bar, indexes) => indexes
+              .map((_) => TouchedSpotIndicatorData(
+                    FlLine(color: Colors.white.withValues(alpha: .35), strokeWidth: 1, dashArray: const [3, 3]),
+                    FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, b, i) => FlDotCirclePainter(
+                        radius: 4,
+                        color: chartColor,
+                        strokeWidth: 2,
+                        strokeColor: const Color(0xFF16171B),
+                      ),
+                    ),
+                  ))
+              .toList(),
           touchTooltipData: LineTouchTooltipData(
+            fitInsideHorizontally: true,
+            fitInsideVertically: true,
             getTooltipColor: (_) => const Color(0xFF1E2026),
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
+                final p = series[spot.x.toInt()];
                 return LineTooltipItem(
-                  '₹${spot.y.toStringAsFixed(2)}',
-                  const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
-                  ),
+                  '₹${p.close.toStringAsFixed(2)}\n',
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
+                  children: [
+                    TextSpan(
+                      text: chartDateLabel(p.time, range),
+                      style: const TextStyle(color: Color(0xFF8E929B), fontWeight: FontWeight.w500, fontSize: 11),
+                    ),
+                    if (p.volume > 0)
+                      TextSpan(
+                        text: '\nVol ${chartVolumeLabel(p.volume)}',
+                        style: const TextStyle(color: Color(0xFF8E929B), fontWeight: FontWeight.w500, fontSize: 11),
+                      ),
+                  ],
                 );
               }).toList();
             },

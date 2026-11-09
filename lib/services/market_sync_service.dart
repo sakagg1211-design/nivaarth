@@ -23,7 +23,7 @@ class MarketSyncService {
 
     try {
       // 1. Collect all unique symbols currently tracked by user
-      final portfolioList = ref.read(portfolioProvider).value ?? [];
+      final portfolioList = ref.read(portfolioProvider).valueOrNull ?? [];
       final watchlistList = ref.read(watchlistProvider);
 
       final Set<String> symbolsToSync = {};

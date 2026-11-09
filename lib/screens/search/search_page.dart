@@ -278,7 +278,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             ),
                             onTap: () {
                               final portfolioAsync = ref.read(livePortfolioProvider);
-                              final liveList = portfolioAsync.value ?? [];
+                              final liveList = portfolioAsync.valueOrNull ?? [];
                               LivePortfolio? matchingHolding;
                               for (final h in liveList) {
                                 if (SymbolUtils.normalize(h.portfolio.instrument) ==
@@ -289,7 +289,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               }
 
                               final cleanSym = SymbolUtils.normalize(stock.instrument);
-                              final liveQuote = ref.read(liveQuoteProvider(cleanSym)).value;
+                              final liveQuote = ref.read(liveQuoteProvider(cleanSym)).valueOrNull;
                               final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                   ? liveQuote.currentPrice
                                   : 0.0;
@@ -403,7 +403,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                             watchlistNotifier,
                                           );
                                         } else {
-                                          final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).value;
+                                          final liveQuote = ref.read(liveQuoteProvider(SymbolUtils.normalize(stock.instrument))).valueOrNull;
                                           final rawPrice = (liveQuote != null && liveQuote.currentPrice > 0)
                                               ? liveQuote.currentPrice
                                               : 0.0;

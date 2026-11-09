@@ -11,6 +11,7 @@ import '../../providers/alerts_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/live_quote_provider.dart';
 import '../stock/stock_detail_page.dart';
+import '../stock/widgets/price_alert_sheet.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
@@ -56,6 +57,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Mere price alerts',
+            icon: const Icon(Icons.price_change_outlined, color: Colors.white70, size: 22),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PriceAlertsPage()),
+            ),
+          ),
           IconButton(
             tooltip: 'Mark all as read',
             icon: const Icon(Icons.done_all_rounded, color: Color(0xFFE5A93C), size: 22),
@@ -216,10 +225,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         final rawSym = alert.symbol?.trim();
         if (rawSym != null && rawSym.isNotEmpty) {
           final sym = SymbolUtils.normalize(rawSym);
-          final liveHoldings = ref.read(livePortfolioProvider).value ?? [];
+          final liveHoldings = ref.read(livePortfolioProvider).valueOrNull ?? [];
           final matchingHolding = liveHoldings.where((h) => SymbolUtils.normalize(h.portfolio.instrument) == sym).firstOrNull;
 
-          final liveQuote = ref.read(liveQuoteProvider(sym)).value;
+          final liveQuote = ref.read(liveQuoteProvider(sym)).valueOrNull;
           final livePrice = (liveQuote != null && liveQuote.currentPrice > 0)
               ? liveQuote.currentPrice
               : 0.0;

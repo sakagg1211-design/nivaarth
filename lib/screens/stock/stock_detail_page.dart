@@ -16,6 +16,7 @@ import '../../providers/watchlist_provider.dart';
 
 import '../../widgets/listing_badges.dart';
 import 'widgets/stock_header.dart';
+import 'widgets/price_alert_sheet.dart';
 import 'widgets/stock_line_chart.dart';
 import 'widgets/chart_card.dart';
 import 'widgets/chart_selector.dart';
@@ -91,7 +92,7 @@ class _StockDetailPageState
 
     final isOwned = portfolio.qty > 0 || portfolio.status == 'PORTFOLIO';
 
-    final liveQuote = ref.watch(liveQuoteProvider(cleanSym)).value;
+    final liveQuote = ref.watch(liveQuoteProvider(cleanSym)).valueOrNull;
 
     // Preserving 100% accurate database values for owned portfolio assets
     final double displayPrice;
@@ -132,7 +133,7 @@ class _StockDetailPageState
 
     final isProfit = displayChange >= 0;
 
-    final score = scoreAsync.value;
+    final score = scoreAsync.valueOrNull;
     String? computedTrend;
     if (score != null && score.technical > 0) {
       if (score.technical >= 7) {
@@ -191,8 +192,8 @@ class _StockDetailPageState
                 symbol: portfolio.instrument,
                 companyName: portfolio.companyName,
                 price: stock.currentPrice,
-                score: scoreAsync.value?.overallScore ?? 0,
-                tag: scoreAsync.value?.recommendation ?? '',
+                score: scoreAsync.valueOrNull?.overallScore ?? 0,
+                tag: scoreAsync.valueOrNull?.recommendation ?? '',
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -207,7 +208,26 @@ class _StockDetailPageState
         // SME / Z / T2T badges and how old the fundamentals are
         Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: ListingInfoStrip(info: ref.watch(listingInfoProvider(cleanSym)).value),
+          child: ListingInfoStrip(info: ref.watch(listingInfoProvider(cleanSym)).valueOrNull),
+        ),
+
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFE5A93C),
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              visualDensity: VisualDensity.compact,
+            ),
+            icon: const Icon(Icons.notifications_active_outlined, size: 16),
+            label: const Text('Price alert lagao', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => PriceAlertSheet(symbol: cleanSym, currentPrice: displayPrice),
+            ),
+          ),
         ),
 
         const SizedBox(
@@ -327,8 +347,9 @@ class _StockDetailPageState
                       );
                     }
                     return StockLineChart(
-                      points: points,
+                      series: points,
                       isPositive: isProfit,
+                      range: _selectedRange,
                     );
                   },
                 ),
@@ -706,8 +727,8 @@ class _StockDetailPageState
                     symbol: portfolio.instrument,
                     companyName: portfolio.companyName,
                     price: stock.currentPrice,
-                    score: scoreAsync.value?.overallScore ?? 0,
-                    tag: scoreAsync.value?.recommendation ?? '',
+                    score: scoreAsync.valueOrNull?.overallScore ?? 0,
+                    tag: scoreAsync.valueOrNull?.recommendation ?? '',
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
