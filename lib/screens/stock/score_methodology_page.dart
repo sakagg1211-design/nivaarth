@@ -54,10 +54,13 @@ class ScoreMethodologyPage extends StatelessWidget {
                   'vs profit 15, 5-year sales and profit growth 20 (full marks at 20% a year sales and 25% '
                   'profit; shrinking scores 0). ROCE and debt count half on a fixed scale and half on the '
                   'rank among companies in the same industry (15 or more), else the same sector.'),
-              _Row('Valuation  30%', 'P/E compared with companies in the same industry 60, and P/E compared '
-                  'with its own 5-year average P/E 40 (0.7x or lower full marks, 1.0x half, 1.5x or '
-                  'higher none). A loss-making company scores 0. Without a 5-year average, the earnings '
-                  'yield vs the 10-year government bond (7%) is used instead.'),
+              _Row('Valuation  30%', 'P/E compared with companies in the same industry 50, P/E compared '
+                  'with its own 5-year average 30 (0.6x or lower full marks, 0.85x half, 1.3x or higher none), '
+                  'and P/E against 5-year profit growth (PEG) 20 (1 or lower full marks, 3 or higher none; growth '
+                  'counted between 5% and 40% a year). A part with no data is left out. A loss-making company '
+                  'scores 0. Companies that demerged a large business, or have no 5-year average, use the '
+                  'earnings yield vs the 10-year government bond instead of their own average. Banks and NBFCs '
+                  'use P/B: rank within banks or NBFCs 60, against their own 5-year average 40.'),
               _Row('Momentum  15%', 'Price return over the last 12 months, leaving out the latest month, '
                   'ranked against every scored stock (6 months for stocks listed under a year). RSI, '
                   'MACD and moving averages are shown for information and are not scored.'),
