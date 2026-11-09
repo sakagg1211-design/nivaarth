@@ -16,7 +16,9 @@ import '../../providers/watchlist_provider.dart';
 
 import '../../widgets/listing_badges.dart';
 import 'widgets/stock_header.dart';
+import 'widgets/peer_comparison_card.dart';
 import 'widgets/price_alert_sheet.dart';
+import 'widgets/stock_radar_card.dart';
 import 'widgets/stock_line_chart.dart';
 import 'widgets/chart_card.dart';
 import 'widgets/chart_selector.dart';
@@ -143,8 +145,6 @@ class _StockDetailPageState
       } else {
         computedTrend = "Neutral";
       }
-    } else if (stock.returnPercent != 0) {
-      computedTrend = stock.returnPercent > 0 ? "Bullish" : "Bearish";
     }
 
     final chartPointsAsync = ref.watch(
@@ -593,6 +593,22 @@ class _StockDetailPageState
             AiScoreCard(
               score: score,
             ),
+
+            const SizedBox(
+              height: AppSpacing.lg,
+            ),
+
+            StockRadarCard(
+              symbol: cleanSym,
+              companyName: portfolio.companyName.isNotEmpty ? portfolio.companyName : cleanSym,
+              score: score,
+            ),
+
+            const SizedBox(
+              height: AppSpacing.lg,
+            ),
+
+            PeerComparisonCard(symbol: cleanSym, score: score),
 
             const SizedBox(
               height: AppSpacing.lg,

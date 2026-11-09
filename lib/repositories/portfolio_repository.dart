@@ -1,24 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/utils/symbol_utils.dart';
 import '../models/portfolio.dart';
 
 /// Reads the per-stock Portfolio summary. Holdings change only through trades
 /// (TradeRepository / migration 16), never by editing Qty or Avg here.
 class PortfolioRepository {
   final SupabaseClient client = Supabase.instance.client;
-
-  // ETFs are not in ScreenerFundamentals. Same exact-match list and suffixes
-  // as KNOWN_ETFS / ETF_SUFFIXES in backend/ai_scoring_service.py.
-  static const Set<String> _knownEtfs = {
-    'NIFTYBEES', 'TATSILV', 'MIDSMALL', 'MON100', 'MOM100',
-  };
-
-  static bool _isListedEtf(String sym) =>
-      _knownEtfs.contains(sym) ||
-      sym.endsWith('BEES') ||
-      sym.endsWith('IETF') ||
-      sym.endsWith('ETF');
 
   // Fully sold holdings stay in the table with Status CLOSED. Live rows hold
   // 'Active', 'ACTIVE' and 'CORE', so test for CLOSED, not for ACTIVE.
@@ -67,7 +56,7 @@ class PortfolioRepository {
   /// Which of these symbols are in Nivaarth's stock list (one query, for an import preview)
   Future<Set<String>> listedAmong(Iterable<String> symbols) async {
     final list = symbols.map((s) => s.trim().toUpperCase()).where((s) => s.isNotEmpty).toSet().toList();
-    final out = <String>{for (final s in list) if (_isListedEtf(s)) s};
+    final out = <String>{for (final s in list) if (SymbolUtils.isEtf(s)) s};
     for (var i = 0; i < list.length; i += 200) {
       final rows = await client
           .from('ScreenerFundamentals')
@@ -80,7 +69,7 @@ class PortfolioRepository {
 
   /// Throws unless [sym] is a listed NSE stock (ScreenerFundamentals) or a known ETF.
   Future<void> checkListed(String sym) async {
-    if (_isListedEtf(sym)) return;
+    if (SymbolUtils.isEtf(sym)) return; // ETFs are not in ScreenerFundamentals
     final valid = await client
         .from('ScreenerFundamentals')
         .select('Instrument')

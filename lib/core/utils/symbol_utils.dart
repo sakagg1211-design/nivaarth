@@ -444,17 +444,13 @@ class SymbolUtils {
     'BALKRISIND': 'Off-Highway Tires Manufacturing',
   };
 
+  // Same exact-match list and suffixes as KNOWN_ETFS / ETF_SUFFIXES in backend/ai_scoring_service.py.
+  // Never "contains GOLD": GOLDIAM and SKYGOLD are companies.
+  static const Set<String> _knownEtfs = {'NIFTYBEES', 'TATSILV', 'MIDSMALL', 'MON100', 'MOM100'};
+
   static bool isEtf(String symbol) {
     final sym = normalize(symbol).toUpperCase();
-    return sym.endsWith("BEES") ||
-        sym.endsWith("ETF") ||
-        sym.contains("NIFTY") ||
-        sym.contains("SILV") ||
-        sym.contains("GOLD") ||
-        sym.contains("COMMODITY") ||
-        sym.contains("LIQUID") ||
-        sym.contains("INVIT") ||
-        sym.contains("REIT");
+    return _knownEtfs.contains(sym) || sym.endsWith('BEES') || sym.endsWith('ETF');
   }
 
   static String getDisplayName(String symbol, {String? dbCompanyName}) {

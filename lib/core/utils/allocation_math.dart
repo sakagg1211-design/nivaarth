@@ -27,11 +27,13 @@ class AllocationMath {
     return small;
   }
 
+  static bool isPartlyPaid(String symbol) => RegExp(r'P\d$').hasMatch(symbol.toUpperCase());
+
   /// Market caps of the 100th and 250th company from a list sorted largest first. Partly-paid
   /// lines (RELIANCEP1, UPLPP1) are the same company again, so they do not take a rank.
   /// Null when the list is too short to rank.
   static ({double large, double mid})? cutOffs(Iterable<({String symbol, double cap})> byCapDesc) {
-    final companies = byCapDesc.where((r) => !RegExp(r'P\d$').hasMatch(r.symbol.toUpperCase())).toList();
+    final companies = byCapDesc.where((r) => !isPartlyPaid(r.symbol)).toList();
     if (companies.length < 250) return null;
     return (large: companies[99].cap, mid: companies[249].cap);
   }

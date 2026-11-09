@@ -48,7 +48,7 @@ class DashboardEngine {
     // Portfolio Analysis
     // ==========================
     final List<StockScore> scores =
-        await stockRepository.getScores();
+        await stockRepository.getDashboardScores();
         final health =
     portfolioHealthEngine.calculate(portfolio,scores,
     );

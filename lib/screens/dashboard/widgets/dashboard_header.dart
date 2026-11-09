@@ -10,6 +10,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../providers/alerts_provider.dart';
 import '../../../providers/dashboard_provider.dart';
 import '../../../providers/live_portfolio_provider.dart';
+import '../../../providers/portfolio_provider.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../../providers/watchlist_provider.dart';
 import '../../../services/auth_service.dart';
@@ -389,6 +390,7 @@ class DashboardHeader extends ConsumerWidget {
       // Clear in-memory Riverpod user state to prevent session cross-contamination
       ref.invalidate(dashboardProvider);
       ref.invalidate(livePortfolioProvider);
+      ref.invalidate(portfolioProvider);
       ref.invalidate(watchlistProvider);
       ref.invalidate(alertsProvider);
 
