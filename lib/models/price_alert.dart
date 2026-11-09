@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 /// A user's price alert for one stock (table PriceAlerts, migration 21).
 class PriceAlert {
   static const above = 'ABOVE';
@@ -32,14 +33,14 @@ class PriceAlert {
 
   /// Why this target cannot be saved, or null when it is fine. An alert already met at the
   /// current price would fire at once, so it is refused. [currentPrice] <= 0 means no price is known.
-  static String? validate(String direction, double? target, double currentPrice) {
-    if (target == null || target <= 0) return 'Sahi bhaav daalo';
+  static String? validate(String direction, double? target, double currentPrice, AppLocalizations t) {
+    if (target == null || target <= 0) return t.alertEnterPrice;
     if (currentPrice > 0) {
       if (direction == above && target <= currentPrice) {
-        return 'Bhaav abhi ke bhaav se upar hona chahiye';
+        return t.alertMustAbove;
       }
       if (direction == below && target >= currentPrice) {
-        return 'Bhaav abhi ke bhaav se neeche hona chahiye';
+        return t.alertMustBelow;
       }
     }
     return null;

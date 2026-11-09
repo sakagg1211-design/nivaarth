@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -33,6 +34,8 @@ const bannedPhrases = [
   'optimal diversification',
 ];
 
+const bannedHinglish = ['kharido', 'khareedo', 'khareed lo', 'bech do', 'becho', 'hold karo', 'rakhe raho', 'nikal jao'];
+
 final _stringLiteral = RegExp(r'''(['"])((?:\\.|(?!\1).)*)\1''');
 
 void main() {
@@ -60,6 +63,21 @@ void main() {
           }
         }
       }
+    }
+    expect(hits, isEmpty, reason: hits.join('\n'));
+  });
+
+  test('no advice wording in the translated text', () {
+    final hits = <String>[];
+    for (final name in ['app_en.arb', 'app_en_IN.arb']) {
+      final arb = jsonDecode(File('lib/l10n/$name').readAsStringSync()) as Map<String, dynamic>;
+      arb.forEach((key, value) {
+        if (key.startsWith('@') || value is! String) return;
+        final text = value.toLowerCase();
+        for (final phrase in [...bannedPhrases, if (name == 'app_en_IN.arb') ...bannedHinglish]) {
+          if (text.contains(phrase)) hits.add('$name:$key: "$phrase"');
+        }
+      });
     }
     expect(hits, isEmpty, reason: hits.join('\n'));
   });

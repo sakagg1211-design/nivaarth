@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import 'login_page.dart';
 import 'sign_up_page.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// Premium Nivaarth Welcome Screen
 ///
@@ -73,8 +74,8 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
 
                   // Subtitle
-                  const Text(
-                    'Quantitative portfolio intelligence for serious Indian investors.',
+                  Text(
+                    context.t.welcomeTagline,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 16,
@@ -86,29 +87,29 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xxl),
 
                   // Value Pillars
-                  const _PillarTile(
+                  _PillarTile(
                     icon: Icons.shield_outlined,
-                    title: 'Private & Isolated',
+                    title: context.t.welcomePrivateTitle,
                     description:
-                        'Your portfolio data is isolated and protected with zero cross-user access.',
+                        context.t.welcomePrivateBody,
                   ),
 
                   const SizedBox(height: AppSpacing.md),
 
-                  const _PillarTile(
+                  _PillarTile(
                     icon: Icons.auto_awesome_rounded,
-                    title: 'Multi-Factor AI Scoring',
+                    title: context.t.welcomeScoringTitle,
                     description:
-                        'Fundamental, technical, management, and risk dimensions ranked continuously.',
+                        context.t.welcomeScoringBody,
                   ),
 
                   const SizedBox(height: AppSpacing.md),
 
-                  const _PillarTile(
+                  _PillarTile(
                     icon: Icons.timeline_rounded,
-                    title: 'Live Cockpit',
+                    title: context.t.welcomeCockpitTitle,
                     description:
-                        'Instant P&L tracking, live prices, and actionable explainable signals.',
+                        context.t.welcomeCockpitBody,
                   ),
 
                   const SizedBox(height: 40),
@@ -144,7 +145,7 @@ class WelcomeScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: const Text('Sign In'),
+                            child: Text(context.t.authSignIn),
                           ),
                         ),
 
@@ -175,7 +176,7 @@ class WelcomeScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: const Text('Create an Account'),
+                            child: Text(context.t.authCreateAnAccount),
                           ),
                         ),
                       ],

@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 enum NewsImpact {
   positive,
@@ -97,7 +98,7 @@ class NewsCard extends StatelessWidget {
                   children: [
 
                     Text(
-                      "Latest News",
+                      context.t.newsTitle,
                       style: AppTypography
                           .titleLarge
                           .copyWith(
@@ -111,7 +112,7 @@ class NewsCard extends StatelessWidget {
                     ),
 
                     Text(
-                      "AI curated market updates",
+                      context.t.newsSub,
                       style: AppTypography
                           .bodySmall,
                     ),
@@ -443,7 +444,7 @@ class _EmptyNews extends StatelessWidget {
           ),
 
           Text(
-            "No News Available",
+            context.t.newsEmptyTitle,
             style: AppTypography.titleMedium.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -454,7 +455,7 @@ class _EmptyNews extends StatelessWidget {
           ),
 
           Text(
-            "Latest company news and market updates will automatically appear here when available.",
+            context.t.newsEmptyBody,
             textAlign: TextAlign.center,
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textSecondary,
@@ -481,7 +482,7 @@ class _EmptyNews extends StatelessWidget {
               ),
             ),
             child: Text(
-              "Auto Refresh",
+              context.t.newsAutoRefresh,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,

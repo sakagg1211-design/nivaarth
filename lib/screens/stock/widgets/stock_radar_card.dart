@@ -6,6 +6,7 @@ import '../../../core/utils/stock_insights.dart';
 import '../../../models/stock_score.dart';
 import '../../../providers/stock_insights_provider.dart';
 import 'share_card.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 const _muted = Color(0xFF8E929B);
 const _line = Color(0xFF3987E5);
@@ -129,13 +130,13 @@ class StockRadarCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Expanded(
-                child: Text('Score ka aakar',
+              Expanded(
+                child: Text(context.t.radarTitle,
                     style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               if (score.overallScore != null)
                 IconButton(
-                  tooltip: 'Share',
+                  tooltip: context.t.commonShare,
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.ios_share_rounded, color: _muted, size: 18),
                   onPressed: () => showShareCard(
@@ -168,8 +169,8 @@ class StockRadarCard extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               lender
-                  ? 'Har score 0–100, bahar ki taraf zyada. Leverage mein zyada score yani kam leverage.'
-                  : 'Har score 0–100, bahar ki taraf zyada. Debt mein zyada score yani kam karz.',
+                  ? context.t.radarNoteLeverage
+                  : context.t.radarNoteDebt,
               style: const TextStyle(color: _muted, fontSize: 11),
             ),
           ],

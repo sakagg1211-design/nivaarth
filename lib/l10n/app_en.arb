@@ -1,0 +1,1510 @@
+{
+  "@@locale": "en",
+  "menuLanguage": "Language",
+  "authInvalidEmail": "Please enter a valid email address.",
+  "authResetFailed": "Unable to send reset link. Please check your email and try again.",
+  "authResetTitle": "Reset Password",
+  "authResetCheckInbox": "Check your inbox for a recovery link.",
+  "authResetPrompt": "Enter the email linked to your Nivaarth account to receive a reset link.",
+  "authResetSent": "Reset Link Sent",
+  "authResetSentTo": "We sent instructions to {email}.",
+  "@authResetSentTo": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "authBackToLogin": "Back to Login",
+  "authRegisteredEmail": "Registered Email",
+  "authSendReset": "Send Reset Link",
+  "authEnterBoth": "Please enter both email and password.",
+  "authWrongCreds": "Incorrect email or password.",
+  "commonNetworkIssue": "Network issue. Please check your internet connection.",
+  "authTooMany": "Too many attempts. Please try again shortly.",
+  "authSignInFailed": "Unable to sign in. Please verify your details.",
+  "authTagline": "Private portfolio intelligence for focused investors.",
+  "authEmail": "Email",
+  "authPassword": "Password",
+  "authForgot": "Forgot password?",
+  "authSignIn": "Sign In",
+  "authNoAccount": "Don't have an account? ",
+  "authCreateAccount": "Create Account",
+  "authEnterName": "Please enter your full name.",
+  "authPasswordShort": "Password must be at least 6 characters long.",
+  "authPasswordMismatch": "Passwords do not match.",
+  "authAcceptRisk": "Please acknowledge that stock investments carry market risks and accept the terms.",
+  "authEmailExists": "An account with this email already exists. Please log in.",
+  "authCreateFailed": "Unable to create account. Please try again.",
+  "authAccountCreated": "Account Created",
+  "authAccountReady": "Your Nivaarth account is ready! If verification is requested, check {email} to confirm.",
+  "@authAccountReady": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "authProceedSignIn": "Proceed to Sign In",
+  "authJoinBeta": "Join the private closed beta of Nivaarth.",
+  "authFullName": "Full Name",
+  "authEmailAddress": "Email Address",
+  "authConfirmPassword": "Confirm Password",
+  "authHaveAccount": "Already have an account? ",
+  "welcomeTagline": "Quantitative portfolio intelligence for serious Indian investors.",
+  "welcomePrivateTitle": "Private & Isolated",
+  "welcomePrivateBody": "Your portfolio data is isolated and protected with zero cross-user access.",
+  "welcomeScoringTitle": "Multi-Factor AI Scoring",
+  "welcomeScoringBody": "Fundamental, technical, management, and risk dimensions ranked continuously.",
+  "welcomeCockpitTitle": "Live Cockpit",
+  "welcomeCockpitBody": "Instant P&L tracking, live prices, and actionable explainable signals.",
+  "authCreateAnAccount": "Create an Account",
+  "homeBackToExit": "Press back again to exit Nivaarth",
+  "legalAcknowledge": "I Understand & Acknowledge",
+  "syncFetchingPrices": "Fetching Latest Market Prices...",
+  "syncReady": "Portfolio Ready",
+  "syncFailed": "Portfolio could not be loaded. Tap Try Again on the Portfolio tab.",
+  "syncPreparing": "Preparing your portfolio intelligence",
+  "syncDontClose": "Please don't close the app.\nWe're preparing the latest market intelligence.",
+  "menuFeedbackTitle": "Share Feedback / Report Bug",
+  "menuFeedbackBody": "Direct channel to the engineering team",
+  "menuLegalTitle": "Compliance & Legal Disclaimers",
+  "menuLegalBody": "SEBI non-advisory notice & platform terms",
+  "menuLogOut": "Log out",
+  "menuLogOutBody": "Sign out and return to welcome screen",
+  "feedbackTitle": "Friends Beta Feedback",
+  "feedbackPrompt": "Found a bug or have a suggestion? Let us know directly:",
+  "feedbackHint": "Describe the issue or idea...",
+  "commonCancel": "Cancel",
+  "feedbackThanks": "Thank you! Your feedback has been noted for the next release.",
+  "commonSubmit": "Submit",
+  "logoutConfirmTitle": "Log out of Nivaarth?",
+  "logoutConfirmBody": "You will need to sign in again to view your private portfolio cockpit.",
+  "greetMorning": "Good morning,",
+  "greetAfternoon": "Good afternoon,",
+  "greetEvening": "Good evening,",
+  "tipShowValues": "Show Values",
+  "tipHideValues": "Hide Values (Privacy Mode)",
+  "tipProfile": "Profile & Details",
+  "tipNotifications": "Notifications",
+  "dashLoadingTitle": "Building portfolio cockpit",
+  "dashLoadingBody": "Fetching live valuation, health scores and AI signals.",
+  "dashUnavailable": "Dashboard unavailable",
+  "commonTryAgain": "Try Again",
+  "dashBriefingSub": "What the numbers of your holdings show today.",
+  "dashWelcome": "Welcome to Nivaarth Cockpit",
+  "dashTools": "Nivaarth research tools",
+  "dashAddPrompt": "Add your current equity holdings to activate real-time analytics:",
+  "dashToolScore": "Rules-based NV Score (0-100)",
+  "dashToolScoreSub": "Quality 50%, Valuation 30%, Price trend 20%",
+  "dashToolHealth": "Dynamic Portfolio Health & Risk Radar",
+  "dashToolHealthSub": "Concentration, sector mix and holdings below their buy price",
+  "dashToolAdvisor": "NV Advisor Contextual Co-Pilot",
+  "dashToolAdvisorSub": "Ask about your holdings; answers use your data and NV Scores",
+  "dashAddFirst": "Add Your First Holding",
+  "indexMarketClosed": "MARKET CLOSED",
+  "indexPerformance": "Market Index Performance",
+  "indexChartUnavailable": "Index chart unavailable right now",
+  "indexRanges": "Price Spectrum & Ranges",
+  "indexTodayRange": "Today's Range",
+  "indexTodayRangeNa": "Today's range unavailable",
+  "index52wRange": "52-Week Range",
+  "index52wLoading": "52-week range loading…",
+  "index52wNa": "52-week range unavailable",
+  "indexAbout": "About {name}",
+  "@indexAbout": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "indexAboutNifty": "The NIFTY 50 is India's benchmark stock market index representing the weighted average of 50 of the largest and most liquid Indian companies listed on the National Stock Exchange. It serves as the primary gauge of India's broader economy and capital markets.",
+  "indexAboutSensex": "The BSE SENSEX is India's oldest and premier market barometer comprising 30 prominent, financially sound, and actively traded companies listed on the Bombay Stock Exchange, covering major sectors of the Indian economy.",
+  "indexLargestSectors": "Largest sectors in the index",
+  "indexWeightsNifty": "Current sector weights are in the monthly NIFTY 50 factsheet on niftyindices.com.",
+  "indexWeightsSensex": "Current sector weights are in the BSE SENSEX factsheet on bseindia.com.",
+  "indexTechnical": "Technical Indicators",
+  "indexTechnicalSub": "Calculated from daily closing prices over the last year.",
+  "indexLoadingDaily": "Loading daily prices…",
+  "indexIndicatorsNa": "Indicators unavailable right now.",
+  "indexPriceAbove": "Price above",
+  "indexPriceBelow": "Price below",
+  "indexEma20": "20-day EMA",
+  "indexAvg50": "50-day average",
+  "indexAvg200": "200-day average",
+  "indexOverbought": "Overbought zone (70+)",
+  "indexOversold": "Oversold zone (30-)",
+  "indexNeutral": "Neutral zone",
+  "indexRsi": "RSI (14 days)",
+  "indexNotEnough": "Not enough daily prices yet.",
+  "briefCoverageNa": "Data coverage —",
+  "briefCoverage": "{pct}% Data coverage",
+  "@briefCoverage": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "briefReasons": "Reasons",
+  "briefToCheck": "What to check",
+  "allocTitle": "Portfolio split",
+  "allocMarketCap": "Market cap",
+  "allocSector": "Sector",
+  "allocCapNote": "Large: top 100 companies by market cap · Mid: 101–250 · Small: the rest",
+  "commonShare": "Share",
+  "allocShareSector": "Portfolio: by sector",
+  "allocShareCap": "Portfolio: by market cap",
+  "signalWinner": "BIGGEST WINNER",
+  "signalStrongest": "STRONGEST HOLDING",
+  "signalNotAssessed": "Not assessed",
+  "signalDiversification": "DIVERSIFICATION",
+  "signalTopSector": "Top sector {pct}%",
+  "@signalTopSector": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "topHoldingsTitle": "Top Holdings",
+  "topHoldingsSub": "Ranked by highest current valuation (₹)",
+  "commonViewAll": "View all",
+  "macroBreadth": "Breadth",
+  "macroAdvances": "{n} up",
+  "@macroAdvances": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "macroDeclines": "{n} down",
+  "@macroDeclines": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "macroWhatIf": "If this happens",
+  "healthIndex": "NV HEALTH INDEX",
+  "commonLive": "Live",
+  "commonMarketClosed": "Market closed",
+  "healthCoverageNa": "Data coverage: —",
+  "healthCoverage": "Data coverage: {pct}%",
+  "@healthCoverage": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "healthStatus": "Status: {status}",
+  "@healthStatus": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "healthExplain": "Average NV Score of your scored holdings, weighted by value.",
+  "healthOpenAdvisorHint": "Open NV Advisor from the bottom bar.",
+  "healthOpenAdvisor": "Open Advisor",
+  "healthMarketOpenNote": "Market open: prices refresh every few minutes. NV Scores update every evening.",
+  "healthMarketClosedNote": "Market closed: prices are the last close. NV Scores update every evening.",
+  "heroQuiet": "{count} stocks had no trade in 15 min ({names}) — the price is from the last trade",
+  "@heroQuiet": {
+    "placeholders": {
+      "count": {},
+      "names": {}
+    }
+  },
+  "heroClosedNote": "Market closed · today's closing prices",
+  "heroUnpriced": "No price for {count} stocks — not included in the total",
+  "@heroUnpriced": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "heroStale": "{count} stocks did not update in this refresh — showing the last saved price",
+  "@heroStale": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "heroValue": "PORTFOLIO VALUE",
+  "heroTotalPl": "Total P&L",
+  "heroToday": "Today",
+  "holdingRemoveTitle": "Remove {symbol}?",
+  "@holdingRemoveTitle": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "holdingRemoveBody": "{symbol} and all its trades will be removed from the portfolio.\n\nSold the shares? Then don't delete: open the stock and add a SELL trade, so the trade history and the \"last time\" figures stay.",
+  "@holdingRemoveBody": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "commonDelete": "Delete",
+  "holdingRemoved": "{symbol} removed.",
+  "@holdingRemoved": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "commonPriceUnavailable": "Price unavailable",
+  "holdingEdit": "Edit Holding",
+  "holdingDelete": "Delete Holding",
+  "heroClosedOn": "Market closed · closing prices of {date}",
+  "@heroClosedOn": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "heroRefreshedAt": "Refreshed at {time}",
+  "@heroRefreshedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "heroRefreshedOn": "Refreshed {date}, {time}",
+  "@heroRefreshedOn": {
+    "placeholders": {
+      "date": {},
+      "time": {}
+    }
+  },
+  "closedTitle": "Closed positions",
+  "closedLoadFailed": "Closed positions could not be loaded",
+  "commonCheckInternet": "Check your internet and try again.",
+  "closedEmptyTitle": "No closed positions",
+  "closedEmptyBody": "When you fully sell a stock, it will appear here with its realized P&L.",
+  "closedCount": "{count} stocks fully sold",
+  "@closedCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "closedRealized": "Realized {amount}",
+  "@closedRealized": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "tradeBought": "Bought {amount}",
+  "@tradeBought": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "tradeSold": "Sold {amount}",
+  "@tradeSold": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "closedLastSell": "Last sell {date}",
+  "@closedLastSell": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "closedTrades": "{count} trades",
+  "@closedTrades": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "importStarting": "Starting…",
+  "importTitle": "Tradebook import",
+  "importHeading": "Zerodha tradebook (CSV or Excel)",
+  "importSteps": "Console → Reports → Tradebook → Segment: Equity → Download (CSV or XLSX). You will see a preview first; nothing is saved until you tap \"Import\". Adding the same file again will not add the earlier trades twice.",
+  "importPickFile": "Choose file (CSV / XLSX)",
+  "importPickOther": "Choose another file",
+  "importDone": "{count} trades imported ({stocks} stocks).",
+  "@importDone": {
+    "placeholders": {
+      "count": {},
+      "stocks": {}
+    }
+  },
+  "importSummary": "{stocks} stocks · {trades} new trades",
+  "@importSummary": {
+    "placeholders": {
+      "stocks": {},
+      "trades": {}
+    }
+  },
+  "importUnlisted": "These symbols are not in Nivaarth's list and will not be imported: {symbols}. ",
+  "@importUnlisted": {
+    "placeholders": {
+      "symbols": {}
+    }
+  },
+  "importRenamed": "(If the name changed, as after a demerger, add the stock yourself from Add Holding.)",
+  "importBonusNote": "Bonuses and splits are not in the tradebook. If such a stock's quantity differs from your broker's, check that stock.",
+  "importNothingNew": "Nothing new to import",
+  "importConfirm": "Import ({trades} trades, {stocks} stocks)",
+  "@importConfirm": {
+    "placeholders": {
+      "trades": {},
+      "stocks": {}
+    }
+  },
+  "importNotHeld": "Not in the portfolio now",
+  "importHeldNow": "Now: {qty} shares",
+  "@importHeldNow": {
+    "placeholders": {
+      "qty": {}
+    }
+  },
+  "importFromBook": "Build from tradebook",
+  "importOnlyNew": "Add new only",
+  "importFromBookNote": "The old opening holding goes away; the holding is built only from tradebook trades.",
+  "importOnlyNewNote": "The old holding stays and tradebook trades are added on top (careful: old buys must not be added twice).",
+  "importManualWarn": "You also entered {count} trades of this stock by hand. If the same trade is in the tradebook, it will be added twice; after import, check Trade book and remove the repeated trade.",
+  "@importManualWarn": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "importError": "Will not be imported: {error}",
+  "@importError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "importResultClosed": "After import: fully sold (Closed positions), realized {pl}",
+  "@importResultClosed": {
+    "placeholders": {
+      "pl": {}
+    }
+  },
+  "importResultOpen": "After import: {qty} shares @ {avg} · Invested {invested}",
+  "@importResultOpen": {
+    "placeholders": {
+      "qty": {},
+      "avg": {},
+      "invested": {}
+    }
+  },
+  "addHolding": "Add Holding",
+  "portfolioLoadingTitle": "Loading holdings",
+  "portfolioLoadingBody": "Pulling your live portfolio positions.",
+  "portfolioUnavailable": "Portfolio unavailable",
+  "portfolioEmptyTitle": "No Portfolio Holdings Yet",
+  "portfolioEmptyBody": "Add your investment positions to unlock real-time Indian stock valuations, P&L, and AI scores.",
+  "portfolioAddFirst": "Add Your First Stock",
+  "portfolioOpenTradeBook": "View trade book",
+  "portfolioImport": "Zerodha tradebook import",
+  "tradeBookTitle": "Trade book",
+  "portfolioTracked": "{count} holdings under active tracking.",
+  "@portfolioTracked": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "sortAlphabetical": "Alphabetical (A-Z)",
+  "sortTodayGainers": "Today's Top Gainers (₹)",
+  "sortTodayLosers": "Today's Top Losers (₹)",
+  "sortOverallGainers": "Overall Top Gainers (%)",
+  "sortOverallLosers": "Overall Top Losers (%)",
+  "sortHighestValue": "Highest Value (₹)",
+  "commonShowLess": "Show less",
+  "commonSeeAll": "See all ({count})",
+  "@commonSeeAll": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "sortShortTodayGainers": "Today's Gainers",
+  "sortShortTodayLosers": "Today's Losers",
+  "sortShortGainers": "Top Gainers",
+  "sortShortLosers": "Top Losers",
+  "sortShortValue": "Valuation",
+  "portfolioValuation": "PORTFOLIO VALUATION",
+  "metricInvested": "Invested",
+  "metricHoldings": "Holdings",
+  "metricPositions": "{count} Positions",
+  "@metricPositions": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "metricWinRatio": "Win Ratio",
+  "heatReturnTitle": "Return Heatmap",
+  "heatUpDown": "{up} Up • {down} Down",
+  "@heatUpDown": {
+    "placeholders": {
+      "up": {},
+      "down": {}
+    }
+  },
+  "heatOverall": "Overall",
+  "heatTodayPl": "Today's P&L",
+  "heatGainersFirst": "Gainers first",
+  "heatLosersFirst": "Losers first",
+  "heatEmpty": "No holdings to display",
+  "tradesLoadFailed": "Trades could not be loaded",
+  "tradesEmptyTitle": "No trades yet",
+  "tradesEmptyBody": "Every trade you add, buy or sell will appear here by day.",
+  "tradesSearchHint": "Search by stock (e.g. POLYCAB)",
+  "tradesCountDays": "{trades} trades · {days} days",
+  "@tradesCountDays": {
+    "placeholders": {
+      "trades": {},
+      "days": {}
+    }
+  },
+  "tradesNoMatch": "No trade found with this name.",
+  "tradeOpeningHolding": "Opening holding",
+  "tradeBonusSplit": "Shares from bonus/split",
+  "lastTimeTitle": "{symbol}: last time",
+  "@lastTimeTitle": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "lastTimeDates": "{from} to {to} ({days} days)",
+  "@lastTimeDates": {
+    "placeholders": {
+      "from": {},
+      "to": {},
+      "days": {}
+    }
+  },
+  "lastTimeBought": "Bought",
+  "lastTimeSold": "Sold",
+  "lastTimeRounds": "You have fully sold this stock {count} times; the figures above are for the latest one.",
+  "@lastTimeRounds": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "commonOk": "OK",
+  "addSelectStock": "Please search and select a stock symbol.",
+  "addValidQty": "Please enter a valid quantity greater than 0.",
+  "addValidPrice": "Please enter a valid average buy price.",
+  "addDone": "{symbol} added to portfolio successfully!",
+  "@addDone": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "addMerged": "{symbol}: {qty} shares added, average updated.",
+  "@addMerged": {
+    "placeholders": {
+      "symbol": {},
+      "qty": {}
+    }
+  },
+  "addTitle": "Add Stock Holding",
+  "addSubtitle": "Search any NSE/BSE stock to auto-fill details and start live AI tracking.",
+  "addSearchHint": "Search Stock Symbol (e.g. RELIANCE, TITAN, INFY)",
+  "addCompanyName": "Company Name",
+  "addFetchingPrice": "Fetching live price...",
+  "addCurrentPrice": "Current Price: {price}",
+  "@addCurrentPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "addUseAsBuy": "[Use as Buy Price]",
+  "commonQuantity": "Quantity",
+  "addAvgBuyPrice": "Avg Buy Price (₹)",
+  "commonBuyPrice": "Buy Price (₹)",
+  "addToPortfolio": "Add to Portfolio",
+  "addToPortfolioAvg": "Add to portfolio (update avg)",
+  "tradeQtyPositive": "Quantity must be more than 0.",
+  "tradePricePositive": "Price must be more than 0.",
+  "tradeNotEnough": "Not enough shares: you have {have}, selling {selling}.",
+  "@tradeNotEnough": {
+    "placeholders": {
+      "have": {},
+      "selling": {}
+    }
+  },
+  "tradeSellSaved": "{symbol}: sale of {qty} shares recorded.",
+  "@tradeSellSaved": {
+    "placeholders": {
+      "symbol": {},
+      "qty": {}
+    }
+  },
+  "tradeRemoveOpening": "Remove opening holding?",
+  "tradeRemoveThis": "Remove this trade?",
+  "tradeRemoveOpeningBody": "This is your holding from before Trade entry: {qty} shares @ {price}. Removing it takes these {qty} shares out of the portfolio.\n\nIf you sold the shares, don't remove this; add a SELL trade.",
+  "@tradeRemoveOpeningBody": {
+    "placeholders": {
+      "qty": {},
+      "price": {}
+    }
+  },
+  "tradeRebuilt": "The holding will be rebuilt from the remaining trades.",
+  "tradeYesRemove": "Yes, remove",
+  "tradeRemove": "Remove",
+  "tradeRemoved": "{symbol}: trade removed.",
+  "@tradeRemoved": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "holdingRemoveBodyFinal": "{symbol} and all its trades will be removed from the portfolio. This cannot be undone.\n\nSold the shares? Then don't delete; add a SELL trade, so the trade history and the \"last time\" figures stay.",
+  "@holdingRemoveBodyFinal": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "holdingRemovedFull": "{symbol} removed from portfolio.",
+  "@holdingRemovedFull": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "tradeAddFor": "Add trade · {symbol}",
+  "@tradeAddFor": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "editHolding": "Holding",
+  "editTotalInvested": "Total Invested",
+  "editRealized": "Realized P&L (avg cost)",
+  "editLtp": "Current Market Price (LTP)",
+  "commonSellPrice": "Sell Price (₹)",
+  "tradeAdd": "Add trade",
+  "tradesHeading": "Trades",
+  "tradesLoadError": "Trades could not be loaded: {error}",
+  "@tradesLoadError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "tradesNoneYet": "No trades recorded yet. As soon as you add the first trade, your current holding becomes an \"Opening holding\" trade.",
+  "tradeRemoveTip": "Remove trade",
+  "sellDoneTitle": "{symbol}: {qty} shares sold",
+  "@sellDoneTitle": {
+    "placeholders": {
+      "symbol": {},
+      "qty": {}
+    }
+  },
+  "sellRealized": "Realized P&L of this sale",
+  "sellDetail": "Sold {qty} @ {price}; the average was {avg}.",
+  "@sellDetail": {
+    "placeholders": {
+      "qty": {},
+      "price": {},
+      "avg": {}
+    }
+  },
+  "sellAllGone": "All shares sold. {symbol} is now in Closed positions.",
+  "@sellAllGone": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "sellRemaining": "Left: {left} shares @ {avg} (a sale does not change the average). Invested now {invested}.",
+  "@sellRemaining": {
+    "placeholders": {
+      "left": {},
+      "avg": {},
+      "invested": {}
+    }
+  },
+  "styleFunds": "ETF / funds {pct}",
+  "@styleFunds": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "styleLoss": "Loss-making {pct}",
+  "@styleLoss": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "styleNoData": "No data {pct}",
+  "@styleNoData": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "styleTitle": "Investment style",
+  "styleWhatTip": "What is this?",
+  "styleLargest": "Largest share",
+  "stylePctPortfolio": "{pct}% portfolio",
+  "@stylePctPortfolio": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "styleShare": "Share",
+  "styleRankNote": "Growth and Value are ranks from 0 to 100, like a rank in class. 60 or above means strong on that side.",
+  "styleWhatTitle": "What is Investment style?",
+  "styleWhatIntro": "This card is a mirror of your portfolio. It shows what kind of companies your money is in. It is not a suggestion to buy or sell.",
+  "styleSizeHead": "Company size",
+  "styleLarge": "Large: the 100 biggest companies.",
+  "styleMid": "Mid: the next 150 companies.",
+  "styleSmall": "Small: companies smaller than that.",
+  "styleMicro": "Micro: companies under ₹1,000 crore.",
+  "styleTypeHead": "Company type",
+  "styleGrowth": "Growth: growing fast, but the share is not cheap.",
+  "styleValue": "Value: the share is cheap, but the company is not growing especially fast.",
+  "styleBoth": "Growth + Value: growing fast and cheap too. Such companies are rare.",
+  "styleOthers": "Others: neither especially fast nor especially cheap.",
+  "styleTableHead": "How to read the table",
+  "styleTableBody": "Each box shows how much of the portfolio is in that size and type. Say ₹100 is invested: 18.0% means ₹18.",
+  "styleTableBody2": "The box with a gold border is the largest share. The darker the colour, the bigger the share. Tap a box to see its stocks.",
+  "styleHowHead": "How the type is decided",
+  "styleHow1": "Each company is compared with companies of its own size, like a rank in class.",
+  "styleHow2": "Growth rank: how much sales and profit grew over the last 3 and 5 years.",
+  "styleHow3": "Value rank: how cheap the share is by P/E, P/B and dividend.",
+  "styleHow4": "A rank of 60 or above puts the company in that type.",
+  "styleBelowHead": "The line below",
+  "styleBelowBody": "ETFs and funds are not companies, and loss-making companies have no P/E. So they are listed separately, outside the table.",
+  "styleNoteHead": "Keep in mind",
+  "styleNoteBody": "The rank is against other companies, so the label can change over time.",
+  "perfBackcast": "If today's holdings had been held the whole time. This is not your actual return.",
+  "perfFooter": "Price only, dividends not included. Data up to {date}.",
+  "@perfFooter": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "perfPartial": "Some holdings lack full past data. The graph is built on the remaining holdings without them.",
+  "movesToday": "Today",
+  "movesLastSession": "Last session",
+  "movesLegend": "Box size: share of the portfolio. Colour: that day's change.",
+  "movesGainers": "Top gainers",
+  "movesLosers": "Top losers",
+  "tradeDateHelp": "Trade date",
+  "tradeDate": "Trade date",
+  "tradeZeroLeft": "0 shares (fully sold)",
+  "tradeNow": "Now",
+  "tradeAfter": "After the trade",
+  "importFailed": " {count} stocks failed; their holdings are unchanged:",
+  "@importFailed": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "importDuplicates": " · {count} already imported (skipped)",
+  "@importDuplicates": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "importSkipped": " · {count} rows skipped (F&O / unreadable)",
+  "@importSkipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "importStockLine": "{count} trades{skip}",
+  "@importStockLine": {
+    "placeholders": {
+      "count": {},
+      "skip": {}
+    }
+  },
+  "savedRemoved": "{symbol} removed from MY SAVED LIST",
+  "@savedRemoved": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "savedAdded": "{symbol} saved to MY SAVED LIST at {price}",
+  "@savedAdded": {
+    "placeholders": {
+      "symbol": {},
+      "price": {}
+    }
+  },
+  "alertButtonCount": "Price alert · {count} set",
+  "@alertButtonCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "alertButton": "Set price alert",
+  "stockPricePerformance": "Price Performance",
+  "stockChartSoon": "Historical Chart Coming Soon",
+  "stockWatchlistAsset": "Watchlist Asset",
+  "stockNotOwned": "Not currently in your owned portfolio.",
+  "stockScoreFailed": "Unable to load AI Score",
+  "stockAnalyzing": "Analyzing {symbol} signals...",
+  "@stockAnalyzing": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "stockScoring": "Scoring quality, valuation and price trend from the latest data.",
+  "stockSaved": "Saved",
+  "stockSave": "+ Save",
+  "aiRulesBased": "Rules-based research score",
+  "aiHowWorks": "How the NV Score works",
+  "aiDataPending": "Data Pending",
+  "aiDataReview": "Data Under Review",
+  "aiExcluded": "Score Excluded",
+  "aiCreditPending": "Credit Pending",
+  "aiBrokerLeverage": "Broker MTF Leverage",
+  "aiDebtNotAssessed": "Debt Not Assessed",
+  "aiWhyScore": "Why this score",
+  "aiMethodology": "Methodology",
+  "aiNoScore": "No NV Score yet: {reason}. The score needs at least 3 of 4 quality inputs and is not built on assumed values.",
+  "@aiNoScore": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "aiReviewBody": "The source data for this stock did not match the exchange (market cap or price belong to a different company), so it is being reviewed. No score is shown rather than a score built on wrong numbers.",
+  "aiInsurance": "Life and General Insurance firms operate on actuarial float and statutory accounting. Quantitative 1-100 scoring is withheld until dedicated Embedded Value (EV) models are integrated.",
+  "aiHolding": "Investment holding companies trade at variable net asset value (NAV) discounts. Standard operating multiples (P/E, ROCE) are not applicable; specialized SOTP research is recommended.",
+  "aiReit": "Real Estate & Infrastructure Investment Trusts operate on distribution yield and Net Asset Value (NAV). Standard industrial scoring is withheld.",
+  "aiSpecialised": "The 1-100 score is not calculated for this stock: its accounts need a specialised valuation method.",
+  "aiScoreOnly": "NV Score {score}/100. The pillar breakdown appears after the next score update.",
+  "@aiScoreOnly": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "aiHighest": "NV Score {score}/100. Highest: {pillar}",
+  "@aiHighest": {
+    "placeholders": {
+      "score": {},
+      "pillar": {}
+    }
+  },
+  "aiLowest": "; lowest: {pillar}",
+  "@aiLowest": {
+    "placeholders": {
+      "pillar": {}
+    }
+  },
+  "aiRiskCap": " A risk check failed, which caps the score at {cap}.",
+  "@aiRiskCap": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "aiHurdle": " Quality is below 55, so the score is scaled down.",
+  "companyOverview": "Company Overview",
+  "companyLabel": "Company",
+  "companyIndustry": "Industry",
+  "companyStatus": "Status",
+  "holdingDetails": "Holding Details",
+  "holdingAvgPrice": "Average Price",
+  "holdingCurrentPrice": "Current Price",
+  "holdingInvested": "Invested Value",
+  "holdingCurrentValue": "Current Value",
+  "holdingNetPl": "Net P&L",
+  "holdingReturn": "Return",
+  "holdingDayPl": "Day's P&L",
+  "thesisTitle": "Investment Thesis",
+  "thesisNone": "No investment thesis available for this stock yet.",
+  "thesisReview": "Review this thesis after every quarterly result.",
+  "newsTitle": "Latest News",
+  "newsSub": "AI curated market updates",
+  "newsEmptyTitle": "No News Available",
+  "newsEmptyBody": "Latest company news and market updates will automatically appear here when available.",
+  "newsAutoRefresh": "Auto Refresh",
+  "peersTitle": "Compared with peers",
+  "peersAdd": "Add another peer",
+  "peersChange": "Change peer",
+  "peersDashNote": "— means no data. A loss-making company has no P/E.",
+  "alertRemoveTip": "Remove alert",
+  "alertRemoveFailed": "Could not remove the alert. Please try again.",
+  "alertDuplicate": "This alert is already set",
+  "alertMax": "You can have up to {max} alerts at once",
+  "@alertMax": {
+    "placeholders": {
+      "max": {}
+    }
+  },
+  "alertSaveFailed": "Could not save the alert. Please try again.",
+  "alertTitle": "Price alert · {symbol}",
+  "@alertTitle": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "alertCurrent": "Current price {price}",
+  "@alertCurrent": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "alertAbove": "Goes above",
+  "alertBelow": "Falls below",
+  "alertPriceHint": "Price (₹)",
+  "alertSaving": "Saving...",
+  "alertSet": "Set alert",
+  "alertNote": "During market hours the price is checked every 5 minutes. When it reaches your price, it shows in Notifications. All alerts: Notifications > My price alerts.",
+  "alertsMine": "My price alerts",
+  "alertsLoadFailed": "Alerts could not be loaded",
+  "alertsNone": "No active alerts. Set one from any stock's page.",
+  "recSummary": "DATA SUMMARY",
+  "recPlaybook": "Tactical Playbook",
+  "recHeld": "HELD IN PORTFOLIO",
+  "recDiscovery": "DISCOVERY MODE",
+  "recShows": "What the data shows",
+  "recWatch": "Number to watch",
+  "recUpdates": "What updates the score",
+  "recCoverage": "Data coverage: {pct}% • Synthesized from 6 quantitative pillars",
+  "@recCoverage": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "breakdownPending": "The breakdown appears after the next score update.",
+  "breakdownNone": "No score for this stock, so there is no breakdown.",
+  "breakdownNotCounted": "not counted",
+  "breakdownWeight": "{pct}% weight",
+  "@breakdownWeight": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "breakdownRiskFlag": "Risk flag",
+  "breakdownRiskCap": "Score capped at {cap} (pledge, net worth or debt check failed)",
+  "@breakdownRiskCap": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "breakdownHurdle": "Quality hurdle",
+  "breakdownHurdleBody": "× {hurdle} (quality below 55)",
+  "@breakdownHurdleBody": {
+    "placeholders": {
+      "hurdle": {}
+    }
+  },
+  "breakdownQualityCap": "Quality cap",
+  "breakdownQualityCapBody": "Capped at {cap} (54 below quality 55, rising to no cap at 65)",
+  "@breakdownQualityCapBody": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "breakdownLenderCap": "Lender / broker cap",
+  "breakdownLenderCapBody": "Capped at {cap} until credit data is added",
+  "@breakdownLenderCapBody": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "breakdownNote": "Note",
+  "shareDownloaded": "Image downloaded.",
+  "shareFailed": "Could not share. Please try again.",
+  "commonClose": "Close",
+  "stockSyncing": "Syncing...",
+  "stockAllTime": "All-Time: {amount}   ({pct})",
+  "@stockAllTime": {
+    "placeholders": {
+      "amount": {},
+      "pct": {}
+    }
+  },
+  "stockToday": "Today: {amount}   ({pct})",
+  "@stockToday": {
+    "placeholders": {
+      "amount": {},
+      "pct": {}
+    }
+  },
+  "stockExchange": "Exchange",
+  "stockTrend": "Trend",
+  "chartUpdating": "Chart updating...",
+  "radarTitle": "Score shape",
+  "radarNoteLeverage": "Each score is 0–100, higher toward the outside. In Leverage a higher score means less leverage.",
+  "radarNoteDebt": "Each score is 0–100, higher toward the outside. In Debt a higher score means less debt.",
+  "breakdownHintQuality": "Return on capital, debt, cash conversion and 5-year growth",
+  "breakdownHintValuation": "P/E vs sector peers and earnings yield",
+  "breakdownHintMomentum": "12-month return, latest month left out, ranked against all stocks",
+  "shareDisclaimer": "For information only. This is not investment advice.",
+  "searchTitle": "Search & Watchlist",
+  "searchTracked": "{count} Tracked",
+  "@searchTracked": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "searchSub": "Prices, NV Scores and watchlist tracking.",
+  "searchExplore": "Explore Stocks",
+  "searchHint": "Search stock by symbol or name (e.g. TAT, KEI, APO)...",
+  "searchingTitle": "Searching market universe",
+  "searchingBody": "Matching symbols and AI scores.",
+  "searchUnavailable": "Search unavailable",
+  "searchStartTitle": "Start with a symbol",
+  "searchStartBody": "Search any stock to see its NV Score.",
+  "searchNoneTitle": "No stock found",
+  "searchNoneBody": "Try another instrument or company name.",
+  "watchRemove": "Remove from Watchlist",
+  "watchAdd": "Add to Watchlist",
+  "watchSavedAt": "{symbol} saved at {price}",
+  "@watchSavedAt": {
+    "placeholders": {
+      "symbol": {},
+      "price": {}
+    }
+  },
+  "watchAdded": "{symbol} added to watchlist",
+  "@watchAdded": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "commonRefresh": "Refresh",
+  "watchRemoveConfirm": "Remove from Watchlist?",
+  "watchRemoveBodyPrice": "Are you sure you want to remove {name} ({symbol})? Your tracked entry price ({price}) will be cleared.",
+  "@watchRemoveBodyPrice": {
+    "placeholders": {
+      "name": {},
+      "symbol": {},
+      "price": {}
+    }
+  },
+  "watchRemoveBody": "Are you sure you want to remove {name} ({symbol}) from your watchlist?",
+  "@watchRemoveBody": {
+    "placeholders": {
+      "name": {},
+      "symbol": {}
+    }
+  },
+  "watchEmptyTitle": "No stocks in watchlist",
+  "watchEmptyBody": "Search any stock and tap \"+ Save\" to track it here.\nPull down to sync and refresh.",
+  "watchColCompany": "Company ⬍",
+  "watchColScore": "Score ⬍",
+  "watchColAdded": "Added Price",
+  "watchColLatest": "Latest Price ⬍\nChange",
+  "watchColReturns": "Returns ⬍\nTracked Date",
+  "watchColTech": "Technical & Things you should know",
+  "watchColAction": "Action",
+  "watchEntry": "Entry Point",
+  "notifMarkAll": "Mark all as read",
+  "notifMarked": "All alerts marked as read.",
+  "notifFailed": "Failed to load notifications:\n{error}",
+  "@notifFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "notifActive": "{count} active",
+  "@notifActive": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "notifJustNow": "Just now",
+  "notifMinutes": "{n}m ago",
+  "@notifMinutes": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "notifHours": "{n}h ago",
+  "@notifHours": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "notifDays": "{n}d ago",
+  "@notifDays": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "notifEmptyTitle": "No Alerts in this Category",
+  "notifEmptyBody": "Your portfolio is stable and within risk limits.",
+  "advBusy": "NV Advisor is busy or there is a connection issue. Please ask again in a little while.",
+  "advNoReply": "No reply yet",
+  "advHistoryTitle": "Today's History",
+  "advQueries": "{count} Queries",
+  "@advQueries": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "advNoHistory": "No conversation yet today.",
+  "advSub": "Research assistant for your holdings",
+  "advClear": "Clear Chat",
+  "advReset": "Chat reset. You can ask me anything about your portfolio!",
+  "advAnalyzing": "NV Advisor analyzing...",
+  "advHint": "Ask NV Advisor anything about your portfolio...",
+  "riskLoadFailed": "Portfolio could not be loaded",
+  "riskNoStocks": "No stocks in the portfolio",
+  "riskDisclaimer": "This is an estimate from the past 1 year's beta, not a prediction. The actual fall can differ. No trade happens here, and this is not investment advice.",
+  "riskBetaNote": "1.00 means it moves as much as Nifty. Above 1 means more.",
+  "riskNoBeta": "{stocks} have no beta. Built on {pct} of the portfolio.",
+  "@riskNoBeta": {
+    "placeholders": {
+      "stocks": {},
+      "pct": {}
+    }
+  },
+  "riskPeExcluded": "{stocks} not in P/E (loss-making or ETF). P/E is built on {pct} of the portfolio.",
+  "@riskPeExcluded": {
+    "placeholders": {
+      "stocks": {},
+      "pct": {}
+    }
+  },
+  "riskIfFalls": "If the market falls",
+  "riskBetaNa": "Beta is not available right now, so this cannot be worked out.",
+  "riskEstimated": "Estimated change {amount}",
+  "@riskEstimated": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "riskNotCounted": "{stocks} not counted, as they have no beta.",
+  "@riskNotCounted": {
+    "placeholders": {
+      "stocks": {}
+    }
+  },
+  "riskMostImpact": "Biggest effect",
+  "riskStockShare": "{name} share",
+  "@riskStockShare": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "riskStockNoBeta": "This stock has no beta, so it is not counted in portfolio beta.",
+  "riskIfChange": "If this stock changes",
+  "riskStockField": "Stock name or symbol",
+  "riskYouHold": "You hold",
+  "riskAdd": "Add",
+  "riskReduce": "Reduce",
+  "riskAmount": "Amount (₹)",
+  "riskWarnStock": "{symbol} would be {pct}% of the portfolio, above the {limit}% line.",
+  "@riskWarnStock": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {},
+      "limit": {}
+    }
+  },
+  "alertEnterPrice": "Enter a valid price",
+  "alertMustAbove": "The price must be above the current price",
+  "alertMustBelow": "The price must be below the current price",
+  "caTitle": "{symbol}: {label} announced",
+  "@caTitle": {
+    "placeholders": {
+      "symbol": {},
+      "label": {}
+    }
+  },
+  "caBody": "You held {before} shares that day, so {extra} new shares (at ₹0) will be added.",
+  "@caBody": {
+    "placeholders": {
+      "before": {},
+      "extra": {}
+    }
+  },
+  "caNow": "Now: {qty} shares @ {avg}",
+  "@caNow": {
+    "placeholders": {
+      "qty": {},
+      "avg": {}
+    }
+  },
+  "caAfter": "After update: {qty} shares @ {avg}",
+  "@caAfter": {
+    "placeholders": {
+      "qty": {},
+      "avg": {}
+    }
+  },
+  "caInvested": "Invested stays the same: {amount}",
+  "@caInvested": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "caFraction": "Fractional shares not added: the broker pays cash for them.",
+  "caMatch": "Match the share count with your broker app. If it is wrong, you can remove it later from Trade book.",
+  "caLater": "Later",
+  "commonNo": "No",
+  "caYesAdd": "Yes, add",
+  "cardLtp": "LTP: {price}",
+  "@cardLtp": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "alertWeightTitle": "Weight Alert: {symbol}",
+  "@alertWeightTitle": {
+    "placeholders": {
+      "symbol": {}
+    }
+  },
+  "alertWeightBody": "{symbol} accounts for {pct}% of your portfolio value, above the 25% concentration line.",
+  "@alertWeightBody": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {}
+    }
+  },
+  "alertChecksTitle": "Portfolio checks on",
+  "alertChecksBody": "Concentration is checked across your {count} holdings each time alerts load.",
+  "@alertChecksBody": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "alertWelcomeBody": "Add your holdings in Portfolio to enable automated algorithmic risk monitoring and technical pivot tracking.",
+  "errNoInternet": "No internet connection. Check your network and tap Try Again.",
+  "errGeneric": "Something went wrong while loading. Please try again in a moment.",
+  "importNotZerodha": "This does not look like a Zerodha tradebook: the symbol, trade_date, trade_type, quantity, price and trade_id columns were not found.",
+  "advGreeting": "Namaste! I am **NV Advisor**\n\nI am your research assistant. I explain the numbers of your portfolio holdings, P&L, NV Scores, **Peer Comparisons** and **Risk Checks**; I do not give advice to buy or sell.\n\nYou can ask me any portfolio or stock question!",
+  "advAsk1": "Show my portfolio's 3 biggest mistakes and risks",
+  "advAsk2": "Tata Motors vs Maruti: which has better growth?",
+  "advAsk3": "Titan vs Trent comparison",
+  "advAsk4": "What are UltraTech's price and NV Score?",
+  "advAsk5": "How is my portfolio performing?",
+  "advAsk6": "What is the trend of Nifty 50 and the market?",
+  "caExDate": "Ex-date {date}: each 1 share is now {multiple} shares. ",
+  "@caExDate": {
+    "placeholders": {
+      "date": {},
+      "multiple": {}
+    }
+  },
+  "narrEtf": "Exchange-Traded Fund",
+  "narrEtfBrief": "{name} is an exchange-traded fund that tracks {sector}. Its price follows the underlying basket, so company-level ratios such as ROCE do not apply; the NV Score gives it a fixed quality of 75 and valuation of 60 and scores only its 12-month return rank.",
+  "@narrEtfBrief": {
+    "placeholders": {
+      "name": {},
+      "sector": {}
+    }
+  },
+  "narrEtfBasket": "Diversified basket",
+  "narrEtfBasketBody": "Holds many securities (or a commodity), so the results of one company move it less than a single stock.",
+  "narrEtfBenchmark": "Moves with its benchmark",
+  "narrEtfBenchmarkBody": "Returns follow the index or commodity it tracks, including its falls.",
+  "narrEtfOwned": "In your portfolio. NV Score {score}/100, set mostly by its 12-month return rank.",
+  "@narrEtfOwned": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "narrEtfNotOwned": "NV Score {score}/100, set mostly by its 12-month return rank.",
+  "@narrEtfNotOwned": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "narrEtfWatch": "Tracking difference against its benchmark and the expense ratio (from the fund house factsheet).",
+  "narrEtfUpdates": "Daily closing prices update the 12-month return rank.",
+  "narrNotEnough": "Not enough quality data yet",
+  "narrPendingBrief": "No NV Score for {name} yet: {why}. A score built on too few inputs would be misleading, so none is shown.",
+  "@narrPendingBrief": {
+    "placeholders": {
+      "name": {},
+      "why": {}
+    }
+  },
+  "narrMissing": "What is missing",
+  "narrMissingBody": "{why}. The score needs at least 3 of 4 quality inputs (return on capital, debt, cash conversion, growth).",
+  "@narrMissingBody": {
+    "placeholders": {
+      "why": {}
+    }
+  },
+  "narrScorePending": "Score: Pending",
+  "narrWhyNoScore": "Why no score",
+  "narrNoAssumed": "Missing inputs are not filled with assumed values.",
+  "narrInputsIncomplete": "Inputs: Incomplete",
+  "narrPendingOwned": "Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is pending.",
+  "narrPendingNotOwned": "Only the NV Score is pending; the live price is unaffected.",
+  "narrPendingWatch": "The next annual results of the company, which usually fill the missing inputs.",
+  "narrPendingUpdates": "The score appears automatically once enough data is available.",
+  "narrReviewBrief": "The fundamentals we hold for {name} did not match exchange data: the market cap or price belongs to a different company. The score is withheld until the data is corrected.",
+  "@narrReviewBrief": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "narrChecked": "What we checked",
+  "narrCheckedBody": "Stored market cap and price were compared with the NSE closing price and an independent market-cap source.",
+  "narrCheckFailed": "Check: Failed",
+  "narrWrongNumbers": "A score built on another company's numbers would be misleading, so none is shown.",
+  "narrScoreWithheld": "Score: Withheld",
+  "narrReviewOwned": "Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is withheld.",
+  "narrReviewNotOwned": "Only the NV Score is withheld; the live price is unaffected.",
+  "narrReviewWatch": "Check the company's latest results on the NSE / BSE website until the data is corrected.",
+  "narrReviewUpdates": "The score returns automatically once the data passes the check.",
+  "narrHoldingTag": "Investment Holding Company (SOTP Required)",
+  "narrInsuranceTag": "Actuarial Underwriting Entity (EV Model Required)",
+  "narrTrustTag": "Yield Distribution Trust (NAV Required)",
+  "narrSpecialTag": "Specialized Asset Class (Score Excluded)",
+  "narrHoldingBrief": "{name} functions as an equity investment holding company. Standard operating ROCE and P/E ratios are mathematically distorted by holding company discounts and non-operating dividend income. Valuation must be assessed via Sum-of-the-Parts (SOTP) net asset value.",
+  "@narrHoldingBrief": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "narrInsuranceBrief": "{name} operates an actuarial insurance underwriting portfolio. Statutory accounting and premium float dynamics make industrial ROCE metrics non-applicable; valuation is driven by Value of New Business (VNB) margins and Embedded Value (EV).",
+  "@narrInsuranceBrief": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "narrTrustBrief": "{name} is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.",
+  "@narrTrustBrief": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "narrHoldingNav": "Underlying Portfolio Holdings NAV",
+  "narrFloat": "Float Compounding & VNB Expansion",
+  "narrDistribution": "Predictable Distribution Yield",
+  "narrHoldingNavBody": "Value realization is linked to the market capitalization growth of listed subsidiaries and unlisted associates.",
+  "narrFloatBody": "Long-duration customer float and growing policyholder retention fuel actuarial book value expansion.",
+  "narrDistributionBody": "High dividend payout mandates and pass-through tax structures provide tangible cash distribution.",
+  "narrCoverage": "Coverage: Specialized",
+  "narrDiscount": "Holding Company Discount Persistence",
+  "narrClaims": "Actuarial Claims / Surrender Risk",
+  "narrRate": "Interest Rate Sensitivity",
+  "narrDiscountBody": "Holding company share prices often trade below the value of their underlying holdings; the gap varies by company and over time.",
+  "narrClaimsBody": "Regulatory commission caps and sudden mortality/morbidity claims spikes can pressure quarterly margins.",
+  "narrRateBody": "Rising benchmark yields increase the discount rate and compress trust capital value.",
+  "narrRiskSpecial": "Risk: Specialized",
+  "narrSpecialOwned": "Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.",
+  "narrSpecialNotOwned": "The 1-100 score is not calculated for this category because standard operating ratios do not apply.",
+  "narrSpecialMetrics": "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+  "narrSpecialHold": "Market value of core subsidiary holdings and parent capital allocation track record.",
+  "narrSpecialIns": "VNB margins, persistency ratios, and solvency margin ratio.",
+  "narrSpecialTrust": "Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec.",
+  "narrScoreProfile": "Score Profile",
+  "narrNoScore": "{name} has no NV Score yet.",
+  "@narrNoScore": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "narrScoreNoBreakdown": "{name} has an NV Score of {score}/100. The pillar-by-pillar breakdown appears after the next score update.",
+  "@narrScoreNoBreakdown": {
+    "placeholders": {
+      "name": {},
+      "score": {}
+    }
+  },
+  "narrBreakdownPending": "Breakdown pending",
+  "narrBreakdownNext": "Quality, valuation and price-trend details load with the next nightly score update.",
+  "narrNoPillars": "No pillar data to compare yet.",
+  "narrOwnedScore": "In your portfolio. NV Score {score}/100.",
+  "@narrOwnedScore": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "narrScoreLine": "NV Score {score}/100.",
+  "@narrScoreLine": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "narrBreakdownWatch": "The breakdown below the score shows which pillar moves it.",
+  "narrHasScore": "{name} has an NV Score of {score}/100. ",
+  "@narrHasScore": {
+    "placeholders": {
+      "name": {},
+      "score": {}
+    }
+  },
+  "narrMissingPillars": " {pillars}: no data yet, so the other pillars carry its weight.",
+  "@narrMissingPillars": {
+    "placeholders": {
+      "pillars": {}
+    }
+  },
+  "narrRiskCap": " A risk check failed (pledge, net worth or debt), which caps the score at {cap}.",
+  "@narrRiskCap": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "narrQualityCap": " Its quality pillar caps the score at {cap} (54 below quality 55, no cap from 65).",
+  "@narrQualityCap": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "narrHurdle": " Quality is below 55, so the weighted score is multiplied by {factor}.",
+  "@narrHurdle": {
+    "placeholders": {
+      "factor": {}
+    }
+  },
+  "narrLenderCap": " Banks, NBFCs and brokers are capped at {cap} until credit data is added.",
+  "@narrLenderCap": {
+    "placeholders": {
+      "cap": {}
+    }
+  },
+  "narrInPortfolio": "In your portfolio. ",
+  "narrHighLow": "Highest pillar: {high}. Lowest pillar: {low}.",
+  "@narrHighLow": {
+    "placeholders": {
+      "high": {},
+      "low": {}
+    }
+  },
+  "narrHighest": "Highest pillar: {pillar}",
+  "@narrHighest": {
+    "placeholders": {
+      "pillar": {}
+    }
+  },
+  "narrLowest": "Lowest pillar: {pillar}",
+  "@narrLowest": {
+    "placeholders": {
+      "pillar": {}
+    }
+  },
+  "narrNoDetail": "No detail available for this pillar.",
+  "narrMostRoom": "The {pillar} pillar has the most room to move the score.",
+  "@narrMostRoom": {
+    "placeholders": {
+      "pillar": {}
+    }
+  },
+  "narrPartScore": "{label} scores {points} of {max} ({detail}).",
+  "@narrPartScore": {
+    "placeholders": {
+      "label": {},
+      "points": {},
+      "max": {},
+      "detail": {}
+    }
+  },
+  "narrRiskFlag": "Risk Flag",
+  "narrBelowHurdle": "Below Quality Hurdle",
+  "narrStrongLowVal": "Strong Quality, Lower Valuation",
+  "narrStrongHighVal": "Strong Quality, High Valuation",
+  "narrStrongQuality": "Strong Quality",
+  "narrMixed": "Mixed Profile",
+  "narrNotScored": "Not Scored",
+  "narrBandExcellent": "Score Band: Excellent",
+  "narrBandStrong": "Score Band: Strong",
+  "narrBandAverage": "Score Band: Average",
+  "narrBandWeak": "Score Band: Weak",
+  "commonAnd": "and",
+  "narrUpdates": "Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update valuation and the 12-month return rank.",
+  "mWhatTitle": "What the score is",
+  "mWhatBody": "A 0-100 score built only from published numbers: return on capital, debt, cash flow, growth, valuation and the 12-month price return. The same rules apply to every stock, and no person picks or adjusts a score. It describes a company's financial profile; it is not a forecast and not a buy or sell call.",
+  "mBands": "Score bands",
+  "mBandExcellent": "Excellent: strong on most measures",
+  "mBandStrong": "Strong",
+  "mBandAverage": "Average",
+  "mBandWeak": "Weak: below the quality hurdle, or a risk flag",
+  "mPillars": "Three pillars",
+  "mPillarsBody": "The overall score is a weighted mix. If valuation or momentum has no data it is left out and its weight is shared by the others; it is never filled with a guessed value.",
+  "mQualityBody": "Return on capital (ROCE) 40, debt to equity 25, operating cash flow vs profit 15, 5-year sales and profit growth 20 (full marks at 20% a year sales and 25% profit; shrinking scores 0). ROCE and debt count half on a fixed scale and half on the rank among companies in the same industry (15 or more), else the same sector.",
+  "mValuationBody": "P/E compared with companies in the same industry 50, P/E compared with its own 5-year average 30 (0.6x or lower full marks, 0.85x half, 1.3x or higher none), and P/E against 5-year profit growth (PEG) 20 (1 or lower full marks, 3 or higher none; growth counted between 5% and 40% a year). A part with no data is left out. A loss-making company scores 0. Companies that demerged a large business, or have no 5-year average, use the earnings yield vs the 10-year government bond instead of their own average. Banks and NBFCs use P/B: rank within banks or NBFCs 60, against their own 5-year average 40.",
+  "mMomentumBody": "Price return over the last 12 months, leaving out the latest month, ranked against every scored stock (6 months for stocks listed under a year). RSI, MACD and moving averages are shown for information and are not scored.",
+  "mHurdleBody": "When the quality pillar is below 55, the overall score is capped at 54. From quality 55 to 65 the cap rises step by step (about 4.6 points per quality point) and disappears at 65, so a small change in quality never makes the score jump. A cheap stock or a strong price run cannot lift a weak business into the strong bands.",
+  "mMinData": "Minimum data",
+  "mMinDataBody": "Quality needs at least 3 of its 4 inputs (return on capital, debt, cash flow, growth). With 2 inputs the overall score is capped at 60; with fewer, or without return on capital, no score is shown and the stock reads DATA PENDING. Missing inputs are never assumed.",
+  "mRiskFlags": "Risk flags",
+  "mRiskBody": "Any of these caps the score at 28 and shows HIGH RISK FLAG, whatever the other numbers say:",
+  "mPledge": "Pledge",
+  "mPledgeBody": "75% or more of promoter shares pledged, or pledged shares at 25% or more of the company",
+  "mNetWorth": "Net worth",
+  "mNetWorthBody": "Zero or negative shareholder equity (held for review instead when the price-to-book in the fundamentals dataset is positive)",
+  "mDebt": "Debt",
+  "mDebtBody": "A negative debt-to-equity figure (a data anomaly)",
+  "mReviewed": "Reviewed pledges",
+  "mReviewedBody": "Some large pledges are checked against exchange filings. When the promoter is a private-equity owner that pledged its stake for its own holding-company loan, the pledge is shown as a note and does not trigger the flag. Every other pledge follows the rule above.",
+  "mSpecial": "Special cases",
+  "mBanks": "Banks and NBFCs",
+  "mBanksBody": "Quality is return on equity 30, return on assets 25, net interest margin 15 (banks only), leverage 10 and growth 20. Loan quality (NPA) is not assessed yet, so the score is capped at 75 and shows a \"provisional\" badge.",
+  "mBrokers": "Brokers",
+  "mBrokersBody": "Debt is not scored (margin funding borrowings); capped at 75 with a \"provisional\" badge.",
+  "mInsurance": "Insurance, holding companies, REITs / InvITs",
+  "mInsuranceBody": "No score. Their accounts do not fit these ratios; they need embedded value, NAV or yield instead.",
+  "mEtfsBody": "Valuation is set to a neutral 60.",
+  "mReview": "Data under review",
+  "mReviewBody": "No score when our stored fundamentals fail a check against exchange data (market cap or price of a different company). It returns once the data is corrected.",
+  "mLabels": "Labels",
+  "mPositiveTrend": "Positive trend",
+  "mPositiveBody": "Momentum rank 50+. A stock already on the positive side keeps it until the rank falls below 45; one on the weak side needs 55 to cross, so a label does not flip on small daily moves.",
+  "mHighStrength": "Quality 70+, valuation 65+, positive trend",
+  "mConsolidation": "Quality 70+, valuation 65+, weak trend",
+  "mFair": "Quality 70+, valuation 35-64",
+  "mExtended": "Quality 70+, valuation below 35, positive trend",
+  "mElevated": "Quality 70+, valuation below 35, weak trend",
+  "mNeutral": "Quality 55-69",
+  "mBelow": "Quality below 55",
+  "mNegative": "Quality 70+, but the company is loss-making",
+  "mUnavailable": "Quality 70+, but under 6 months of price history or no valuation data",
+  "mUnconfirmed": "Pledge data is missing, so the risk check could not run",
+  "mDataPending": "Not enough data to score yet",
+  "mFreshness": "Data and freshness",
+  "mFreshnessBody": "Fundamentals come from a dataset compiled from companies' published results; where a figure is missing, debt and cash flow are taken from Yahoo Finance; net worth, margins and bank balance-sheet figures come from Yahoo Finance. Closing prices come from the NSE daily bhavcopy; prices during market hours come from Yahoo Finance and can be delayed. Scores are recalculated after each trading day's close. Data can be incomplete or wrong; check the company's filings before relying on any number.",
+  "syncStepAuth": "Verifying Authentication",
+  "syncStepHoldings": "Loading Portfolio Holdings",
+  "syncStepPrices": "Syncing Latest Prices & Health",
+  "syncLoading": "Loading Portfolio...",
+  "dashToday": "TODAY",
+  "signalWeakest": "WEAKEST",
+  "recoStrong": "Strong Returns",
+  "recoAbove": "Your holdings are {ret} above their total cost.",
+  "@recoAbove": {
+    "placeholders": {
+      "ret": {}
+    }
+  },
+  "recoPositive": "Positive Returns",
+  "recoNearCost": "Near Cost",
+  "recoAgainst": "Your holdings are {ret} against their total cost.",
+  "@recoAgainst": {
+    "placeholders": {
+      "ret": {}
+    }
+  },
+  "recoMild": "Mild Drawdown",
+  "recoBelow": "Your holdings are {ret} below their total cost.",
+  "@recoBelow": {
+    "placeholders": {
+      "ret": {}
+    }
+  },
+  "recoBelowCost": "Below Cost",
+  "recoOverall": "Overall return: {ret}.",
+  "@recoOverall": {
+    "placeholders": {
+      "ret": {}
+    }
+  },
+  "recoAboveBuy": "{profit} of {total} holdings are above their buy price.",
+  "@recoAboveBuy": {
+    "placeholders": {
+      "profit": {},
+      "total": {}
+    }
+  },
+  "recoHealth": "NV Health Index {score}/100 (value-weighted average NV Score).",
+  "@recoHealth": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "recoLoss": "{count} holdings are below their buy price; each one's \"Why this score\" shows its lowest pillar.",
+  "@recoLoss": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "recoLargestFall": "Largest fall: {symbol} ({pct}).",
+  "@recoLargestFall": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {}
+    }
+  },
+  "recoUnpriced": "{count} holdings have no current price and are left out of the totals.",
+  "@recoUnpriced": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "recoStale": "{count} holdings show their last saved price, not a live one.",
+  "@recoStale": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "recoNoneBelow": "No holding is below its buy price.",
+  "errSymbolNotListed": "This symbol is not in the NSE list. Choose the stock from search.",
+  "errLoginRequired": "Please log in first."
+}

@@ -49,6 +49,7 @@ class ParsedTradebook {
 class ZerodhaTradebook {
   const ZerodhaTradebook._();
 
+  static const notTradebook = 'not-a-zerodha-tradebook';
   static const required = ['symbol', 'trade_date', 'trade_type', 'quantity', 'price', 'trade_id'];
 
   static ParsedTradebook parse(String text) {
@@ -86,7 +87,7 @@ class ZerodhaTradebook {
     }
     if (headerAt < 0) {
       throw const FormatException(
-          'Ye Zerodha tradebook nahi lagti: symbol, trade_date, trade_type, quantity, price, trade_id columns nahi mile.');
+          notTradebook);
     }
     String cell(List<String> row, String name) {
       final j = col[name];

@@ -14,8 +14,12 @@ import '../../widgets/portfolio_card.dart';
 import 'closed_positions_page.dart';
 import 'import_trades_page.dart';
 import 'trade_book_page.dart';
+import 'widgets/investment_style_card.dart';
+import 'widgets/performance_card.dart';
+import 'widgets/today_moves_card.dart';
 import 'widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 enum PortfolioSortOption {
   alphabetical,
@@ -35,6 +39,8 @@ class PortfolioPage extends ConsumerStatefulWidget {
 
 class _PortfolioPageState extends ConsumerState<PortfolioPage> {
   PortfolioSortOption _selectedSort = PortfolioSortOption.alphabetical;
+  static const _holdingsPreview = 9; // fills three rows of the desktop grid
+  bool _showAllHoldings = false;
   late final ScrollController _scrollController;
   bool _showBackToTop = false;
 
@@ -161,8 +167,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
             foregroundColor: Colors.black,
             elevation: 4,
             icon: const Icon(Icons.add_rounded, color: Colors.black),
-            label: const Text(
-              'Add Holding',
+            label: Text(
+              context.t.addHolding,
               style: TextStyle(fontWeight: FontWeight.w800),
             ),
           ),
@@ -170,19 +176,19 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
       ),
       body: SafeArea(
         child: portfolioAsync.when(
-          loading: () => const _PortfolioState(
+          loading: () => _PortfolioState(
             icon: Icons.hourglass_empty_rounded,
-            title: 'Loading holdings',
-            message: 'Pulling your live portfolio positions.',
+            title: context.t.portfolioLoadingTitle,
+            message: context.t.portfolioLoadingBody,
             loading: true,
           ),
           error: (e, _) => _PortfolioState(
             icon: Icons.error_outline_rounded,
-            title: 'Portfolio unavailable',
-            message: ErrorMessages.friendly(e),
+            title: context.t.portfolioUnavailable,
+            message: ErrorMessages.friendly(e, context.t),
             action: ElevatedButton(
               onPressed: () => ref.invalidate(livePortfolioProvider),
-              child: const Text('Try Again'),
+              child: Text(context.t.commonTryAgain),
             ),
           ),
           data: (stocks) {
@@ -208,8 +214,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      const Text(
-                        'No Portfolio Holdings Yet',
+                      Text(
+                        context.t.portfolioEmptyTitle,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -217,8 +223,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      const Text(
-                        'Add your investment positions to unlock real-time Indian stock valuations, P&L, and AI scores.',
+                      Text(
+                        context.t.portfolioEmptyBody,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF8E929B),
@@ -233,8 +239,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         ),
                         onPressed: _openAddHoldingSheet,
                         icon: const Icon(Icons.add_rounded),
-                        label: const Text(
-                          'Add Your First Stock',
+                        label: Text(
+                          context.t.portfolioAddFirst,
                           style: TextStyle(fontWeight: FontWeight.w800),
                         ),
                       ),
@@ -242,7 +248,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                       TextButton.icon(
                         onPressed: _openTradeBook,
                         icon: const Icon(Icons.receipt_long_rounded, size: 18),
-                        label: const Text('Trade book dekho'),
+                        label: Text(context.t.portfolioOpenTradeBook),
                         style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
                       ),
                       TextButton.icon(
@@ -251,13 +257,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                           MaterialPageRoute(builder: (_) => const ImportTradesPage()),
                         ),
                         icon: const Icon(Icons.upload_file_rounded, size: 18),
-                        label: const Text('Zerodha tradebook import'),
+                        label: Text(context.t.portfolioImport),
                         style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
                       ),
                       TextButton.icon(
                         onPressed: _openClosedPositions,
                         icon: const Icon(Icons.inventory_2_outlined, size: 18),
-                        label: const Text('Closed positions'),
+                        label: Text(context.t.closedTitle),
                         style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
                       ),
                     ],
@@ -333,31 +339,31 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                     onPressed: _openClosedPositions,
                                     icon: const Icon(Icons.inventory_2_outlined),
                                     color: const Color(0xFF8E929B),
-                                    tooltip: 'Closed positions',
+                                    tooltip: context.t.closedTitle,
                                   ),
                                   IconButton(
                                     onPressed: _openTradeBook,
                                     icon: const Icon(Icons.receipt_long_rounded),
                                     color: const Color(0xFF8E929B),
-                                    tooltip: 'Trade book',
+                                    tooltip: context.t.tradeBookTitle,
                                   ),
                                   IconButton(
                                     onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
                                     icon: Icon(isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded),
                                     color: isPrivacy ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
-                                    tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',
+                                    tooltip: isPrivacy ? context.t.tipShowValues : context.t.tipHideValues,
                                   ),
                                   IconButton(
                                     onPressed: _openAddHoldingSheet,
                                     icon: const Icon(Icons.add_circle_outline_rounded),
                                     color: const Color(0xFFE5A93C),
-                                    tooltip: 'Add Holding',
+                                    tooltip: context.t.addHolding,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${stocks.length} holdings under active tracking.',
+                                context.t.portfolioTracked(stocks.length),
                                 style: const TextStyle(
                                   color: Color(0xFF8E929B),
                                   fontSize: 13,
@@ -377,6 +383,18 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                 stocks: sortedStocks,
                                 isPrivacy: isPrivacy,
                               ),
+
+                              const SizedBox(height: 16),
+
+                              const PerformanceCard(),
+
+                              const SizedBox(height: 16),
+
+                              const TodayMovesCard(),
+
+                              const SizedBox(height: 16),
+
+                              const InvestmentStyleCard(),
 
                               const SizedBox(height: 16),
 
@@ -441,45 +459,45 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                       ),
                                     ),
                                     itemBuilder: (context) => [
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.alphabetical,
                                         child: Text(
-                                          'Alphabetical (A-Z)',
+                                          context.t.sortAlphabetical,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.todayGainers,
                                         child: Text(
-                                          "Today's Top Gainers (₹)",
+                                          context.t.sortTodayGainers,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.todayLosers,
                                         child: Text(
-                                          "Today's Top Losers (₹)",
+                                          context.t.sortTodayLosers,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.bestPnL,
                                         child: Text(
-                                          'Overall Top Gainers (%)',
+                                          context.t.sortOverallGainers,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.worstPnL,
                                         child: Text(
-                                          'Overall Top Losers (%)',
+                                          context.t.sortOverallLosers,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: PortfolioSortOption.highestValue,
                                         child: Text(
-                                          'Highest Value (₹)',
+                                          context.t.sortHighestValue,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -504,8 +522,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                       child: Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: gridMaxWidth),
-                          child: LayoutBuilder(
+                          child: Column(
+                            children: [
+                          LayoutBuilder(
                             builder: (context, constraints) {
+                              final shown = _showAllHoldings
+                                  ? sortedStocks
+                                  : sortedStocks.take(_holdingsPreview).toList();
                               final isTwoCol = constraints.maxWidth >= 540;
                               final columns = constraints.maxWidth >= 1050 ? 3 : 2;
 
@@ -513,10 +536,10 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                 return ListView.separated(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: sortedStocks.length,
+                                  itemCount: shown.length,
                                   separatorBuilder: (context, index) => const SizedBox(height: 10),
                                   itemBuilder: (context, index) {
-                                    return PortfolioCard(stock: sortedStocks[index]);
+                                    return PortfolioCard(stock: shown[index]);
                                   },
                                 );
                               }
@@ -530,12 +553,23 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                   mainAxisSpacing: 10,
                                   mainAxisExtent: 185,
                                 ),
-                                itemCount: sortedStocks.length,
+                                itemCount: shown.length,
                                 itemBuilder: (context, index) {
-                                  return PortfolioCard(stock: sortedStocks[index]);
+                                  return PortfolioCard(stock: shown[index]);
                                 },
                               );
                             },
+                          ),
+                          if (sortedStocks.length > _holdingsPreview)
+                            TextButton(
+                              style: TextButton.styleFrom(foregroundColor: const Color(0xFFE5A93C)),
+                              onPressed: () => setState(() => _showAllHoldings = !_showAllHoldings),
+                              child: Text(
+                                _showAllHoldings ? context.t.commonShowLess : context.t.commonSeeAll(sortedStocks.length),
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            ],
                           ),
                         ),
                       ),
@@ -556,15 +590,15 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
       case PortfolioSortOption.alphabetical:
         return 'A-Z';
       case PortfolioSortOption.todayGainers:
-        return "Today's Gainers";
+        return context.t.sortShortTodayGainers;
       case PortfolioSortOption.todayLosers:
-        return "Today's Losers";
+        return context.t.sortShortTodayLosers;
       case PortfolioSortOption.bestPnL:
-        return 'Top Gainers';
+        return context.t.sortShortGainers;
       case PortfolioSortOption.worstPnL:
-        return 'Top Losers';
+        return context.t.sortShortLosers;
       case PortfolioSortOption.highestValue:
-        return 'Valuation';
+        return context.t.sortShortValue;
     }
   }
 }
@@ -620,8 +654,8 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'PORTFOLIO VALUATION',
+                        Text(
+                          context.t.portfolioValuation,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -689,11 +723,11 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   children: [
-                    _InlineMetric('Invested', isPrivacy ? '••••••' : Formatters.currency0(totalInvested)),
+                    _InlineMetric(context.t.metricInvested, isPrivacy ? '••••••' : Formatters.currency0(totalInvested)),
                     Container(width: 1, height: 26, color: const Color(0xFF282A30)),
-                    _InlineMetric('Holdings', '$totalStocks Positions'),
+                    _InlineMetric(context.t.metricHoldings, context.t.metricPositions(totalStocks)),
                     Container(width: 1, height: 26, color: const Color(0xFF282A30)),
-                    _InlineMetric('Win Ratio', _calculateWinRatio()),
+                    _InlineMetric(context.t.metricWinRatio, _calculateWinRatio()),
                   ],
                 ),
               ),
@@ -790,13 +824,13 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
           children: [
             const Icon(Icons.grid_view_rounded, size: 13, color: Color(0xFFE5A93C)),
             const SizedBox(width: 5),
-            const Text(
-              'Return Heatmap',
+            Text(
+              context.t.heatReturnTitle,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white),
             ),
             const Spacer(),
             Text(
-              '$up Up • ${stocks.length - up} Down',
+              context.t.heatUpDown(up, stocks.length - up),
               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF858A94)),
             ),
           ],
@@ -804,9 +838,9 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
         const SizedBox(height: 8),
         Row(
           children: [
-            _modeChip('Overall', _HeatmapMode.overall),
+            _modeChip(context.t.heatOverall, _HeatmapMode.overall),
             const SizedBox(width: 6),
-            _modeChip("Today's P&L", _HeatmapMode.today),
+            _modeChip(context.t.heatTodayPl, _HeatmapMode.today),
             const Spacer(),
             InkWell(
               borderRadius: BorderRadius.circular(8),
@@ -823,7 +857,7 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
                     ),
                     const SizedBox(width: 3),
                     Text(
-                      _gainersFirst ? 'Gainers first' : 'Losers first',
+                      _gainersFirst ? context.t.heatGainersFirst : context.t.heatLosersFirst,
                       style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
                     ),
                   ],
@@ -885,11 +919,11 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (stocks.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 40,
         child: Center(
           child: Text(
-            'No holdings to display',
+            context.t.heatEmpty,
             style: TextStyle(fontSize: 12, color: Color(0xFF858A94)),
           ),
         ),

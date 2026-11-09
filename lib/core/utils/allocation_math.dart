@@ -48,6 +48,17 @@ class AllocationMath {
     return s.endsWith('BEES') || s.endsWith('ETF');
   }
 
+  static const fullyDiversifiedSectors = 8;
+
+  /// 0-100 from how evenly the money is spread across sectors, not how many sectors there are.
+  /// Effective sectors = 1 / sum of squared shares: 8 equal sectors or better scores 100, and
+  /// 90% in one sector scores about 15 however many others are held. Pass unfolded [sectors].
+  static int? diversificationScore(List<AllocationSlice> sectors) {
+    if (sectors.isEmpty) return null;
+    final squared = sectors.fold<double>(0, (t, s) => t + (s.percent / 100) * (s.percent / 100));
+    return (100 / (squared * fullyDiversifiedSectors)).clamp(0, 100).round();
+  }
+
   /// Slices by value, largest first. Groups past [maxSlices] fold into Others, so the donut stays
   /// readable and colours stay distinct.
   static List<AllocationSlice> slices(Iterable<({String group, double value})> holdings, {int? maxSlices}) {

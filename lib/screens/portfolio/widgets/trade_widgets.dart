@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/holding_math.dart';
 import '../../../models/trade.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 /// Tappable trade-date row; opens a date picker limited to today or earlier.
 class TradeDateField extends StatelessWidget {
@@ -23,7 +24,7 @@ class TradeDateField extends StatelessWidget {
           initialDate: date.isAfter(now) ? now : date,
           firstDate: DateTime(2000),
           lastDate: now,
-          helpText: 'Trade ki date',
+          helpText: context.t.tradeDateHelp,
         );
         if (picked != null) onChanged(picked);
       },
@@ -38,7 +39,7 @@ class TradeDateField extends StatelessWidget {
           children: [
             const Icon(Icons.event_rounded, color: Color(0xFF8E929B), size: 18),
             const SizedBox(width: 10),
-            const Text('Trade date', style: TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+            Text(context.t.tradeDate, style: TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
             const Spacer(),
             Text(
               DateFormat('d MMM yyyy').format(date),
@@ -81,7 +82,7 @@ class TradePreview extends StatelessWidget {
     }
 
     String holding(HoldingSummary s) => s.isClosed
-        ? '0 shares (poora bik jayega)'
+        ? context.t.tradeZeroLeft
         : '${_qty(s.qty)} @ ${Formatters.currency(s.avgPrice)}';
 
     return Container(
@@ -93,16 +94,16 @@ class TradePreview extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _row('Abhi', holding(start)),
+          _row(context.t.tradeNow, holding(start)),
           if (after != null) ...[
             const SizedBox(height: 6),
-            _row('Trade ke baad', holding(after), strong: true),
+            _row(context.t.tradeAfter, holding(after), strong: true),
             const SizedBox(height: 6),
-            _row('Total Invested', Formatters.currency(after.totalInvested)),
+            _row(context.t.editTotalInvested, Formatters.currency(after.totalInvested)),
             if (side == TradeSide.sell) ...[
               const SizedBox(height: 6),
               _row(
-                'Is sell ka realized P&L',
+                context.t.sellRealized,
                 Formatters.currency(after.realizedPl - start.realizedPl, signed: true),
                 color: after.realizedPl >= start.realizedPl
                     ? const Color(0xFF00E676)

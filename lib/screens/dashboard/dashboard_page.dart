@@ -23,6 +23,7 @@ import 'widgets/allocation_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 import '../portfolio/widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final VoidCallback? onOpenAdvisor;
@@ -101,19 +102,19 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
       backgroundColor: const Color(0xFF0C0D10),
       body: SafeArea(
         child: dashboard.when(
-          loading: () => const _ScreenState(
+          loading: () => _ScreenState(
             icon: Icons.hourglass_empty_rounded,
-            title: 'Building portfolio cockpit',
-            message: 'Fetching live valuation, health scores and AI signals.',
+            title: context.t.dashLoadingTitle,
+            message: context.t.dashLoadingBody,
             loading: true,
           ),
           error: (e, _) => _ScreenState(
             icon: Icons.error_outline_rounded,
-            title: 'Dashboard unavailable',
-            message: ErrorMessages.friendly(e),
+            title: context.t.dashUnavailable,
+            message: ErrorMessages.friendly(e, context.t),
             action: ElevatedButton(
               onPressed: () => ref.invalidate(dashboardProvider),
-              child: const Text('Try Again'),
+              child: Text(context.t.commonTryAgain),
             ),
           ),
           data: (data) {
@@ -160,7 +161,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
             final signals = DashboardSignalsGrid(
               summary: data,
-              holdings: liveStocks,
             );
 
             // 5. Today's AI Briefing & Insight Column (Attached Image 2)
@@ -301,7 +301,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
   }
 
   Widget _buildBriefingHeading() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -325,7 +325,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 child: Text(
-                  'TODAY',
+                  context.t.dashToday,
                   style: TextStyle(
                     color: Color(0xFFE5A93C),
                     fontSize: 11,
@@ -339,7 +339,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
         ),
         SizedBox(height: 4),
         Text(
-          'What the numbers of your holdings show today.',
+          context.t.dashBriefingSub,
           style: TextStyle(
             color: Color(0xFF8E929B),
             fontSize: 13,
@@ -386,12 +386,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 ),
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Welcome to Nivaarth Cockpit',
+                      context.t.dashWelcome,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 17,
@@ -401,7 +401,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Nivaarth research tools',
+                      context.t.dashTools,
                       style: TextStyle(
                         color: Color(0xFF8E929B),
                         fontSize: 12,
@@ -415,8 +415,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           ),
 
           const SizedBox(height: 16),
-          const Text(
-            'Add your current equity holdings to activate real-time analytics:',
+          Text(
+            context.t.dashAddPrompt,
             style: TextStyle(
               color: Color(0xFFD1D5DB),
               fontSize: 13,
@@ -427,20 +427,20 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           const SizedBox(height: 12),
           _buildOnboardingBullet(
             icon: Icons.auto_awesome_rounded,
-            title: 'Rules-based NV Score (0-100)',
-            subtitle: 'Quality 50%, Valuation 30%, Price trend 20%',
+            title: context.t.dashToolScore,
+            subtitle: context.t.dashToolScoreSub,
           ),
           const SizedBox(height: 8),
           _buildOnboardingBullet(
             icon: Icons.shield_outlined,
-            title: 'Dynamic Portfolio Health & Risk Radar',
-            subtitle: 'Concentration, sector mix and holdings below their buy price',
+            title: context.t.dashToolHealth,
+            subtitle: context.t.dashToolHealthSub,
           ),
           const SizedBox(height: 8),
           _buildOnboardingBullet(
             icon: Icons.psychology_outlined,
-            title: 'NV Advisor Contextual Co-Pilot',
-            subtitle: 'Ask about your holdings; answers use your data and NV Scores',
+            title: context.t.dashToolAdvisor,
+            subtitle: context.t.dashToolAdvisorSub,
           ),
 
           const SizedBox(height: 18),
@@ -465,8 +465,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 );
               },
               icon: const Icon(Icons.add_circle_outline_rounded, size: 18, color: Colors.black),
-              label: const Text(
-                'Add Your First Holding',
+              label: Text(
+                context.t.dashAddFirst,
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 14,

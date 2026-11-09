@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mobile/core/utils/market_hours.dart';
 import 'package:mobile/screens/dashboard/widgets/portfolio_health_card.dart';
+import 'helpers/localized_app.dart';
 
 void main() {
   test('Live only during the NSE session (IST)', () {
@@ -20,7 +21,7 @@ void main() {
   });
 
   testWidgets('card shows the derived status and no monitoring claims', (tester) async {
-    await tester.pumpWidget(const MaterialApp(
+    await tester.pumpWidget(localizedApp(
       home: Scaffold(body: PortfolioHealthCard(healthScore: 48, action: '', dataCoverage: 93)),
     ));
     expect(find.text('Status: Weak'), findsOneWidget);

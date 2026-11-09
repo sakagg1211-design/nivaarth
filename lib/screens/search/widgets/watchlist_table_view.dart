@@ -6,6 +6,7 @@ import '../../../models/live_portfolio.dart';
 import '../../../models/portfolio.dart';
 import '../../../models/watchlist_item.dart';
 import '../../stock/stock_detail_page.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class WatchlistTableView extends StatelessWidget {
   final List<WatchlistItem> items;
@@ -44,8 +45,8 @@ class WatchlistTableView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'No stocks in watchlist',
+                  Text(
+                    context.t.watchEmptyTitle,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -53,8 +54,8 @@ class WatchlistTableView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Search any stock and tap "+ Save" to track it here.\nPull down to sync and refresh.',
+                  Text(
+                    context.t.watchEmptyBody,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xFF858A94), fontSize: 12),
                   ),
@@ -89,7 +90,7 @@ class WatchlistTableView extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return _buildTableHeader(wide);
+                    return _buildTableHeader(context, wide);
                   }
 
                   final item = items[index - 1];
@@ -103,7 +104,7 @@ class WatchlistTableView extends StatelessWidget {
     );
   }
 
-  Widget _buildTableHeader(bool wide) {
+  Widget _buildTableHeader(BuildContext context, bool wide) {
     return Container(
       color: const Color(0xFF131418),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
@@ -111,8 +112,8 @@ class WatchlistTableView extends StatelessWidget {
         children: [
           SizedBox(
             width: _companyWidth(wide),
-            child: const Text(
-              'Company ⬍',
+            child: Text(
+              context.t.watchColCompany,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 12,
@@ -120,10 +121,10 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 60,
             child: Text(
-              'Score ⬍',
+              context.t.watchColScore,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 12,
@@ -131,10 +132,10 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 90,
             child: Text(
-              'Added Price',
+              context.t.watchColAdded,
               style: TextStyle(
                 color: Color(0xFFE5A93C),
                 fontSize: 12,
@@ -142,10 +143,10 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 105,
             child: Text(
-              'Latest Price ⬍\nChange',
+              context.t.watchColLatest,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 11,
@@ -154,10 +155,10 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 110,
             child: Text(
-              'Returns ⬍\nTracked Date',
+              context.t.watchColReturns,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 11,
@@ -166,9 +167,9 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Technical & Things you should know',
+              context.t.watchColTech,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 12,
@@ -176,10 +177,10 @@ class WatchlistTableView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 44,
             child: Text(
-              'Action',
+              context.t.watchColAction,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF8E929B),
@@ -324,8 +325,8 @@ class WatchlistTableView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 1),
-                  const Text(
-                    'Entry Point',
+                  Text(
+                    context.t.watchEntry,
                     style: TextStyle(
                       color: Color(0xFF858A94),
                       fontSize: 11,
@@ -476,7 +477,7 @@ class WatchlistTableView extends StatelessWidget {
                   color: Color(0xFFFF5252),
                   size: 19,
                 ),
-                tooltip: 'Remove from Watchlist',
+                tooltip: context.t.watchRemove,
                 onPressed: () {
                   if (onDelete != null) {
                     onDelete!(item);

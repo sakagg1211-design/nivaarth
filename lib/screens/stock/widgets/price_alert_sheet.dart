@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/price_alert.dart';
 import '../../../providers/price_alert_provider.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 const _muted = Color(0xFF8E929B);
 const _gold = Color(0xFFE5A93C);
@@ -27,14 +28,15 @@ class PriceAlertTile extends ConsumerWidget {
               style: const TextStyle(color: Colors.white, fontSize: 13)),
         ),
         IconButton(
-          tooltip: 'Alert hatao',
+          tooltip: context.t.alertRemoveTip,
           icon: const Icon(Icons.delete_outline_rounded, color: _muted, size: 20),
           onPressed: () async {
             final messenger = ScaffoldMessenger.of(context);
+            final t = context.t;
             try {
               await ref.read(priceAlertRepositoryProvider).remove(alert.id);
             } catch (_) {
-              messenger.showSnackBar(const SnackBar(content: Text('Alert hata nahi paaye. Dobara try karo.')));
+              messenger.showSnackBar(SnackBar(content: Text(t.alertRemoveFailed)));
               return;
             }
             // Outside the try: a sheet closed meanwhile must not report a delete that worked as failed
@@ -72,11 +74,11 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
     final target = double.tryParse(_controller.text.trim());
     final existing = ref.read(activePriceAlertsProvider).valueOrNull ?? const <PriceAlert>[];
     final sym = widget.symbol.trim().toUpperCase();
-    final problem = PriceAlert.validate(_direction, target, widget.currentPrice) ??
+    final problem = PriceAlert.validate(_direction, target, widget.currentPrice, context.t) ??
         (existing.any((a) => a.instrument.toUpperCase() == sym && a.matches(_direction, target!))
-            ? 'Ye alert pehle se laga hai'
+            ? context.t.alertDuplicate
             : existing.length >= PriceAlert.maxActive
-                ? 'Ek saath ${PriceAlert.maxActive} alert tak laga sakte ho'
+                ? context.t.alertMax(PriceAlert.maxActive)
                 : null);
     if (problem != null) {
       setState(() => _error = problem);
@@ -91,7 +93,7 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
       ref.invalidate(activePriceAlertsProvider);
       _controller.clear();
     } catch (_) {
-      if (mounted) setState(() => _error = 'Alert save nahi hua. Dobara try karo.');
+      if (mounted) setState(() => _error = context.t.alertSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -117,19 +119,19 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Price alert · $sym',
+            Text(context.t.alertTitle(sym),
                 style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
             if (widget.currentPrice > 0) ...[
               const SizedBox(height: 4),
-              Text('Abhi ka bhaav ${Formatters.currency(widget.currentPrice)}',
+              Text(context.t.alertCurrent(Formatters.currency(widget.currentPrice)),
                   style: const TextStyle(color: _muted, fontSize: 13)),
             ],
             const SizedBox(height: 14),
             Row(
               children: [
-                _choice('Upar jaaye', PriceAlert.above),
+                _choice(context.t.alertAbove, PriceAlert.above),
                 const SizedBox(width: 8),
-                _choice('Neeche aaye', PriceAlert.below),
+                _choice(context.t.alertBelow, PriceAlert.below),
               ],
             ),
             const SizedBox(height: 12),
@@ -140,7 +142,7 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
               style: const TextStyle(color: Colors.white),
               cursorColor: _gold, // the app theme's cursor is dark, invisible on this sheet
               decoration: InputDecoration(
-                hintText: 'Bhaav (₹)',
+                hintText: context.t.alertPriceHint,
                 hintStyle: const TextStyle(color: _muted),
                 errorText: _error,
                 filled: true,
@@ -154,12 +156,12 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
               child: FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: _gold, foregroundColor: Colors.black),
                 onPressed: _saving ? null : _save,
-                child: Text(_saving ? 'Save ho raha hai...' : 'Alert lagao'),
+                child: Text(_saving ? context.t.alertSaving : context.t.alertSet),
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Market ke samay bhaav har 5 minute mein check hota hai. Bhaav pahunchne par Notifications mein dikhega.',
+            Text(
+              context.t.alertNote,
               style: TextStyle(color: _muted, fontSize: 11),
             ),
             if (mine.isNotEmpty) ...[
@@ -210,17 +212,17 @@ class PriceAlertsPage extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF111215),
         foregroundColor: Colors.white,
-        title: const Text('Mere price alerts',
+        title: Text(context.t.alertsMine,
             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator(color: _gold)),
-        error: (_, _) => const Center(child: Text('Alerts load nahi hue', style: TextStyle(color: _muted))),
+        error: (_, _) => Center(child: Text(context.t.alertsLoadFailed, style: TextStyle(color: _muted))),
         data: (list) => list.isEmpty
-            ? const Center(
+            ? Center(
                 child: Padding(
                   padding: EdgeInsets.all(24),
-                  child: Text('Koi active alert nahi. Kisi stock ke page se alert lagao.',
+                  child: Text(context.t.alertsNone,
                       textAlign: TextAlign.center, style: TextStyle(color: _muted)),
                 ),
               )

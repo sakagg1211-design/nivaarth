@@ -8,6 +8,7 @@ import '../../models/trade.dart';
 import '../../providers/privacy_provider.dart';
 import '../../repositories/trade_repository.dart';
 import 'import_trades_page.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// Day-wise list of every buy and sell of the user, newest day first, with what was bought
 /// and sold each day and the realized P&L (average cost) of each sell.
@@ -60,7 +61,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
         backgroundColor: const Color(0xFF0C0D10),
         foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text('Trade book', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(context.t.tradeBookTitle, style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             onPressed: () async {
@@ -69,13 +70,13 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
             },
             icon: const Icon(Icons.upload_file_rounded),
             color: const Color(0xFF8E929B),
-            tooltip: 'Zerodha tradebook import',
+            tooltip: context.t.portfolioImport,
           ),
           IconButton(
             onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
             icon: Icon(hide ? Icons.visibility_off_rounded : Icons.visibility_rounded),
             color: hide ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
-            tooltip: hide ? 'Show Values' : 'Hide Values (Privacy Mode)',
+            tooltip: hide ? context.t.tipShowValues : context.t.tipHideValues,
           ),
         ],
       ),
@@ -94,17 +95,17 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                 if (snapshot.hasError) {
                   return _message(
                     Icons.error_outline_rounded,
-                    'Trades load nahi hue',
-                    TradeRepository.message(snapshot.error!),
-                    action: ElevatedButton(onPressed: _reload, child: const Text('Try Again')),
+                    context.t.tradesLoadFailed,
+                    TradeRepository.message(snapshot.error!, context.t),
+                    action: ElevatedButton(onPressed: _reload, child: Text(context.t.commonTryAgain)),
                   );
                 }
                 final all = snapshot.data ?? const <Trade>[];
                 if (all.isEmpty) {
                   return _message(
                     Icons.receipt_long_rounded,
-                    'Abhi koi trade nahi',
-                    'Stock add karne, kharidne ya bechne par har trade yahan din ke hisaab se dikhega.',
+                    context.t.tradesEmptyTitle,
+                    context.t.tradesEmptyBody,
                   );
                 }
 
@@ -131,7 +132,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                         textCapitalization: TextCapitalization.characters,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          hintText: 'Stock se dhundo (jaise POLYCAB)',
+                          hintText: context.t.tradesSearchHint,
                           hintStyle: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                           prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B), size: 18),
                           filled: true,
@@ -153,14 +154,14 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        '${shown.length} trades · ${keys.length} din',
+                        context.t.tradesCountDays(shown.length, keys.length),
                         style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                       ),
                       if (shown.isEmpty)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(top: 24),
                           child: Text(
-                            'Is naam ka koi trade nahi mila.',
+                            context.t.tradesNoMatch,
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                           ),
@@ -187,8 +188,8 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
       }
     }
     final totals = [
-      if (bought > 0) 'Kharida ${hide ? '••••' : Formatters.currency0(bought)}',
-      if (sold > 0) 'Becha ${hide ? '••••' : Formatters.currency0(sold)}',
+      if (bought > 0) context.t.tradeBought(hide ? '••••' : Formatters.currency0(bought)),
+      if (sold > 0) context.t.tradeSold(hide ? '••••' : Formatters.currency0(sold)),
     ].join(' · ');
 
     return Padding(
@@ -220,8 +221,8 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
     final qty = t.qty == t.qty.roundToDouble() ? t.qty.toStringAsFixed(0) : t.qty.toString();
     final subtitle = [
       '$qty @ ${hide ? '••••' : Formatters.currency(t.price)}',
-      if (t.isOpening) 'Shuruaati holding',
-      if (t.source == 'CORP_ACT') 'Bonus/split ke shares',
+      if (t.isOpening) context.t.tradeOpeningHolding,
+      if (t.source == 'CORP_ACT') context.t.tradeBonusSplit,
       if (t.brokerName != 'Manual') t.brokerName,
     ].join(' · ');
 

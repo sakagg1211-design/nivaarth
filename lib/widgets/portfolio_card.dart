@@ -14,6 +14,7 @@ import '../repositories/trade_repository.dart';
 import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
 import 'listing_badges.dart';
+import '../core/l10n/l10n_ext.dart';
 
 class PortfolioCard extends ConsumerWidget {
   final LivePortfolio stock;
@@ -37,21 +38,19 @@ class PortfolioCard extends ConsumerWidget {
             const Icon(Icons.delete_forever_rounded, color: Color(0xFFFF5252), size: 24),
             const SizedBox(width: 8),
             Text(
-              'Remove ${stock.portfolio.instrument}?',
+              context.t.holdingRemoveTitle(stock.portfolio.instrument),
               style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
             ),
           ],
         ),
         content: Text(
-          '${stock.portfolio.instrument} aur uske saare trades portfolio se hat jayenge.\n\n'
-          'Shares bech diye hain? To Delete nahi, stock kholkar SELL trade daalo, taaki '
-          'trade history aur "pichhli baar" ka hisaab bacha rahe.',
+          context.t.holdingRemoveBody(stock.portfolio.instrument),
           style: const TextStyle(color: Color(0xFF8E929B), fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: Color(0xFF8E929B))),
+            child: Text(context.t.commonCancel, style: TextStyle(color: Color(0xFF8E929B))),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -60,7 +59,7 @@ class PortfolioCard extends ConsumerWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(context.t.commonDelete, style: TextStyle(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -74,7 +73,7 @@ class PortfolioCard extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${stock.portfolio.instrument} removed.'),
+            content: Text(context.t.holdingRemoved(stock.portfolio.instrument)),
             backgroundColor: const Color(0xFFFF5252),
           ),
         );
@@ -192,8 +191,8 @@ class PortfolioCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         if (stock.isPriceUnavailable)
-                          const Text(
-                            'Price unavailable',
+                          Text(
+                            context.t.commonPriceUnavailable,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -288,23 +287,23 @@ class PortfolioCard extends ConsumerWidget {
                               side: const BorderSide(color: Color(0xFF282A30)),
                             ),
                             itemBuilder: (context) => [
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 'edit',
                                 child: Row(
                                   children: [
                                     Icon(Icons.edit_outlined, size: 16, color: Color(0xFFE5A93C)),
                                     SizedBox(width: 8),
-                                    Text('Edit Holding', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                                    Text(context.t.holdingEdit, style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 'delete',
                                 child: Row(
                                   children: [
                                     Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFFF5252)),
                                     SizedBox(width: 8),
-                                    Text('Delete Holding', style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
+                                    Text(context.t.holdingDelete, style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),
@@ -405,7 +404,7 @@ class PortfolioCard extends ConsumerWidget {
                     ),
                     const Spacer(),
                     Text(
-                      'LTP: ${Formatters.currency(stock.currentPrice)}',
+                      context.t.cardLtp(Formatters.currency(stock.currentPrice)),
                       style: const TextStyle(
                         fontSize: 11,
                         color: Color(0xFFC7CDD6),

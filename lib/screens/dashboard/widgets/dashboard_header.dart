@@ -17,6 +17,8 @@ import '../../../services/auth_service.dart';
 import '../../login/welcome_screen.dart';
 import '../../notifications/notifications_page.dart';
 import '../../../widgets/legal_disclaimer_sheet.dart';
+import '../../../widgets/language_switcher.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class DashboardHeader extends ConsumerWidget {
   const DashboardHeader({super.key});
@@ -135,7 +137,9 @@ class DashboardHeader extends ConsumerWidget {
                 ],
               ),
 
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
+              const LanguageSwitcher(),
+              const SizedBox(height: AppSpacing.sm),
               // Feedback & Issue Report Action
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -153,14 +157,14 @@ class DashboardHeader extends ConsumerWidget {
                   ),
                 ),
                 title: Text(
-                  'Share Feedback / Report Bug',
+                  context.t.menuFeedbackTitle,
                   style: AppTypography.title.copyWith(
                     color: Colors.white,
                     fontSize: 15,
                   ),
                 ),
-                subtitle: const Text(
-                  'Direct channel to the engineering team',
+                subtitle: Text(
+                  context.t.menuFeedbackBody,
                   style: AppTypography.caption,
                 ),
                 trailing: const Icon(
@@ -195,14 +199,14 @@ class DashboardHeader extends ConsumerWidget {
                   ),
                 ),
                 title: Text(
-                  'Compliance & Legal Disclaimers',
+                  context.t.menuLegalTitle,
                   style: AppTypography.title.copyWith(
                     color: Colors.white,
                     fontSize: 15,
                   ),
                 ),
-                subtitle: const Text(
-                  'SEBI non-advisory notice & platform terms',
+                subtitle: Text(
+                  context.t.menuLegalBody,
                   style: AppTypography.caption,
                 ),
                 trailing: const Icon(
@@ -237,14 +241,14 @@ class DashboardHeader extends ConsumerWidget {
                   ),
                 ),
                 title: Text(
-                  'Log out',
+                  context.t.menuLogOut,
                   style: AppTypography.title.copyWith(
                     color: AppColors.danger,
                     fontSize: 16,
                   ),
                 ),
-                subtitle: const Text(
-                  'Sign out and return to welcome screen',
+                subtitle: Text(
+                  context.t.menuLogOutBody,
                   style: AppTypography.caption,
                 ),
                 onTap: () async {
@@ -289,19 +293,19 @@ class DashboardHeader extends ConsumerWidget {
         return AlertDialog(
           backgroundColor: const Color(0xFF16171B),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
+          title: Row(
             children: [
               Icon(Icons.feedback_outlined, color: Color(0xFFE5A93C), size: 22),
               SizedBox(width: 10),
-              Text('Friends Beta Feedback', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
+              Text(context.t.feedbackTitle, style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Found a bug or have a suggestion? Let us know directly:',
+              Text(
+                context.t.feedbackPrompt,
                 style: TextStyle(color: Color(0xFFD1D5DB), fontSize: 13),
               ),
               const SizedBox(height: 12),
@@ -310,7 +314,7 @@ class DashboardHeader extends ConsumerWidget {
                 maxLines: 4,
                 style: const TextStyle(color: Colors.white, fontSize: 13),
                 decoration: InputDecoration(
-                  hintText: 'Describe the issue or idea...',
+                  hintText: context.t.feedbackHint,
                   hintStyle: const TextStyle(color: Color(0xFF858A94)),
                   filled: true,
                   fillColor: const Color(0xFF111215),
@@ -329,7 +333,7 @@ class DashboardHeader extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+              child: Text(context.t.commonCancel, style: TextStyle(color: Colors.white54)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -340,13 +344,13 @@ class DashboardHeader extends ConsumerWidget {
               onPressed: () {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Thank you! Your feedback has been noted for the next release.'),
+                  SnackBar(
+                    content: Text(context.t.feedbackThanks),
                     backgroundColor: Color(0xFF16171B),
                   ),
                 );
               },
-              child: const Text('Submit', style: TextStyle(fontWeight: FontWeight.w700)),
+              child: Text(context.t.commonSubmit, style: TextStyle(fontWeight: FontWeight.w700)),
             ),
           ],
         );
@@ -362,14 +366,14 @@ class DashboardHeader extends ConsumerWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.card),
         ),
-        title: const Text('Log out of Nivaarth?'),
-        content: const Text(
-          'You will need to sign in again to view your private portfolio cockpit.',
+        title: Text(context.t.logoutConfirmTitle),
+        content: Text(
+          context.t.logoutConfirmBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text(context.t.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -377,7 +381,7 @@ class DashboardHeader extends ConsumerWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Log out'),
+            child: Text(context.t.menuLogOut),
           ),
         ],
       ),
@@ -416,11 +420,11 @@ class DashboardHeader extends ConsumerWidget {
 
     String greeting;
     if (hour < 12) {
-      greeting = 'Good morning,';
+      greeting = context.t.greetMorning;
     } else if (hour < 17) {
-      greeting = 'Good afternoon,';
+      greeting = context.t.greetAfternoon;
     } else {
-      greeting = 'Good evening,';
+      greeting = context.t.greetEvening;
     }
 
     return Row(
@@ -485,7 +489,7 @@ class DashboardHeader extends ConsumerWidget {
         // Action 0: Privacy Mode Toggle
         _HeaderIconButton(
           icon: isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-          tooltip: isPrivacy ? 'Show Values' : 'Hide Values (Privacy Mode)',
+          tooltip: isPrivacy ? context.t.tipShowValues : context.t.tipHideValues,
           iconColor: isPrivacy ? const Color(0xFFE5A93C) : null,
           onTap: () => ref.read(privacyModeProvider.notifier).toggle(),
         ),
@@ -493,7 +497,7 @@ class DashboardHeader extends ConsumerWidget {
         // Action 1: Info / Profile Menu
         _HeaderIconButton(
           icon: Icons.info_outline_rounded,
-          tooltip: 'Profile & Details',
+          tooltip: context.t.tipProfile,
           onTap: () => _showUserMenu(context, ref),
         ),
         const SizedBox(width: 8),
@@ -502,7 +506,7 @@ class DashboardHeader extends ConsumerWidget {
           icon: unreadCount > 0
               ? Icons.notifications_active_rounded
               : Icons.notifications_none_rounded,
-          tooltip: 'Notifications',
+          tooltip: context.t.tipNotifications,
           hasBadge: unreadCount > 0,
           badgeCount: unreadCount,
           onTap: () {
@@ -516,7 +520,7 @@ class DashboardHeader extends ConsumerWidget {
         // Action 3: Logout
         _HeaderIconButton(
           icon: Icons.logout_rounded,
-          tooltip: 'Log out',
+          tooltip: context.t.menuLogOut,
           onTap: () => _handleLogout(context, ref),
         ),
       ],

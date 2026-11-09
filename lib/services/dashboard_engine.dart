@@ -13,6 +13,7 @@ import 'portfolio_analyzer.dart';
 import 'recommendation_engine.dart';
 import 'stock_score_engine.dart';
 import 'portfolio_health_engine.dart';
+import '../l10n/app_localizations.dart';
 
 class DashboardEngine {
   final LivePortfolioRepository liveRepository;
@@ -36,7 +37,7 @@ class DashboardEngine {
         stockScoreEngine = const StockScoreEngine(),
         portfolioHealthEngine = const PortfolioHealthEngine();
 
-  Future<DashboardSummary> buildDashboard() async {
+  Future<DashboardSummary> buildDashboard(AppLocalizations t) async {
     // ==========================
     // Live Portfolio
     // ==========================
@@ -79,7 +80,7 @@ final StockScore weakestHolding =
     // ==========================
 
     final AIRecommendation ai =
-        recommendationEngine.generate(analysis);
+        recommendationEngine.generate(analysis, t);
 
     // ==========================
     // Dashboard

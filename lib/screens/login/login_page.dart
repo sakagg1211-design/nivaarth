@@ -9,6 +9,7 @@ import '../../services/auth_service.dart';
 import 'forgot_password_page.dart';
 import 'sign_up_page.dart';
 import '../../widgets/legal_disclaimer_sheet.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 enum LoginViewMode {
   signIn,
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (email.isEmpty || password.isEmpty) {
       setState(() {
-        errorMessage = 'Please enter both email and password.';
+        errorMessage = context.t.authEnterBoth;
       });
       return;
     }
@@ -81,17 +82,17 @@ class _LoginPageState extends State<LoginPage> {
 
       if (rawMessage.contains('invalid login credentials') ||
           rawMessage.contains('invalid_credentials')) {
-        userFriendlyMessage = 'Incorrect email or password.';
+        userFriendlyMessage = context.t.authWrongCreds;
       } else if (rawMessage.contains('network') ||
           rawMessage.contains('connection') ||
           rawMessage.contains('socketexception')) {
         userFriendlyMessage =
-            'Network issue. Please check your internet connection.';
+            context.t.commonNetworkIssue;
       } else if (rawMessage.contains('rate limit')) {
-        userFriendlyMessage = 'Too many attempts. Please try again shortly.';
+        userFriendlyMessage = context.t.authTooMany;
       } else {
         userFriendlyMessage =
-            'Unable to sign in. Please verify your details.';
+            context.t.authSignInFailed;
       }
 
       setState(() {
@@ -174,8 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: AppSpacing.xl),
                     const Text('NIVAARTH', style: AppTypography.heading1),
                     const SizedBox(height: AppSpacing.sm),
-                    const Text(
-                      'Private portfolio intelligence for focused investors.',
+                    Text(
+                      context.t.authTagline,
                       style: AppTypography.body,
                     ),
                     const SizedBox(height: AppSpacing.xxl),
@@ -200,8 +201,8 @@ class _LoginPageState extends State<LoginPage> {
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
+                            decoration: InputDecoration(
+                              labelText: context.t.authEmail,
                               prefixIcon: Icon(Icons.alternate_email_rounded),
                             ),
                             onChanged: (_) {
@@ -216,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                             obscureText: obscurePassword,
                             autofillHints: const [AutofillHints.password],
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: context.t.authPassword,
                               prefixIcon: const Icon(Icons.lock_outline_rounded),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -264,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                                       );
                                     },
                               child: Text(
-                                'Forgot password?',
+                                context.t.authForgot,
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.w700,
@@ -327,7 +328,7 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : const Text('Sign In'),
+                                  : Text(context.t.authSignIn),
                             ),
                           ),
 
@@ -348,11 +349,11 @@ class _LoginPageState extends State<LoginPage> {
                                     },
                               child: RichText(
                                 text: TextSpan(
-                                  text: "Don't have an account? ",
+                                  text: context.t.authNoAccount,
                                   style: AppTypography.bodySmall,
-                                  children: const [
+                                  children: [
                                     TextSpan(
-                                      text: 'Create Account',
+                                      text: context.t.authCreateAccount,
                                       style: TextStyle(
                                         color: AppColors.accent,
                                         fontWeight: FontWeight.w700,

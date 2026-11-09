@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/import/zerodha_tradebook.dart';
 import 'package:mobile/models/portfolio.dart';
 import 'package:mobile/models/trade.dart';
 import 'package:mobile/screens/dashboard/widgets/portfolio_hero_card.dart';
 import 'package:mobile/screens/portfolio/closed_positions_page.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 // Made-up tradebook in Zerodha Console's column layout (not real account data)
 const csv = '''symbol,isin,trade_date,exchange,segment,series,trade_type,auction,quantity,price,trade_id,order_id,order_execution_time
@@ -24,6 +27,8 @@ Trade opening(String sym, double qty, double price) => Trade(
       tradeDate: DateTime(2026, 11, 3),
       source: 'OPENING',
     );
+
+final en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   final parsed = ZerodhaTradebook.parse(csv);
@@ -112,7 +117,7 @@ void main() {
     ];
     expect(PortfolioHeroCard.quietStocks(late, isMarketOpen: true), isEmpty);
     expect(PortfolioHeroCard.quietStocks(stocks, isMarketOpen: false), isEmpty);
-    expect(PortfolioHeroCard.quietNote(['A', 'B', 'C', 'D']), contains('(A, B, C +1)'));
-    expect(PortfolioHeroCard.quietNote(const []), isNull);
+    expect(PortfolioHeroCard.quietNote(['A', 'B', 'C', 'D'], en), contains('(A, B, C +1)'));
+    expect(PortfolioHeroCard.quietNote(const [], en), isNull);
   });
 }

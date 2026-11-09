@@ -9,6 +9,7 @@ import '../../providers/live_portfolio_provider.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../services/tradebook_importer.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// Zerodha Console tradebook CSV -> preview -> import. Nothing is written until "Import karo".
 class ImportTradesPage extends ConsumerStatefulWidget {
@@ -50,7 +51,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
       setState(() => _plan = plan);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = e is FormatException ? e.message : e.toString().replaceFirst('Exception: ', ''));
+      setState(() => _error = e is FormatException ? (e.message == ZerodhaTradebook.notTradebook ? context.t.importNotZerodha : e.message) : e.toString().replaceFirst('Exception: ', ''));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -61,9 +62,9 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
     if (plan == null) return;
     setState(() {
       _busy = true;
-      _progress = 'Shuru ho raha hai…';
+      _progress = context.t.importStarting;
     });
-    final result = await _importer.run(plan, onProgress: (d, t) {
+    final result = await _importer.run(plan, context.t, onProgress: (d, t) {
       if (mounted) setState(() => _progress = '$d / $t stocks');
     });
     ref.invalidate(portfolioProvider);
@@ -87,7 +88,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
         backgroundColor: const Color(0xFF0C0D10),
         foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text('Tradebook import', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(context.t.importTitle, style: TextStyle(fontWeight: FontWeight.w800)),
       ),
       body: SafeArea(
         child: Center(
@@ -100,20 +101,18 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Zerodha tradebook (CSV ya Excel)',
+                      Text(context.t.importHeading,
                           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
                       const SizedBox(height: 6),
-                      const Text(
-                        'Console → Reports → Tradebook → Segment: Equity → Download (CSV ya XLSX). '
-                        'Pehle preview dikhega; "Import karo" dabane tak kuch save nahi hoga. '
-                        'Ek hi file dobara daaloge to pehle wale trades dobara nahi judenge.',
+                      Text(
+                        context.t.importSteps,
                         style: TextStyle(color: Color(0xFF8E929B), fontSize: 12),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
                         onPressed: _busy ? null : _pick,
                         icon: const Icon(Icons.upload_file_rounded),
-                        label: Text(_fileName == null ? 'File chuno (CSV / XLSX)' : 'Doosri file chuno'),
+                        label: Text(_fileName == null ? context.t.importPickFile : context.t.importPickOther),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE5A93C),
                           foregroundColor: Colors.black,
@@ -152,8 +151,8 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
   List<Widget> _resultView(ImportResult r) => [
         const SizedBox(height: 12),
         _note(
-          '${r.imported} trades import hue (${r.doneStocks.length} stocks).'
-          '${r.failedStocks.isEmpty ? '' : ' ${r.failedStocks.length} stocks nahi hue, unka holding pehle jaisa hai:'}',
+          context.t.importDone(r.imported, r.doneStocks.length) +
+          (r.failedStocks.isEmpty ? '' : context.t.importFailed(r.failedStocks.length)),
           r.failedStocks.isEmpty ? const Color(0xFF00E676) : const Color(0xFFFFB74D),
         ),
         for (final e in r.failedStocks.entries)
@@ -171,20 +170,20 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
     return [
       const SizedBox(height: 12),
       _card(Text(
-        '${plan.stocks.length} stocks · ${plan.newTradeCount} naye trades'
-        '${plan.duplicateCount > 0 ? ' · ${plan.duplicateCount} pehle se imported (skip)' : ''}'
-        '${plan.skipped.isNotEmpty ? ' · ${plan.skipped.length} rows skip (F&O / padhi nahi gayi)' : ''}',
+        context.t.importSummary(plan.stocks.length, plan.newTradeCount) +
+        (plan.duplicateCount > 0 ? context.t.importDuplicates(plan.duplicateCount) : '') +
+        (plan.skipped.isNotEmpty ? context.t.importSkipped(plan.skipped.length) : ''),
         style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
       )),
       if (plan.unlisted.isNotEmpty) ...[
         const SizedBox(height: 8),
         _note(
-            'Ye symbols Nivaarth ki list me nahi mile, import nahi honge: ${plan.unlisted.map((s) => s.symbol).join(', ')}. '
-            '(Naam badla ho, jaise demerger ke baad, to stock Add Holding se khud daalo.)',
+            context.t.importUnlisted(plan.unlisted.map((s) => s.symbol).join(', ')) +
+            context.t.importRenamed,
             const Color(0xFFFFB74D)),
       ],
       const SizedBox(height: 8),
-      _note('Bonus ya split tradebook me nahi hote. Aise stock ki quantity broker se alag dikhe to us stock ko check karo.',
+      _note(context.t.importBonusNote,
           const Color(0xFF8E929B)),
       for (final s in plan.stocks.where((s) => s.listed && s.newTrades.isNotEmpty)) ...[
         const SizedBox(height: 10),
@@ -198,7 +197,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
-        child: Text(writeCount == 0 ? 'Import ke liye kuch naya nahi' : 'Import karo ($writeCount trades, ${writable.length} stocks)'),
+        child: Text(writeCount == 0 ? context.t.importNothingNew : context.t.importConfirm(writeCount, writable.length)),
       ),
     ];
   }
@@ -216,21 +215,21 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
               Expanded(
                 child: Text(s.symbol, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
-              Text('${s.newTrades.length} trades${s.duplicates > 0 ? ' (+${s.duplicates} skip)' : ''}',
+              Text(context.t.importStockLine(s.newTrades.length, s.duplicates > 0 ? ' (+${s.duplicates} skip)' : ''),
                   style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
             ],
           ),
           const SizedBox(height: 6),
           Text(
-            cur == null ? 'Abhi portfolio me nahi' : 'Abhi: ${q(cur.qty)} shares',
+            cur == null ? context.t.importNotHeld : context.t.importHeldNow(q(cur.qty)),
             style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
           ),
           if (s.hasOpening) ...[
             const SizedBox(height: 8),
             SegmentedButton<ImportMode>(
-              segments: const [
-                ButtonSegment(value: ImportMode.replaceOpening, label: Text('Tradebook se banao')),
-                ButtonSegment(value: ImportMode.addOnTop, label: Text('Sirf naye jodo')),
+              segments: [
+                ButtonSegment(value: ImportMode.replaceOpening, label: Text(context.t.importFromBook)),
+                ButtonSegment(value: ImportMode.addOnTop, label: Text(context.t.importOnlyNew)),
               ],
               selected: {s.mode},
               onSelectionChanged: (v) => setState(() => s.mode = v.first),
@@ -239,27 +238,26 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
             const SizedBox(height: 4),
             Text(
               s.mode == ImportMode.replaceOpening
-                  ? 'Purana opening holding hatega, holding sirf tradebook ke trades se banega.'
-                  : 'Purana holding rahega, tradebook ke trades uske upar judenge (dhyan: purane buys do baar na judein).',
+                  ? context.t.importFromBookNote
+                  : context.t.importOnlyNewNote,
               style: const TextStyle(color: Color(0xFF858A94), fontSize: 11),
             ),
           ],
           if (s.manualTrades > 0) ...[
             const SizedBox(height: 6),
             Text(
-              'Is stock ke ${s.manualTrades} trades aapne haath se bhi daale hain. Wahi trade tradebook me bhi '
-              'ho to do baar judega — import ke baad Trade book me check karke dohraya trade hata do.',
+              context.t.importManualWarn(s.manualTrades),
               style: const TextStyle(color: Color(0xFFFFB74D), fontSize: 11),
             ),
           ],
           const SizedBox(height: 8),
           if (err != null)
-            Text('Import nahi hoga: $err', style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12))
+            Text(context.t.importError(err), style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12))
           else if (res != null)
             Text(
               res.isClosed
-                  ? 'Import ke baad: poora bika (Closed positions), realized ${money(res.realizedPl)}'
-                  : 'Import ke baad: ${q(res.qty)} shares @ ${money(res.avgPrice)} · Invested ${money(res.totalInvested)}',
+                  ? context.t.importResultClosed(money(res.realizedPl))
+                  : context.t.importResultOpen(q(res.qty), money(res.avgPrice), money(res.totalInvested)),
               style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
             ),
         ],

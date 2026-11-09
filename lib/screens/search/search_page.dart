@@ -15,6 +15,7 @@ import '../../services/market_sync_service.dart';
 import '../stock/stock_detail_page.dart';
 import 'widgets/watchlist_table_view.dart';
 import '../../core/utils/error_messages.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -27,6 +28,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   String query = '';
   int _activeTab = 0; // 0: Explore / Search, 1: My Saved List (Watchlist)
+  bool _refreshingSaved = false;
+
+  Future<void> _refreshSaved() async {
+    setState(() => _refreshingSaved = true);
+    await MarketSyncService.instance.syncAll(ref);
+    if (mounted) setState(() => _refreshingSaved = false);
+  }
 
   @override
   void dispose() {
@@ -57,8 +65,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Search & Watchlist',
+                  Text(
+                    context.t.searchTitle,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -74,7 +82,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       border: Border.all(color: const Color(0x33E5A93C)),
                     ),
                     child: Text(
-                      '${savedList.length} Tracked',
+                      context.t.searchTracked(savedList.length),
                       style: const TextStyle(
                         color: Color(0xFFE5A93C),
                         fontSize: 12,
@@ -85,8 +93,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 ],
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Prices, NV Scores and watchlist tracking.',
+              Text(
+                context.t.searchSub,
                 style: TextStyle(
                   color: Color(0xFF8E929B),
                   fontSize: 13,
@@ -126,7 +134,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'Explore Stocks',
+                                context.t.searchExplore,
                                 style: TextStyle(
                                   color: _activeTab == 0 ? Colors.white : const Color(0xFF8E929B),
                                   fontWeight: FontWeight.w700,
@@ -183,7 +191,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   textInputAction: TextInputAction.search,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Search stock by symbol or name (e.g. TAT, KEI, APO)...',
+                    hintText: context.t.searchHint,
                     hintStyle: const TextStyle(color: Color(0xFF858A94), fontSize: 13),
                     prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B)),
                     suffixIcon: query.isNotEmpty
@@ -221,31 +229,31 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 const SizedBox(height: 14),
                 Expanded(
                   child: result.when(
-                    loading: () => const _SearchState(
+                    loading: () => _SearchState(
                       icon: Icons.manage_search_rounded,
-                      title: 'Searching market universe',
-                      message: 'Matching symbols and AI scores.',
+                      title: context.t.searchingTitle,
+                      message: context.t.searchingBody,
                       loading: true,
                     ),
                     error: (e, _) => _SearchState(
                       icon: Icons.error_outline_rounded,
-                      title: 'Search unavailable',
-                      message: ErrorMessages.friendly(e),
+                      title: context.t.searchUnavailable,
+                      message: ErrorMessages.friendly(e, context.t),
                     ),
                     data: (stocks) {
                       if (query.isEmpty) {
-                        return const _SearchState(
+                        return _SearchState(
                           icon: Icons.search_rounded,
-                          title: 'Start with a symbol',
-                          message: 'Search any stock to see its NV Score.',
+                          title: context.t.searchStartTitle,
+                          message: context.t.searchStartBody,
                         );
                       }
 
                       if (stocks.isEmpty) {
-                        return const _SearchState(
+                        return _SearchState(
                           icon: Icons.remove_circle_outline_rounded,
-                          title: 'No stock found',
-                          message: 'Try another instrument or company name.',
+                          title: context.t.searchNoneTitle,
+                          message: context.t.searchNoneBody,
                         );
                       }
 
@@ -394,7 +402,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                       splashRadius: 20,
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                                      tooltip: isSaved ? 'Remove from Watchlist' : 'Add to Watchlist',
+                                      tooltip: isSaved ? context.t.watchRemove : context.t.watchAdd,
                                       onPressed: () {
                                         if (isSaved) {
                                           _showDeleteConfirmation(
@@ -422,8 +430,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                             SnackBar(
                                               content: Text(
                                                 savePrice > 0
-                                                    ? '${SymbolUtils.normalize(stock.instrument)} saved at ${Formatters.currency(savePrice)}'
-                                                    : '${SymbolUtils.normalize(stock.instrument)} added to watchlist',
+                                                    ? context.t.watchSavedAt(SymbolUtils.normalize(stock.instrument), Formatters.currency(savePrice))
+                                                    : context.t.watchAdded(SymbolUtils.normalize(stock.instrument)),
                                               ),
                                               backgroundColor: const Color(0xFF16171B),
                                             ),
@@ -445,6 +453,22 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ),
             ] else ...[
               // Tab 1: MY SAVED LIST (Watchlist Table View matching attached image 4)
+              if (savedList.isNotEmpty)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(foregroundColor: const Color(0xFFE5A93C)),
+                    onPressed: _refreshingSaved ? null : _refreshSaved,
+                    icon: _refreshingSaved
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
+                          )
+                        : const Icon(Icons.refresh_rounded, size: 18),
+                    label: Text(context.t.commonRefresh, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                  ),
+                ),
               Expanded(
                 child: RefreshIndicator(
                   color: const Color(0xFFE5A93C),
@@ -509,9 +533,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               ),
             ),
             const SizedBox(width: 10),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Remove from Watchlist?',
+                context.t.watchRemoveConfirm,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -523,8 +547,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         ),
         content: Text(
           addedPrice != null && addedPrice > 0
-              ? 'Are you sure you want to remove $displayName ($cleanSym)? Your tracked entry price (${Formatters.currency(addedPrice)}) will be cleared.'
-              : 'Are you sure you want to remove $displayName ($cleanSym) from your watchlist?',
+              ? context.t.watchRemoveBodyPrice(displayName, cleanSym, Formatters.currency(addedPrice))
+              : context.t.watchRemoveBody(displayName, cleanSym),
           style: const TextStyle(
             color: Color(0xFF8E929B),
             fontSize: 13,
@@ -534,8 +558,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
+            child: Text(
+              context.t.commonCancel,
               style: TextStyle(
                 color: Colors.white70,
                 fontWeight: FontWeight.w600,
@@ -555,13 +579,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               notifier.remove(cleanSym);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('$cleanSym removed from MY SAVED LIST'),
+                  content: Text(context.t.savedRemoved(cleanSym)),
                   backgroundColor: const Color(0xFF16171B),
                 ),
               );
             },
-            child: const Text(
-              'Remove',
+            child: Text(
+              context.t.tradeRemove,
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
@@ -663,7 +687,7 @@ class _LivePriceColumn extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              price > 0 ? Formatters.currency(price) : 'Syncing...',
+              price > 0 ? Formatters.currency(price) : context.t.stockSyncing,
               style: TextStyle(
                 color: price > 0 ? Colors.white : const Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
@@ -701,12 +725,12 @@ class _LivePriceColumn extends ConsumerWidget {
         );
       },
       loading: () {
-        return const Column(
+        return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Syncing...',
+              context.t.stockSyncing,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,

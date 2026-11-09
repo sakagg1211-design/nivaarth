@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_alert.dart';
 import '../services/backend_service.dart';
 import 'live_portfolio_provider.dart';
+import '../l10n/app_localizations.dart';
+import 'locale_provider.dart';
 
 final alertsProvider = StateNotifierProvider<AlertsNotifier, AsyncValue<List<UserAlert>>>((ref) {
   return AlertsNotifier(ref);
@@ -19,6 +21,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
   Timer? _reload;
 
   AlertsNotifier(this.ref) : super(const AsyncValue.loading()) {
+    ref.listen(localeProvider, (_, _) => fetchAlerts());
     fetchAlerts();
     // Price alerts are checked every 5 minutes, so an open app looks on the same beat
     _reload = Timer.periodic(const Duration(minutes: 5), (_) => fetchAlerts());
@@ -68,6 +71,7 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
   }
 
   Future<void> fetchAlerts() async {
+    final t = lookupAppLocalizations(ref.read(localeProvider));
     try {
       final user = Supabase.instance.client.auth.currentUser;
       final userId = user?.id;
@@ -113,8 +117,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             if (weight > 25.0 && holdings.length > 1) {
               alerts.add(UserAlert(
                 id: 'local_conc_${h.portfolio.instrument}',
-                title: 'Weight Alert: ${h.portfolio.instrument}',
-                message: '${h.portfolio.instrument} accounts for ${weight.toStringAsFixed(1)}% of your portfolio value, above the 25% concentration line.',
+                title: t.alertWeightTitle(h.portfolio.instrument),
+                message: t.alertWeightBody(h.portfolio.instrument, weight.toStringAsFixed(1)),
                 type: AlertType.portfolioRisk,
                 severity: AlertSeverity.warning,
                 symbol: h.portfolio.instrument,
@@ -128,8 +132,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
             0,
             UserAlert(
               id: 'local_health_active',
-              title: 'Portfolio checks on',
-              message: 'Concentration is checked across your ${holdings.length} holdings each time alerts load.',
+              title: t.alertChecksTitle,
+              message: t.alertChecksBody(holdings.length),
               type: AlertType.system,
               severity: AlertSeverity.info,
               isRead: false,
@@ -140,8 +144,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
           alerts.add(
             UserAlert(
               id: 'local_welcome',
-              title: 'Welcome to Nivaarth Cockpit',
-              message: 'Add your holdings in Portfolio to enable automated algorithmic risk monitoring and technical pivot tracking.',
+              title: t.dashWelcome,
+              message: t.alertWelcomeBody,
               type: AlertType.system,
               severity: AlertSeverity.info,
               isRead: false,

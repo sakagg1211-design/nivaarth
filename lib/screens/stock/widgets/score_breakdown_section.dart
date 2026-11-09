@@ -4,6 +4,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/l10n/l10n_ext.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// "Why this score": the three pillars that actually make up the NV Score, with their
 /// weights and inputs, and the arithmetic from the weighted score to the final number.
@@ -19,11 +21,11 @@ class ScoreBreakdownSection extends StatelessWidget {
     'momentum': Colors.teal,
   };
 
-  static const _pillarHints = {
-    'quality': 'Return on capital, debt, cash conversion and 5-year growth',
-    'valuation': 'P/E vs sector peers and earnings yield',
-    'momentum': '12-month return, latest month left out, ranked against all stocks',
-  };
+  static Map<String, String> _pillarHints(AppLocalizations t) => {
+        'quality': t.breakdownHintQuality,
+        'valuation': t.breakdownHintValuation,
+        'momentum': t.breakdownHintMomentum,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +33,8 @@ class ScoreBreakdownSection extends StatelessWidget {
     if (b == null || b['final'] == null) {
       return Text(
         b == null
-            ? 'The breakdown appears after the next score update.'
-            : 'No score for this stock, so there is no breakdown.',
+            ? context.t.breakdownPending
+            : context.t.breakdownNone,
         style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
       );
     }
@@ -49,7 +51,7 @@ class ScoreBreakdownSection extends StatelessWidget {
           _PillarTile(
             pillar: p,
             color: _pillarColors[p['key']] ?? AppColors.accent,
-            hint: _pillarHints[p['key']] ?? '',
+            hint: _pillarHints(context.t)[p['key']] ?? '',
           ),
           const SizedBox(height: AppSpacing.md),
         ],
@@ -77,7 +79,7 @@ class _PillarTile extends StatelessWidget {
         .whereType<Map>()
         .map((p) => Map<String, dynamic>.from(p))
         .toList();
-    final weightText = weight == null ? 'not counted' : '${(weight * 100).round()}% weight';
+    final weightText = weight == null ? context.t.breakdownNotCounted : context.t.breakdownWeight((weight * 100).round());
 
     // Material (not a coloured Container) so the expansion tile's ink and background paint correctly
     return Material(
@@ -103,7 +105,7 @@ class _PillarTile extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    score == null ? 'Not assessed' : '${_num(score)} / 100',
+                    score == null ? context.t.signalNotAssessed : '${_num(score)} / 100',
                     style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: color),
                   ),
                 ],
@@ -176,25 +178,25 @@ class _MathCard extends StatelessWidget {
     final rows = <MapEntry<String, String>>[];
     final riskCap = breakdown['risk_cap'];
     if (riskCap != null) {
-      rows.add(MapEntry('Risk flag', 'Score capped at $riskCap (pledge, net worth or debt check failed)'));
+      rows.add(MapEntry(context.t.breakdownRiskFlag, context.t.breakdownRiskCap(riskCap)));
     } else {
       rows.add(MapEntry('Weighted score', _num(breakdown['weighted'], digits: 1)));
       // v2.4 breakdowns carry a multiplier; v2.5 caps the score instead
       final hurdle = breakdown['hurdle_factor'] as num?;
       if (hurdle != null) {
-        rows.add(MapEntry('Quality hurdle', '× ${hurdle.toStringAsFixed(2)} (quality below 55)'));
+        rows.add(MapEntry(context.t.breakdownHurdle, context.t.breakdownHurdleBody(hurdle.toStringAsFixed(2))));
       }
       final qualityCap = breakdown['quality_cap'];
       if (qualityCap != null) {
-        rows.add(MapEntry('Quality cap', 'Capped at $qualityCap (54 below quality 55, rising to no cap at 65)'));
+        rows.add(MapEntry(context.t.breakdownQualityCap, context.t.breakdownQualityCapBody(qualityCap)));
       }
       final cap = breakdown['provisional_cap'];
       if (cap != null) {
-        rows.add(MapEntry('Lender / broker cap', 'Capped at $cap until credit data is added'));
+        rows.add(MapEntry(context.t.breakdownLenderCap, context.t.breakdownLenderCapBody(cap)));
       }
     }
     for (final note in (breakdown['notes'] as List? ?? const [])) {
-      rows.add(MapEntry('Note', '$note'));
+      rows.add(MapEntry(context.t.breakdownNote, '$note'));
     }
 
     return Container(

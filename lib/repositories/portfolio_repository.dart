@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/symbol_utils.dart';
 import '../models/portfolio.dart';
+import '../core/utils/error_messages.dart';
 
 /// Reads the per-stock Portfolio summary. Holdings change only through trades
 /// (TradeRepository / migration 16), never by editing Qty or Avg here.
@@ -12,6 +13,46 @@ class PortfolioRepository {
   // Fully sold holdings stay in the table with Status CLOSED. Live rows hold
   // 'Active', 'ACTIVE' and 'CORE', so test for CLOSED, not for ACTIVE.
   static bool isClosed(Portfolio p) => p.status.toUpperCase() == 'CLOSED';
+
+  /// Holdings often store no name, or just the ticker; StockTaxonomy has the real one.
+  static bool missingName(Map<String, dynamic> row) {
+    final name = (row['Company_name'] ?? '').toString().trim().toUpperCase();
+    return name.isEmpty || name == row['Instrument'].toString().trim().toUpperCase();
+  }
+
+  static List<Map<String, dynamic>> withCompanyNames(List<Map<String, dynamic>> rows, Map<String, String> names) => [
+        for (final r in rows)
+          missingName(r) && names[r['Instrument'].toString().trim().toUpperCase()] != null
+              ? {...r, 'Company_name': names[r['Instrument'].toString().trim().toUpperCase()]}
+              : r,
+      ];
+
+  // Company names are public and do not change, so each is fetched once.
+  static final Map<String, String> _knownNames = {};
+
+  Future<Map<String, String>> _companyNames(List<Map<String, dynamic>> rows) async {
+    final wanted = rows
+        .where(missingName)
+        .map((r) => r['Instrument'].toString().trim().toUpperCase())
+        .where((s) => !_knownNames.containsKey(s))
+        .toSet()
+        .toList();
+    try {
+      for (var i = 0; i < wanted.length; i += 200) {
+        final found = await client
+            .from('StockTaxonomy')
+            .select('Instrument,company_name')
+            .inFilter('Instrument', wanted.sublist(i, i + 200 > wanted.length ? wanted.length : i + 200));
+        for (final r in found) {
+          final name = r['company_name']?.toString().trim() ?? '';
+          if (name.isNotEmpty) _knownNames[r['Instrument'].toString().toUpperCase()] = name;
+        }
+      }
+    } catch (e) {
+      debugPrint('Company names unavailable: $e'); // the app falls back to its own list
+    }
+    return _knownNames;
+  }
 
   /// Open holdings only.
   Future<List<Portfolio>> getPortfolio() async {
@@ -44,7 +85,7 @@ class PortfolioRepository {
           .eq("user_id", user.id)
           .order("Instrument");
 
-      return userResponse
+      return withCompanyNames(userResponse, await _companyNames(userResponse))
           .map<Portfolio>((json) => Portfolio.fromJson(json))
           .toList();
     } catch (e) {
@@ -77,7 +118,7 @@ class PortfolioRepository {
         .limit(1)
         .maybeSingle();
     if (valid == null) {
-      throw Exception('Ye symbol NSE list mein nahi mila. Search se stock chuno.');
+      throw TextError((t) => t.errSymbolNotListed);
     }
   }
 }

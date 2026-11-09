@@ -6,6 +6,7 @@ import '../../../core/utils/symbol_utils.dart';
 import '../../../models/live_portfolio.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../stock/stock_detail_page.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class DashboardTopHoldingsSection extends ConsumerWidget {
   final List<LivePortfolio> holdings;
@@ -22,24 +23,6 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
     if (holdings.isEmpty) return const SizedBox.shrink();
     final isPrivacy = ref.watch(privacyModeProvider);
 
-    // 1. Calculate Real Sector Allocation using SymbolUtils.getSector
-    final Map<String, double> sectorTotals = {};
-    double grandTotal = 0;
-    for (final h in holdings) {
-      final sector = SymbolUtils.getSector(
-        h.portfolio.instrument,
-        dbSector: h.portfolio.sector,
-      );
-      sectorTotals[sector] = (sectorTotals[sector] ?? 0) + h.currentValue;
-      grandTotal += h.currentValue;
-    }
-
-    final sortedSectors = sectorTotals.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    // Top 3 sectors
-    final top3Sectors = sortedSectors.take(3).toList();
-
     // Top Holdings: sorted by highest Current Value (₹) descending
     final sortedHoldings = List<LivePortfolio>.from(holdings)
       ..sort((a, b) => b.currentValue.compareTo(a.currentValue));
@@ -48,113 +31,6 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Sector Allocation Heading
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Sector Allocation',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2,
-              ),
-            ),
-            Text(
-              '${sortedSectors.length} Sectors Active',
-              style: const TextStyle(
-                color: Color(0xFF858A94),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 14),
-
-        // Top 3 Sectors Allocation Bars
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: const Color(0xFF16171B),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF282A30), width: 1),
-          ),
-          child: Column(
-            children: top3Sectors.asMap().entries.map((entry) {
-              final index = entry.key;
-              final sector = entry.value;
-              final percent = grandTotal > 0
-                  ? ((sector.value / grandTotal) * 100).clamp(0.0, 100.0)
-                  : 0.0;
-
-              // Color accents for top 3 sectors
-              const barColors = [
-                Color(0xFFE5A93C), // Gold for #1
-                Color(0xFF38BDF8), // Sky Blue for #2
-                Color(0xFFA78BFA), // Violet for #3
-              ];
-              final barColor = barColors[index % barColors.length];
-
-              return Padding(
-                padding: EdgeInsets.only(bottom: index < top3Sectors.length - 1 ? 12 : 0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: barColor,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              sector.key,
-                              style: const TextStyle(
-                                color: Color(0xFFE5E7EB),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '${percent.toStringAsFixed(1)}%',
-                          style: TextStyle(
-                            color: barColor,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: (percent / 100).clamp(0.01, 1.0),
-                        minHeight: 5,
-                        backgroundColor: const Color(0xFF23252B),
-                        valueColor: AlwaysStoppedAnimation<Color>(barColor),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
         // Top Holdings Header + "View all"
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,8 +38,8 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Top Holdings',
+                Text(
+                  context.t.topHoldingsTitle,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -172,8 +48,8 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'Ranked by highest current valuation (₹)',
+                Text(
+                  context.t.topHoldingsSub,
                   style: TextStyle(
                     color: Color(0xFF858A94),
                     fontSize: 11,
@@ -185,8 +61,8 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
             if (onViewAll != null)
               InkWell(
                 onTap: onViewAll,
-                child: const Text(
-                  'View all',
+                child: Text(
+                  context.t.commonViewAll,
                   style: TextStyle(
                     color: Color(0xFFE5A93C),
                     fontSize: 13,

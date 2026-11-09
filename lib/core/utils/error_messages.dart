@@ -3,6 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import '../../l10n/app_localizations.dart';
+
+/// An error raised away from any screen; the words are chosen where it is shown.
+class TextError implements Exception {
+  final String Function(AppLocalizations) text;
+  const TextError(this.text);
+}
+
 /// Turns an exception into a message a user can act on. The raw exception text
 /// (host names, URLs, query strings) is shown only in debug builds.
 class ErrorMessages {
@@ -21,10 +29,10 @@ class ErrorMessages {
         text.contains('timed out');
   }
 
-  static String friendly(Object error) {
+  static String friendly(Object error, AppLocalizations t) {
     final message = isNetworkError(error)
-        ? 'No internet connection. Check your network and tap Try Again.'
-        : 'Something went wrong while loading. Please try again in a moment.';
+        ? t.errNoInternet
+        : t.errGeneric;
     return kDebugMode ? '$message\n\n$error' : message;
   }
 }

@@ -11,6 +11,7 @@ import '../../services/market_quote_service.dart';
 import '../../providers/market_indices_provider.dart';
 import '../stock/widgets/chart_selector.dart';
 import '../stock/widgets/stock_line_chart.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class IndexDetailPage extends ConsumerStatefulWidget {
   final String symbol; // ^NSEI or ^BSESN
@@ -155,7 +156,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                                 size: 6),
                             const SizedBox(width: 4),
                             Text(
-                              !hasValue ? 'UNAVAILABLE' : (marketOpen ? 'LIVE' : 'MARKET CLOSED'),
+                              !hasValue ? 'UNAVAILABLE' : (marketOpen ? 'LIVE' : context.t.indexMarketClosed),
                               style: TextStyle(
                                 color: hasValue && marketOpen ? const Color(0xFF00E676) : const Color(0xFF8E929B),
                                 fontSize: 11,
@@ -226,12 +227,12 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
                       Icon(Icons.insights_rounded, size: 16, color: Color(0xFFE5A93C)),
                       SizedBox(width: 8),
                       Text(
-                        'Market Index Performance',
+                        context.t.indexPerformance,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
@@ -260,9 +261,9 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                           ),
                         ),
                       ),
-                      error: (error, stack) => const Center(
+                      error: (error, stack) => Center(
                         child: Text(
-                          'Index chart unavailable right now',
+                          context.t.indexChartUnavailable,
                           style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                         ),
                       ),
@@ -292,8 +293,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Price Spectrum & Ranges',
+                  Text(
+                    context.t.indexRanges,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
@@ -305,13 +306,13 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   // Today's Range
                   if (hasValue)
                     _RangeThermometer(
-                      title: "Today's Range",
+                      title: context.t.indexTodayRange,
                       lowValue: dayLow,
                       highValue: dayHigh,
                       currentValue: value,
                     )
                   else
-                    const Text("Today's range unavailable",
+                    Text(context.t.indexTodayRangeNa,
                         style: TextStyle(fontSize: 12, color: Color(0xFF8E929B))),
 
                   const SizedBox(height: 18),
@@ -321,14 +322,14 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   // 52-Week Range from Yahoo's daily history (never a fixed number)
                   if (hasValue && hist?.high52 != null && hist?.low52 != null)
                     _RangeThermometer(
-                      title: "52-Week Range",
+                      title: context.t.index52wRange,
                       lowValue: hist!.low52!,
                       highValue: hist.high52!,
                       currentValue: value,
                     )
                   else
                     Text(
-                      history.isLoading ? '52-week range loading…' : '52-week range unavailable',
+                      history.isLoading ? context.t.index52wLoading : context.t.index52wNa,
                       style: const TextStyle(fontSize: 12, color: Color(0xFF8E929B)),
                     ),
                 ],
@@ -358,7 +359,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                       const Icon(Icons.account_balance_rounded, color: Color(0xFFE5A93C), size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'About ${widget.name}',
+                        context.t.indexAbout(widget.name),
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
@@ -370,8 +371,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   const SizedBox(height: 12),
                   Text(
                     isNifty
-                        ? 'The NIFTY 50 is India\'s benchmark stock market index representing the weighted average of 50 of the largest and most liquid Indian companies listed on the National Stock Exchange. It serves as the primary gauge of India\'s broader economy and capital markets.'
-                        : 'The BSE SENSEX is India\'s oldest and premier market barometer comprising 30 prominent, financially sound, and actively traded companies listed on the Bombay Stock Exchange, covering major sectors of the Indian economy.',
+                        ? context.t.indexAboutNifty
+                        : context.t.indexAboutSensex,
                     style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xFF8E929B),
@@ -379,8 +380,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Largest sectors in the index',
+                  Text(
+                    context.t.indexLargestSectors,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -403,8 +404,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   const SizedBox(height: 10),
                   Text(
                     isNifty
-                        ? 'Current sector weights are in the monthly NIFTY 50 factsheet on niftyindices.com.'
-                        : 'Current sector weights are in the BSE SENSEX factsheet on bseindia.com.',
+                        ? context.t.indexWeightsNifty
+                        : context.t.indexWeightsSensex,
                     style: const TextStyle(fontSize: 11, color: Color(0xFF8E929B)),
                   ),
                 ],
@@ -560,46 +561,46 @@ class _IndicatorCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Technical Indicators',
+          Text(
+            context.t.indexTechnical,
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Calculated from daily closing prices over the last year.',
+          Text(
+            context.t.indexTechnicalSub,
             style: TextStyle(fontSize: 12, color: Color(0xFF8E929B)),
           ),
           const SizedBox(height: 14),
           ...history.when(
-            loading: () => [_note('Loading daily prices…')],
-            error: (_, _) => [_note('Indicators unavailable right now.')],
-            data: (h) => _rows(h),
+            loading: () => [_note(context.t.indexLoadingDaily)],
+            error: (_, _) => [_note(context.t.indexIndicatorsNa)],
+            data: (h) => _rows(context, h),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _rows(DailyHistory? h) {
-    if (h == null || h.closes.length < 15) return [_note('Indicators unavailable right now.')];
+  List<Widget> _rows(BuildContext context, DailyHistory? h) {
+    if (h == null || h.closes.length < 15) return [_note(context.t.indexIndicatorsNa)];
     final closes = h.closes;
     final price = currentValue > 0 ? currentValue : closes.last;
     final rows = <Widget>[];
     void average(String label, double? avg) {
       if (avg == null) return;
       final above = price >= avg;
-      rows.add(_row(label, Formatters.number(avg.round()), above ? 'Price above' : 'Price below', above));
+      rows.add(_row(label, Formatters.number(avg.round()), above ? context.t.indexPriceAbove : context.t.indexPriceBelow, above));
     }
 
-    average('20-day EMA', Indicators.ema(closes, 20));
-    average('50-day average', Indicators.sma(closes, 50));
-    average('200-day average', Indicators.sma(closes, 200));
+    average(context.t.indexEma20, Indicators.ema(closes, 20));
+    average(context.t.indexAvg50, Indicators.sma(closes, 50));
+    average(context.t.indexAvg200, Indicators.sma(closes, 200));
     final rsi = Indicators.rsi(closes);
     if (rsi != null) {
-      final state = rsi >= 70 ? 'Overbought zone (70+)' : (rsi <= 30 ? 'Oversold zone (30-)' : 'Neutral zone');
-      rows.add(_row('RSI (14 days)', rsi.toStringAsFixed(1), state, null));
+      final state = rsi >= 70 ? context.t.indexOverbought : (rsi <= 30 ? context.t.indexOversold : context.t.indexNeutral);
+      rows.add(_row(context.t.indexRsi, rsi.toStringAsFixed(1), state, null));
     }
-    return rows.isEmpty ? [_note('Not enough daily prices yet.')] : rows;
+    return rows.isEmpty ? [_note(context.t.indexNotEnough)] : rows;
   }
 
   static Widget _note(String text) =>

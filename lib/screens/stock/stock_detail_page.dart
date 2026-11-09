@@ -12,6 +12,7 @@ import '../../models/stock_score.dart';
 
 import '../../providers/listing_provider.dart';
 import '../../providers/live_quote_provider.dart';
+import '../../providers/price_alert_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../providers/stock_score_provider.dart';
 import '../../providers/watchlist_provider.dart';
@@ -32,6 +33,7 @@ import 'widgets/recommendation_card.dart';
 import 'widgets/news_card.dart';
 import '../portfolio/widgets/add_holding_sheet.dart';
 import '../../services/backend_service.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class StockDetailPage extends ConsumerStatefulWidget {
   final LivePortfolio stock;
@@ -155,6 +157,9 @@ class _StockDetailPageState
     );
 
     final isDesktop = Breakpoints.isDesktop(context);
+    final alertCount = (ref.watch(activePriceAlertsProvider).valueOrNull ?? const [])
+        .where((a) => a.instrument.toUpperCase() == cleanSym.toUpperCase())
+        .length;
 
     final Widget overview = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +190,7 @@ class _StockDetailPageState
               notifier.remove(portfolio.instrument);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${portfolio.instrument} removed from MY SAVED LIST'),
+                  content: Text(context.t.savedRemoved(portfolio.instrument)),
                   backgroundColor: const Color(0xFF16171B),
                 ),
               );
@@ -199,7 +204,7 @@ class _StockDetailPageState
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${portfolio.instrument} saved to MY SAVED LIST at ${Formatters.currency(stock.currentPrice)}'),
+                  content: Text(context.t.savedAdded(portfolio.instrument, Formatters.currency(stock.currentPrice))),
                   backgroundColor: const Color(0xFF16171B),
                 ),
               );
@@ -222,7 +227,10 @@ class _StockDetailPageState
               visualDensity: VisualDensity.compact,
             ),
             icon: const Icon(Icons.notifications_active_outlined, size: 16),
-            label: const Text('Price alert lagao', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+            label: Text(
+              alertCount > 0 ? context.t.alertButtonCount(alertCount) : context.t.alertButton,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+            ),
             onPressed: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -253,8 +261,8 @@ class _StockDetailPageState
                     color: Color(0xFFE5A93C),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    "Price Performance",
+                  Text(
+                    context.t.stockPricePerformance,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
@@ -327,9 +335,9 @@ class _StockDetailPageState
                       ),
                     ),
                   ),
-                  error: (error, stack) => const Center(
+                  error: (error, stack) => Center(
                     child: Text(
-                      "Historical Chart Coming Soon",
+                      context.t.stockChartSoon,
                       style: TextStyle(
                         color: Color(0xFF8E929B),
                         fontSize: 13,
@@ -338,9 +346,9 @@ class _StockDetailPageState
                   ),
                   data: (points) {
                     if (points.length < 2) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          "Historical Chart Coming Soon",
+                          context.t.stockChartSoon,
                           style: TextStyle(
                             color: Color(0xFF8E929B),
                             fontSize: 13,
@@ -392,12 +400,12 @@ class _StockDetailPageState
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Watchlist Asset',
+                        context.t.stockWatchlistAsset,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
@@ -406,7 +414,7 @@ class _StockDetailPageState
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Not currently in your owned portfolio.',
+                        context.t.stockNotOwned,
                         style: TextStyle(
                           color: Color(0xFF858A94),
                           fontSize: 12,
@@ -467,7 +475,7 @@ class _StockDetailPageState
                 BorderRadius.circular(16),
           ),
           child: Text(
-            "Unable to load AI Score",
+            context.t.stockScoreFailed,
             style: TextStyle(
               color:
                   AppColors.danger,
@@ -522,7 +530,7 @@ class _StockDetailPageState
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            'Analyzing $cleanSym signals...',
+                            context.t.stockAnalyzing(cleanSym),
                             style: const TextStyle(
                               color: Color(0xFF8E929B),
                               fontSize: 13,
@@ -549,8 +557,8 @@ class _StockDetailPageState
                   minHeight: 3,
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  'Scoring quality, valuation and price trend from the latest data.',
+                Text(
+                  context.t.stockScoring,
                   style: TextStyle(
                     color: Color(0xFF858A94),
                     fontSize: 12,
@@ -688,7 +696,7 @@ class _StockDetailPageState
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      isOwned ? 'Holding' : '+ Port',
+                      isOwned ? context.t.metricHoldings : '+ Port',
                       style: TextStyle(
                         color: isOwned ? const Color(0xFF00E676) : const Color(0xFF38BDF8),
                         fontSize: 12,
@@ -710,7 +718,7 @@ class _StockDetailPageState
                   notifier.remove(portfolio.instrument);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${portfolio.instrument} removed from MY SAVED LIST'),
+                      content: Text(context.t.savedRemoved(portfolio.instrument)),
                       backgroundColor: const Color(0xFF16171B),
                     ),
                   );
@@ -724,7 +732,7 @@ class _StockDetailPageState
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${portfolio.instrument} saved to MY SAVED LIST at ${Formatters.currency(stock.currentPrice)}'),
+                      content: Text(context.t.savedAdded(portfolio.instrument, Formatters.currency(stock.currentPrice))),
                       backgroundColor: const Color(0xFF16171B),
                     ),
                   );
@@ -749,7 +757,7 @@ class _StockDetailPageState
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      isSaved ? 'Saved' : '+ Save',
+                      isSaved ? context.t.stockSaved : context.t.stockSave,
                       style: const TextStyle(
                         color: Color(0xFFE5A93C),
                         fontSize: 12,

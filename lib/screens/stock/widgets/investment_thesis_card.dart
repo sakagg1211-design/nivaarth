@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class InvestmentThesisCard extends StatelessWidget {
   final String thesis;
@@ -47,7 +48,7 @@ class InvestmentThesisCard extends StatelessWidget {
               ),
 
               Text(
-                "Investment Thesis",
+                context.t.thesisTitle,
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -73,7 +74,7 @@ class InvestmentThesisCard extends StatelessWidget {
             child: Text(
               hasData
                   ? thesis
-                  : "No investment thesis available for this stock yet.",
+                  : context.t.thesisNone,
               style: AppTypography.bodyMedium.copyWith(
                 height: 1.6,
                 color: hasData
@@ -89,7 +90,7 @@ class InvestmentThesisCard extends StatelessWidget {
             ),
 
             Row(
-              children: const [
+              children: [
 
                 Icon(
                   Icons.check_circle_outline,
@@ -103,7 +104,7 @@ class InvestmentThesisCard extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    "Review this thesis after every quarterly result.",
+                    context.t.thesisReview,
                   ),
                 ),
               ],

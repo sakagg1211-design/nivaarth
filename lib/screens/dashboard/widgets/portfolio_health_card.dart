@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/utils/market_hours.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
@@ -61,8 +62,8 @@ class PortfolioHealthCard extends StatelessWidget {
                 color: Color(0xFFE5A93C),
               ),
               const SizedBox(width: 8),
-              const Text(
-                'NV HEALTH INDEX',
+              Text(
+                context.t.healthIndex,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -83,7 +84,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     Icon(Icons.circle, size: 6, color: badgeColor),
                     const SizedBox(width: 4),
                     Text(
-                      live ? 'Live' : 'Market closed',
+                      live ? context.t.commonLive : context.t.commonMarketClosed,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -160,8 +161,8 @@ class PortfolioHealthCard extends StatelessWidget {
                       children: [
                         Text(
                           dataCoverage == null
-                              ? 'Data coverage: —'
-                              : 'Data coverage: ${dataCoverage!.round()}%',
+                              ? context.t.healthCoverageNa
+                              : context.t.healthCoverage(dataCoverage!.round()),
                           style: const TextStyle(
                             color: Color(0xFF8E929B),
                             fontSize: 12,
@@ -172,7 +173,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Status: $status',
+                      context.t.healthStatus(status),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -180,8 +181,8 @@ class PortfolioHealthCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    const Text(
-                      'Average NV Score of your scored holdings, weighted by value.',
+                    Text(
+                      context.t.healthExplain,
                       style: TextStyle(
                         color: Color(0xFF8E929B),
                         fontSize: 12,
@@ -193,20 +194,20 @@ class PortfolioHealthCard extends StatelessWidget {
                       onTap: onOpenAdvisor ??
                           () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Open NV Advisor from the bottom bar.'),
+                              SnackBar(
+                                content: Text(context.t.healthOpenAdvisorHint),
                                 duration: Duration(seconds: 2),
                               ),
                             );
                           },
                       borderRadius: BorderRadius.circular(4),
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 2),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Open Advisor',
+                              context.t.healthOpenAdvisor,
                               style: TextStyle(
                                 color: Color(0xFFE5A93C),
                                 fontSize: 13,
@@ -246,8 +247,8 @@ class PortfolioHealthCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     live
-                        ? 'Market open: prices refresh every few minutes. NV Scores update every evening.'
-                        : 'Market closed: prices are the last close. NV Scores update every evening.',
+                        ? context.t.healthMarketOpenNote
+                        : context.t.healthMarketClosedNote,
                     style: TextStyle(
                       color: Color(0xFFC7CDD6),
                       fontSize: 11,

@@ -8,6 +8,7 @@ import '../../features/sync/sync_loading_page.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/legal_disclaimer_sheet.dart';
 import 'login_page.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// Premium Nivaarth Sign Up Screen
 ///
@@ -55,31 +56,31 @@ class _SignUpPageState extends State<SignUpPage> {
 
     // 1. Validations
     if (name.isEmpty) {
-      setState(() => _errorMessage = 'Please enter your full name.');
+      setState(() => _errorMessage = context.t.authEnterName);
       return;
     }
 
     if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
-      setState(() => _errorMessage = 'Please enter a valid email address.');
+      setState(() => _errorMessage = context.t.authInvalidEmail);
       return;
     }
 
     if (password.length < 6) {
       setState(
-        () => _errorMessage = 'Password must be at least 6 characters long.',
+        () => _errorMessage = context.t.authPasswordShort,
       );
       return;
     }
 
     if (password != confirmPassword) {
-      setState(() => _errorMessage = 'Passwords do not match.');
+      setState(() => _errorMessage = context.t.authPasswordMismatch);
       return;
     }
 
     if (!_agreedToTerms) {
       setState(
         () => _errorMessage =
-            'Please acknowledge that stock investments carry market risks and accept the terms.',
+            context.t.authAcceptRisk,
       );
       return;
     }
@@ -119,13 +120,13 @@ class _SignUpPageState extends State<SignUpPage> {
       if (rawMessage.contains('already registered') ||
           rawMessage.contains('user_already_exists')) {
         userFriendlyMessage =
-            'An account with this email already exists. Please log in.';
+            context.t.authEmailExists;
       } else if (rawMessage.contains('network') ||
           rawMessage.contains('socketexception')) {
         userFriendlyMessage =
-            'Network issue. Please check your internet connection.';
+            context.t.commonNetworkIssue;
       } else {
-        userFriendlyMessage = 'Unable to create account. Please try again.';
+        userFriendlyMessage = context.t.authCreateFailed;
       }
 
       setState(() {
@@ -149,16 +150,16 @@ class _SignUpPageState extends State<SignUpPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.card),
         ),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.check_circle_outline_rounded,
                 color: AppColors.success, size: 26),
             SizedBox(width: 8),
-            Text('Account Created'),
+            Text(context.t.authAccountCreated),
           ],
         ),
         content: Text(
-          'Your Nivaarth account is ready! If verification is requested, check ${_emailController.text.trim()} to confirm.',
+          context.t.authAccountReady(_emailController.text.trim()),
         ),
         actions: [
           ElevatedButton(
@@ -169,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 MaterialPageRoute(builder: (_) => const LoginPage()),
               );
             },
-            child: const Text('Proceed to Sign In'),
+            child: Text(context.t.authProceedSignIn),
           ),
         ],
       ),
@@ -247,10 +248,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     const SizedBox(height: AppSpacing.xl),
 
-                    const Text('Create Account', style: AppTypography.heading1),
+                    Text(context.t.authCreateAccount, style: AppTypography.heading1),
                     const SizedBox(height: AppSpacing.sm),
-                    const Text(
-                      'Join the private closed beta of Nivaarth.',
+                    Text(
+                      context.t.authJoinBeta,
                       style: AppTypography.body,
                     ),
 
@@ -280,8 +281,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             keyboardType: TextInputType.name,
                             textCapitalization: TextCapitalization.words,
                             autofillHints: const [AutofillHints.name],
-                            decoration: const InputDecoration(
-                              labelText: 'Full Name',
+                            decoration: InputDecoration(
+                              labelText: context.t.authFullName,
                               prefixIcon: Icon(Icons.person_outline_rounded),
                             ),
                             onChanged: (_) {
@@ -298,8 +299,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
-                            decoration: const InputDecoration(
-                              labelText: 'Email Address',
+                            decoration: InputDecoration(
+                              labelText: context.t.authEmailAddress,
                               prefixIcon: Icon(Icons.alternate_email_rounded),
                             ),
                             onChanged: (_) {
@@ -317,7 +318,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             obscureText: _obscurePassword,
                             autofillHints: const [AutofillHints.newPassword],
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: context.t.authPassword,
                               prefixIcon: const Icon(Icons.lock_outline_rounded),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -348,7 +349,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             obscureText: _obscureConfirmPassword,
                             autofillHints: const [AutofillHints.newPassword],
                             decoration: InputDecoration(
-                              labelText: 'Confirm Password',
+                              labelText: context.t.authConfirmPassword,
                               prefixIcon: const Icon(Icons.lock_outline_rounded),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -495,7 +496,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : const Text('Create Account'),
+                                  : Text(context.t.authCreateAccount),
                             ),
                           ),
                         ],
@@ -517,11 +518,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         },
                         child: RichText(
                           text: TextSpan(
-                            text: 'Already have an account? ',
+                            text: context.t.authHaveAccount,
                             style: AppTypography.bodySmall,
-                            children: const [
+                            children: [
                               TextSpan(
-                                text: 'Sign In',
+                                text: context.t.authSignIn,
                                 style: TextStyle(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.w700,

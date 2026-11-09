@@ -12,15 +12,21 @@ import 'live_portfolio_provider.dart';
 class RiskInfo {
   final double? beta;
   final String sector;
-  const RiskInfo(this.beta, this.sector);
+  final double? pe;
+  const RiskInfo(this.beta, this.sector, [this.pe]);
 }
 
 /// Beta and sector for these symbols. A beta older than the freshness limit counts as missing.
 Future<Map<String, RiskInfo>> _loadRiskInfo(List<String> symbols) async {
   final client = Supabase.instance.client;
   final betas = <String, double?>{};
+  final pes = <String, double?>{};
   for (var i = 0; i < symbols.length; i += 200) {
     final part = symbols.sublist(i, i + 200 > symbols.length ? symbols.length : i + 200);
+    final fundamentals = await client.from('ScreenerFundamentals').select('Instrument,PE').inFilter('Instrument', part);
+    for (final r in fundamentals) {
+      pes[r['Instrument'].toString().toUpperCase()] = numOrNull(r['PE']);
+    }
     try {
       final rows = await client.from('TechnicalIndicators').select('Instrument,Beta1Y,BetaAsOf').inFilter('Instrument', part);
       for (final r in rows) {
@@ -33,7 +39,7 @@ Future<Map<String, RiskInfo>> _loadRiskInfo(List<String> symbols) async {
     }
   }
   final sectors = await ListingRepository().sectorsFor(symbols);
-  return {for (final s in symbols) s: RiskInfo(betas[s], sectors[s] ?? AllocationMath.others)};
+  return {for (final s in symbols) s: RiskInfo(betas[s], sectors[s] ?? AllocationMath.others, pes[s])};
 }
 
 /// The portfolio as the what-if and stress sums need it.
@@ -47,7 +53,7 @@ final riskHoldingsProvider = FutureProvider.autoDispose<List<RiskHolding>>((ref)
     for (final h in priced)
       () {
         final s = h.portfolio.instrument.trim().toUpperCase();
-        return RiskHolding(s, h.currentValue, info[s]?.beta, info[s]?.sector ?? AllocationMath.others);
+        return RiskHolding(s, h.currentValue, info[s]?.beta, info[s]?.sector ?? AllocationMath.others, pe: info[s]?.pe);
       }(),
   ];
 });

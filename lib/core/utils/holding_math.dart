@@ -30,9 +30,9 @@ class OversellException implements Exception {
 
   @override
   String toString() =>
-      'Itne shares nahi hain: ${_plain(held)} hain, ${_plain(selling)} bech rahe ho.';
+      'Itne shares nahi hain: ${plain(held)} hain, ${plain(selling)} bech rahe ho.';
 
-  static String _plain(double v) =>
+  static String plain(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
 }
 

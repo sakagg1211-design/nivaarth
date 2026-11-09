@@ -12,6 +12,7 @@ import '../providers/portfolio_provider.dart';
 import '../providers/privacy_provider.dart';
 import '../repositories/portfolio_repository.dart';
 import '../repositories/trade_repository.dart';
+import '../core/l10n/l10n_ext.dart';
 
 /// Bonus/split events after a holding's trades: the app asks, the user confirms (decided 5 Nov
 /// 2026). "Haan" adds the extra shares as a price-0 BUY (source CORP_ACT, broker trade id = the
@@ -97,37 +98,37 @@ class CorporateActionPrompt {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1E2024),
-        title: Text('${a.instrument}: ${a.label} aaya', style: const TextStyle(color: Colors.white, fontSize: 17)),
+        title: Text(context.t.caTitle(a.instrument, a.label), style: const TextStyle(color: Colors.white, fontSize: 17)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Ex-date ${DateFormat('d MMM yyyy').format(a.exDate)}: har 1 share par ab ${q(a.multiplier)} shares. '
-              'Us din aapke paas ${q(p.sharesBefore)} shares the, to ${p.extraShares} naye shares (₹0 par) judenge.',
+              context.t.caExDate(DateFormat('d MMM yyyy').format(a.exDate), q(a.multiplier)) +
+              context.t.caBody(q(p.sharesBefore), p.extraShares),
               style: const TextStyle(color: Color(0xFFB0B4BC), fontSize: 13),
             ),
             const SizedBox(height: 12),
-            Text('Abhi: ${q(p.now.qty)} shares @ ${money(p.now.avgPrice)}',
+            Text(context.t.caNow(q(p.now.qty), money(p.now.avgPrice)),
                 style: const TextStyle(color: Colors.white70, fontSize: 13)),
-            Text('Update ke baad: ${q(p.after.qty)} shares @ ${money(p.after.avgPrice)}',
+            Text(context.t.caAfter(q(p.after.qty), money(p.after.avgPrice)),
                 style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
-            Text('Invested wahi rahega: ${money(p.after.totalInvested)}',
+            Text(context.t.caInvested(money(p.after.totalInvested)),
                 style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
             if (p.fractionDropped) ...[
               const SizedBox(height: 8),
-              const Text('Adhoora share nahi joda: broker uske badle paise deta hai.',
+              Text(context.t.caFraction,
                   style: TextStyle(color: Color(0xFFFFB74D), fontSize: 12)),
             ],
             const SizedBox(height: 8),
-            const Text('Broker app me shares ki ginti se mila lo. Galat ho to baad me Trade book se hata sakte ho.',
+            Text(context.t.caMatch,
                 style: TextStyle(color: Color(0xFF6B6F78), fontSize: 11)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Baad me')),
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Nahi')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Haan, jodo')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.t.caLater)),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.t.commonNo)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: Text(context.t.caYesAdd)),
         ],
       ),
     );

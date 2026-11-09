@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/core/utils/formatters.dart';
 import 'package:mobile/screens/stock/widgets/chart_selector.dart';
 import 'package:mobile/screens/stock/widgets/stock_header.dart';
+import 'helpers/localized_app.dart';
 
 double _contrast(Color a, Color b) {
   final x = a.computeLuminance(), y = b.computeLuminance();
@@ -31,7 +32,7 @@ void main() {
     expect(Formatters.currency(121050), '₹1,21,050.00');
   });
 
-  Widget host(Widget child, {double width = 320}) => MaterialApp(
+  Widget host(Widget child, {double width = 320}) => localizedApp(
         theme: AppTheme.darkTheme,
         home: Scaffold(body: Center(child: SizedBox(width: width, child: child))),
       );

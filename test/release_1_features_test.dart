@@ -9,6 +9,11 @@ import 'package:mobile/providers/price_alert_provider.dart';
 import 'package:mobile/screens/dashboard/widgets/allocation_card.dart';
 import 'package:mobile/screens/stock/widgets/price_alert_sheet.dart';
 import 'package:mobile/screens/stock/widgets/stock_line_chart.dart';
+import 'helpers/localized_app.dart';
+import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/providers/locale_provider.dart';
+
+final en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   group('market-cap tiers', () {
@@ -60,7 +65,7 @@ void main() {
     testWidgets('price alert sheet still opens when the list cannot load', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [activePriceAlertsProvider.overrideWith((ref) => Future.error(Exception('no table')))],
-        child: const MaterialApp(home: Scaffold(body: PriceAlertSheet(symbol: 'TCS', currentPrice: 100))),
+        child: localizedApp(locale: hinglishLocale, home: Scaffold(body: PriceAlertSheet(symbol: 'TCS', currentPrice: 100))),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -76,7 +81,7 @@ void main() {
       ];
       await tester.pumpWidget(ProviderScope(
         overrides: [activePriceAlertsProvider.overrideWith((ref) async => many)],
-        child: const MaterialApp(
+        child: localizedApp(locale: hinglishLocale, 
           home: Scaffold(body: Align(alignment: Alignment.bottomCenter, child: PriceAlertSheet(symbol: 'TCS', currentPrice: 100))),
         ),
       ));
@@ -91,7 +96,7 @@ void main() {
         await tester.pumpWidget(ProviderScope(
           key: UniqueKey(),
           overrides: [activePriceAlertsProvider.overrideWith((ref) async => list)],
-          child: const MaterialApp(
+          child: localizedApp(locale: hinglishLocale, 
             home: Scaffold(body: Align(alignment: Alignment.bottomCenter, child: PriceAlertSheet(symbol: 'TCS', currentPrice: 100))),
           ),
         ));
@@ -120,7 +125,7 @@ void main() {
                 const PriceAlert(id: '1', instrument: 'TCS', direction: PriceAlert.below, targetPrice: 90),
               ]),
         ],
-        child: const MaterialApp(home: PriceAlertsPage()),
+        child: localizedApp(locale: hinglishLocale, home: PriceAlertsPage()),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -130,7 +135,7 @@ void main() {
     testWidgets('dashboard card hides itself on an error', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [allocationProvider.overrideWith((ref) => Future.error(Exception('offline')))],
-        child: const MaterialApp(home: Scaffold(body: AllocationCard())),
+        child: localizedApp(locale: hinglishLocale, home: Scaffold(body: AllocationCard())),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -143,7 +148,7 @@ void main() {
       final slices = [AllocationSlice('Communication Services', 100, 100, 1)];
       await tester.pumpWidget(ProviderScope(
         overrides: [allocationProvider.overrideWith((ref) async => PortfolioAllocation(slices, slices))],
-        child: const MaterialApp(home: Scaffold(body: SingleChildScrollView(child: AllocationCard()))),
+        child: localizedApp(locale: hinglishLocale, home: Scaffold(body: SingleChildScrollView(child: AllocationCard()))),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -218,13 +223,13 @@ void main() {
 
   group('price alert validation', () {
     test('above must be over the current price', () {
-      expect(PriceAlert.validate(PriceAlert.above, 110, 100), isNull);
-      expect(PriceAlert.validate(PriceAlert.above, 100, 100), isNotNull);
-      expect(PriceAlert.validate(PriceAlert.above, 90, 100), isNotNull);
+      expect(PriceAlert.validate(PriceAlert.above, 110, 100, en), isNull);
+      expect(PriceAlert.validate(PriceAlert.above, 100, 100, en), isNotNull);
+      expect(PriceAlert.validate(PriceAlert.above, 90, 100, en), isNotNull);
     });
     test('below must be under the current price', () {
-      expect(PriceAlert.validate(PriceAlert.below, 90, 100), isNull);
-      expect(PriceAlert.validate(PriceAlert.below, 100, 100), isNotNull);
+      expect(PriceAlert.validate(PriceAlert.below, 90, 100, en), isNull);
+      expect(PriceAlert.validate(PriceAlert.below, 100, 100, en), isNotNull);
     });
     test('the same alert twice is recognised', () {
       const a = PriceAlert(id: '1', instrument: 'TCS', direction: PriceAlert.above, targetPrice: 110);
@@ -233,9 +238,9 @@ void main() {
       expect(a.matches(PriceAlert.above, 110.5), isFalse);
     });
     test('bad input is refused; unknown current price only needs a valid target', () {
-      expect(PriceAlert.validate(PriceAlert.above, null, 100), isNotNull);
-      expect(PriceAlert.validate(PriceAlert.above, 0, 100), isNotNull);
-      expect(PriceAlert.validate(PriceAlert.below, 50, 0), isNull);
+      expect(PriceAlert.validate(PriceAlert.above, null, 100, en), isNotNull);
+      expect(PriceAlert.validate(PriceAlert.above, 0, 100, en), isNotNull);
+      expect(PriceAlert.validate(PriceAlert.below, 50, 0, en), isNull);
     });
   });
 }

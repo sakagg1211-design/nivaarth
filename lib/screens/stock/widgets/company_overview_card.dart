@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class CompanyOverviewCard extends StatelessWidget {
   final String companyName;
@@ -77,7 +78,7 @@ class CompanyOverviewCard extends StatelessWidget {
               ),
 
               Text(
-                "Company Overview",
+                context.t.companyOverview,
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight:
                       FontWeight.bold,
@@ -92,7 +93,7 @@ class CompanyOverviewCard extends StatelessWidget {
 
           _OverviewTile(
             icon: Icons.apartment,
-            title: "Company",
+            title: context.t.companyLabel,
             value: companyName.isEmpty
                 ? "--"
                 : companyName,
@@ -102,7 +103,7 @@ class CompanyOverviewCard extends StatelessWidget {
 
           _OverviewTile(
             icon: Icons.category_outlined,
-            title: "Sector",
+            title: context.t.allocSector,
             value: sector.isEmpty
                 ? "--"
                 : sector,
@@ -112,7 +113,7 @@ class CompanyOverviewCard extends StatelessWidget {
 
           _OverviewTile(
             icon: Icons.precision_manufacturing_outlined,
-            title: "Industry",
+            title: context.t.companyIndustry,
             value: industry.isEmpty
                 ? "--"
                 : industry,
@@ -122,7 +123,7 @@ class CompanyOverviewCard extends StatelessWidget {
 
           _OverviewTile(
             icon: Icons.verified_outlined,
-            title: "Status",
+            title: context.t.companyStatus,
             value: status.isEmpty
                 ? "--"
                 : status,

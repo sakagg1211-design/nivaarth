@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mobile/models/stock_score.dart';
 import 'package:mobile/screens/stock/widgets/score_breakdown_section.dart';
+import 'helpers/localized_app.dart';
 
 // Shape written by backend build_score_breakdown() (v2.5): quality below 55 caps the score at 54
 const weakQuality = {
@@ -42,7 +43,7 @@ const v241 = {
 };
 
 Future<void> pump(WidgetTester tester, Map<String, dynamic>? b) => tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: SingleChildScrollView(child: ScoreBreakdownSection(breakdown: b)))),
+      localizedApp(home: Scaffold(body: SingleChildScrollView(child: ScoreBreakdownSection(breakdown: b)))),
     );
 
 void main() {

@@ -11,6 +11,7 @@ import '../../models/stock_score.dart';
 import '../../providers/privacy_provider.dart';
 import '../../providers/risk_provider.dart';
 import '../../providers/search_provider.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 const _muted = Color(0xFF8E929B);
 const _gold = Color(0xFFE5A93C);
@@ -39,14 +40,14 @@ class RiskLabPage extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF111215),
         foregroundColor: Colors.white,
-        title: const Text('Agar aisa ho to',
+        title: Text(context.t.macroWhatIf,
             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator(color: _gold)),
-        error: (_, _) => const Center(child: Text('Portfolio load nahi hua', style: TextStyle(color: _muted))),
+        error: (_, _) => Center(child: Text(context.t.riskLoadFailed, style: TextStyle(color: _muted))),
         data: (holdings) => holdings.isEmpty
-            ? const Center(child: Text('Portfolio mein koi stock nahi', style: TextStyle(color: _muted)))
+            ? Center(child: Text(context.t.riskNoStocks, style: TextStyle(color: _muted)))
             : Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),
@@ -59,9 +60,8 @@ class RiskLabPage extends ConsumerWidget {
                       const SizedBox(height: 14),
                       _WhatIfCard(holdings),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Ye pichhle 1 saal ke beta par bana andaaza hai, bhavishyavani nahi. Asli girawat isse alag ho '
-                        'sakti hai. Yahan koi trade nahi hota, aur ye investment advice nahi hai.',
+                      Text(
+                        context.t.riskDisclaimer,
                         style: TextStyle(color: _muted, fontSize: 11),
                       ),
                     ],
@@ -80,21 +80,38 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = RiskMath.snapshot(holdings);
+    final pe = RiskMath.portfolioPe(holdings);
+    Widget metric(String label, String value) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: const TextStyle(color: _muted, fontSize: 12)),
+            const SizedBox(height: 2),
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
+          ],
+        );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: _card(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Portfolio beta', style: TextStyle(color: _muted, fontSize: 12)),
-          const SizedBox(height: 2),
-          Text(_beta(s.beta), style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
+          Row(
+            children: [
+              Expanded(child: metric('Portfolio beta', _beta(s.beta))),
+              Expanded(child: metric('Portfolio P/E', pe.pe == null ? '—' : pe.pe!.toStringAsFixed(1))),
+            ],
+          ),
           const SizedBox(height: 4),
-          const Text('1.00 yani Nifty jitna hilta hai. 1 se upar yani usse zyada.',
+          Text(context.t.riskBetaNote,
               style: TextStyle(color: _muted, fontSize: 12)),
           if (s.uncoveredCount > 0) ...[
             const SizedBox(height: 6),
-            Text('${_stocks(s.uncoveredCount)} ka beta nahi hai. Ye ${_pct(s.coveragePct)} portfolio par bana hai.',
+            Text(context.t.riskNoBeta(_stocks(s.uncoveredCount), _pct(s.coveragePct)),
+                style: const TextStyle(color: _muted, fontSize: 12)),
+          ],
+          if (pe.excluded > 0 && pe.pe != null) ...[
+            const SizedBox(height: 6),
+            Text(context.t.riskPeExcluded(_stocks(pe.excluded), _pct(pe.coveragePct)),
                 style: const TextStyle(color: _muted, fontSize: 12)),
           ],
         ],
@@ -125,7 +142,7 @@ class _StressCardState extends ConsumerState<_StressCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Agar market gire',
+          Text(context.t.riskIfFalls,
               style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
           Row(
@@ -138,16 +155,16 @@ class _StressCardState extends ConsumerState<_StressCard> {
           ),
           const SizedBox(height: 14),
           if (r.coveredValue <= 0)
-            const Text('Beta abhi uplabdh nahi hai, isliye hisaab nahi ban sakta.', style: TextStyle(color: _muted))
+            Text(context.t.riskBetaNa, style: TextStyle(color: _muted))
           else ...[
             Text('${r.changePct >= 0 ? '+' : ''}${r.changePct.toStringAsFixed(1)}%',
                 style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
-            Text('Andaazan badlav ${money(r.change)}', style: const TextStyle(color: _muted, fontSize: 13)),
+            Text(context.t.riskEstimated(money(r.change)), style: const TextStyle(color: _muted, fontSize: 13)),
             if (r.uncoveredCount > 0)
-              Text('${_stocks(r.uncoveredCount)} beta na hone se hisaab mein nahi.',
+              Text(context.t.riskNotCounted(_stocks(r.uncoveredCount)),
                   style: const TextStyle(color: _muted, fontSize: 12)),
             const SizedBox(height: 10),
-            const Text('Sabse zyada asar', style: TextStyle(color: _muted, fontSize: 12)),
+            Text(context.t.riskMostImpact, style: TextStyle(color: _muted, fontSize: 12)),
             const SizedBox(height: 4),
             for (final l in r.lines.take(5))
               Padding(
@@ -220,7 +237,7 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
         beta: info.beta,
         sector: info.sector,
       ));
-      final warnings = _add ? RiskMath.warnings(after, sym, info.sector) : const <String>[];
+      final warnings = _add ? RiskMath.warnings(after, sym, info.sector, context.t) : const <String>[];
       Widget row(String label, String from, String to) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
@@ -240,12 +257,12 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
         children: [
           const SizedBox(height: 12),
           row('Portfolio beta', _beta(before.beta), _beta(after.beta)),
-          row('$sym ka hissa', _pct(before.stockWeight[sym] ?? 0), _pct(after.stockWeight[sym] ?? 0)),
-          row('${info.sector} ka hissa', _pct(before.sectorWeight[info.sector] ?? 0), _pct(after.sectorWeight[info.sector] ?? 0)),
+          row(context.t.riskStockShare(sym), _pct(before.stockWeight[sym] ?? 0), _pct(after.stockWeight[sym] ?? 0)),
+          row(context.t.riskStockShare(info.sector), _pct(before.sectorWeight[info.sector] ?? 0), _pct(after.sectorWeight[info.sector] ?? 0)),
           if (info.beta == null)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: 6),
-              child: Text('Is stock ka beta nahi hai, isliye portfolio beta mein nahi gina.',
+              child: Text(context.t.riskStockNoBeta,
                   style: TextStyle(color: _muted, fontSize: 12)),
             ),
           for (final w in warnings)
@@ -270,14 +287,14 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Agar is stock mein badlav ho',
+          Text(context.t.riskIfChange,
               style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
           TextField(
             controller: _search,
             style: const TextStyle(color: Colors.white),
             cursorColor: _gold,
-            decoration: _field('Stock ka naam ya symbol'),
+            decoration: _field(context.t.riskStockField),
             onChanged: (v) {
               setState(() => _symbol = null);
               _debounce?.cancel();
@@ -297,7 +314,7 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(s, style: const TextStyle(color: Colors.white, fontSize: 13)),
                 subtitle: Text(m.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: _muted, fontSize: 12)),
-                trailing: held.contains(s) ? const Text('Aapke paas', style: TextStyle(color: _muted, fontSize: 11)) : null,
+                trailing: held.contains(s) ? Text(context.t.riskYouHold, style: TextStyle(color: _muted, fontSize: 11)) : null,
                 onTap: () {
                   FocusScope.of(context).unfocus();
                   setState(() {
@@ -313,10 +330,10 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
           const SizedBox(height: 10),
           Row(
             children: [
-              Expanded(child: _Chip('Jodo', _add, () => setState(() => _add = true))),
+              Expanded(child: _Chip(context.t.riskAdd, _add, () => setState(() => _add = true))),
               const SizedBox(width: 6),
               Expanded(
-                child: _Chip('Ghatao', !_add, () {
+                child: _Chip(context.t.riskReduce, !_add, () {
                   if (sym == null || held.contains(sym)) setState(() => _add = false);
                 }),
               ),
@@ -329,7 +346,7 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             style: const TextStyle(color: Colors.white),
             cursorColor: _gold,
-            decoration: _field('Rakam (₹)'),
+            decoration: _field(context.t.riskAmount),
             onChanged: (_) => setState(() {}),
           ),
           ?result,

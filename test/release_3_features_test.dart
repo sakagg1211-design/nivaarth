@@ -8,6 +8,11 @@ import 'package:mobile/providers/risk_provider.dart';
 import 'package:mobile/providers/search_provider.dart';
 import 'package:mobile/screens/dashboard/widgets/macro_card.dart';
 import 'package:mobile/screens/risk/risk_lab_page.dart';
+import 'helpers/localized_app.dart';
+import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/providers/locale_provider.dart';
+
+final en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   const a = RiskHolding('A', 300, 1.5, 'Tech');
@@ -77,16 +82,16 @@ void main() {
         RiskHolding('NIFTYBEES', 80, 1, AllocationMath.etf),
         RiskHolding('X', 20, 1, AllocationMath.others),
       ]);
-      expect(RiskMath.warnings(s, 'NIFTYBEES', AllocationMath.etf), isEmpty);
+      expect(RiskMath.warnings(s, 'NIFTYBEES', AllocationMath.etf, en), isEmpty);
       final other = RiskMath.snapshot(const [RiskHolding('X', 100, 1, AllocationMath.others)]);
-      expect(RiskMath.warnings(other, 'X', AllocationMath.others).length, 1); // the stock line only
+      expect(RiskMath.warnings(other, 'X', AllocationMath.others, en).length, 1); // the stock line only
     });
     test('warns only above the 15% and 30% lines', () {
       final over = RiskMath.snapshot(const [RiskHolding('A', 16, 1, 'T'), RiskHolding('B', 84, 1, 'U')]);
-      expect(RiskMath.warnings(over, 'A', 'T').length, 1);
-      expect(RiskMath.warnings(over, 'B', 'U').length, 2);
+      expect(RiskMath.warnings(over, 'A', 'T', en).length, 1);
+      expect(RiskMath.warnings(over, 'B', 'U', en).length, 2);
       final exact = RiskMath.snapshot(const [RiskHolding('A', 15, 1, 'T'), RiskHolding('B', 85, 1, 'U')]);
-      expect(RiskMath.warnings(exact, 'A', 'T'), isEmpty);
+      expect(RiskMath.warnings(exact, 'A', 'T', en), isEmpty);
     });
   });
 
@@ -94,7 +99,7 @@ void main() {
     testWidgets('macro card shows dashes for a missing half and hides when empty', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [macroProvider.overrideWith((ref) async => const MacroData(vix: 13.4, vixChangePct: 2.1))],
-        child: const MaterialApp(home: Scaffold(body: MacroCard())),
+        child: localizedApp(locale: hinglishLocale, home: Scaffold(body: MacroCard())),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -104,7 +109,7 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         key: UniqueKey(),
         overrides: [macroProvider.overrideWith((ref) async => const MacroData())],
-        child: const MaterialApp(home: Scaffold(body: MacroCard())),
+        child: localizedApp(locale: hinglishLocale, home: Scaffold(body: MacroCard())),
       ));
       await tester.pumpAndSettle();
       expect(find.text('India VIX'), findsNothing);
@@ -124,7 +129,7 @@ void main() {
           searchProvider.overrideWith((ref, q) async => q == 'SIEM' ? [hit('SIEMENS')] : <StockScore>[]),
           stockRiskProvider.overrideWith((ref, s) async => const RiskInfo(1.2, 'Industrials')),
         ],
-        child: const MaterialApp(home: RiskLabPage()),
+        child: localizedApp(locale: hinglishLocale, home: RiskLabPage()),
       ));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'SIEM');
@@ -145,7 +150,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(ProviderScope(
         overrides: [riskHoldingsProvider.overrideWith((ref) async => const [a, b, c])],
-        child: const MaterialApp(home: RiskLabPage()),
+        child: localizedApp(locale: hinglishLocale, home: RiskLabPage()),
       ));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);

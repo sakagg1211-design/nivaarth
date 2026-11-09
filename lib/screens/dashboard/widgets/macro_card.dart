@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../providers/risk_provider.dart';
 import '../../risk/risk_lab_page.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 const _muted = Color(0xFF8E929B);
 const _up = Color(0xFF199E70);
@@ -58,7 +59,7 @@ class MacroCard extends ConsumerWidget {
                   children: [
                     Text(
                       data.breadthDate == null
-                          ? 'Breadth'
+                          ? context.t.macroBreadth
                           : 'Breadth · ${DateFormat('d MMM').format(data.breadthDate!)}',
                       style: const TextStyle(color: _muted, fontSize: 12),
                     ),
@@ -66,10 +67,10 @@ class MacroCard extends ConsumerWidget {
                     if (data.hasBreadth) ...[
                       Row(
                         children: [
-                          Text('${n.format(data.advances)} badhe',
+                          Text(context.t.macroAdvances(n.format(data.advances)),
                               style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
                           const Spacer(),
-                          Text('${n.format(data.declines)} gire',
+                          Text(context.t.macroDeclines(n.format(data.declines)),
                               style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
                         ],
                       ),
@@ -102,7 +103,7 @@ class MacroCard extends ConsumerWidget {
                 visualDensity: VisualDensity.compact,
               ),
               icon: const Icon(Icons.science_outlined, size: 16),
-              label: const Text('Agar aisa ho to', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+              label: Text(context.t.macroWhatIf, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const RiskLabPage()),

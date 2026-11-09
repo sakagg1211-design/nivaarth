@@ -6,6 +6,7 @@ import '../../../models/peer_comparison.dart';
 import '../../../models/stock_score.dart';
 import '../../../providers/stock_insights_provider.dart';
 import '../../../providers/stock_score_provider.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 const _muted = Color(0xFF8E929B);
 const _labelWidth = 112.0;
@@ -105,7 +106,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Peers se tulna',
+          Text(context.t.peersTitle,
               style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
           Text(data.industry, style: const TextStyle(color: _muted, fontSize: 12)),
@@ -165,13 +166,13 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
                   visualDensity: VisualDensity.compact,
                 ),
                 icon: Icon(_picked == null ? Icons.add_rounded : Icons.swap_horiz_rounded, size: 16),
-                label: Text(_picked == null ? 'Aur peer jodo' : 'Peer badlo',
+                label: Text(_picked == null ? context.t.peersAdd : context.t.peersChange,
                     style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                 onPressed: () => _pick(data, columns),
               ),
             ),
           ],
-          const Text('— yani data nahi. P/E loss-making company ka nahi hota.',
+          Text(context.t.peersDashNote,
               style: TextStyle(color: _muted, fontSize: 11)),
         ],
       ),

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/symbol_utils.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class StockHeader extends StatelessWidget {
   final String instrument;
@@ -171,7 +173,7 @@ class StockHeader extends StatelessWidget {
 
                     Text(
                       companyName.isEmpty
-                          ? "Company"
+                          ? SymbolUtils.getDisplayName(instrument)
                           : companyName,
                       maxLines: 1,
                       overflow:
@@ -274,7 +276,7 @@ class StockHeader extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              currentPrice > 0 ? _money(currentPrice) : 'Syncing...',
+              currentPrice > 0 ? _money(currentPrice) : context.t.stockSyncing,
               style: AppTypography
                   .displaySmall
                   .copyWith(
@@ -303,7 +305,7 @@ class StockHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Text(
-                    "All-Time: ${hideMoney ? '••••' : _money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                    context.t.stockAllTime(hideMoney ? '••••' : _money(netPL, signed: true), _percent(returnPercent, signed: true)),
                     style: AppTypography.bodyMedium.copyWith(
                       color: netPL >= 0 ? AppColors.success : AppColors.danger,
                       fontWeight: FontWeight.bold,
@@ -320,7 +322,7 @@ class StockHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Text(
-                      "Today: ${hideMoney ? '••••' : _money(todayPL!, signed: true)}   (${_percent(todayReturnPercent ?? 0.0, signed: true)})",
+                      context.t.stockToday(hideMoney ? '••••' : _money(todayPL!, signed: true), _percent(todayReturnPercent ?? 0.0, signed: true)),
                       style: AppTypography.bodyMedium.copyWith(
                         color: (todayPL ?? 0) >= 0 ? AppColors.success : AppColors.danger,
                         fontWeight: FontWeight.bold,
@@ -357,16 +359,16 @@ class StockHeader extends StatelessWidget {
 
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: _HeaderMetric(
-                  title: "Exchange",
+                  title: context.t.stockExchange,
                   value: "NSE",
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: _HeaderMetric(
-                  title: "Trend",
+                  title: context.t.stockTrend,
                   value: trend != null && trend!.isNotEmpty
                       ? trend!
                       : (isProfit ? "Bullish" : "Neutral"),
@@ -375,7 +377,7 @@ class StockHeader extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _HeaderMetric(
-                  title: "Status",
+                  title: context.t.companyStatus,
                   value: status.isNotEmpty ? status : "UNTRACKED",
                 ),
               ),

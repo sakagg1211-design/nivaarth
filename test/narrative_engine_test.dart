@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mobile/core/utils/verdict_narrative_engine.dart';
 import 'package:mobile/models/stock_score.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 const breakdown = {
   'final': 61,
@@ -37,9 +40,11 @@ StockScore motherson({Map<String, dynamic>? b}) => StockScore(
       scoreBreakdown: b,
     );
 
+final en = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   test('equity narrative comes from the breakdown numbers', () {
-    final n = VerdictNarrativeEngine.generate(score: motherson(b: Map<String, dynamic>.from(breakdown)), isOwned: true);
+    final n = VerdictNarrativeEngine.generate(score: motherson(b: Map<String, dynamic>.from(breakdown)), isOwned: true, t: en);
     expect(n.analystBriefing, contains('NV Score of 61/100'));
     expect(n.primaryCatalyst.title, 'Highest pillar: Momentum');
     expect(n.primaryRisk.title, 'Lowest pillar: Valuation');
@@ -52,13 +57,13 @@ void main() {
     final b = Map<String, dynamic>.from(breakdown)
       ..['final'] = 54
       ..['quality_cap'] = 54;
-    final n = VerdictNarrativeEngine.generate(score: motherson(b: b));
+    final n = VerdictNarrativeEngine.generate(score: motherson(b: b), t: en);
     expect(n.analystBriefing, contains('caps the score at 54'));
     expect(n.playbook.updatesWith, contains('12-month return rank'));
   });
 
   test('no breakdown yet: plain message, no story', () {
-    final n = VerdictNarrativeEngine.generate(score: motherson());
+    final n = VerdictNarrativeEngine.generate(score: motherson(), t: en);
     expect(n.analystBriefing, contains('breakdown appears after the next score update'));
   });
 }

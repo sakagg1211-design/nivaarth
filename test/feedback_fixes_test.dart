@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mobile/core/utils/error_messages.dart';
@@ -7,6 +9,7 @@ import 'package:mobile/models/portfolio.dart';
 import 'package:mobile/models/stock_score.dart';
 import 'package:mobile/repositories/stock_repository.dart';
 import 'package:mobile/services/stock_score_engine.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 StockScore score(String sym, int? overall, {String name = ''}) => StockScore(
       instrument: sym,
@@ -45,6 +48,8 @@ LivePortfolio holding(String sym) => LivePortfolio(
       returnPercent: 0,
     );
 
+final en = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   test('exact ticker ranks first even when higher-scored partial matches exist', () {
     final ranked = StockRepository.rankByRelevance([
@@ -77,7 +82,7 @@ void main() {
 
   test('network errors get a plain message', () {
     final msg = ErrorMessages.friendly(Exception(
-        "ClientException with SocketException: Failed host lookup: 'example.supabase.co'"));
+        "ClientException with SocketException: Failed host lookup: 'example.supabase.co'"), en);
     expect(msg, startsWith('No internet connection'));
     expect(ErrorMessages.isNetworkError(Exception('Bad state: no element')), isFalse);
   });

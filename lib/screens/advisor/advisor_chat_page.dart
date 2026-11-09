@@ -8,6 +8,7 @@ import '../../core/layout/breakpoints.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../services/backend_service.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class ChatMessageModel {
   final String text;
@@ -47,24 +48,22 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
   bool _isTyping = false;
 
-  final List<ChatMessageModel> _messages = [
+  late final List<ChatMessageModel> _messages = [
     ChatMessageModel(
-      text: "Namaste! Main hoon **NV Advisor**\n\n"
-          "Main aapka research assistant hoon. Aapke portfolio holdings, P&L, NV Scores, **Peer Comparisons** aur **Risk Checks** ke numbers samjhata hoon; khareedne ya bechne ki salah nahi deta.\n\n"
-          "Aap mujhse koi bhi portfolio ya stock question pooch sakte hain!",
+      text: context.t.advGreeting,
       isUser: false,
       time: DateTime.now(),
     ),
   ];
 
-  final List<String> _quickSuggestions = [
-    "Mere portfolio ki 3 sabse badi galtiyan aur risk batao",
-    "Tata Motors vs Maruti kisme better growth hai?",
-    "Titan vs Trent comparison",
-    "UltraTech ka rate aur NV score kya hai?",
-    "Mera portfolio performance kaisa hai?",
-    "Nifty 50 aur market ka trend kya hai?",
-  ];
+  List<String> get _quickSuggestions => [
+        context.t.advAsk1,
+        context.t.advAsk2,
+        context.t.advAsk3,
+        context.t.advAsk4,
+        context.t.advAsk5,
+        context.t.advAsk6,
+      ];
 
   @override
   void initState() {
@@ -188,7 +187,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         setState(() {
           _messages.add(
             ChatMessageModel(
-              text: "NV Advisor filhal busy hai ya connection me issue hai. Kripya thodi der baad dobara poochhein.",
+              text: context.t.advBusy,
               isUser: false,
               time: DateTime.now(),
             ),
@@ -212,7 +211,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
     final userQuestions = <Map<String, dynamic>>[];
     for (int i = 0; i < todayMessages.length; i++) {
       if (todayMessages[i].isUser) {
-        String answerSnippet = "No reply yet";
+        String answerSnippet = context.t.advNoReply;
         if (i + 1 < todayMessages.length && !todayMessages[i + 1].isUser) {
           answerSnippet = todayMessages[i + 1].text;
         }
@@ -254,12 +253,12 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Row(
+                      Row(
                         children: [
                           Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
                           SizedBox(width: 8),
                           Text(
-                            "Today's History (Aaj ki History)",
+                            context.t.advHistoryTitle,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -275,7 +274,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          "${userQuestions.length} Queries",
+                          context.t.advQueries(userQuestions.length),
                           style: const TextStyle(
                             color: Color(0xFFE5A93C),
                             fontSize: 11,
@@ -296,7 +295,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                               const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white38, size: 40),
                               const SizedBox(height: 12),
                               Text(
-                                "Aaj abhi tak koi conversation nahi hui.",
+                                context.t.advNoHistory,
                                 style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 13),
                               ),
                             ],
@@ -449,7 +448,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     ],
                   ),
                   Text(
-                    "Research assistant for your holdings",
+                    context.t.advSub,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 11,
@@ -462,19 +461,19 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         ),
         actions: [
           IconButton(
-            tooltip: "Aaj ki History",
+            tooltip: context.t.advHistoryTitle,
             icon: const Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
             onPressed: _showTodayHistoryModal,
           ),
           IconButton(
-            tooltip: "Clear Chat",
+            tooltip: context.t.advClear,
             icon: const Icon(Icons.delete_outline_rounded, color: Colors.white54, size: 20),
             onPressed: () {
               setState(() {
                 _messages.clear();
                 _messages.add(
                   ChatMessageModel(
-                    text: "Chat reset. Aap mujhse apne portfolio ke bare me kuch bhi pooch sakte hain!",
+                    text: context.t.advReset,
                     isUser: false,
                     time: DateTime.now(),
                   ),
@@ -917,7 +916,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFF282A30)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
@@ -930,7 +929,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  "NV Advisor analyzing...",
+                  context.t.advAnalyzing,
                   style: TextStyle(
                     color: Color(0xFFE5A93C),
                     fontSize: 12,
@@ -969,8 +968,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 cursorColor: const Color(0xFFE5A93C),
                 textInputAction: TextInputAction.send,
                 onSubmitted: _sendMessage,
-                decoration: const InputDecoration(
-                  hintText: "Ask NV Advisor anything about your portfolio...",
+                decoration: InputDecoration(
+                  hintText: context.t.advHint,
                   hintStyle: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
                   contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   border: InputBorder.none,

@@ -9,6 +9,7 @@ import '../../providers/privacy_provider.dart';
 import '../../repositories/portfolio_repository.dart';
 import '../../repositories/trade_repository.dart';
 import 'trade_book_page.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// One fully sold stock: what was bought and sold in all, the realized P&L (average cost,
 /// from Portfolio.realized_pl) and the day of the last sell.
@@ -100,13 +101,13 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
         backgroundColor: const Color(0xFF0C0D10),
         foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text('Closed positions', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(context.t.closedTitle, style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
             icon: Icon(hide ? Icons.visibility_off_rounded : Icons.visibility_rounded),
             color: hide ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
-            tooltip: hide ? 'Show Values' : 'Hide Values (Privacy Mode)',
+            tooltip: hide ? context.t.tipShowValues : context.t.tipHideValues,
           ),
         ],
       ),
@@ -121,14 +122,14 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                   return const Center(child: CircularProgressIndicator(color: Color(0xFFE5A93C)));
                 }
                 if (snapshot.hasError) {
-                  return _message(Icons.error_outline_rounded, 'Closed positions load nahi hue',
-                      'Internet check karke dobara try karo.',
-                      action: TextButton(onPressed: _reload, child: const Text('Try Again')));
+                  return _message(Icons.error_outline_rounded, context.t.closedLoadFailed,
+                      context.t.commonCheckInternet,
+                      action: TextButton(onPressed: _reload, child: Text(context.t.commonTryAgain)));
                 }
                 final items = snapshot.data ?? const [];
                 if (items.isEmpty) {
-                  return _message(Icons.inventory_2_outlined, 'Koi closed position nahi',
-                      'Jab koi stock poora bech doge, wo yahan realized P&L ke saath dikhega.');
+                  return _message(Icons.inventory_2_outlined, context.t.closedEmptyTitle,
+                      context.t.closedEmptyBody);
                 }
                 final total = items.fold<double>(0, (s, p) => s + p.realizedPl);
                 return RefreshIndicator(
@@ -165,11 +166,11 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
       child: Row(
         children: [
           Expanded(
-            child: Text('$count stock poore beche gaye',
+            child: Text(context.t.closedCount(count),
                 style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
           ),
           Text(
-            hide ? 'Realized ••••' : 'Realized ${Formatters.currency(total, signed: true)}',
+            hide ? context.t.closedRealized('••••') : context.t.closedRealized(Formatters.currency(total, signed: true)),
             style: TextStyle(color: hide ? Colors.white70 : _tone(total), fontSize: 15, fontWeight: FontWeight.w800),
           ),
         ],
@@ -229,10 +230,10 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
             const SizedBox(height: 8),
             Text(
               [
-                'Kharida ${hide ? '••••' : Formatters.currency0(p.bought)}',
-                'Becha ${hide ? '••••' : Formatters.currency0(p.sold)}',
-                if (p.lastSell != null) 'Aakhri sell ${_dayFormat.format(p.lastSell!)}',
-                '${p.trades} trades',
+                context.t.tradeBought(hide ? '••••' : Formatters.currency0(p.bought)),
+                context.t.tradeSold(hide ? '••••' : Formatters.currency0(p.sold)),
+                if (p.lastSell != null) context.t.closedLastSell(_dayFormat.format(p.lastSell!)),
+                context.t.closedTrades(p.trades),
               ].join(' · '),
               style: const TextStyle(color: Color(0xFF858A94), fontSize: 12),
             ),

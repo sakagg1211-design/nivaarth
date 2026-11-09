@@ -7,6 +7,7 @@ import '../models/portfolio.dart';
 import '../models/trade.dart';
 import '../repositories/portfolio_repository.dart';
 import '../repositories/trade_repository.dart';
+import '../l10n/app_localizations.dart';
 
 class ImportResult {
   final int imported;
@@ -67,7 +68,7 @@ class TradebookImporter {
       .where((s) => s.listed && s.newTrades.isNotEmpty && s.errorFor(s.mode) == null)
       .toList();
 
-  Future<ImportResult> run(ImportPlan plan, {void Function(int done, int total)? onProgress}) async {
+  Future<ImportResult> run(ImportPlan plan, AppLocalizations t, {void Function(int done, int total)? onProgress}) async {
     final stocks = writable(plan);
     var imported = 0;
     final done = <String>[];
@@ -106,7 +107,7 @@ class TradebookImporter {
             await trades.deleteTrade(id);
           } catch (_) {}
         }
-        failed[s.symbol] = TradeRepository.message(e);
+        failed[s.symbol] = TradeRepository.message(e, t);
       }
       onProgress?.call(i + 1, stocks.length);
     }

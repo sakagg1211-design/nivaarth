@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_radius.dart';
 import '../core/theme/app_spacing.dart';
+import '../core/l10n/l10n_ext.dart';
 
 class LegalDisclaimerSheet extends StatelessWidget {
   const LegalDisclaimerSheet({super.key});
@@ -170,8 +171,8 @@ class LegalDisclaimerSheet extends StatelessWidget {
                         ),
                       ),
                       onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'I Understand & Acknowledge',
+                      child: Text(
+                        context.t.legalAcknowledge,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,

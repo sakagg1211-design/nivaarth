@@ -8,6 +8,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../models/live_portfolio.dart';
 import '../../../providers/privacy_provider.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class HoldingCard extends ConsumerWidget {
   final LivePortfolio stock;
@@ -83,7 +84,7 @@ class HoldingCard extends ConsumerWidget {
 
               Expanded(
                 child: Text(
-                  "Holding Details",
+                  context.t.holdingDetails,
                   style: AppTypography.titleLarge.copyWith(
                     fontWeight:
                         FontWeight.bold,
@@ -131,36 +132,36 @@ class HoldingCard extends ConsumerWidget {
           ),
 
           _HoldingRow(
-            "Quantity",
+            context.t.commonQuantity,
             isPrivacy ? masked : portfolio.qty.toString(),
             Icons.inventory_2_outlined,
           ),
 
           _HoldingRow(
-            "Average Price",
+            context.t.holdingAvgPrice,
             isPrivacy ? masked : _money(portfolio.avgPrice),
             Icons.payments_outlined,
           ),
 
           _HoldingRow(
-            "Current Price",
+            context.t.holdingCurrentPrice,
             _money(stock.currentPrice),
             Icons.show_chart,
           ),
 
           _HoldingRow(
-            "Invested Value",
+            context.t.holdingInvested,
             isPrivacy ? masked : _money(portfolio.totalInvested),
             Icons.account_balance_wallet_outlined,
           ),
                     _HoldingRow(
-            "Current Value",
+            context.t.holdingCurrentValue,
             isPrivacy ? masked : _money(stock.currentValue),
             Icons.savings_outlined,
           ),
 
           _HoldingRow(
-            "Net P&L",
+            context.t.holdingNetPl,
             isPrivacy
                 ? masked
                 : _money(
@@ -174,7 +175,7 @@ class HoldingCard extends ConsumerWidget {
           ),
 
           _HoldingRow(
-            "Return",
+            context.t.holdingReturn,
             _percent(
               stock.returnPercent,
               signed: true,
@@ -186,7 +187,7 @@ class HoldingCard extends ConsumerWidget {
           ),
 
           _HoldingRow(
-            "Day's P&L",
+            context.t.holdingDayPl,
             isPrivacy
                 ? '$masked (${_percent(stock.todayReturnPercent, signed: true)})'
                 : '${_money(stock.todayPL, signed: true)} (${_percent(stock.todayReturnPercent, signed: true)})',

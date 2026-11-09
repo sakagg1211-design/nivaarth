@@ -8,6 +8,8 @@ import '../../../core/utils/symbol_utils.dart';
 import '../../../models/stock_score.dart';
 import '../score_methodology_page.dart';
 import 'score_breakdown_section.dart';
+import '../../../core/l10n/l10n_ext.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AiScoreCard extends StatelessWidget {
   final StockScore score;
@@ -92,7 +94,7 @@ class AiScoreCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      "Rules-based research score",
+                      context.t.aiRulesBased,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.bodySmall.copyWith(
@@ -104,7 +106,7 @@ class AiScoreCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: 'How the NV Score works',
+                tooltip: context.t.aiHowWorks,
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(
                   Icons.info_outline_rounded,
@@ -241,28 +243,28 @@ class AiScoreCard extends StatelessWidget {
                           if (score.isExcluded)
                             _buildInstitutionalBadge(
                               label: score.isDataPending
-                                  ? "Data Pending"
+                                  ? context.t.aiDataPending
                                   : (score.recommendation.toUpperCase().contains("DATA REVIEW")
-                                      ? "Data Under Review"
-                                      : "Score Excluded"),
+                                      ? context.t.aiDataReview
+                                      : context.t.aiExcluded),
                               icon: Icons.block_outlined,
                               color: Colors.amber,
                             ),
                           if (score.provisionalCreditPending)
                             _buildInstitutionalBadge(
-                              label: "Credit Pending",
+                              label: context.t.aiCreditPending,
                               icon: Icons.account_balance_outlined,
                               color: Colors.blue,
                             ),
                           if (score.provisionalBrokerMTF)
                             _buildInstitutionalBadge(
-                              label: "Broker MTF Leverage",
+                              label: context.t.aiBrokerLeverage,
                               icon: Icons.account_balance_wallet_outlined,
                               color: Colors.purple,
                             ),
                           if (score.debtNotAssessed)
                             _buildInstitutionalBadge(
-                              label: "Debt Not Assessed",
+                              label: context.t.aiDebtNotAssessed,
                               icon: Icons.warning_amber_rounded,
                               color: Colors.orange,
                             ),
@@ -309,7 +311,7 @@ class AiScoreCard extends StatelessWidget {
                         const Spacer(),
 
                         Text(
-                          "${score.confidence}% Data coverage",
+                          context.t.briefCoverage(score.confidence),
                           style: AppTypography.bodySmall
                               .copyWith(
                             fontWeight:
@@ -351,7 +353,7 @@ class AiScoreCard extends StatelessWidget {
                     ),
 
                     Text(
-                      _summary(),
+                      _summary(context.t),
                       style:
                           AppTypography.bodySmall
                               .copyWith(
@@ -381,7 +383,7 @@ class AiScoreCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                "Why this score",
+                context.t.aiWhyScore,
                 style: AppTypography.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -398,13 +400,13 @@ class AiScoreCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0x33E5A93C)),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.psychology_outlined, size: 14, color: Color(0xFFE5A93C)),
                       SizedBox(width: 4),
                       Text(
-                        "Methodology",
+                        context.t.aiMethodology,
                         style: TextStyle(
                           color: Color(0xFFE5A93C),
                           fontSize: 11,
@@ -499,23 +501,23 @@ class AiScoreCard extends StatelessWidget {
     return "Weak";
   }
 
-  String _summary() {
+  String _summary(AppLocalizations t) {
     if (score.isDataPending) {
-      return "No NV Score yet: ${score.pendingReason ?? 'not enough quality data'}. The score needs at least 3 of 4 quality inputs and is not built on assumed values.";
+      return t.aiNoScore(score.pendingReason ?? 'not enough quality data');
     }
     if (score.isExcluded) {
       final rec = score.recommendation.toUpperCase();
       if (rec.contains("DATA REVIEW")) {
-        return "The source data for this stock did not match the exchange (market cap or price belong to a different company), so it is being reviewed. No score is shown rather than a score built on wrong numbers.";
+        return t.aiReviewBody;
       }
       if (rec.contains("INSURANCE")) {
-        return "Life and General Insurance firms operate on actuarial float and statutory accounting. Quantitative 1-100 scoring is withheld until dedicated Embedded Value (EV) models are integrated.";
+        return t.aiInsurance;
       } else if (rec.contains("HOLDING")) {
-        return "Investment holding companies trade at variable net asset value (NAV) discounts. Standard operating multiples (P/E, ROCE) are not applicable; specialized SOTP research is recommended.";
+        return t.aiHolding;
       } else if (rec.contains("REIT") || rec.contains("INVIT")) {
-        return "Real Estate & Infrastructure Investment Trusts operate on distribution yield and Net Asset Value (NAV). Standard industrial scoring is withheld.";
+        return t.aiReit;
       }
-      return "The 1-100 score is not calculated for this stock: its accounts need a specialised valuation method.";
+      return t.aiSpecialised;
     }
 
     // Built from the score breakdown: which pillars are high or low, with their numbers
@@ -525,16 +527,16 @@ class AiScoreCard extends StatelessWidget {
         .toList()
       ..sort((x, y) => (y['score'] as num).compareTo(x['score'] as num));
     if (pillars.isEmpty) {
-      return "NV Score ${score.overallScore ?? '—'}/100. The pillar breakdown appears after the next score update.";
+      return t.aiScoreOnly(score.overallScore ?? '—');
     }
     String line(Map p) => "${p['label']} ${(p['score'] as num).round()}/100";
-    final text = StringBuffer("NV Score ${score.overallScore}/100. Highest: ${line(pillars.first)}");
-    if (pillars.length > 1) text.write("; lowest: ${line(pillars.last)}");
+    final text = StringBuffer(t.aiHighest(score.overallScore ?? '—', line(pillars.first)));
+    if (pillars.length > 1) text.write(t.aiLowest(line(pillars.last)));
     text.write(".");
     if (score.scoreBreakdown?['risk_cap'] != null) {
-      text.write(" A risk check failed, which caps the score at ${score.scoreBreakdown!['risk_cap']}.");
+      text.write(t.aiRiskCap(score.scoreBreakdown!['risk_cap']));
     } else if (score.scoreBreakdown?['hurdle_factor'] != null) {
-      text.write(" Quality is below 55, so the score is scaled down.");
+      text.write(t.aiHurdle);
     }
     return text.toString();
   }

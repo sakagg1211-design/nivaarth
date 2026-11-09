@@ -6,6 +6,7 @@ import '../advisor/advisor_chat_page.dart';
 import '../dashboard/dashboard_page.dart';
 import '../portfolio/portfolio_page.dart';
 import '../search/search_page.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class _NavItem {
   final IconData icon;
@@ -71,8 +72,8 @@ class _HomePageState extends State<HomePage> {
             now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
           _lastBackPressTime = now;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Press back again to exit Nivaarth'),
+            SnackBar(
+              content: Text(context.t.homeBackToExit),
               duration: Duration(seconds: 2),
               backgroundColor: Color(0xFF16171B),
             ),

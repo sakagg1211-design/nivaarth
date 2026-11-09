@@ -7,6 +7,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../core/utils/verdict_narrative_engine.dart';
 import '../../../models/stock_score.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class RecommendationCard extends StatelessWidget {
   final StockScore score;
@@ -28,6 +29,7 @@ class RecommendationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color recColor = _recommendationColor();
     final narrative = VerdictNarrativeEngine.generate(
+      t: context.t,
       score: score,
       companyName: companyName,
       sector: sector,
@@ -229,7 +231,7 @@ class RecommendationCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                "DATA SUMMARY",
+                                context.t.recSummary,
                                 style: TextStyle(
                                   color: recColor,
                                   fontSize: 11,
@@ -305,8 +307,8 @@ class RecommendationCard extends StatelessWidget {
                       color: AppColors.accent,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      "Tactical Playbook",
+                    Text(
+                      context.t.recPlaybook,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -325,7 +327,7 @@ class RecommendationCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        isOwned ? "HELD IN PORTFOLIO" : "DISCOVERY MODE",
+                        isOwned ? context.t.recHeld : context.t.recDiscovery,
                         style: TextStyle(
                           color: isOwned ? AppColors.accent : AppColors.textSecondary,
                           fontSize: 11,
@@ -347,7 +349,7 @@ class RecommendationCard extends StatelessWidget {
                 _PlaybookRow(
                   icon: Icons.account_balance_wallet_outlined,
                   iconColor: const Color(0xFFE5A93C),
-                  title: "What the data shows",
+                  title: context.t.recShows,
                   guideline: narrative.playbook.dataShows,
                 ),
 
@@ -357,7 +359,7 @@ class RecommendationCard extends StatelessWidget {
                 _PlaybookRow(
                   icon: Icons.add_chart_rounded,
                   iconColor: const Color(0xFF00E676),
-                  title: "Number to watch",
+                  title: context.t.recWatch,
                   guideline: narrative.playbook.toWatch,
                 ),
 
@@ -367,7 +369,7 @@ class RecommendationCard extends StatelessWidget {
                 _PlaybookRow(
                   icon: Icons.remove_red_eye_outlined,
                   iconColor: const Color(0xFFA78BFA),
-                  title: "What updates the score",
+                  title: context.t.recUpdates,
                   guideline: narrative.playbook.updatesWith,
                 ),
               ],
@@ -389,7 +391,7 @@ class RecommendationCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  "Data coverage: ${score.confidence}% • Synthesized from 6 quantitative pillars",
+                  context.t.recCoverage(score.confidence),
                   style: const TextStyle(
                     color: Color(0xFF858A94),
                     fontSize: 11,

@@ -5,6 +5,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../services/auth_service.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 /// Forgot Password screen for requesting a password reset email
 class ForgotPasswordPage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     if (email.isEmpty || !email.contains('@')) {
       setState(() {
-        _errorMessage = 'Please enter a valid email address.';
+        _errorMessage = context.t.authInvalidEmail;
       });
       return;
     }
@@ -63,7 +64,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Unable to send reset link. Please check your email and try again.';
+        _errorMessage = context.t.authResetFailed;
       });
     } finally {
       if (mounted) {
@@ -139,12 +140,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   const SizedBox(height: AppSpacing.xl),
 
-                  const Text('Reset Password', style: AppTypography.heading1),
+                  Text(context.t.authResetTitle, style: AppTypography.heading1),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     _emailSent
-                        ? 'Check your inbox for a recovery link.'
-                        : 'Enter the email linked to your Nivaarth account to receive a reset link.',
+                        ? context.t.authResetCheckInbox
+                        : context.t.authResetPrompt,
                     style: AppTypography.body,
                   ),
 
@@ -168,12 +169,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ),
                           const SizedBox(height: AppSpacing.md),
                           Text(
-                            'Reset Link Sent',
+                            context.t.authResetSent,
                             style: AppTypography.title.copyWith(color: AppColors.success),
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           Text(
-                            'We sent instructions to ${_emailController.text.trim()}.',
+                            context.t.authResetSentTo(_emailController.text.trim()),
                             textAlign: TextAlign.center,
                             style: AppTypography.bodySmall,
                           ),
@@ -182,7 +183,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Back to Login'),
+                              child: Text(context.t.authBackToLogin),
                             ),
                           ),
                         ],
@@ -210,8 +211,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
-                            decoration: const InputDecoration(
-                              labelText: 'Registered Email',
+                            decoration: InputDecoration(
+                              labelText: context.t.authRegisteredEmail,
                               prefixIcon: Icon(Icons.alternate_email_rounded),
                             ),
                           ),
@@ -253,7 +254,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : const Text('Send Reset Link'),
+                                  : Text(context.t.authSendReset),
                             ),
                           ),
                         ],

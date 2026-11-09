@@ -11,6 +11,8 @@ import 'package:mobile/providers/stock_insights_provider.dart';
 import 'package:mobile/providers/stock_score_provider.dart';
 import 'package:mobile/screens/stock/widgets/peer_comparison_card.dart';
 import 'package:mobile/screens/stock/widgets/stock_radar_card.dart';
+import 'helpers/localized_app.dart';
+import 'package:mobile/providers/locale_provider.dart';
 
 Map<String, dynamic> part(String label, num points, num max, [String status = 'VALID']) =>
     {'label': label, 'points': points, 'max': max, 'status': status};
@@ -206,7 +208,7 @@ void main() {
 
   group('cards', () {
     Widget host(List<Override> o, Widget child) =>
-        ProviderScope(overrides: o, child: MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))));
+        ProviderScope(overrides: o, child: localizedApp(locale: hinglishLocale, home: Scaffold(body: SingleChildScrollView(child: child))));
 
     testWidgets('radar card at 320 wide, and it survives failed facts', (tester) async {
       tester.view.physicalSize = const Size(320, 800);
@@ -281,7 +283,7 @@ void main() {
         RadarAxis('D', 'D', 40),
         RadarAxis('E', 'E', 20),
       ];
-      await tester.pumpWidget(const MaterialApp(
+      await tester.pumpWidget(localizedApp(locale: hinglishLocale, 
         home: Scaffold(body: SizedBox(height: 220, width: 300, child: ScoreRadar(axes: axes))),
       ));
       await tester.pumpAndSettle();

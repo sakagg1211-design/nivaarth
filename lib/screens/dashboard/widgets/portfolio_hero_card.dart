@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../providers/privacy_provider.dart';
+import '../../../core/l10n/l10n_ext.dart';
+import '../../../l10n/app_localizations.dart';
 
 class PortfolioHeroCard extends ConsumerWidget {
   final double currentValue;
@@ -52,42 +54,42 @@ class PortfolioHeroCard extends ConsumerWidget {
     ];
   }
 
-  static String? quietNote(List<String> names) {
+  static String? quietNote(List<String> names, AppLocalizations t) {
     if (names.isEmpty) return null;
     final shown = names.take(3).join(', ');
     final more = names.length > 3 ? ' +${names.length - 3}' : '';
-    return '${names.length} stock me 15 min se koi trade nahi hua ($shown$more) — price aakhri trade ka hai';
+    return t.heroQuiet(names.length, '$shown$more');
   }
 
-  String? get _asOfLabel => asOfLabel(pricesAsOf, isMarketOpen: isMarketOpen);
+  String? _asOfLabel(AppLocalizations t) => asOfLabel(pricesAsOf, t, isMarketOpen: isMarketOpen);
 
   /// During the session: when the live prices were last refreshed (v1.0.12: the refresh time,
   /// not a quiet stock's last trade time). Once the market is closed the
   /// prices are that day's closing prices (official close is 3:30 PM IST, loaded from the NSE
   /// bhavcopy in the evening), so the label names the day instead of the last refresh time.
-  static String? asOfLabel(DateTime? pricesAsOf, {required bool isMarketOpen, DateTime? now}) {
+  static String? asOfLabel(DateTime? pricesAsOf, AppLocalizations t, {required bool isMarketOpen, DateTime? now}) {
     if (pricesAsOf == null) return null;
     const ist = Duration(hours: 5, minutes: 30);
-    final t = pricesAsOf.toUtc().add(ist);
+    final at = pricesAsOf.toUtc().add(ist);
     final n = (now ?? DateTime.now()).toUtc().add(ist);
-    final sameDay = t.year == n.year && t.month == n.month && t.day == n.day;
+    final sameDay = at.year == n.year && at.month == n.month && at.day == n.day;
     if (!isMarketOpen) {
       return sameDay
-          ? 'Market closed · today\'s closing prices'
-          : 'Market closed · closing prices of ${DateFormat('d MMM').format(t)}';
+          ? t.heroClosedNote
+          : t.heroClosedOn(DateFormat('d MMM').format(at));
     }
-    final time = DateFormat('h:mm a').format(t);
-    return sameDay ? 'Refreshed at $time' : 'Refreshed ${DateFormat('d MMM').format(t)}, $time';
+    final time = DateFormat('h:mm a').format(at);
+    return sameDay ? t.heroRefreshedAt(time) : t.heroRefreshedOn(DateFormat('d MMM').format(at), time);
   }
 
-  String? get _priceNote {
+  String? _priceNote(AppLocalizations t) {
     if (unpricedHoldings > 0) {
-      return '$unpricedHoldings stock ka price nahi mila — total mein shaamil nahi';
+      return t.heroUnpriced(unpricedHoldings);
     }
     if (staleHoldings > 0) {
-      return '$staleHoldings stock is refresh me update nahi hue — pichhla saved price dikh raha hai';
+      return t.heroStale(staleHoldings);
     }
-    return quietNote(quietHoldings);
+    return quietNote(quietHoldings, t);
   }
 
   bool get isProfit => netPnL >= 0;
@@ -119,8 +121,8 @@ class PortfolioHeroCard extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Subheader label
-          const Text(
-            'PORTFOLIO VALUE',
+          Text(
+            context.t.heroValue,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -181,8 +183,8 @@ class PortfolioHeroCard extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Total P&L',
+              Text(
+                context.t.heroTotalPl,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -207,8 +209,8 @@ class PortfolioHeroCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Today',
+              Text(
+                context.t.heroToday,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -228,10 +230,10 @@ class PortfolioHeroCard extends ConsumerWidget {
             ],
           ),
 
-          if (_asOfLabel != null) ...[
+          if (_asOfLabel(context.t) != null) ...[
             const SizedBox(height: 8),
             Text(
-              _asOfLabel!,
+              _asOfLabel(context.t)!,
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
@@ -240,7 +242,7 @@ class PortfolioHeroCard extends ConsumerWidget {
             ),
           ],
 
-          if (_priceNote != null) ...[
+          if (_priceNote(context.t) != null) ...[
             const SizedBox(height: 10),
             Row(
               children: [
@@ -252,7 +254,7 @@ class PortfolioHeroCard extends ConsumerWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    _priceNote!,
+                    _priceNote(context.t)!,
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,

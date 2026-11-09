@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../models/dashboard_summary.dart';
-import '../../../models/live_portfolio.dart';
+import '../../../providers/allocation_provider.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
-class DashboardSignalsGrid extends StatelessWidget {
+class DashboardSignalsGrid extends ConsumerWidget {
   final DashboardSummary summary;
-  final List<LivePortfolio> holdings;
 
   const DashboardSignalsGrid({
     super.key,
     required this.summary,
-    this.holdings = const [],
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Missing data shows a dash, never a placeholder stock or number
     const dash = '—';
 
@@ -33,29 +33,10 @@ class DashboardSignalsGrid extends StatelessWidget {
     final strongScore = summary.topOpportunity.overallScore;
     final hasStrong = strongSym.isNotEmpty && strongScore != null;
 
-    // 4. Diversification Score & Distinct Sector Count
-    final Set<String> distinctSectors = {};
-    for (final h in holdings) {
-      final s = SymbolUtils.getSector(
-        h.portfolio.instrument,
-        dbSector: h.portfolio.sector,
-      );
-      distinctSectors.add(s);
-    }
-    final int sectorCount = distinctSectors.length;
-
-    // Comprehensive Diversification Score out of 100
-    // Ideal diversification for 30+ holdings is 8-15 sectors
-    int computedDivScore;
-    if (sectorCount >= 10) {
-      computedDivScore = 88;
-    } else if (sectorCount >= 7) {
-      computedDivScore = 75;
-    } else if (sectorCount >= 4) {
-      computedDivScore = 60;
-    } else {
-      computedDivScore = 40;
-    }
+    // 4. Diversification: how evenly the value is spread over the sectors on the bantwara card
+    final allocation = ref.watch(allocationProvider).valueOrNull;
+    final divScore = allocation?.diversificationScore;
+    final topSector = allocation?.topSectorPct;
 
     return Column(
       children: [
@@ -64,7 +45,7 @@ class DashboardSignalsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _SignalMicroCard(
-                title: 'BIGGEST WINNER',
+                title: context.t.signalWinner,
                 subtitle: winnerSym.isEmpty ? dash : winnerSym,
                 value: winnerSym.isEmpty ? dash : Formatters.percent(winnerPct, signed: true),
                 valueColor: winnerPct >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252),
@@ -73,7 +54,7 @@ class DashboardSignalsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _SignalMicroCard(
-                title: 'WEAKEST',
+                title: context.t.signalWeakest,
                 subtitle: weakestSym.isEmpty ? dash : weakestSym,
                 value: weakestSym.isEmpty ? dash : Formatters.percent(weakestPct, signed: true),
                 valueColor: weakestPct < 0 ? const Color(0xFFFF5252) : const Color(0xFF00E676),
@@ -87,8 +68,8 @@ class DashboardSignalsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _SignalMicroCard(
-                title: 'STRONGEST HOLDING',
-                subtitle: hasStrong ? strongSym : 'Not assessed',
+                title: context.t.signalStrongest,
+                subtitle: hasStrong ? strongSym : context.t.signalNotAssessed,
                 value: hasStrong ? '$strongScore/100' : dash,
                 valueColor: const Color(0xFFE5A93C),
               ),
@@ -96,10 +77,10 @@ class DashboardSignalsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _SignalMicroCard(
-                title: 'DIVERSIFICATION',
-                subtitle: sectorCount == 0 ? 'No holdings' : '$sectorCount sectors',
-                value: sectorCount == 0 ? dash : '$computedDivScore/100',
-                valueColor: const Color(0xFF00E676),
+                title: context.t.signalDiversification,
+                subtitle: topSector == null ? dash : context.t.signalTopSector(topSector.toStringAsFixed(0)),
+                value: divScore == null ? dash : '$divScore/100',
+                valueColor: (divScore ?? 0) >= 60 ? const Color(0xFF00E676) : const Color(0xFFE5A93C),
               ),
             ),
           ],

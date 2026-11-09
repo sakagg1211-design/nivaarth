@@ -4,6 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/utils/symbol_utils.dart';
 import '../models/trade.dart';
 import 'portfolio_repository.dart';
+import '../core/utils/error_messages.dart';
+import '../core/utils/holding_math.dart';
+import '../l10n/app_localizations.dart';
 
 /// Buys and sells (public."Trades", migration 16). Every write goes through an RPC that saves
 /// the trade and rebuilds the stock's Portfolio row in one transaction, so the two never drift.
@@ -14,15 +17,17 @@ class TradeRepository {
 
   /// The database raises plain Hinglish messages (P0001), e.g. "Itne shares nahi hain…";
   /// show those as they are.
-  static String message(Object error) {
+  static String message(Object error, AppLocalizations t) {
     if (error is PostgrestException) return error.message;
+    if (error is TextError) return error.text(t);
+    if (error is OversellException) return t.tradeNotEnough(OversellException.plain(error.held), OversellException.plain(error.selling));
     return error.toString().replaceFirst('Exception: ', '');
   }
 
   String _requireUser() {
     final user = client.auth.currentUser;
     if (user == null) {
-      throw Exception('Login zaroori hai.');
+      throw TextError((t) => t.errLoginRequired);
     }
     return user.id;
   }

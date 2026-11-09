@@ -8,7 +8,10 @@ import 'live_portfolio_provider.dart';
 class PortfolioAllocation {
   final List<AllocationSlice> byCap;
   final List<AllocationSlice> bySector;
-  const PortfolioAllocation(this.byCap, this.bySector);
+
+  final int? diversificationScore;
+  final double? topSectorPct;
+  const PortfolioAllocation(this.byCap, this.bySector, [this.diversificationScore, this.topSectorPct]);
 }
 
 /// Market caps and sectors change slowly; prices refresh every 2 minutes. Kept apart so a price
@@ -75,5 +78,11 @@ final allocationProvider = FutureProvider<PortfolioAllocation?>((ref) async {
     byCap.add((group: AllocationMath.capTier(data.marketCap[s], data.largeCut, data.midCut, isEtf: isEtf), value: h.currentValue));
     bySector.add((group: sector, value: h.currentValue));
   }
-  return PortfolioAllocation(AllocationMath.slices(byCap), AllocationMath.slices(bySector, maxSlices: 8));
+  final sectors = AllocationMath.slices(bySector);
+  return PortfolioAllocation(
+    AllocationMath.slices(byCap),
+    AllocationMath.slices(bySector, maxSlices: 8),
+    AllocationMath.diversificationScore(sectors),
+    sectors.isEmpty ? null : sectors.first.percent,
+  );
 });

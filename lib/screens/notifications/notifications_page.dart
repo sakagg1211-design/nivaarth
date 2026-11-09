@@ -10,8 +10,10 @@ import '../../models/user_alert.dart';
 import '../../providers/alerts_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
 import '../../providers/live_quote_provider.dart';
+import '../../providers/price_alert_provider.dart';
 import '../stock/stock_detail_page.dart';
 import '../stock/widgets/price_alert_sheet.dart';
+import '../../core/l10n/l10n_ext.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
@@ -36,34 +38,26 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Notifications',
+        title: Text(
+          context.t.tipNotifications,
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
         ),
         actions: [
           IconButton(
-            tooltip: 'Mere price alerts',
-            icon: const Icon(Icons.price_change_outlined, color: Colors.white70, size: 22),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PriceAlertsPage()),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Mark all as read',
+            tooltip: context.t.notifMarkAll,
             icon: const Icon(Icons.done_all_rounded, color: Color(0xFFE5A93C), size: 22),
             onPressed: () {
               ref.read(alertsProvider.notifier).markAllAsRead();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All alerts marked as read.'),
+                SnackBar(
+                  content: Text(context.t.notifMarked),
                   duration: Duration(seconds: 1),
                 ),
               );
             },
           ),
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: context.t.commonRefresh,
             icon: const Icon(Icons.refresh_rounded, color: Colors.white70, size: 22),
             onPressed: () {
               ref.read(alertsProvider.notifier).fetchAlerts();
@@ -76,6 +70,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         children: [
           // Filter Tabs
           _buildFilterBar(),
+          _buildPriceAlertsRow(),
 
           // Alerts List
           Expanded(
@@ -88,7 +83,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               ),
               error: (err, _) => Center(
                 child: Text(
-                  'Failed to load notifications:\n$err',
+                  context.t.notifFailed(err),
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white54),
                 ),
@@ -118,6 +113,29 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPriceAlertsRow() {
+    final count = ref.watch(activePriceAlertsProvider).valueOrNull?.length;
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
+        leading: const Icon(Icons.notifications_active_outlined, color: Color(0xFFE5A93C), size: 20),
+        title: Text(context.t.alertsMine,
+            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (count != null) Text(context.t.notifActive(count), style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF8E929B)),
+          ],
+        ),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PriceAlertsPage()),
+        ),
       ),
     );
   }
@@ -341,10 +359,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   String _formatTime(DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return context.t.notifJustNow;
+    if (diff.inMinutes < 60) return context.t.notifMinutes(diff.inMinutes);
+    if (diff.inHours < 24) return context.t.notifHours(diff.inHours);
+    return context.t.notifDays(diff.inDays);
   }
 
   Widget _buildEmptyState() {
@@ -367,8 +385,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          const Text(
-            'No Alerts in this Category',
+          Text(
+            context.t.notifEmptyTitle,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -376,8 +394,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Your portfolio is stable and within risk limits.',
+          Text(
+            context.t.notifEmptyBody,
             style: TextStyle(color: Colors.white54, fontSize: 13),
           ),
         ],

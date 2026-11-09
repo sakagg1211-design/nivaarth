@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T00:00:00+05:30",
+  "title": "Design System: Nivaarth",
+  "extensions": {
+    "colorMeta": {
+      "night-desk": { "role": "neutral", "displayName": "Night Desk" },
+      "audit-sheet": { "role": "neutral", "displayName": "Audit Sheet" },
+      "raised-sheet": { "role": "neutral", "displayName": "Raised Sheet" },
+      "ledger-gold": { "role": "primary", "displayName": "Ledger Gold" },
+      "profit-mint": { "role": "status", "displayName": "Profit Mint" },
+      "loss-red": { "role": "status", "displayName": "Loss Red" },
+      "caution-orange": { "role": "status", "displayName": "Caution Orange" },
+      "heat-green": { "role": "status", "displayName": "Heat Green" },
+      "heat-red": { "role": "status", "displayName": "Heat Red" }
+    },
+    "shadows": [],
+    "breakpoints": [
+      { "name": "desktop", "value": "1000px" },
+      { "name": "content-max", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action of a screen.",
+      "html": "<button class=\"ds-btn\">Add Holding</button>",
+      "css": ".ds-btn { background:#fff; color:#0C0D10; border:0; border-radius:16px; height:52px; width:100%; font-weight:800; font-size:15px; } .ds-btn:hover { background:#E5E7EB; } .ds-btn:focus-visible { outline:2px solid #E5A93C; outline-offset:2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A flat sheet holding one idea.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-t\">Portfolio vs Nifty</div><div class=\"ds-s\">Data up to 9 Nov 2026.</div></div>",
+      "css": ".ds-card { background:#16171B; border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:16px; } .ds-t { color:#fff; font-weight:800; font-size:15px; } .ds-s { color:#8E929B; font-size:12px; margin-top:4px; }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A filled field with a hairline stroke.",
+      "html": "<input class=\"ds-input\" placeholder=\"Search stock\">",
+      "css": ".ds-input { background:#16171B; color:#fff; border:1px solid #282A30; border-radius:16px; padding:14px; } .ds-input:focus { outline:0; border-color:#fff; }"
+    },
+    {
+      "name": "Range Chip",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Selected state of a small filter.",
+      "html": "<span class=\"ds-chip\">1M</span>",
+      "css": ".ds-chip { background:#23252B; color:#fff; border-radius:8px; padding:5px 10px; font-size:12px; font-weight:700; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Auditor's Night Desk",
+    "overview": "A quiet desk late at night with one audit file open. The room is dark so the numbers can be bright.",
+    "keyCharacteristics": [
+      "Dark only; no light theme exists.",
+      "Flat, hairline-separated sheets, with no shadows.",
+      "White for numbers and primary actions, gold for a single point of attention.",
+      "Green and red mean up and down, and are never decoration.",
+      "Percentages may be public; rupee amounts obey Privacy Mode."
+    ],
+    "rules": [
+      { "name": "The One Pencil Rule", "body": "Gold marks one thing per card. If two things are gold, neither is the point.", "section": "colors" },
+      { "name": "The Direction Only Rule", "body": "Green and red say up or down. They never mean brand, selection or series identity, and a direction is never told by colour alone: a sign or arrow goes with it.", "section": "colors" },
+      { "name": "The Number Comes First Rule", "body": "Within a card the figure is the heaviest thing. Words explain it and stay lighter.", "section": "typography" },
+      { "name": "The Flat Desk Rule", "body": "Nothing casts a shadow. If something must sit above the page, it is a bottom sheet or a dialog with a lighter sheet colour.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do show a date on anything that can go stale.",
+      "Do write \"—\" for a missing number.",
+      "Do say on the card what a figure is not, when it could be misread.",
+      "Do use the tokens in lib/core/theme instead of a colour literal.",
+      "Do keep touch targets at 48px or more."
+    ],
+    "donts": [
+      "Don't add shadows or decorative gradients to surfaces.",
+      "Don't use gold for a second thing on the same card.",
+      "Don't use green or red to mean anything except direction.",
+      "Don't put rupee amounts on a shareable card.",
+      "Don't add a light theme without replacing this document."
+    ]
+  }
+}

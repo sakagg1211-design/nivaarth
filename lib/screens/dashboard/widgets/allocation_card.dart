@@ -7,6 +7,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../providers/allocation_provider.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../stock/widgets/share_card.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 /// Colour-blind-safe categorical order, validated against the card surface (dark mode).
 const _series = [
@@ -72,16 +73,16 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
         children: [
           Row(
             children: [
-              const Expanded(
-                child: Text('Portfolio ka bantwara',
+              Expanded(
+                child: Text(context.t.allocTitle,
                     style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
-              _tab('Market cap', !_sector, () => setState(() {
+              _tab(context.t.allocMarketCap, !_sector, () => setState(() {
                     _sector = false;
                     _touched = -1;
                   })),
               const SizedBox(width: 6),
-              _tab('Sector', _sector, () => setState(() {
+              _tab(context.t.allocSector, _sector, () => setState(() {
                     _sector = true;
                     _touched = -1;
                   })),
@@ -169,7 +170,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
             ),
           if (!_sector) ...[
             const SizedBox(height: 6),
-            const Text('Large: top 100 companies by market cap · Mid: 101–250 · Small: baaki',
+            Text(context.t.allocCapNote,
                 style: TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
           ],
           Align(
@@ -181,12 +182,12 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                 visualDensity: VisualDensity.compact,
               ),
               icon: const Icon(Icons.ios_share_rounded, size: 15),
-              label: const Text('Share', style: TextStyle(fontSize: 12)),
+              label: Text(context.t.commonShare, style: TextStyle(fontSize: 12)),
               onPressed: () => showShareCard(
                 context,
                 fileName: 'Nivaarth_portfolio.png',
                 card: AllocationShareCard(
-                  title: _sector ? 'Portfolio: sector ke hisaab se' : 'Portfolio: market cap ke hisaab se',
+                  title: _sector ? context.t.allocShareSector : context.t.allocShareCap,
                   slices: slices,
                   colors: colors,
                 ),

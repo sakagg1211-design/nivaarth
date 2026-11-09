@@ -1,0 +1,362 @@
+{
+ "etf/false": {
+  "archetypeTag": "Exchange-Traded Fund",
+  "analystBriefing": "Sample Co Ltd. (NIFTYBEES) is an exchange-traded fund that tracks Index & ETFs. Its price follows the underlying basket, so company-level ratios such as ROCE do not apply; the NV Score gives it a fixed quality of 75 and valuation of 60 and scores only its 12-month return rank.",
+  "profileLabel": "Exchange-Traded Fund",
+  "catalyst": [
+   "Diversified basket",
+   "Holds many securities (or a commodity), so the results of one company move it less than a single stock.",
+   "ETF"
+  ],
+  "risk": [
+   "Moves with its benchmark",
+   "Returns follow the index or commodity it tracks, including its falls.",
+   "ETF"
+  ],
+  "playbook": [
+   "NV Score 60/100, set mostly by its 12-month return rank.",
+   "Tracking difference against its benchmark and the expense ratio (from the fund house factsheet).",
+   "Daily closing prices update the 12-month return rank."
+  ]
+ },
+ "etf/true": {
+  "archetypeTag": "Exchange-Traded Fund",
+  "analystBriefing": "Sample Co Ltd. (NIFTYBEES) is an exchange-traded fund that tracks Index & ETFs. Its price follows the underlying basket, so company-level ratios such as ROCE do not apply; the NV Score gives it a fixed quality of 75 and valuation of 60 and scores only its 12-month return rank.",
+  "profileLabel": "Exchange-Traded Fund",
+  "catalyst": [
+   "Diversified basket",
+   "Holds many securities (or a commodity), so the results of one company move it less than a single stock.",
+   "ETF"
+  ],
+  "risk": [
+   "Moves with its benchmark",
+   "Returns follow the index or commodity it tracks, including its falls.",
+   "ETF"
+  ],
+  "playbook": [
+   "In your portfolio. NV Score 60/100, set mostly by its 12-month return rank.",
+   "Tracking difference against its benchmark and the expense ratio (from the fund house factsheet).",
+   "Daily closing prices update the 12-month return rank."
+  ]
+ },
+ "pending/false": {
+  "archetypeTag": "Data Pending",
+  "analystBriefing": "No NV Score for Sample Co Ltd. (AAA) yet: Not enough quality data yet. A score built on too few inputs would be misleading, so none is shown.",
+  "profileLabel": "Data Pending",
+  "catalyst": [
+   "What is missing",
+   "Not enough quality data yet. The score needs at least 3 of 4 quality inputs (return on capital, debt, cash conversion, growth).",
+   "Score: Pending"
+  ],
+  "risk": [
+   "Why no score",
+   "Missing inputs are not filled with assumed values.",
+   "Inputs: Incomplete"
+  ],
+  "playbook": [
+   "Only the NV Score is pending; the live price is unaffected.",
+   "The next annual results of the company, which usually fill the missing inputs.",
+   "The score appears automatically once enough data is available."
+  ]
+ },
+ "pending/true": {
+  "archetypeTag": "Data Pending",
+  "analystBriefing": "No NV Score for Sample Co Ltd. (AAA) yet: Not enough quality data yet. A score built on too few inputs would be misleading, so none is shown.",
+  "profileLabel": "Data Pending",
+  "catalyst": [
+   "What is missing",
+   "Not enough quality data yet. The score needs at least 3 of 4 quality inputs (return on capital, debt, cash conversion, growth).",
+   "Score: Pending"
+  ],
+  "risk": [
+   "Why no score",
+   "Missing inputs are not filled with assumed values.",
+   "Inputs: Incomplete"
+  ],
+  "playbook": [
+   "Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is pending.",
+   "The next annual results of the company, which usually fill the missing inputs.",
+   "The score appears automatically once enough data is available."
+  ]
+ },
+ "review/false": {
+  "archetypeTag": "Data Under Review",
+  "analystBriefing": "The fundamentals we hold for Sample Co Ltd. (AAA) did not match exchange data: the market cap or price belongs to a different company. The score is withheld until the data is corrected.",
+  "profileLabel": "Data Under Review",
+  "catalyst": [
+   "What we checked",
+   "Stored market cap and price were compared with the NSE closing price and an independent market-cap source.",
+   "Check: Failed"
+  ],
+  "risk": [
+   "Why no score",
+   "A score built on another company's numbers would be misleading, so none is shown.",
+   "Score: Withheld"
+  ],
+  "playbook": [
+   "Only the NV Score is withheld; the live price is unaffected.",
+   "Check the company's latest results on the NSE / BSE website until the data is corrected.",
+   "The score returns automatically once the data passes the check."
+  ]
+ },
+ "review/true": {
+  "archetypeTag": "Data Under Review",
+  "analystBriefing": "The fundamentals we hold for Sample Co Ltd. (AAA) did not match exchange data: the market cap or price belongs to a different company. The score is withheld until the data is corrected.",
+  "profileLabel": "Data Under Review",
+  "catalyst": [
+   "What we checked",
+   "Stored market cap and price were compared with the NSE closing price and an independent market-cap source.",
+   "Check: Failed"
+  ],
+  "risk": [
+   "Why no score",
+   "A score built on another company's numbers would be misleading, so none is shown.",
+   "Score: Withheld"
+  ],
+  "playbook": [
+   "Currently in your portfolio. Your holding, price and P&L are unaffected; only the NV Score is withheld.",
+   "Check the company's latest results on the NSE / BSE website until the data is corrected.",
+   "The score returns automatically once the data passes the check."
+  ]
+ },
+ "holding/false": {
+  "archetypeTag": "Investment Holding Company (SOTP Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) functions as an equity investment holding company. Standard operating ROCE and P/E ratios are mathematically distorted by holding company discounts and non-operating dividend income. Valuation must be assessed via Sum-of-the-Parts (SOTP) net asset value.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Underlying Portfolio Holdings NAV",
+   "Value realization is linked to the market capitalization growth of listed subsidiaries and unlisted associates.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Holding Company Discount Persistence",
+   "Holding company share prices often trade below the value of their underlying holdings; the gap varies by company and over time.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "The 1-100 score is not calculated for this category because standard operating ratios do not apply.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Market value of core subsidiary holdings and parent capital allocation track record."
+  ]
+ },
+ "holding/true": {
+  "archetypeTag": "Investment Holding Company (SOTP Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) functions as an equity investment holding company. Standard operating ROCE and P/E ratios are mathematically distorted by holding company discounts and non-operating dividend income. Valuation must be assessed via Sum-of-the-Parts (SOTP) net asset value.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Underlying Portfolio Holdings NAV",
+   "Value realization is linked to the market capitalization growth of listed subsidiaries and unlisted associates.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Holding Company Discount Persistence",
+   "Holding company share prices often trade below the value of their underlying holdings; the gap varies by company and over time.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Market value of core subsidiary holdings and parent capital allocation track record."
+  ]
+ },
+ "insurance/false": {
+  "archetypeTag": "Actuarial Underwriting Entity (EV Model Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) operates an actuarial insurance underwriting portfolio. Statutory accounting and premium float dynamics make industrial ROCE metrics non-applicable; valuation is driven by Value of New Business (VNB) margins and Embedded Value (EV).",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Float Compounding & VNB Expansion",
+   "Long-duration customer float and growing policyholder retention fuel actuarial book value expansion.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Actuarial Claims / Surrender Risk",
+   "Regulatory commission caps and sudden mortality/morbidity claims spikes can pressure quarterly margins.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "The 1-100 score is not calculated for this category because standard operating ratios do not apply.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "VNB margins, persistency ratios, and solvency margin ratio."
+  ]
+ },
+ "insurance/true": {
+  "archetypeTag": "Actuarial Underwriting Entity (EV Model Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) operates an actuarial insurance underwriting portfolio. Statutory accounting and premium float dynamics make industrial ROCE metrics non-applicable; valuation is driven by Value of New Business (VNB) margins and Embedded Value (EV).",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Float Compounding & VNB Expansion",
+   "Long-duration customer float and growing policyholder retention fuel actuarial book value expansion.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Actuarial Claims / Surrender Risk",
+   "Regulatory commission caps and sudden mortality/morbidity claims spikes can pressure quarterly margins.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "VNB margins, persistency ratios, and solvency margin ratio."
+  ]
+ },
+ "reit/false": {
+  "archetypeTag": "Yield Distribution Trust (NAV Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Predictable Distribution Yield",
+   "High dividend payout mandates and pass-through tax structures provide tangible cash distribution.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Interest Rate Sensitivity",
+   "Rising benchmark yields increase the discount rate and compress trust capital value.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "The 1-100 score is not calculated for this category because standard operating ratios do not apply.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec."
+  ]
+ },
+ "reit/true": {
+  "archetypeTag": "Yield Distribution Trust (NAV Required)",
+  "analystBriefing": "Sample Co Ltd. (AAA) is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Predictable Distribution Yield",
+   "High dividend payout mandates and pass-through tax structures provide tangible cash distribution.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Interest Rate Sensitivity",
+   "Rising benchmark yields increase the discount rate and compress trust capital value.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec."
+  ]
+ },
+ "other/false": {
+  "archetypeTag": "Specialized Asset Class (Score Excluded)",
+  "analystBriefing": "Sample Co Ltd. (AAA) is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Predictable Distribution Yield",
+   "High dividend payout mandates and pass-through tax structures provide tangible cash distribution.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Interest Rate Sensitivity",
+   "Rising benchmark yields increase the discount rate and compress trust capital value.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "The 1-100 score is not calculated for this category because standard operating ratios do not apply.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec."
+  ]
+ },
+ "other/true": {
+  "archetypeTag": "Specialized Asset Class (Score Excluded)",
+  "analystBriefing": "Sample Co Ltd. (AAA) is a structured trust vehicle distributing rental/infrastructure cash flows. Standard industrial scoring is withheld in favor of Net Asset Value (NAV) and distribution yield.",
+  "profileLabel": "Specialized Asset Class (Score Excluded)",
+  "catalyst": [
+   "Predictable Distribution Yield",
+   "High dividend payout mandates and pass-through tax structures provide tangible cash distribution.",
+   "Coverage: Specialized"
+  ],
+  "risk": [
+   "Interest Rate Sensitivity",
+   "Rising benchmark yields increase the discount rate and compress trust capital value.",
+   "Risk: Specialized"
+  ],
+  "playbook": [
+   "Currently in your portfolio. The 1-100 score is not calculated for this category; review it on the metrics listed below.",
+   "Relevant metrics for this category: NAV discount (holding companies), EV / VNB (insurance), distribution yield (REITs / InvITs).",
+   "Occupancy rates, weighted average lease expiry (WALE), and yield spreads over G-Sec."
+  ]
+ },
+ "noBreakdown/false": {
+  "archetypeTag": "Score Profile",
+  "analystBriefing": "Sample Co Ltd. (AAA) has an NV Score of 61/100. The pillar-by-pillar breakdown appears after the next score update.",
+  "profileLabel": "Score Band: Average",
+  "catalyst": [
+   "Breakdown pending",
+   "Quality, valuation and price-trend details load with the next nightly score update.",
+   "—"
+  ],
+  "risk": [
+   "Breakdown pending",
+   "No pillar data to compare yet.",
+   "—"
+  ],
+  "playbook": [
+   "NV Score 61/100.",
+   "The breakdown below the score shows which pillar moves it.",
+   "Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update valuation and the 12-month return rank."
+  ]
+ },
+ "noBreakdown/true": {
+  "archetypeTag": "Score Profile",
+  "analystBriefing": "Sample Co Ltd. (AAA) has an NV Score of 61/100. The pillar-by-pillar breakdown appears after the next score update.",
+  "profileLabel": "Score Band: Average",
+  "catalyst": [
+   "Breakdown pending",
+   "Quality, valuation and price-trend details load with the next nightly score update.",
+   "—"
+  ],
+  "risk": [
+   "Breakdown pending",
+   "No pillar data to compare yet.",
+   "—"
+  ],
+  "playbook": [
+   "In your portfolio. NV Score 61/100.",
+   "The breakdown below the score shows which pillar moves it.",
+   "Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update valuation and the 12-month return rank."
+  ]
+ },
+ "scored/false": {
+  "archetypeTag": "Risk Flag",
+  "analystBriefing": "Sample Co Ltd. (AAA) has an NV Score of 54/100. Quality 49/100; Valuation 43/100. Momentum: no data yet, so the other pillars carry its weight. A risk check failed (pledge, net worth or debt), which caps the score at 40. Banks, NBFCs and brokers are capped at 50 until credit data is added.",
+  "profileLabel": "Score Band: Weak",
+  "catalyst": [
+   "Highest pillar: Quality",
+   "ROCE 13.4%.",
+   "49/100"
+  ],
+  "risk": [
+   "Lowest pillar: Valuation",
+   "No detail available for this pillar.",
+   "43/100"
+  ],
+  "playbook": [
+   "Highest pillar: Quality 49/100. Lowest pillar: Valuation 43/100.",
+   "The Valuation pillar has the most room to move the score.",
+   "Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update valuation and the 12-month return rank."
+  ]
+ },
+ "scored/true": {
+  "archetypeTag": "Risk Flag",
+  "analystBriefing": "Sample Co Ltd. (AAA) has an NV Score of 54/100. Quality 49/100; Valuation 43/100. Momentum: no data yet, so the other pillars carry its weight. A risk check failed (pledge, net worth or debt), which caps the score at 40. Banks, NBFCs and brokers are capped at 50 until credit data is added.",
+  "profileLabel": "Score Band: Weak",
+  "catalyst": [
+   "Highest pillar: Quality",
+   "ROCE 13.4%.",
+   "49/100"
+  ],
+  "risk": [
+   "Lowest pillar: Valuation",
+   "No detail available for this pillar.",
+   "43/100"
+  ],
+  "playbook": [
+   "In your portfolio. Highest pillar: Quality 49/100. Lowest pillar: Valuation 43/100.",
+   "The Valuation pillar has the most room to move the score.",
+   "Quarterly results update return on capital, debt, cash flow and growth; daily closing prices update valuation and the 12-month return rank."
+  ]
+ }
+}

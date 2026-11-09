@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../models/ai_recommendation.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 class AIBriefingCard extends StatelessWidget {
   final AIRecommendation ai;
@@ -79,8 +80,8 @@ class AIBriefingCard extends StatelessWidget {
                 ),
                 child: Text(
                   dataCoverage == null
-                      ? 'Data coverage —'
-                      : '${dataCoverage!.round()}% Data coverage',
+                      ? context.t.briefCoverageNa
+                      : context.t.briefCoverage(dataCoverage!.round()),
                   style: const TextStyle(
                     color: Color(0xFFE5A93C),
                     fontSize: 11,
@@ -132,8 +133,8 @@ class AIBriefingCard extends StatelessWidget {
           const SizedBox(height: 18),
 
           // Reasons Section with lightning icons
-          const Text(
-            'Reasons',
+          Text(
+            context.t.briefReasons,
             style: TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -182,8 +183,8 @@ class AIBriefingCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           // Factual checks (never instructions)
-          const Text(
-            'What to check',
+          Text(
+            context.t.briefToCheck,
             style: TextStyle(
               color: Colors.white,
               fontSize: 14,

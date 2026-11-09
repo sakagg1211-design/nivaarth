@@ -1,4 +1,5 @@
 import 'allocation_math.dart';
+import '../../l10n/app_localizations.dart';
 
 /// One position for the what-if and stress sums. [beta] is null when it is not known.
 class RiskHolding {
@@ -6,7 +7,10 @@ class RiskHolding {
   final double value;
   final double? beta;
   final String sector;
-  const RiskHolding(this.symbol, this.value, this.beta, this.sector);
+
+  /// Null for funds and when Screener has none; zero or less for a loss-maker.
+  final double? pe;
+  const RiskHolding(this.symbol, this.value, this.beta, this.sector, {this.pe});
 }
 
 class RiskSnapshot {
@@ -83,6 +87,25 @@ class RiskMath {
     );
   }
 
+  /// Total value over total earnings, the only way P/Es add up across holdings. Loss-makers and
+  /// funds have no usable P/E, so they are left out and counted.
+  static ({double? pe, int excluded, double coveragePct}) portfolioPe(List<RiskHolding> holdings) {
+    var total = 0.0, covered = 0.0, earnings = 0.0;
+    var excluded = 0;
+    for (final h in holdings) {
+      if (h.value <= 0) continue;
+      total += h.value;
+      final pe = h.pe;
+      if (pe == null || pe <= 0) {
+        excluded++;
+      } else {
+        covered += h.value;
+        earnings += h.value / pe;
+      }
+    }
+    return (pe: earnings > 0 ? covered / earnings : null, excluded: excluded, coveragePct: total > 0 ? covered / total * 100 : 0);
+  }
+
   /// Estimated change if the market falls [fallPct] percent: value x beta x fall for each position
   /// with a beta, never more than the position itself. Positions without a beta are left out and counted.
   static StressResult stress(List<RiskHolding> holdings, double fallPct) {
@@ -121,7 +144,7 @@ class RiskMath {
       if (h.symbol == symbol) {
         found = true;
         final v = h.value + delta;
-        if (v > 0) out.add(RiskHolding(h.symbol, v, h.beta, h.sector));
+        if (v > 0) out.add(RiskHolding(h.symbol, v, h.beta, h.sector, pe: h.pe));
       } else {
         out.add(h);
       }
@@ -132,16 +155,16 @@ class RiskMath {
 
   /// Plain statements for the lines this stock and sector would be over. A fund already holds many
   /// companies, and "Others" is not a sector, so neither is measured against these lines.
-  static List<String> warnings(RiskSnapshot s, String symbol, String sector) {
+  static List<String> warnings(RiskSnapshot s, String symbol, String sector, AppLocalizations t) {
     final out = <String>[];
     if (sector == AllocationMath.etf) return out;
     final w = s.stockWeight[symbol] ?? 0;
     final sw = s.sectorWeight[sector] ?? 0;
     if (w > stockLimit) {
-      out.add('$symbol portfolio ka ${w.toStringAsFixed(1)}% hoga, ${stockLimit.toStringAsFixed(0)}% ki line se upar.');
+      out.add(t.riskWarnStock(symbol, w.toStringAsFixed(1), stockLimit.toStringAsFixed(0)));
     }
     if (sector != AllocationMath.others && sw > sectorLimit) {
-      out.add('$sector portfolio ka ${sw.toStringAsFixed(1)}% hoga, ${sectorLimit.toStringAsFixed(0)}% ki line se upar.');
+      out.add(t.riskWarnStock(sector, sw.toStringAsFixed(1), sectorLimit.toStringAsFixed(0)));
     }
     return out;
   }

@@ -12,16 +12,16 @@ import '../../../core/utils/allocation_math.dart';
 import '../../../core/utils/stock_insights.dart';
 import '../../../models/stock_score.dart';
 import 'stock_radar_card.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 const _surface = Color(0xFF16171B);
 const _muted = Color(0xFF8E929B);
 const _gold = Color(0xFFE5A93C);
-const _disclaimer = 'Sirf jaankari ke liye. Ye investment advice nahi hai.';
 
 Widget _brand() => const Text('NIVAARTH',
     style: TextStyle(color: _gold, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 2));
 
-Widget _footer() => const Text(_disclaimer, style: TextStyle(color: _muted, fontSize: 11));
+Widget _footer(BuildContext context) => Text(context.t.shareDisclaimer, style: const TextStyle(color: _muted, fontSize: 11));
 
 /// Preview of a card with a Share button. The image is made as soon as the preview is on screen:
 /// browsers only allow sharing right after a tap, so the button must not wait for rendering.
@@ -74,9 +74,9 @@ class _ShareDialogState extends State<_ShareDialog> {
     try {
       if (!kIsWeb) throw UnsupportedError('no share sheet');
       await file.saveTo(widget.fileName);
-      if (mounted) setState(() => _status = 'Image download ho gayi.');
+      if (mounted) setState(() => _status = context.t.shareDownloaded);
     } catch (_) {
-      if (mounted) setState(() => _status = 'Share nahi ho paaya. Dobara try karo.');
+      if (mounted) setState(() => _status = context.t.shareFailed);
     }
   }
 
@@ -100,14 +100,14 @@ class _ShareDialogState extends State<_ShareDialog> {
                 TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.white),
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Band karo'),
+                  child: Text(context.t.commonClose),
                 ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
                   style: FilledButton.styleFrom(backgroundColor: _gold, foregroundColor: Colors.black),
                   onPressed: _png == null ? null : _share,
                   icon: const Icon(Icons.ios_share_rounded, size: 18),
-                  label: const Text('Share'),
+                  label: Text(context.t.commonShare),
                 ),
               ],
             ),
@@ -199,7 +199,7 @@ class StockShareCard extends StatelessWidget {
       if (updated != null)
         Text('Score ${DateFormat('d MMM yyyy').format(updated.toLocal())}',
             style: const TextStyle(color: _muted, fontSize: 11)),
-      _footer(),
+      _footer(context),
     ]);
   }
 }
@@ -263,7 +263,7 @@ class AllocationShareCard extends StatelessWidget {
           ),
         ),
       const SizedBox(height: 12),
-      _footer(),
+      _footer(context),
     ]);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/chart_point.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 /// Date text for the crosshair, at the precision the selected range has.
 String chartDateLabel(DateTime time, String range) {
@@ -37,9 +38,9 @@ class StockLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (series.length < 2) {
-      return const Center(
+      return Center(
         child: Text(
-          'Chart updating...',
+          context.t.chartUpdating,
           style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
         ),
       );

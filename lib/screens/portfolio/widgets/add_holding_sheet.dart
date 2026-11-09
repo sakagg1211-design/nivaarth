@@ -20,6 +20,7 @@ import '../../../repositories/trade_repository.dart';
 import '../../../services/backend_service.dart';
 import '../../../services/market_quote_service.dart';
 import 'trade_widgets.dart';
+import '../../../core/l10n/l10n_ext.dart';
 
 /// Modal bottom sheet for adding a stock with live autocomplete search. Saves a BUY trade:
 /// a new stock is added, a stock already held gets the weighted average.
@@ -205,7 +206,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '$sym: pichhli baar',
+                context.t.lastTimeTitle(sym),
                 style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
               ),
             ),
@@ -216,13 +217,12 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${day.format(last.firstBuy)} se ${day.format(last.lastSell)} '
-              '(${last.daysHeld} din)',
+              context.t.lastTimeDates(day.format(last.firstBuy), day.format(last.lastSell), last.daysHeld),
               style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
             ),
             const SizedBox(height: 14),
-            line('Kharida', hide ? '••••' : '${qty(last.qtyBought)} @ ${Formatters.currency(last.avgBuy)} (avg)'),
-            line('Becha', hide ? '••••' : '${qty(last.qtySold)} @ ${Formatters.currency(last.avgSell)} (avg)'),
+            line(context.t.lastTimeBought, hide ? '••••' : '${qty(last.qtyBought)} @ ${Formatters.currency(last.avgBuy)} (avg)'),
+            line(context.t.lastTimeSold, hide ? '••••' : '${qty(last.qtySold)} @ ${Formatters.currency(last.avgSell)} (avg)'),
             line(
               'Realized P&L',
               hide ? '••••' : Formatters.currency(last.realizedPl, signed: true),
@@ -230,7 +230,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             ),
             if (rounds.length > 1)
               Text(
-                'Ye stock aap ${rounds.length} baar poora bech chuke ho; upar sabse aakhri baar ka hisaab hai.',
+                context.t.lastTimeRounds(rounds.length),
                 style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
               ),
           ],
@@ -238,7 +238,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Theek hai', style: TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w700)),
+            child: Text(context.t.commonOk, style: TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -264,17 +264,17 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     final held = _heldHolding();
 
     if (instrument.isEmpty) {
-      setState(() => _errorMessage = 'Please search and select a stock symbol.');
+      setState(() => _errorMessage = context.t.addSelectStock);
       return;
     }
 
     if (qty == null || qty <= 0) {
-      setState(() => _errorMessage = 'Please enter a valid quantity greater than 0.');
+      setState(() => _errorMessage = context.t.addValidQty);
       return;
     }
 
     if (avgPrice == null || avgPrice <= 0) {
-      setState(() => _errorMessage = 'Please enter a valid average buy price.');
+      setState(() => _errorMessage = context.t.addValidPrice);
       return;
     }
 
@@ -311,15 +311,15 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(held == null
-              ? '$instrument added to portfolio successfully!'
-              : '$instrument: $qty shares jud gaye, average update ho gaya.'),
+              ? context.t.addDone(instrument)
+              : context.t.addMerged(instrument, qty)),
           backgroundColor: const Color(0xFF0C9F6E),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = TradeRepository.message(e);
+        _errorMessage = TradeRepository.message(e, context.t);
         _loading = false;
       });
     }
@@ -377,9 +377,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Add Stock Holding',
+                    context.t.addTitle,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -391,8 +391,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             ),
 
             const SizedBox(height: AppSpacing.sm),
-            const Text(
-              'Search any NSE/BSE stock to auto-fill details and start live AI tracking.',
+            Text(
+              context.t.addSubtitle,
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontSize: 13,
@@ -407,7 +407,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               textCapitalization: TextCapitalization.characters,
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
               decoration: _inputDecoration(
-                'Search Stock Symbol (e.g. RELIANCE, TITAN, INFY)',
+                context.t.addSearchHint,
                 Icons.search_rounded,
                 suffix: _isSearching
                     ? const SizedBox(
@@ -513,17 +513,17 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               controller: _companyController,
               textCapitalization: TextCapitalization.words,
               style: const TextStyle(color: Colors.white),
-              decoration: _inputDecoration('Company Name', Icons.business_rounded),
+              decoration: _inputDecoration(context.t.addCompanyName, Icons.business_rounded),
             ),
 
             // Live LTP Badge
             if (_fetchingLtp) ...[
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 children: [
                   SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFE5A93C))),
                   SizedBox(width: 8),
-                  Text('Fetching live price...', style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                  Text(context.t.addFetchingPrice, style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
                 ],
               ),
             ] else if (_liveLtp != null && _liveLtp! > 0) ...[
@@ -541,7 +541,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     const Icon(Icons.show_chart_rounded, size: 15, color: Color(0xFFE5A93C)),
                     const SizedBox(width: 6),
                     Text(
-                      'Current Price: ${Formatters.currency(_liveLtp!)}',
+                      context.t.addCurrentPrice(Formatters.currency(_liveLtp!)),
                       style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 12, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(width: 8),
@@ -551,8 +551,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                           _avgPriceController.text = _liveLtp!.toStringAsFixed(2);
                         });
                       },
-                      child: const Text(
-                        '[Use as Buy Price]',
+                      child: Text(
+                        context.t.addUseAsBuy,
                         style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800, decoration: TextDecoration.underline),
                       ),
                     ),
@@ -572,7 +572,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     focusNode: _qtyFocusNode,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Quantity', Icons.pin_outlined),
+                    decoration: _inputDecoration(context.t.commonQuantity, Icons.pin_outlined),
                     onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                 ),
@@ -584,7 +584,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     style: const TextStyle(color: Colors.white),
                     decoration: _inputDecoration(
-                      held == null ? 'Avg Buy Price (₹)' : 'Buy Price (₹)',
+                      held == null ? context.t.addAvgBuyPrice : context.t.commonBuyPrice,
                       Icons.currency_rupee_rounded,
                     ),
                     onChanged: (_) => setState(() => _errorMessage = null),
@@ -654,7 +654,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                         ),
                       )
                     : Text(
-                        held == null ? 'Add to Portfolio' : 'Portfolio me jodo (avg update)',
+                        held == null ? context.t.addToPortfolio : context.t.addToPortfolioAvg,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,

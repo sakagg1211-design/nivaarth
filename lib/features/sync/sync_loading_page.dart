@@ -7,6 +7,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../screens/home/home_page.dart';
+import '../../core/l10n/l10n_ext.dart';
+import '../../l10n/app_localizations.dart';
 
 class SyncLoadingPage extends ConsumerStatefulWidget {
   const SyncLoadingPage({super.key});
@@ -20,23 +22,23 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
   late AnimationController _controller;
 
   double progress = 0.2;
-  String currentStep = "Loading Portfolio...";
+  String? currentStep;
 
   final List<_SyncStep> steps = [
     _SyncStep(
-      title: "Verifying Authentication",
+      title: (t) => t.syncStepAuth,
       completed: true,
     ),
     _SyncStep(
-      title: "Loading Portfolio Holdings",
+      title: (t) => t.syncStepHoldings,
       completed: false,
     ),
     _SyncStep(
-      title: "Syncing Latest Prices & Health",
+      title: (t) => t.syncStepPrices,
       completed: false,
     ),
     _SyncStep(
-      title: "Portfolio Ready",
+      title: (t) => t.syncReady,
       completed: false,
     ),
   ];
@@ -66,7 +68,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
       if (!mounted) return;
       setState(() {
         steps[1].completed = true;
-        currentStep = "Fetching Latest Market Prices...";
+        currentStep = context.t.syncFetchingPrices;
         progress = 0.50;
       });
 
@@ -77,7 +79,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
       setState(() {
         steps[2].completed = true;
         steps[3].completed = true;
-        currentStep = "Portfolio Ready";
+        currentStep = context.t.syncReady;
         progress = 1.0;
       });
 
@@ -96,7 +98,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Portfolio abhi load nahi hua. Portfolio tab me Try Again dabao.'),
+          content: Text(context.t.syncFailed),
           backgroundColor: AppColors.surfaceSecondary,
         ),
       );
@@ -139,8 +141,8 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 
                   const SizedBox(height: AppSpacing.sm),
 
-                  const Text(
-                    "Preparing your portfolio intelligence",
+                  Text(
+                    context.t.syncPreparing,
                     style: AppTypography.body,
                     textAlign: TextAlign.center,
                   ),
@@ -162,7 +164,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
                   const SizedBox(height: 28),
 
                   Text(
-                    currentStep,
+                    currentStep ?? context.t.syncLoading,
                     textAlign: TextAlign.center,
                     style: AppTypography.body.copyWith(
                       fontWeight: FontWeight.w600,
@@ -210,8 +212,8 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 
                   const SizedBox(height: 28),
 
-                  const Text(
-                    "Please don't close the app.\nWe're preparing the latest market intelligence.",
+                  Text(
+                    context.t.syncDontClose,
                     textAlign: TextAlign.center,
                     style: AppTypography.caption,
                   ),
@@ -226,7 +228,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 } // <--- YEH BRACE MISSING THA (State class ko close karne ke liye)
 
 class _SyncStep {
-  final String title;
+  final String Function(AppLocalizations) title;
   bool completed;
 
   _SyncStep({
@@ -273,7 +275,7 @@ class _StepTile extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              step.title,
+              step.title(context.t),
               style: AppTypography.body.copyWith(
                 color: step.completed
                     ? AppColors.textPrimary
