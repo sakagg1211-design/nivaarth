@@ -380,14 +380,14 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF757A85)),
+                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF858A94)),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'Nivaarth is an educational & analytical technology platform. Not registered with SEBI as an Investment Adviser.',
                                 style: AppTypography.caption.copyWith(
-                                  color: const Color(0xFF757A85),
-                                  fontSize: 10.5,
+                                  color: const Color(0xFF858A94),
+                                  fontSize: 11,
                                   height: 1.3,
                                 ),
                               ),
@@ -397,7 +397,7 @@ class _LoginPageState extends State<LoginPage> {
                               'Details ↗',
                               style: TextStyle(
                                 color: Color(0xFFE5A93C),
-                                fontSize: 10.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

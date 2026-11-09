@@ -153,7 +153,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                     child: Text('${s.label} · ${s.stocks}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
+                        style: const TextStyle(color: Colors.white70, fontSize: 13)),
                   ),
                   Text(hide ? '••••' : Formatters.currency0(s.value),
                       style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
@@ -162,7 +162,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                     width: 60,
                     child: Text(Formatters.percent(s.percent),
                         textAlign: TextAlign.right,
-                        style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
                   ),
                 ],
               ),
@@ -170,7 +170,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
           if (!_sector) ...[
             const SizedBox(height: 6),
             const Text('Large: top 100 companies by market cap · Mid: 101–250 · Small: baaki',
-                style: TextStyle(color: Color(0xFF8E929B), fontSize: 10.5)),
+                style: TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
           ],
           Align(
             alignment: Alignment.centerRight,
@@ -202,15 +202,19 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        // The pill stays compact; the tap area around it is 48 high
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(label,
+              style: TextStyle(
+                  color: active ? Colors.white : const Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w700)),
         ),
-        child: Text(label,
-            style: TextStyle(
-                color: active ? Colors.white : const Color(0xFF8E929B), fontSize: 11.5, fontWeight: FontWeight.w700)),
       ),
     );
   }

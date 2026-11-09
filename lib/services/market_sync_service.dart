@@ -4,6 +4,7 @@ import '../core/utils/symbol_utils.dart';
 import '../providers/dashboard_provider.dart';
 import '../providers/live_portfolio_provider.dart';
 import '../providers/market_indices_provider.dart';
+import '../providers/risk_provider.dart';
 import '../providers/portfolio_provider.dart';
 import '../providers/watchlist_provider.dart';
 import 'market_quote_service.dart';
@@ -46,6 +47,7 @@ class MarketSyncService {
         ref.refresh(dashboardProvider.future),
         ref.refresh(livePortfolioProvider.future),
         ref.refresh(marketIndicesProvider.future),
+        ref.refresh(macroProvider.future),
         ref.read(watchlistProvider.notifier).refreshWatchlist(),
       ]);
     } catch (_) {

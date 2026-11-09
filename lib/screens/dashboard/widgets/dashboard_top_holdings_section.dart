@@ -64,7 +64,7 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
             Text(
               '${sortedSectors.length} Sectors Active',
               style: const TextStyle(
-                color: Color(0xFF757A85),
+                color: Color(0xFF858A94),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -79,7 +79,7 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: const Color(0xFF16171B),
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: const Color(0xFF282A30), width: 1),
           ),
           child: Column(
@@ -175,7 +175,7 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
                 const Text(
                   'Ranked by highest current valuation (₹)',
                   style: TextStyle(
-                    color: Color(0xFF757A85),
+                    color: Color(0xFF858A94),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -288,7 +288,7 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: Color(0xFF757A85),
+                                color: Color(0xFF858A94),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
                               ),

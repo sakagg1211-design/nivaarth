@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/utils/allocation_math.dart';
+import '../repositories/listing_repository.dart';
 import 'live_portfolio_provider.dart';
 
 class PortfolioAllocation {
@@ -18,8 +19,8 @@ class _ReferenceData {
   final double largeCut;
   final double midCut;
   final Map<String, double?> marketCap;
-  final Map<String, Map<String, dynamic>> taxonomy;
-  const _ReferenceData(this.key, this.loadedAt, this.largeCut, this.midCut, this.marketCap, this.taxonomy);
+  final Map<String, String> sectors;
+  const _ReferenceData(this.key, this.loadedAt, this.largeCut, this.midCut, this.marketCap, this.sectors);
 }
 
 _ReferenceData? _reference;
@@ -45,19 +46,15 @@ Future<_ReferenceData?> _loadReference(List<String> symbols) async {
   if (cuts == null) return null;
 
   final mcap = <String, double?>{};
-  final tax = <String, Map<String, dynamic>>{};
   for (var i = 0; i < symbols.length; i += 200) {
     final part = symbols.sublist(i, i + 200 > symbols.length ? symbols.length : i + 200);
     final scr = await client.from('ScreenerFundamentals').select('Instrument,MarketCapCr').inFilter('Instrument', part);
     for (final r in scr) {
       mcap[r['Instrument'].toString().toUpperCase()] = (r['MarketCapCr'] as num?)?.toDouble();
     }
-    final t = await client.from('StockTaxonomy').select('Instrument,isin,category,peer_sector').inFilter('Instrument', part);
-    for (final r in t) {
-      tax[r['Instrument'].toString().toUpperCase()] = Map<String, dynamic>.from(r as Map);
-    }
   }
-  return _reference = _ReferenceData(key, DateTime.now(), cuts.large, cuts.mid, mcap, tax);
+  final sectors = await ListingRepository().sectorsFor(symbols);
+  return _reference = _ReferenceData(key, DateTime.now(), cuts.large, cuts.mid, mcap, sectors);
 }
 
 /// How the portfolio's current value splits by market-cap tier and by sector.
@@ -73,10 +70,9 @@ final allocationProvider = FutureProvider<PortfolioAllocation?>((ref) async {
   final bySector = <({String group, double value})>[];
   for (final h in priced) {
     final s = h.portfolio.instrument.trim().toUpperCase();
-    final tax = data.taxonomy[s];
-    final isEtf = AllocationMath.isFund(tax?['isin']?.toString(), tax?['category']?.toString(), s);
+    final sector = data.sectors[s] ?? AllocationMath.others;
+    final isEtf = sector == AllocationMath.etf;
     byCap.add((group: AllocationMath.capTier(data.marketCap[s], data.largeCut, data.midCut, isEtf: isEtf), value: h.currentValue));
-    final sector = isEtf ? AllocationMath.etf : (tax?['peer_sector']?.toString() ?? AllocationMath.others);
     bySector.add((group: sector, value: h.currentValue));
   }
   return PortfolioAllocation(AllocationMath.slices(byCap), AllocationMath.slices(bySector, maxSlices: 8));

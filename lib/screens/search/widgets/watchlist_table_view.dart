@@ -1,3 +1,4 @@
+import '../../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/utils/symbol_utils.dart';
@@ -38,7 +39,7 @@ class WatchlistTableView extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.bookmark_border_rounded,
-                      color: Color(0xFF757A85),
+                      color: Color(0xFF858A94),
                       size: 32,
                     ),
                   ),
@@ -55,7 +56,7 @@ class WatchlistTableView extends StatelessWidget {
                   const Text(
                     'Search any stock and tap "+ Save" to track it here.\nPull down to sync and refresh.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF757A85), fontSize: 12),
+                    style: TextStyle(color: Color(0xFF858A94), fontSize: 12),
                   ),
                 ],
               ),
@@ -114,7 +115,7 @@ class WatchlistTableView extends StatelessWidget {
               'Company ⬍',
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -125,7 +126,7 @@ class WatchlistTableView extends StatelessWidget {
               'Score ⬍',
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -136,7 +137,7 @@ class WatchlistTableView extends StatelessWidget {
               'Added Price',
               style: TextStyle(
                 color: Color(0xFFE5A93C),
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -170,7 +171,7 @@ class WatchlistTableView extends StatelessWidget {
               'Technical & Things you should know',
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -182,7 +183,7 @@ class WatchlistTableView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -269,7 +270,7 @@ class WatchlistTableView extends StatelessWidget {
                   Text(
                     item.instrument,
                     style: const TextStyle(
-                      color: Color(0xFF757A85),
+                      color: Color(0xFF858A94),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -300,7 +301,7 @@ class WatchlistTableView extends StatelessWidget {
                     style: const TextStyle(
                       color: Color(0xFFE5A93C),
                       fontWeight: FontWeight.w800,
-                      fontSize: 11.5,
+                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -315,7 +316,7 @@ class WatchlistTableView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '₹${item.addedPrice.toStringAsFixed(2)}',
+                    Formatters.currency(item.addedPrice),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 13,
@@ -326,8 +327,8 @@ class WatchlistTableView extends StatelessWidget {
                   const Text(
                     'Entry Point',
                     style: TextStyle(
-                      color: Color(0xFF757A85),
-                      fontSize: 10,
+                      color: Color(0xFF858A94),
+                      fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -343,7 +344,7 @@ class WatchlistTableView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '₹${item.latestPrice.toStringAsFixed(2)}',
+                    Formatters.currency(item.latestPrice),
                     style: TextStyle(
                       color: changeColor,
                       fontSize: 13,
@@ -374,7 +375,7 @@ class WatchlistTableView extends StatelessWidget {
                     '${isRetPos ? '+' : ''}${item.returnPercent.toStringAsFixed(2)}%',
                     style: TextStyle(
                       color: retColor,
-                      fontSize: 12.5,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -382,8 +383,8 @@ class WatchlistTableView extends StatelessWidget {
                   Text(
                     item.trackedDate,
                     style: const TextStyle(
-                      color: Color(0xFF757A85),
-                      fontSize: 10,
+                      color: Color(0xFF858A94),
+                      fontSize: 11,
                     ),
                   ),
                 ],
@@ -442,7 +443,7 @@ class WatchlistTableView extends StatelessWidget {
                           style: TextStyle(
                             color: textColor,
                             fontWeight: FontWeight.w900,
-                            fontSize: 9.5,
+                            fontSize: 11,
                             letterSpacing: 0.3,
                           ),
                         ),

@@ -8,7 +8,7 @@ class AppColors {
   static const inkSoft = Color(0xFFE5E7EB);
   static const textPrimary = Color(0xFFFFFFFF);
   static const textSecondary = Color(0xFF8E929B);
-  static const textTertiary = Color(0xFF757A85);
+  static const textTertiary = Color(0xFF858A94);
   static const line = Color(0xFF282A30);
   static const lineStrong = Color(0xFF383A42);
   static const accent = Color(0xFFE5A93C);

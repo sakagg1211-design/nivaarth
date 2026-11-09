@@ -173,7 +173,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
             ),
           ],
         ),
-        content: Text(body, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5)),
+        content: Text(body, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 14)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -546,7 +546,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
             ),
             child: Text(
               t.source == 'CORP_ACT' ? 'BONUS' : (isBuy ? 'BUY' : 'SELL'),
-              style: TextStyle(color: tone, fontSize: 10.5, fontWeight: FontWeight.w800),
+              style: TextStyle(color: tone, fontSize: 11, fontWeight: FontWeight.w800),
             ),
           ),
           const SizedBox(width: 10),
@@ -562,7 +562,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                   t.isOpening
                       ? '${DateFormat('d MMM yyyy').format(t.tradeDate)} · Shuruaati holding'
                       : DateFormat('d MMM yyyy').format(t.tradeDate),
-                  style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11.5),
+                  style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
                 ),
               ],
             ),

@@ -127,7 +127,7 @@ class RecommendationCard extends StatelessWidget {
                     color: recColor,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.3,
-                    fontSize: 10.5,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -154,10 +154,7 @@ class RecommendationCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text(
-                  narrative.archetypeIcon,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Icon(_archetypeIcon(narrative.archetypeIcon), size: 18, color: const Color(0xFFE5A93C)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -184,7 +181,7 @@ class RecommendationCard extends StatelessWidget {
                     "ARCHETYPE",
                     style: TextStyle(
                       color: AppColors.accent,
-                      fontSize: 9.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
                     ),
@@ -247,7 +244,7 @@ class RecommendationCard extends StatelessWidget {
                             narrative.analystBriefing,
                             style: const TextStyle(
                               color: Color(0xFFD6D9E0),
-                              fontSize: 13.5,
+                              fontSize: 14,
                               fontWeight: FontWeight.w400,
                               height: 1.55,
                             ),
@@ -292,7 +289,7 @@ class RecommendationCard extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: AppColors.surfaceSecondary,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: AppColors.line,
               ),
@@ -312,7 +309,7 @@ class RecommendationCard extends StatelessWidget {
                       "Tactical Playbook",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 13.5,
+                        fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -331,7 +328,7 @@ class RecommendationCard extends StatelessWidget {
                         isOwned ? "HELD IN PORTFOLIO" : "DISCOVERY MODE",
                         style: TextStyle(
                           color: isOwned ? AppColors.accent : AppColors.textSecondary,
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                         ),
@@ -387,14 +384,14 @@ class RecommendationCard extends StatelessWidget {
               const Icon(
                 Icons.verified_user_outlined,
                 size: 13,
-                color: Color(0xFF757A85),
+                color: Color(0xFF858A94),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   "Data coverage: ${score.confidence}% • Synthesized from 6 quantitative pillars",
                   style: const TextStyle(
-                    color: Color(0xFF757A85),
+                    color: Color(0xFF858A94),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -469,7 +466,7 @@ class _SignalTile extends StatelessWidget {
                 isBullish ? "PRIMARY CATALYST" : "KEY MONITORABLE & RISK",
                 style: TextStyle(
                   color: color,
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
                 ),
@@ -488,7 +485,7 @@ class _SignalTile extends StatelessWidget {
                   tag,
                   style: TextStyle(
                     color: color,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -559,7 +556,7 @@ class _PlaybookRow extends StatelessWidget {
                 title,
                 style: TextStyle(
                   color: iconColor,
-                  fontSize: 11.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -579,3 +576,16 @@ class _PlaybookRow extends StatelessWidget {
     );
   }
 }
+
+/// The narrative engine names a kind of company with a symbol; the card draws it from the icon set.
+IconData _archetypeIcon(String symbol) => switch (symbol) {
+      '🧺' => Icons.shopping_basket_outlined,
+      '⏳' => Icons.hourglass_empty_rounded,
+      '🔍' => Icons.search_rounded,
+      '🏢' => Icons.business_outlined,
+      '☂️' => Icons.umbrella_outlined,
+      '🏗️' => Icons.apartment_outlined,
+      '📋' => Icons.assignment_outlined,
+      '⚠️' => Icons.warning_amber_rounded,
+      _ => Icons.bar_chart_rounded,
+    };

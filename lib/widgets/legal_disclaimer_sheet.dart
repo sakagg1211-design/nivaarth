@@ -201,7 +201,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFF17191E),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF262830)),
       ),
       child: Column(
@@ -221,7 +221,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   badge,
                   style: TextStyle(
                     color: badgeColor,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -233,7 +233,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
             title,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 13.5,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -242,7 +242,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
             body,
             style: const TextStyle(
               color: Color(0xFF9EA3AE),
-              fontSize: 11.5,
+              fontSize: 12,
               height: 1.45,
             ),
           ),

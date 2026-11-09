@@ -185,7 +185,7 @@ class AiScoreCard extends StatelessWidget {
                         Text(
                           score.overallScore != null ? "/100" : "EXCLUDED",
                           style: AppTypography.bodySmall.copyWith(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w800,
                             color: AppColors.textSecondary,
                             letterSpacing: 0.2,
@@ -453,7 +453,7 @@ class AiScoreCard extends StatelessWidget {
             label,
             style: TextStyle(
               color: color,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.1,
             ),
@@ -577,7 +577,7 @@ class _RecommendationChip extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.bold,
           letterSpacing: .3,
-          fontSize: 10.5,
+          fontSize: 11,
         ),
       ),
     );

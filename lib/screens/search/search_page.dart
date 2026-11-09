@@ -1,3 +1,4 @@
+import '../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -76,7 +77,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       '${savedList.length} Tracked',
                       style: const TextStyle(
                         color: Color(0xFFE5A93C),
-                        fontSize: 11.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -88,7 +89,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 'Prices, NV Scores and watchlist tracking.',
                 style: TextStyle(
                   color: Color(0xFF8E929B),
-                  fontSize: 12.5,
+                  fontSize: 13,
                 ),
               ),
 
@@ -112,7 +113,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
                             color: _activeTab == 0 ? const Color(0xFF23252B) : Colors.transparent,
-                            borderRadius: BorderRadius.circular(9),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
                           child: Row(
@@ -129,7 +130,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 style: TextStyle(
                                   color: _activeTab == 0 ? Colors.white : const Color(0xFF8E929B),
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 12.5,
+                                  fontSize: 13,
                                 ),
                               ),
                             ],
@@ -145,7 +146,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
                             color: _activeTab == 1 ? const Color(0xFF23252B) : Colors.transparent,
-                            borderRadius: BorderRadius.circular(9),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
                           child: Row(
@@ -162,7 +163,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 style: TextStyle(
                                   color: _activeTab == 1 ? Colors.white : const Color(0xFF8E929B),
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 12.5,
+                                  fontSize: 13,
                                 ),
                               ),
                             ],
@@ -183,7 +184,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search stock by symbol or name (e.g. TAT, KEI, APO)...',
-                    hintStyle: const TextStyle(color: Color(0xFF757A85), fontSize: 13),
+                    hintStyle: const TextStyle(color: Color(0xFF858A94), fontSize: 13),
                     prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B)),
                     suffixIcon: query.isNotEmpty
                         ? IconButton(
@@ -199,15 +200,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     filled: true,
                     fillColor: const Color(0xFF16171B),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(color: Color(0xFF282A30)),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(color: Color(0xFF282A30)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
                     ),
                   ),
@@ -267,7 +268,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           color: const Color(0xFF16171B),
                           clipBehavior: Clip.antiAlias,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
                             side: const BorderSide(color: Color(0xFF282A30)),
                           ),
                           child: ListTile(
@@ -355,7 +356,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
-                                fontSize: 14.5,
+                                fontSize: 15,
                               ),
                             ),
                             subtitle: Padding(
@@ -387,7 +388,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                     return IconButton(
                                       icon: Icon(
                                         isSaved ? Icons.star_rounded : Icons.star_outline_rounded,
-                                        color: isSaved ? const Color(0xFFE5A93C) : const Color(0xFF757A85),
+                                        color: isSaved ? const Color(0xFFE5A93C) : const Color(0xFF858A94),
                                         size: 24,
                                       ),
                                       splashRadius: 20,
@@ -421,7 +422,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                             SnackBar(
                                               content: Text(
                                                 savePrice > 0
-                                                    ? '${SymbolUtils.normalize(stock.instrument)} saved at ₹${savePrice.toStringAsFixed(2)}'
+                                                    ? '${SymbolUtils.normalize(stock.instrument)} saved at ${Formatters.currency(savePrice)}'
                                                     : '${SymbolUtils.normalize(stock.instrument)} added to watchlist',
                                               ),
                                               backgroundColor: const Color(0xFF16171B),
@@ -490,7 +491,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF16171B),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: Color(0xFF282A30)),
         ),
         title: Row(
@@ -522,7 +523,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         ),
         content: Text(
           addedPrice != null && addedPrice > 0
-              ? 'Are you sure you want to remove $displayName ($cleanSym)? Your tracked entry price (₹${addedPrice.toStringAsFixed(2)}) will be cleared.'
+              ? 'Are you sure you want to remove $displayName ($cleanSym)? Your tracked entry price (${Formatters.currency(addedPrice)}) will be cleared.'
               : 'Are you sure you want to remove $displayName ($cleanSym) from your watchlist?',
           style: const TextStyle(
             color: Color(0xFF8E929B),
@@ -662,11 +663,11 @@ class _LivePriceColumn extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              price > 0 ? '₹${price.toStringAsFixed(2)}' : 'Syncing...',
+              price > 0 ? Formatters.currency(price) : 'Syncing...',
               style: TextStyle(
                 color: price > 0 ? Colors.white : const Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
-                fontSize: 13.5,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 2),
@@ -690,7 +691,7 @@ class _LivePriceColumn extends ConsumerWidget {
                     color: hasChange
                         ? (isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252))
                         : const Color(0xFF8E929B),
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -709,7 +710,7 @@ class _LivePriceColumn extends ConsumerWidget {
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
-                fontSize: 13.5,
+                fontSize: 14,
               ),
             ),
             SizedBox(height: 2),
@@ -717,7 +718,7 @@ class _LivePriceColumn extends ConsumerWidget {
               'Live NSE',
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -734,7 +735,7 @@ class _LivePriceColumn extends ConsumerWidget {
               style: TextStyle(
                 color: Color(0xFF8E929B),
                 fontWeight: FontWeight.w800,
-                fontSize: 13.5,
+                fontSize: 14,
               ),
             ),
             SizedBox(height: 2),
@@ -742,7 +743,7 @@ class _LivePriceColumn extends ConsumerWidget {
               'Offline',
               style: TextStyle(
                 color: Color(0xFF8E929B),
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
             ),

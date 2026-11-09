@@ -69,7 +69,7 @@ class ListingInfoStrip extends StatelessWidget {
               style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
           const SizedBox(height: 6),
         ],
-        if (line != null) Text(line, style: const TextStyle(color: Color(0xFF6B6F78), fontSize: 11)),
+        if (line != null) Text(line, style: const TextStyle(color: Color(0xFF858A94), fontSize: 11)),
       ],
     );
   }

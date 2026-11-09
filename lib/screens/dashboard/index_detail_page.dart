@@ -102,7 +102,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   'BENCHMARK',
                   style: TextStyle(
                     color: Color(0xFFE5A93C),
-                    fontSize: 10.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.6,
                   ),
@@ -158,7 +158,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                               !hasValue ? 'UNAVAILABLE' : (marketOpen ? 'LIVE' : 'MARKET CLOSED'),
                               style: TextStyle(
                                 color: hasValue && marketOpen ? const Color(0xFF00E676) : const Color(0xFF8E929B),
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -295,7 +295,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   const Text(
                     'Price Spectrum & Ranges',
                     style: TextStyle(
-                      fontSize: 14.5,
+                      fontSize: 15,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                     ),
@@ -360,7 +360,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                       Text(
                         'About ${widget.name}',
                         style: const TextStyle(
-                          fontSize: 14.5,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                         ),
@@ -373,7 +373,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                         ? 'The NIFTY 50 is India\'s benchmark stock market index representing the weighted average of 50 of the largest and most liquid Indian companies listed on the National Stock Exchange. It serves as the primary gauge of India\'s broader economy and capital markets.'
                         : 'The BSE SENSEX is India\'s oldest and premier market barometer comprising 30 prominent, financially sound, and actively traded companies listed on the Bombay Stock Exchange, covering major sectors of the Indian economy.',
                     style: const TextStyle(
-                      fontSize: 12.5,
+                      fontSize: 13,
                       color: Color(0xFF8E929B),
                       height: 1.55,
                     ),
@@ -562,12 +562,12 @@ class _IndicatorCard extends StatelessWidget {
         children: [
           const Text(
             'Technical Indicators',
-            style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Colors.white),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white),
           ),
           const SizedBox(height: 4),
           const Text(
             'Calculated from daily closing prices over the last year.',
-            style: TextStyle(fontSize: 11.5, color: Color(0xFF8E929B)),
+            style: TextStyle(fontSize: 12, color: Color(0xFF8E929B)),
           ),
           const SizedBox(height: 14),
           ...history.when(
@@ -615,16 +615,16 @@ class _IndicatorCard extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 12.5, color: Colors.white, fontWeight: FontWeight.w600)),
+            child: Text(label, style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600)),
           ),
-          Text(value, style: const TextStyle(fontSize: 12.5, color: Colors.white, fontWeight: FontWeight.w700)),
+          Text(value, style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(width: 10),
           SizedBox(
             width: 140,
             child: Text(
               status,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 11.5, color: color, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w700),
             ),
           ),
         ],

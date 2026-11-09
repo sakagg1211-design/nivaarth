@@ -43,24 +43,6 @@ class ChartCard extends StatelessWidget {
         children: [
 
           Container(
-            height: 4,
-            width: 48,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(
-                alpha: .20,
-              ),
-              borderRadius:
-                  BorderRadius.circular(
-                100,
-              ),
-            ),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.lg,
-          ),
-
-          Container(
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(

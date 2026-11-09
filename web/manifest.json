@@ -3,7 +3,7 @@
     "short_name": "Nivaarth",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0B0D0C",
+    "background_color": "#0C0D10",
     "theme_color": "#0B0D0C",
     "description": "Nivaarth — portfolio auditor & stock research (private beta).",
     "orientation": "portrait-primary",

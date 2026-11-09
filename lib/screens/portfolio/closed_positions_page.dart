@@ -158,7 +158,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF15171C),
+        color: const Color(0xFF16171B),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: .06)),
       ),
@@ -188,7 +188,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF15171C),
+          color: const Color(0xFF16171B),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white.withValues(alpha: .06)),
         ),
@@ -234,7 +234,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                 if (p.lastSell != null) 'Aakhri sell ${_dayFormat.format(p.lastSell!)}',
                 '${p.trades} trades',
               ].join(' · '),
-              style: const TextStyle(color: Color(0xFF6B6F78), fontSize: 12),
+              style: const TextStyle(color: Color(0xFF858A94), fontSize: 12),
             ),
           ],
         ),

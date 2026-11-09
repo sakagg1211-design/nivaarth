@@ -109,7 +109,7 @@ class _PillarTile extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 2),
-              Text(hint, style: const TextStyle(color: Color(0xFF757A85), fontSize: 10.5)),
+              Text(hint, style: const TextStyle(color: Color(0xFF858A94), fontSize: 11)),
               const SizedBox(height: 6),
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.lg),

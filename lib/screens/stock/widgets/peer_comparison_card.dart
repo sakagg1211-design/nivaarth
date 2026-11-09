@@ -90,7 +90,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    color: Colors.white, fontSize: 12.5, fontWeight: strong ? FontWeight.w800 : FontWeight.w500)),
+                    color: Colors.white, fontSize: 13, fontWeight: strong ? FontWeight.w800 : FontWeight.w500)),
           ),
         );
 
@@ -108,7 +108,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
           const Text('Peers se tulna',
               style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
-          Text(data.industry, style: const TextStyle(color: _muted, fontSize: 11.5)),
+          Text(data.industry, style: const TextStyle(color: _muted, fontSize: 12)),
           const SizedBox(height: 10),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,13 +166,13 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
                 ),
                 icon: Icon(_picked == null ? Icons.add_rounded : Icons.swap_horiz_rounded, size: 16),
                 label: Text(_picked == null ? 'Aur peer jodo' : 'Peer badlo',
-                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                 onPressed: () => _pick(data, columns),
               ),
             ),
           ],
           const Text('— yani data nahi. P/E loss-making company ka nahi hota.',
-              style: TextStyle(color: _muted, fontSize: 10.5)),
+              style: TextStyle(color: _muted, fontSize: 11)),
         ],
       ),
     );

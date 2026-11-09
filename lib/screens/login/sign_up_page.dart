@@ -385,7 +385,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   value: _agreedToTerms,
                                   activeColor: AppColors.accent,
                                   checkColor: Colors.black,
-                                  side: const BorderSide(color: Color(0xFF757A85), width: 1.5),
+                                  side: const BorderSide(color: Color(0xFF858A94), width: 1.5),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.circular(AppRadius.xs),
@@ -547,14 +547,14 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF757A85)),
+                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF858A94)),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'Nivaarth is an educational & analytical technology platform. Not registered with SEBI as an Investment Adviser. All data & scores are algorithmically generated.',
                                 style: AppTypography.caption.copyWith(
-                                  color: const Color(0xFF757A85),
-                                  fontSize: 10.5,
+                                  color: const Color(0xFF858A94),
+                                  fontSize: 11,
                                   height: 1.3,
                                 ),
                               ),

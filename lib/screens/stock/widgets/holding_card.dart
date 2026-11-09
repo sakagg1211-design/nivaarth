@@ -1,3 +1,4 @@
+import '../../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -203,10 +204,7 @@ class HoldingCard extends ConsumerWidget {
     num value, {
     bool signed = false,
   }) {
-    final prefix =
-        signed && value >= 0 ? "+" : "";
-
-    return "$prefix₹${value.toStringAsFixed(2)}";
+    return Formatters.currency(value, signed: signed);
   }
 
   static String _percent(

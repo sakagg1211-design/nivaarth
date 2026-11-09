@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
                     height: 64,
                     width: 64,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFFE5A93C).withValues(alpha: 0.20),
@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
                         'assets/images/logo.jpg',
                         fit: BoxFit.cover,
@@ -64,7 +64,6 @@ class WelcomeScreen extends StatelessWidget {
                     'NIVAARTH',
                     style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontFamily: 'Inter',
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.0,
@@ -78,7 +77,6 @@ class WelcomeScreen extends StatelessWidget {
                     'Quantitative portfolio intelligence for serious Indian investors.',
                     style: TextStyle(
                       color: AppColors.textSecondary,
-                      fontFamily: 'Inter',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       height: 1.45,
@@ -165,7 +163,6 @@ class WelcomeScreen extends StatelessWidget {
                               ),
                               foregroundColor: AppColors.textPrimary,
                               textStyle: const TextStyle(
-                                fontFamily: 'Inter',
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
                               ),

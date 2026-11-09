@@ -1,3 +1,4 @@
+import '../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,6 +12,7 @@ import '../../models/stock_score.dart';
 
 import '../../providers/listing_provider.dart';
 import '../../providers/live_quote_provider.dart';
+import '../../providers/privacy_provider.dart';
 import '../../providers/stock_score_provider.dart';
 import '../../providers/watchlist_provider.dart';
 
@@ -23,7 +25,6 @@ import 'widgets/stock_line_chart.dart';
 import 'widgets/chart_card.dart';
 import 'widgets/chart_selector.dart';
 import 'widgets/holding_card.dart';
-import 'widgets/stats_grid.dart';
 import 'widgets/company_overview_card.dart';
 import 'widgets/investment_thesis_card.dart';
 import 'widgets/ai_score_card.dart';
@@ -159,6 +160,7 @@ class _StockDetailPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         StockHeader(
+          hideMoney: ref.watch(privacyModeProvider),
           instrument:
               portfolio.instrument,
           companyName:
@@ -197,7 +199,7 @@ class _StockDetailPageState
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${portfolio.instrument} saved to MY SAVED LIST at ₹${stock.currentPrice.toStringAsFixed(2)}'),
+                  content: Text('${portfolio.instrument} saved to MY SAVED LIST at ${Formatters.currency(stock.currentPrice)}'),
                   backgroundColor: const Color(0xFF16171B),
                 ),
               );
@@ -220,7 +222,7 @@ class _StockDetailPageState
               visualDensity: VisualDensity.compact,
             ),
             icon: const Icon(Icons.notifications_active_outlined, size: 16),
-            label: const Text('Price alert lagao', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+            label: const Text('Price alert lagao', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
             onPressed: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -272,7 +274,7 @@ class _StockDetailPageState
                     child: const Text(
                       "NSE Real-time",
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF8E929B),
                       ),
@@ -365,32 +367,6 @@ class _StockDetailPageState
         if (isOwned) ...[
           const SizedBox(height: 16),
           HoldingCard(stock: stock),
-          const SizedBox(height: 16),
-          StatsGrid(
-            items: [
-              StatItem(
-                title: "Quantity",
-                value: portfolio.qty.toString(),
-                icon: Icons.inventory_2_outlined,
-              ),
-              StatItem(
-                title: "Average",
-                value: "₹${portfolio.avgPrice.toStringAsFixed(2)}",
-                icon: Icons.payments_outlined,
-              ),
-              StatItem(
-                title: "Current",
-                value: "₹${stock.currentPrice.toStringAsFixed(2)}",
-                icon: Icons.show_chart,
-              ),
-              StatItem(
-                title: "Return",
-                value: "${stock.returnPercent.toStringAsFixed(2)}%",
-                icon: Icons.trending_up,
-                color: stock.netPL >= 0 ? AppColors.success : AppColors.danger,
-              ),
-            ],
-          ),
         ] else ...[
           const SizedBox(height: 16),
           Container(
@@ -432,7 +408,7 @@ class _StockDetailPageState
                       Text(
                         'Not currently in your owned portfolio.',
                         style: TextStyle(
-                          color: Color(0xFF757A85),
+                          color: Color(0xFF858A94),
                           fontSize: 12,
                         ),
                       ),
@@ -549,7 +525,7 @@ class _StockDetailPageState
                             'Analyzing $cleanSym signals...',
                             style: const TextStyle(
                               color: Color(0xFF8E929B),
-                              fontSize: 12.5,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -576,8 +552,8 @@ class _StockDetailPageState
                 const Text(
                   'Scoring quality, valuation and price trend from the latest data.',
                   style: TextStyle(
-                    color: Color(0xFF757A85),
-                    fontSize: 11.5,
+                    color: Color(0xFF858A94),
+                    fontSize: 12,
                     height: 1.45,
                   ),
                 ),
@@ -643,14 +619,14 @@ class _StockDetailPageState
               child: const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline_rounded, size: 15, color: Color(0xFF757A85)),
+                  Icon(Icons.info_outline_rounded, size: 15, color: Color(0xFF858A94)),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Regulatory Notice: Nivaarth is a financial analytics and research technology platform. All quantitative scores, factor models, and signals are algorithmically computed for educational purposes only and do not constitute SEBI-registered investment advice.',
                       style: TextStyle(
-                        color: Color(0xFF757A85),
-                        fontSize: 10.5,
+                        color: Color(0xFF858A94),
+                        fontSize: 11,
                         height: 1.4,
                       ),
                     ),
@@ -748,7 +724,7 @@ class _StockDetailPageState
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${portfolio.instrument} saved to MY SAVED LIST at ₹${stock.currentPrice.toStringAsFixed(2)}'),
+                      content: Text('${portfolio.instrument} saved to MY SAVED LIST at ${Formatters.currency(stock.currentPrice)}'),
                       backgroundColor: const Color(0xFF16171B),
                     ),
                   );

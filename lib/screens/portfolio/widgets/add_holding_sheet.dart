@@ -218,7 +218,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             Text(
               '${day.format(last.firstBuy)} se ${day.format(last.lastSell)} '
               '(${last.daysHeld} din)',
-              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12.5),
+              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
             ),
             const SizedBox(height: 14),
             line('Kharida', hide ? '••••' : '${qty(last.qtyBought)} @ ${Formatters.currency(last.avgBuy)} (avg)'),
@@ -466,13 +466,13 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                       ),
                       title: Text(
                         cleanSym,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13.5),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14),
                       ),
                       subtitle: Text(
                         item.companyName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11.5),
+                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
                       ),
                       trailing: (item.overallScore != null && item.overallScore! > 0)
                           ? Container(
@@ -483,7 +483,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                               ),
                               child: Text(
                                 '${item.overallScore} ${item.recommendation}',
-                                style: const TextStyle(color: Color(0xFF00E676), fontSize: 10, fontWeight: FontWeight.w700),
+                                style: const TextStyle(color: Color(0xFF00E676), fontSize: 11, fontWeight: FontWeight.w700),
                               ),
                             )
                           : (item.isExcluded
@@ -495,7 +495,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                                   ),
                                   child: Text(
                                     item.isDataPending ? 'DATA PENDING' : 'EXCLUDED',
-                                    style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.w700),
+                                    style: const TextStyle(color: Colors.amber, fontSize: 11, fontWeight: FontWeight.w700),
                                   ),
                                 )
                               : null),
@@ -523,7 +523,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                 children: [
                   SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFE5A93C))),
                   SizedBox(width: 8),
-                  Text('Fetching live price...', style: TextStyle(color: Color(0xFF8E929B), fontSize: 11.5)),
+                  Text('Fetching live price...', style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
                 ],
               ),
             ] else if (_liveLtp != null && _liveLtp! > 0) ...[
@@ -542,7 +542,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     const SizedBox(width: 6),
                     Text(
                       'Current Price: ${Formatters.currency(_liveLtp!)}',
-                      style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 11.5, fontWeight: FontWeight.w700),
+                      style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 12, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(width: 8),
                     InkWell(

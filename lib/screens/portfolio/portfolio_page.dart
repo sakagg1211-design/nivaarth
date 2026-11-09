@@ -623,7 +623,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                         const Text(
                           'PORTFOLIO VALUATION',
                           style: TextStyle(
-                            fontSize: 10.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF8E929B),
                             letterSpacing: 0.8,
@@ -735,7 +735,7 @@ class _InlineMetric extends StatelessWidget {
             label,
             style: const TextStyle(
               fontSize: 11,
-              color: Color(0xFF757A85),
+              color: Color(0xFF858A94),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -746,7 +746,7 @@ class _InlineMetric extends StatelessWidget {
               value,
               maxLines: 1,
               style: const TextStyle(
-                fontSize: 12.5,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: Colors.white,
               ),
@@ -792,12 +792,12 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
             const SizedBox(width: 5),
             const Text(
               'Return Heatmap',
-              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Colors.white),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white),
             ),
             const Spacer(),
             Text(
               '$up Up • ${stocks.length - up} Down',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF757A85)),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF858A94)),
             ),
           ],
         ),
@@ -890,7 +890,7 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
         child: Center(
           child: Text(
             'No holdings to display',
-            style: TextStyle(fontSize: 12, color: Color(0xFF757A85)),
+            style: TextStyle(fontSize: 12, color: Color(0xFF858A94)),
           ),
         ),
       );
@@ -938,7 +938,7 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4.5),
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(6),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -946,7 +946,7 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
               Text(
                 clean,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   color: fg,
                 ),
@@ -955,7 +955,7 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
               Text(
                 Formatters.percent(ret, signed: true),
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: fg,
                 ),

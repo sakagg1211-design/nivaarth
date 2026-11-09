@@ -16,6 +16,7 @@ import 'widgets/ai_briefing_card.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/dashboard_signals_grid.dart';
 import 'widgets/dashboard_top_holdings_section.dart';
+import 'widgets/macro_card.dart';
 import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
 import 'widgets/allocation_card.dart';
@@ -207,6 +208,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                         children: [
                           hero,
                           const SizedBox(height: 14),
+                          const MacroCard(),
+                          const SizedBox(height: 14),
                           health,
                           const SizedBox(height: 14),
                           signals,
@@ -232,6 +235,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             } else {
               body = [
                 hero,
+                const SizedBox(height: 14),
+                const MacroCard(),
                 const SizedBox(height: 14),
                 health,
                 const SizedBox(height: 14),
@@ -323,7 +328,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                   'TODAY',
                   style: TextStyle(
                     color: Color(0xFFE5A93C),
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,
                   ),
@@ -389,7 +394,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                       'Welcome to Nivaarth Cockpit',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16.5,
+                        fontSize: 17,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.3,
                       ),
@@ -399,7 +404,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                       'Nivaarth research tools',
                       style: TextStyle(
                         color: Color(0xFF8E929B),
-                        fontSize: 11.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -492,7 +497,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 title,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -500,7 +505,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               Text(
                 subtitle,
                 style: const TextStyle(
-                  color: Color(0xFF757A85),
+                  color: Color(0xFF858A94),
                   fontSize: 11,
                   height: 1.3,
                 ),

@@ -1,3 +1,4 @@
+import '../../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,7 @@ class PriceAlertTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final text = '${alert.isAbove ? 'Upar jaaye' : 'Neeche aaye'}: ₹${alert.targetPrice.toStringAsFixed(2)}';
+    final text = '${alert.isAbove ? 'Upar jaaye' : 'Neeche aaye'}: ${Formatters.currency(alert.targetPrice)}';
     return Row(
       children: [
         Icon(alert.isAbove ? Icons.north_east_rounded : Icons.south_east_rounded, color: _muted, size: 16),
@@ -120,8 +121,8 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
                 style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
             if (widget.currentPrice > 0) ...[
               const SizedBox(height: 4),
-              Text('Abhi ka bhaav ₹${widget.currentPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(color: _muted, fontSize: 12.5)),
+              Text('Abhi ka bhaav ${Formatters.currency(widget.currentPrice)}',
+                  style: const TextStyle(color: _muted, fontSize: 13)),
             ],
             const SizedBox(height: 14),
             Row(
@@ -183,7 +184,7 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
         }),
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          constraints: const BoxConstraints(minHeight: 48),
           decoration: BoxDecoration(
             color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),

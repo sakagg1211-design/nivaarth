@@ -21,7 +21,7 @@ const _disclaimer = 'Sirf jaankari ke liye. Ye investment advice nahi hai.';
 Widget _brand() => const Text('NIVAARTH',
     style: TextStyle(color: _gold, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 2));
 
-Widget _footer() => const Text(_disclaimer, style: TextStyle(color: _muted, fontSize: 10));
+Widget _footer() => const Text(_disclaimer, style: TextStyle(color: _muted, fontSize: 11));
 
 /// Preview of a card with a Share button. The image is made as soon as the preview is on screen:
 /// browsers only allow sharing right after a tap, so the button must not wait for rendering.
@@ -113,7 +113,7 @@ class _ShareDialogState extends State<_ShareDialog> {
             ),
             if (_status != null) ...[
               const SizedBox(height: 8),
-              Text(_status!, style: const TextStyle(color: Colors.white, fontSize: 12.5)),
+              Text(_status!, style: const TextStyle(color: Colors.white, fontSize: 13)),
             ],
           ],
         ),
@@ -198,7 +198,7 @@ class StockShareCard extends StatelessWidget {
       const SizedBox(height: 14),
       if (updated != null)
         Text('Score ${DateFormat('d MMM yyyy').format(updated.toLocal())}',
-            style: const TextStyle(color: _muted, fontSize: 10)),
+            style: const TextStyle(color: _muted, fontSize: 11)),
       _footer(),
     ]);
   }
@@ -255,10 +255,10 @@ class AllocationShareCard extends StatelessWidget {
                 child: Text(s.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
+                    style: const TextStyle(color: Colors.white70, fontSize: 13)),
               ),
               Text('${s.percent.toStringAsFixed(1)}%',
-                  style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
             ],
           ),
         ),

@@ -42,7 +42,7 @@ class PortfolioHealthCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
         color: const Color(0xFF16171B),
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFF282A30),
           width: 1,
@@ -137,8 +137,8 @@ class PortfolioHealthCard extends StatelessWidget {
                         const Text(
                           '/100',
                           style: TextStyle(
-                            color: Color(0xFF757A85),
-                            fontSize: 10,
+                            color: Color(0xFF858A94),
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -184,7 +184,7 @@ class PortfolioHealthCard extends StatelessWidget {
                       'Average NV Score of your scored holdings, weighted by value.',
                       style: TextStyle(
                         color: Color(0xFF8E929B),
-                        fontSize: 11.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

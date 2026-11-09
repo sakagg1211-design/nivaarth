@@ -6,17 +6,20 @@ import 'app_typography.dart';
 
 class AppTheme {
   static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.light,
+    brightness: Brightness.dark,
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.background,
-    fontFamily: 'Inter',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.accent,
-      brightness: Brightness.light,
+      brightness: Brightness.dark,
     ).copyWith(
       primary: AppColors.ink,
+      onPrimary: AppColors.background,
       secondary: AppColors.accent,
       surface: AppColors.surface,
+      onSurface: AppColors.textPrimary,
+      onSurfaceVariant: AppColors.textSecondary,
+      outline: AppColors.line,
       error: AppColors.danger,
     ),
     textTheme: const TextTheme(
@@ -98,8 +101,13 @@ class AppTheme {
         ),
       ),
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppColors.accent,
+      selectionColor: AppColors.accent.withValues(alpha: .35),
+      selectionHandleColor: AppColors.accent,
+    ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: AppColors.ink,
+      backgroundColor: AppColors.surfaceSecondary,
       contentTextStyle: const TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.w600,

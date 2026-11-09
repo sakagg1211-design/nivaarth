@@ -122,7 +122,7 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 88,
                   width: 88,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFFE5A93C).withValues(alpha: 0.25),
@@ -132,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(24),
                     child: Image.asset(
                       'assets/images/logo.jpg',
                       fit: BoxFit.cover,
@@ -147,7 +147,6 @@ class _SplashScreenState extends State<SplashScreen>
                   'NIVAARTH',
                   style: TextStyle(
                     color: AppColors.textPrimary,
-                    fontFamily: 'Inter',
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 4.0,
@@ -161,7 +160,6 @@ class _SplashScreenState extends State<SplashScreen>
                   'Private Portfolio Intelligence',
                   style: TextStyle(
                     color: AppColors.textSecondary,
-                    fontFamily: 'Inter',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,

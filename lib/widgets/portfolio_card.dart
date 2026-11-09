@@ -46,7 +46,7 @@ class PortfolioCard extends ConsumerWidget {
           '${stock.portfolio.instrument} aur uske saare trades portfolio se hat jayenge.\n\n'
           'Shares bech diye hain? To Delete nahi, stock kholkar SELL trade daalo, taaki '
           'trade history aur "pichhli baar" ka hisaab bacha rahe.',
-          style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13.5),
+          style: const TextStyle(color: Color(0xFF8E929B), fontSize: 14),
         ),
         actions: [
           TextButton(
@@ -166,7 +166,7 @@ class PortfolioCard extends ConsumerWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  fontSize: 14.5,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
                                 ),
@@ -185,7 +185,7 @@ class PortfolioCard extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 12,
                             color: Color(0xFF8E929B),
                             fontWeight: FontWeight.w500,
                           ),
@@ -195,7 +195,7 @@ class PortfolioCard extends ConsumerWidget {
                           const Text(
                             'Price unavailable',
                             style: TextStyle(
-                              fontSize: 11.5,
+                              fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFFFFB74D),
                             ),
@@ -216,7 +216,7 @@ class PortfolioCard extends ConsumerWidget {
                                 child: const Text(
                                   'DELAYED',
                                   style: TextStyle(
-                                    fontSize: 8.5,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: Color(0xFFFFB74D),
                                     letterSpacing: 0.3,
@@ -228,7 +228,7 @@ class PortfolioCard extends ConsumerWidget {
                             Text(
                               Formatters.currency(stock.currentPrice),
                               style: const TextStyle(
-                                fontSize: 11.5,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                               ),
@@ -237,7 +237,7 @@ class PortfolioCard extends ConsumerWidget {
                             Text(
                               '${stock.todayReturnPercent >= 0 ? '+' : ''}${Formatters.currency(stock.todayPL / (stock.portfolio.qty > 0 ? stock.portfolio.qty : 1))} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: stock.todayReturnPercent >= 0
                                     ? const Color(0xFF00E676)
@@ -270,7 +270,7 @@ class PortfolioCard extends ConsumerWidget {
                             child: const Text(
                               'ACTIVE',
                               style: TextStyle(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w800,
                                 color: Color(0xFF00E676),
                                 letterSpacing: 0.3,
@@ -388,7 +388,7 @@ class PortfolioCard extends ConsumerWidget {
                     const Text(
                       "1D P&L: ",
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 11,
                         color: Color(0xFF8E929B),
                         fontWeight: FontWeight.w600,
                       ),
@@ -407,7 +407,7 @@ class PortfolioCard extends ConsumerWidget {
                     Text(
                       'LTP: ${Formatters.currency(stock.currentPrice)}',
                       style: const TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 11,
                         color: Color(0xFFC7CDD6),
                         fontWeight: FontWeight.w600,
                       ),
@@ -445,7 +445,7 @@ class _CompactMetric extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 10.5,
+            fontSize: 11,
             color: Color(0xFF8E929B),
             fontWeight: FontWeight.w600,
           ),

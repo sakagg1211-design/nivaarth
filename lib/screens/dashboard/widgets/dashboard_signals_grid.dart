@@ -144,9 +144,9 @@ class _SignalMicroCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF757A85),
+              color: Color(0xFF858A94),
               letterSpacing: 1.0,
             ),
           ),

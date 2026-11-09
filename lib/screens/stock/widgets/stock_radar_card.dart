@@ -87,7 +87,7 @@ class BadgeWrap extends StatelessWidget {
                   color: b.caution ? const Color(0xFFE5A93C) : _muted,
                 ),
                 const SizedBox(width: 4),
-                Text(b.label, style: const TextStyle(color: Colors.white, fontSize: 11.5)),
+                Text(b.label, style: const TextStyle(color: Colors.white, fontSize: 12)),
               ],
             ),
           ),
@@ -159,9 +159,9 @@ class StockRadarCard extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Row(
                   children: [
-                    Expanded(child: Text(a.label, style: const TextStyle(color: Colors.white70, fontSize: 12.5))),
+                    Expanded(child: Text(a.label, style: const TextStyle(color: Colors.white70, fontSize: 13))),
                     Text(a.value == null ? '—' : a.value!.round().toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
@@ -170,7 +170,7 @@ class StockRadarCard extends ConsumerWidget {
               lender
                   ? 'Har score 0–100, bahar ki taraf zyada. Leverage mein zyada score yani kam leverage.'
                   : 'Har score 0–100, bahar ki taraf zyada. Debt mein zyada score yani kam karz.',
-              style: const TextStyle(color: _muted, fontSize: 10.5),
+              style: const TextStyle(color: _muted, fontSize: 11),
             ),
           ],
         ],

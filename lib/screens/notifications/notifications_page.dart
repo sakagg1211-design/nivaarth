@@ -36,25 +36,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Alerts & Notifications',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Text(
-              'Real-time NV Intelligence feeds',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 12,
-              ),
-            ),
-          ],
+        title: const Text(
+          'Notifications',
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
         ),
         actions: [
           IconButton(
@@ -264,15 +248,15 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           );
         }
       },
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: alert.isRead ? const Color(0xFF15171B) : const Color(0xFF1C1E24),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: alert.isRead
-                ? const Color(0xFF26282E)
+                ? const Color(0xFF282A30)
                 : accentColor.withValues(alpha: 0.35),
             width: alert.isRead ? 1 : 1.5,
           ),
@@ -379,7 +363,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             child: const Icon(
               Icons.notifications_off_outlined,
               size: 32,
-              color: Color(0xFF757A85),
+              color: Color(0xFF858A94),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

@@ -108,7 +108,7 @@ class PortfolioHeroCard extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
         color: const Color(0xFF16171B),
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFF282A30),
           width: 1,
@@ -235,7 +235,7 @@ class PortfolioHeroCard extends ConsumerWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF6B6F78),
+                color: Color(0xFF858A94),
               ),
             ),
           ],
@@ -254,7 +254,7 @@ class PortfolioHeroCard extends ConsumerWidget {
                   child: Text(
                     _priceNote!,
                     style: const TextStyle(
-                      fontSize: 11.5,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFFFFB74D),
                     ),

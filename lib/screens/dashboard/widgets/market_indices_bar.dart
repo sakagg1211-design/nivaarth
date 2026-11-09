@@ -107,7 +107,7 @@ class _IndexPill extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         onTap: () {
           Navigator.push(
             context,
@@ -123,7 +123,7 @@ class _IndexPill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFF16171B),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFF282A30)),
           ),
           child: Column(
@@ -171,7 +171,7 @@ class _IndexPill extends StatelessWidget {
                   Text(
                     hasValue ? Formatters.number(value.round()) : '—',
                     style: const TextStyle(
-                      fontSize: 16.5,
+                      fontSize: 17,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                       letterSpacing: -0.3,
@@ -186,7 +186,7 @@ class _IndexPill extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                           decoration: BoxDecoration(
                             color: toneBg,
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -199,7 +199,7 @@ class _IndexPill extends StatelessWidget {
                               Text(
                                 '${isUp ? '+' : '-'}${pointChange.abs().toStringAsFixed(1)} (${changePercent.abs().toStringAsFixed(2)}%)',
                                 style: TextStyle(
-                                  fontSize: 9.5,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w800,
                                   color: tone,
                                 ),
@@ -212,7 +212,7 @@ class _IndexPill extends StatelessWidget {
                   else
                     Text(
                       emptyStatus,
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
                     ),
                 ],
               ),
@@ -225,7 +225,7 @@ class _IndexPill extends StatelessWidget {
                   Text(
                     'H: ${hasValue ? Formatters.number(dayHigh.round()) : '—'}',
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF00E676),
                     ),
@@ -234,7 +234,7 @@ class _IndexPill extends StatelessWidget {
                   Text(
                     'L: ${hasValue ? Formatters.number(dayLow.round()) : '—'}',
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFFFF5252),
                     ),

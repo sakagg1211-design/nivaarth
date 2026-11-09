@@ -1,3 +1,4 @@
+import '../../../core/utils/formatters.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -98,7 +99,7 @@ class StockLineChart extends StatelessWidget {
               return touchedSpots.map((spot) {
                 final p = series[spot.x.toInt()];
                 return LineTooltipItem(
-                  '₹${p.close.toStringAsFixed(2)}\n',
+                  '${Formatters.currency(p.close)}\n',
                   const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
                   children: [
                     TextSpan(

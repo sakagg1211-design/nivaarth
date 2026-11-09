@@ -265,7 +265,7 @@ class DashboardHeader extends ConsumerWidget {
                           ? 'Nivaarth Friends Beta'
                           : 'Nivaarth Friends Beta v${info.version} (Build ${info.buildNumber})',
                       style: const TextStyle(
-                        color: Color(0xFF757A85),
+                        color: Color(0xFF858A94),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -311,7 +311,7 @@ class DashboardHeader extends ConsumerWidget {
                 style: const TextStyle(color: Colors.white, fontSize: 13),
                 decoration: InputDecoration(
                   hintText: 'Describe the issue or idea...',
-                  hintStyle: const TextStyle(color: Color(0xFF757A85)),
+                  hintStyle: const TextStyle(color: Color(0xFF858A94)),
                   filled: true,
                   fillColor: const Color(0xFF111215),
                   border: OutlineInputBorder(
@@ -426,6 +426,8 @@ class DashboardHeader extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // On the narrowest phones the name needs this room more than the logo does
+        if (MediaQuery.sizeOf(context).width >= 360)
         Container(
           height: 42,
           width: 42,
@@ -455,6 +457,8 @@ class DashboardHeader extends ConsumerWidget {
             children: [
               Text(
                 greeting,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Color(0xFF9E9E9E),
                   fontSize: 14,
@@ -582,7 +586,7 @@ class _HeaderIconButton extends StatelessWidget {
                       badgeCount > 9 ? '9+' : '$badgeCount',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w800,
                       ),
                     ),

@@ -49,7 +49,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
   final List<ChatMessageModel> _messages = [
     ChatMessageModel(
-      text: "Namaste! Main hoon **NV Advisor** 🤖\n\n"
+      text: "Namaste! Main hoon **NV Advisor**\n\n"
           "Main aapka research assistant hoon. Aapke portfolio holdings, P&L, NV Scores, **Peer Comparisons** aur **Risk Checks** ke numbers samjhata hoon; khareedne ya bechne ki salah nahi deta.\n\n"
           "Aap mujhse koi bhi portfolio ya stock question pooch sakte hain!",
       isUser: false,
@@ -188,7 +188,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         setState(() {
           _messages.add(
             ChatMessageModel(
-              text: "⚠️ NV Advisor filhal busy hai ya connection me issue hai. Kripya thodi der baad dobara poochhein.",
+              text: "NV Advisor filhal busy hai ya connection me issue hai. Kripya thodi der baad dobara poochhein.",
               isUser: false,
               time: DateTime.now(),
             ),
@@ -226,7 +226,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF16181D),
+      backgroundColor: const Color(0xFF16171B),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -286,7 +286,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     ],
                   ),
                 ),
-                const Divider(color: Color(0xFF26282E), height: 1),
+                const Divider(color: Color(0xFF282A30), height: 1),
                 Expanded(
                   child: userQuestions.isEmpty
                       ? Center(
@@ -439,7 +439,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                               "LIVE AI",
                               style: TextStyle(
                                 color: Color(0xFF00C853),
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -614,7 +614,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               decoration: BoxDecoration(
                 color: isUser
                     ? const Color(0xFFE5A93C).withValues(alpha: 0.16)
-                    : const Color(0xFF16181D),
+                    : const Color(0xFF16171B),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -624,7 +624,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 border: Border.all(
                   color: isUser
                       ? const Color(0xFFE5A93C).withValues(alpha: 0.40)
-                      : const Color(0xFF26282E),
+                      : const Color(0xFF282A30),
                   width: 1,
                 ),
               ),
@@ -639,7 +639,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                       "${msg.time.hour.toString().padLeft(2, '0')}:${msg.time.minute.toString().padLeft(2, '0')}",
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.3),
-                        fontSize: 10,
+                        fontSize: 11,
                       ),
                     ),
                   ),
@@ -706,7 +706,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           child: Table(
             defaultColumnWidth: const IntrinsicColumnWidth(),
             border: TableBorder.symmetric(
-              inside: const BorderSide(color: Color(0xFF26282E), width: 1),
+              inside: const BorderSide(color: Color(0xFF282A30), width: 1),
             ),
             children: [
               TableRow(
@@ -913,9 +913,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF16181D),
+              color: const Color(0xFF16171B),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF26282E)),
+              border: Border.all(color: const Color(0xFF282A30)),
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,

@@ -24,7 +24,7 @@ const _navItems = [
 ];
 
 const _gold = Color(0xFFE5A93C);
-const _muted = Color(0xFF757A85);
+const _muted = Color(0xFF858A94);
 const _panel = Color(0xFF111215);
 const _border = Color(0xFF23252B);
 
@@ -191,7 +191,7 @@ class _Sidebar extends StatelessWidget {
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(9),
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.asset('assets/images/logo.jpg',
                           width: 36, height: 36, fit: BoxFit.cover),
                     ),

@@ -241,7 +241,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
               s.mode == ImportMode.replaceOpening
                   ? 'Purana opening holding hatega, holding sirf tradebook ke trades se banega.'
                   : 'Purana holding rahega, tradebook ke trades uske upar judenge (dhyan: purane buys do baar na judein).',
-              style: const TextStyle(color: Color(0xFF6B6F78), fontSize: 11),
+              style: const TextStyle(color: Color(0xFF858A94), fontSize: 11),
             ),
           ],
           if (s.manualTrades > 0) ...[
@@ -270,7 +270,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
   Widget _card(Widget child) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF15171C),
+          color: const Color(0xFF16171B),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white.withValues(alpha: .06)),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/theme/app_typography.dart';
 
 class StockHeader extends StatelessWidget {
@@ -14,6 +15,9 @@ class StockHeader extends StatelessWidget {
 
   final bool isProfit;
   final String? trend;
+
+  /// Privacy Mode: the user's own profit in rupees is hidden; the stock's price is public.
+  final bool hideMoney;
   final bool isSaved;
   final VoidCallback? onSaveToggle;
   final double? todayPL;
@@ -29,6 +33,7 @@ class StockHeader extends StatelessWidget {
     required this.returnPercent,
     required this.isProfit,
     this.trend,
+    this.hideMoney = false,
     this.isSaved = false,
     this.onSaveToggle,
     this.todayPL,
@@ -225,7 +230,7 @@ class StockHeader extends StatelessWidget {
                                 .success,
                             fontWeight:
                                 FontWeight.bold,
-                            fontSize: 10.5,
+                            fontSize: 11,
                           ),
                         ),
                       ],
@@ -298,11 +303,11 @@ class StockHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Text(
-                    "All-Time: ${_money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
+                    "All-Time: ${hideMoney ? '••••' : _money(netPL, signed: true)}   (${_percent(returnPercent, signed: true)})",
                     style: AppTypography.bodyMedium.copyWith(
                       color: netPL >= 0 ? AppColors.success : AppColors.danger,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12.5,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -315,11 +320,11 @@ class StockHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Text(
-                      "Today: ${_money(todayPL!, signed: true)}   (${_percent(todayReturnPercent ?? 0.0, signed: true)})",
+                      "Today: ${hideMoney ? '••••' : _money(todayPL!, signed: true)}   (${_percent(todayReturnPercent ?? 0.0, signed: true)})",
                       style: AppTypography.bodyMedium.copyWith(
                         color: (todayPL ?? 0) >= 0 ? AppColors.success : AppColors.danger,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12.5,
+                        fontSize: 13,
                       ),
                     ),
                   ),
@@ -385,10 +390,7 @@ class StockHeader extends StatelessWidget {
     num value, {
     bool signed = false,
   }) {
-    final prefix =
-        signed && value >= 0 ? "+" : "";
-
-    return "$prefix₹${value.toStringAsFixed(2)}";
+    return Formatters.currency(value, signed: signed);
   }
 
   static String _percent(

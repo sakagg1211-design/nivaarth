@@ -154,7 +154,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                       const SizedBox(height: 10),
                       Text(
                         '${shown.length} trades · ${keys.length} din',
-                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12.5),
+                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
                       ),
                       if (shown.isEmpty)
                         const Padding(
@@ -240,12 +240,12 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
             padding: const EdgeInsets.symmetric(vertical: 3),
             decoration: BoxDecoration(
               color: tone.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               t.source == 'CORP_ACT' ? 'BONUS' : (isBuy ? 'BUY' : 'SELL'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: tone, fontSize: 10.5, fontWeight: FontWeight.w800),
+              style: TextStyle(color: tone, fontSize: 11, fontWeight: FontWeight.w800),
             ),
           ),
           const SizedBox(width: 12),
@@ -277,7 +277,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                     color: hide
                         ? const Color(0xFF8E929B)
                         : (pl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252)),
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
