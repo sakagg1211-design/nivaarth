@@ -120,6 +120,8 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
     final sector = SymbolUtils.getSector(sym);
     final String tag;
     final String takeaway;
+    final String takeawayKind;
+    final Map<String, dynamic> takeawayArgs;
     final scoreVal = stock.overallScore;
     if (stock.recommendation.isNotEmpty && stock.recommendation != 'PENDING') {
       tag = SymbolUtils.toCompliantVerdict(stock.recommendation);
@@ -137,14 +139,19 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
         .toList();
     if (stock.isDataPending) {
       takeaway = 'Not enough data for an NV Score yet${stock.pendingReason != null ? ' (${stock.pendingReason})' : ''}.';
+      (takeawayKind, takeawayArgs) = ('pending', {'reason': stock.pendingReason});
     } else if (stock.isExcluded && stock.recommendation.toUpperCase().contains('DATA REVIEW')) {
       takeaway = 'Source data under review; no score until it is verified.';
+      (takeawayKind, takeawayArgs) = ('review', {});
     } else if (stock.isExcluded) {
       takeaway = 'Specialized asset class ($sector); standard quantitative scoring withheld.';
+      (takeawayKind, takeawayArgs) = ('special', {'sector': sector});
     } else if (pillars.isNotEmpty) {
       takeaway = 'NV Score $scoreVal/100 · ${pillars.join(' · ')}';
+      (takeawayKind, takeawayArgs) = ('pillars', {'score': scoreVal, 'pillars': pillars.join(' · ')});
     } else {
       takeaway = scoreVal == null ? 'No NV Score yet ($sector).' : 'NV Score $scoreVal/100 ($sector).';
+      (takeawayKind, takeawayArgs) = scoreVal == null ? ('none', {'sector': sector}) : ('score', {'score': scoreVal, 'sector': sector});
     }
 
     final newItem = WatchlistItem(
@@ -159,6 +166,8 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       trackedDate: _formatToday(),
       technicalTag: tag,
       keyTakeaway: takeaway,
+      takeawayKind: takeawayKind,
+      takeawayArgs: takeawayArgs,
     );
 
     state = [...state, newItem];
@@ -186,6 +195,8 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       computedTag = _scoreBand(score);
     }
     takeaway = score == null ? 'No NV Score yet ($sector).' : 'NV Score $score/100 ($sector).';
+    final takeawayKind = score == null ? 'none' : 'score';
+    final takeawayArgs = <String, dynamic>{'score': score, 'sector': sector};
 
     final newItem = WatchlistItem(
       instrument: sym,
@@ -199,6 +210,8 @@ class WatchlistNotifier extends StateNotifier<List<WatchlistItem>> {
       trackedDate: _formatToday(),
       technicalTag: computedTag,
       keyTakeaway: takeaway,
+      takeawayKind: takeawayKind,
+      takeawayArgs: takeawayArgs,
     );
 
     state = [...state, newItem];

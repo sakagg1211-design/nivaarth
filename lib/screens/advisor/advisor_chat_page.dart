@@ -9,6 +9,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../services/backend_service.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../providers/advisor_question_provider.dart';
 
 class ChatMessageModel {
   final String text;
@@ -41,6 +42,9 @@ class AdvisorChatPage extends ConsumerStatefulWidget {
   ConsumerState<AdvisorChatPage> createState() => _AdvisorChatPageState();
 }
 
+// The greeting is stored as a key and worded at display, so it follows a language switch
+const _greetingKey = '__nv_greeting__';
+
 class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -50,7 +54,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
   late final List<ChatMessageModel> _messages = [
     ChatMessageModel(
-      text: context.t.advGreeting,
+      text: _greetingKey,
       isUser: false,
       time: DateTime.now(),
     ),
@@ -69,6 +73,16 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   void initState() {
     super.initState();
     _loadTodayHistory();
+    // A question set before this page was built (opened from the Pulse "kyun" button)
+    WidgetsBinding.instance.addPostFrameCallback((_) => _takePendingQuestion());
+  }
+
+  void _takePendingQuestion() {
+    if (!mounted) return;
+    final q = ref.read(advisorQuestionProvider);
+    if (q == null) return;
+    ref.read(advisorQuestionProvider.notifier).state = null;
+    _sendMessage(q);
   }
 
   @override
@@ -378,6 +392,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<String?>(advisorQuestionProvider, (_, q) {
+      if (q != null) Future.microtask(_takePendingQuestion);
+    });
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
       appBar: AppBar(
@@ -630,7 +647,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _formatMessageText(msg.text, isUser),
+                  _formatMessageText(msg.text == _greetingKey ? context.t.advGreeting : msg.text, isUser),
                   const SizedBox(height: 6),
                   Align(
                     alignment: Alignment.bottomRight,

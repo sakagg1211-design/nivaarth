@@ -74,7 +74,7 @@ class TodayMovesCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _Heatmap(data.sectors),
+          Semantics(label: context.t.semSummary('Sector heatmap', data.sectors.take(8).map((s) => '${s.label} ${_pct(s.change)}').join(', ')), excludeSemantics: true, child: _Heatmap(data.sectors)),
           const SizedBox(height: 8),
           Text(context.t.movesLegend,
               style: TextStyle(color: _muted, fontSize: 11)),

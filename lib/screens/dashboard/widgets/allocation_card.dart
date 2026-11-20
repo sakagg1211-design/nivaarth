@@ -89,7 +89,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
             ],
           ),
           const SizedBox(height: 14),
-          SizedBox(
+          Semantics(label: context.t.semSummary(_sector ? context.t.allocSector : context.t.allocMarketCap, slices.map((s) => '${s.label} ${s.percent.toStringAsFixed(0)}%').join(', ')), excludeSemantics: true, child: SizedBox(
             height: 170,
             child: Stack(
               alignment: Alignment.center,
@@ -137,7 +137,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                 ),
               ],
             ),
-          ),
+          )),
           const SizedBox(height: 12),
           for (final s in slices)
             Padding(

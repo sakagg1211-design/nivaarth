@@ -1,3 +1,5 @@
+import '../../l10n/app_localizations.dart';
+
 /// One corner of the radar. [value] is 0-100, null when the data is missing (shown as "—").
 class RadarAxis {
   final String shortLabel;
@@ -124,32 +126,32 @@ class StockInsights {
   static String _n(double v, [int digits = 0]) => v.toStringAsFixed(digits);
 
   /// Plain statements of fact with the number in them. Nothing that reads as a call on the stock.
-  static List<StockBadge> badges(StockFacts? f, {required bool lender, bool pledgeReviewed = false}) {
+  static List<StockBadge> badges(StockFacts? f, AppLocalizations t, {required bool lender, bool pledgeReviewed = false}) {
     if (f == null) return const [];
     final out = <StockBadge>[];
     final de = f.debtToEquity;
     if (!lender && !f.insurer && de != null && de >= 0 && de <= debtFreeMax) {
-      out.add(StockBadge('Debt-free (D/E ${_n(de, 2)})'));
+      out.add(StockBadge(t.badgeDebtFree(_n(de, 2))));
     }
     final roce = f.roce;
     final growth = f.profitGrowth5Y;
     if (!lender && roce != null && growth != null && roce >= highRoce && growth >= highProfitGrowth) {
-      out.add(StockBadge('ROCE ${_n(roce)}% · profit growth ${_n(growth)}%'));
+      out.add(StockBadge(t.badgeRoceGrowth(_n(roce), _n(growth))));
     }
     final e50 = f.ema50;
     final e200 = f.ema200;
     if (e50 != null && e200 != null && e50 > 0 && e200 > 0 && e50 > e200) {
-      out.add(const StockBadge('50-EMA above 200-EMA'));
+      out.add(StockBadge(t.badgeGoldenCross));
     }
     final pledged = f.pledged;
     if (pledged != null && pledged >= highPledge) {
       out.add(pledgeReviewed
-          ? StockBadge('Promoter pledge ${_n(pledged)}% · filings checked')
-          : StockBadge('Promoter pledge ${_n(pledged)}%', caution: true));
+          ? StockBadge(t.badgePledgeChecked(_n(pledged)))
+          : StockBadge(t.badgePledge(_n(pledged)), caution: true));
     }
     final pat = f.pat12m;
     if (pat != null && pat < 0) {
-      out.add(const StockBadge('Loss-making (12M)', caution: true));
+      out.add(StockBadge(t.badgeLossMaking, caution: true));
     }
     return out;
   }

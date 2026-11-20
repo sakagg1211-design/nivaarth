@@ -7,6 +7,7 @@ import '../../../models/portfolio.dart';
 import '../../../models/watchlist_item.dart';
 import '../../stock/stock_detail_page.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/utils/watch_takeaway.dart';
 
 class WatchlistTableView extends StatelessWidget {
   final List<WatchlistItem> items;
@@ -229,7 +230,7 @@ class WatchlistTableView extends StatelessWidget {
             sector: SymbolUtils.getSector(item.instrument),
             industry: '',
             status: 'WATCHLIST',
-            investmentThesis: item.keyTakeaway,
+            investmentThesis: takeawayText(item, context.t),
           ),
           currentPrice: item.latestPrice,
           currentValue: 0.0,
@@ -454,7 +455,7 @@ class WatchlistTableView extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      item.keyTakeaway,
+                      takeawayText(item, context.t),
                       maxLines: wide ? 3 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

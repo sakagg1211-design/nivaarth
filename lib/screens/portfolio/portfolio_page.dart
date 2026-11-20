@@ -15,11 +15,12 @@ import 'closed_positions_page.dart';
 import 'import_trades_page.dart';
 import 'trade_book_page.dart';
 import 'widgets/investment_style_card.dart';
-import 'widgets/performance_card.dart';
+import 'widgets/account_value_card.dart';
 import 'widgets/today_moves_card.dart';
 import 'widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 enum PortfolioSortOption {
   alphabetical,
@@ -135,44 +136,50 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (_showBackToTop) ...[
-            FloatingActionButton.small(
-              heroTag: 'portfolio_go_top',
-              onPressed: () {
-                _scrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 350),
-                  curve: Curves.easeOutCubic,
-                );
-              },
-              backgroundColor: const Color(0xFF1E2024),
-              foregroundColor: const Color(0xFFE5A93C),
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Color(0xFF282A30)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            if (_showBackToTop)
+              FloatingActionButton.small(
+                heroTag: 'portfolio_go_top',
+                tooltip: context.t.backToTop,
+                onPressed: () => _scrollController.animateTo(0, duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic),
+                backgroundColor: const Color(0xFF1E2024),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Color(0xFF282A30)),
+                ),
+                child: const Icon(Icons.arrow_upward_rounded, size: 20),
               ),
-              child: const Icon(Icons.arrow_upward_rounded, size: 20),
-            ),
-            const SizedBox(height: 10),
+            const Spacer(),
+            // Collapses to an icon once the list scrolls, keeping its label for TalkBack
+            if (_showBackToTop)
+              FloatingActionButton(
+                heroTag: 'portfolio_add_holding',
+                tooltip: context.t.addHolding,
+                onPressed: _openAddHoldingSheet,
+                backgroundColor: AppColors.ink,
+                foregroundColor: AppColors.background,
+                elevation: 0,
+                child: const Icon(Icons.add_rounded),
+              )
+            else
+              FloatingActionButton.extended(
+                heroTag: 'portfolio_add_holding',
+                tooltip: context.t.addHolding,
+                onPressed: _openAddHoldingSheet,
+                backgroundColor: AppColors.ink,
+                foregroundColor: AppColors.background,
+                elevation: 0,
+                icon: const Icon(Icons.add_rounded),
+                label: Text(context.t.addHolding, style: const TextStyle(fontWeight: FontWeight.w800)),
+              ),
           ],
-          FloatingActionButton.extended(
-            heroTag: 'portfolio_add_holding',
-            onPressed: _openAddHoldingSheet,
-            backgroundColor: const Color(0xFFE5A93C),
-            foregroundColor: Colors.black,
-            elevation: 4,
-            icon: const Icon(Icons.add_rounded, color: Colors.black),
-            label: Text(
-              context.t.addHolding,
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-          ),
-        ],
+        ),
       ),
       body: SafeArea(
         child: portfolioAsync.when(
@@ -382,21 +389,16 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                 isProfit: isProfit,
                                 stocks: sortedStocks,
                                 isPrivacy: isPrivacy,
+                                showHeatmap: false,
                               ),
 
                               const SizedBox(height: 16),
 
-                              const PerformanceCard(),
+                              const AccountValueCard(),
 
                               const SizedBox(height: 16),
 
-                              const TodayMovesCard(),
 
-                              const SizedBox(height: 16),
-
-                              const InvestmentStyleCard(),
-
-                              const SizedBox(height: 16),
 
                               // Sorting & Filter Controls
                               Row(
@@ -516,7 +518,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                       sidePadding,
                       0,
                       sidePadding,
-                      84, // Extra padding for Floating Action Button
+                      96, // room for the add button, so it never covers the last card
                     ),
                     sliver: SliverToBoxAdapter(
                       child: Center(
@@ -569,6 +571,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                               ),
                             ),
+                          const SizedBox(height: 16),
+                          _HeatmapCard(stocks: sortedStocks),
+                          const SizedBox(height: 16),
+                          const TodayMovesCard(),
+                          const SizedBox(height: 16),
+                          const InvestmentStyleCard(),
                             ],
                           ),
                         ),
@@ -612,6 +620,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
   final bool isProfit;
   final List<LivePortfolio> stocks;
   final bool isPrivacy;
+  final bool showHeatmap;
 
   const _SummaryAndHeatmapSection({
     required this.totalStocks,
@@ -622,6 +631,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
     required this.isProfit,
     required this.stocks,
     this.isPrivacy = false,
+    this.showHeatmap = true,
   });
 
   @override
@@ -733,6 +743,7 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
               ),
 
               // Heatmap Visual Strip (overall return or today's move)
+              if (showHeatmap)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
                 child: _ReturnHeatmap(stocks: stocks),
@@ -749,6 +760,26 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
     final winners = stocks.where((s) => s.returnPercent >= 0).length;
     final ratio = (winners / stocks.length) * 100;
     return '${ratio.toStringAsFixed(0)}%';
+  }
+}
+
+/// The return heatmap as its own card, below the holdings.
+class _HeatmapCard extends StatelessWidget {
+  final List<LivePortfolio> stocks;
+  const _HeatmapCard({required this.stocks});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF16171B),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+      ),
+      child: _ReturnHeatmap(stocks: stocks),
+    );
   }
 }
 
@@ -824,9 +855,13 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
           children: [
             const Icon(Icons.grid_view_rounded, size: 13, color: Color(0xFFE5A93C)),
             const SizedBox(width: 5),
-            Text(
-              context.t.heatReturnTitle,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white),
+            Flexible(
+              child: Text(
+                context.t.heatReturnTitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white),
+              ),
             ),
             const Spacer(),
             Text(
@@ -836,12 +871,15 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
           ],
         ),
         const SizedBox(height: 8),
-        Row(
+        // Wraps to a second line on a narrow phone instead of overflowing
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             _modeChip(context.t.heatOverall, _HeatmapMode.overall),
-            const SizedBox(width: 6),
             _modeChip(context.t.heatTodayPl, _HeatmapMode.today),
-            const Spacer(),
             InkWell(
               borderRadius: BorderRadius.circular(8),
               onTap: () => setState(() => _gainersFirst = !_gainersFirst),

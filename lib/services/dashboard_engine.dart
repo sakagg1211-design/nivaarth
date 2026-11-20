@@ -14,6 +14,7 @@ import 'recommendation_engine.dart';
 import 'stock_score_engine.dart';
 import 'portfolio_health_engine.dart';
 import '../l10n/app_localizations.dart';
+import '../core/utils/health_math.dart';
 
 class DashboardEngine {
   final LivePortfolioRepository liveRepository;
@@ -109,6 +110,7 @@ final StockScore weakestHolding =
       riskHealth: health.risk,
 
 portfolioHealthStatus: health.status,
+      holdingScores: holdingScoresFrom(portfolio, scores),
       aiRecommendation: ai,
       topOpportunity: topOpportunity,
       weakestHolding: weakestHolding,

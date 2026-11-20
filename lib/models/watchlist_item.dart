@@ -10,6 +10,9 @@ class WatchlistItem {
   final String trackedDate;
   final String technicalTag;
   final String keyTakeaway;
+  // How to word the takeaway in the chosen language; null on items saved before this existed
+  final String? takeawayKind;
+  final Map<String, dynamic>? takeawayArgs;
 
   const WatchlistItem({
     required this.instrument,
@@ -23,6 +26,8 @@ class WatchlistItem {
     required this.trackedDate,
     required this.technicalTag,
     required this.keyTakeaway,
+    this.takeawayKind,
+    this.takeawayArgs,
   });
 
   Map<String, dynamic> toJson() {
@@ -38,6 +43,8 @@ class WatchlistItem {
       'tracked_date': trackedDate,
       'technical_tag': technicalTag,
       'key_takeaway': keyTakeaway,
+      'takeaway_kind': takeawayKind,
+      'takeaway_args': takeawayArgs,
     };
   }
 
@@ -54,6 +61,8 @@ class WatchlistItem {
       trackedDate: json['tracked_date']?.toString() ?? '',
       technicalTag: json['technical_tag']?.toString() ?? 'MONITORED',
       keyTakeaway: json['key_takeaway']?.toString() ?? 'Active monitored watchlist asset',
+      takeawayKind: json['takeaway_kind']?.toString(),
+      takeawayArgs: (json['takeaway_args'] as Map?)?.cast<String, dynamic>(),
     );
   }
 }

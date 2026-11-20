@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:mobile/core/utils/health_math.dart';
 import 'package:mobile/core/utils/market_hours.dart';
 import 'package:mobile/screens/dashboard/widgets/portfolio_health_card.dart';
 import 'helpers/localized_app.dart';
@@ -27,5 +28,30 @@ void main() {
     expect(find.text('Status: Weak'), findsOneWidget);
     expect(find.textContaining('Risk hedging'), findsNothing);
     expect(find.textContaining('actively tracking'), findsNothing);
+  });
+
+  testWidgets('tapping the score opens what sets it, lowest first', (tester) async {
+    await tester.pumpWidget(localizedApp(
+      home: const Scaffold(
+        body: PortfolioHealthCard(
+          healthScore: 58,
+          action: '',
+          holdingScores: [HoldingScore('A', 70, 3000), HoldingScore('B', 40, 1000), HoldingScore('D', null, 500)],
+        ),
+      ),
+    ));
+    await tester.tap(find.text('58'));
+    await tester.pumpAndSettle();
+    expect(find.text('What sets your NV Health'), findsOneWidget);
+    expect(tester.getTopLeft(find.text('B')).dy, lessThan(tester.getTopLeft(find.text('A')).dy));
+    expect(find.text('not counted'), findsOneWidget);
+    expect(find.text('75.0%'), findsOneWidget);
+  });
+
+  testWidgets('no breakdown sheet without holding scores', (tester) async {
+    await tester.pumpWidget(localizedApp(home: const Scaffold(body: PortfolioHealthCard(healthScore: 58, action: ''))));
+    await tester.tap(find.text('58'));
+    await tester.pumpAndSettle();
+    expect(find.text('What sets your NV Health'), findsNothing);
   });
 }

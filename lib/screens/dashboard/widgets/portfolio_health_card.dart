@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/utils/market_hours.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/utils/health_math.dart';
+import 'health_breakdown_sheet.dart';
 
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
@@ -12,6 +14,9 @@ class PortfolioHealthCard extends StatelessWidget {
   final String? healthStatus;
   final VoidCallback? onOpenAdvisor;
 
+  /// Each holding's score and value; when present, the score opens what sets it.
+  final List<HoldingScore> holdingScores;
+
   const PortfolioHealthCard({
     super.key,
     required this.healthScore,
@@ -19,6 +24,7 @@ class PortfolioHealthCard extends StatelessWidget {
     this.dataCoverage,
     this.healthStatus,
     this.onOpenAdvisor,
+    this.holdingScores = const [],
   });
 
   /// PortfolioHealthEngine's bands, so the card never shows a fixed placeholder status
@@ -59,7 +65,7 @@ class PortfolioHealthCard extends StatelessWidget {
               const Icon(
                 Icons.health_and_safety_rounded,
                 size: 14,
-                color: Color(0xFFE5A93C),
+                color: Color(0xFF8E929B),
               ),
               const SizedBox(width: 8),
               Text(
@@ -67,7 +73,7 @@ class PortfolioHealthCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFFE5A93C),
+                  color: Color(0xFF8E929B),
                   letterSpacing: 1.1,
                 ),
               ),
@@ -107,7 +113,10 @@ class PortfolioHealthCard extends StatelessWidget {
               SizedBox(
                 width: 86,
                 height: 86,
-                child: Stack(
+                child: Semantics(label: context.t.semHealth('$score', status), button: holdingScores.isNotEmpty, onTap: holdingScores.isEmpty ? null : () => showHealthBreakdown(context, holdingScores), excludeSemantics: true, child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: holdingScores.isEmpty ? null : () => showHealthBreakdown(context, holdingScores),
+                  child: Stack(
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
@@ -147,6 +156,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                )),
               ),
 
               const SizedBox(width: 20),
@@ -209,7 +219,7 @@ class PortfolioHealthCard extends StatelessWidget {
                             Text(
                               context.t.healthOpenAdvisor,
                               style: TextStyle(
-                                color: Color(0xFFE5A93C),
+                                color: Color(0xFF8E929B),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -218,7 +228,7 @@ class PortfolioHealthCard extends StatelessWidget {
                             Icon(
                               Icons.arrow_forward_rounded,
                               size: 14,
-                              color: Color(0xFFE5A93C),
+                              color: Color(0xFF8E929B),
                             ),
                           ],
                         ),

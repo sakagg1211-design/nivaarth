@@ -13,6 +13,7 @@ import 'package:mobile/screens/stock/widgets/peer_comparison_card.dart';
 import 'package:mobile/screens/stock/widgets/stock_radar_card.dart';
 import 'helpers/localized_app.dart';
 import 'package:mobile/providers/locale_provider.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 Map<String, dynamic> part(String label, num points, num max, [String status = 'VALID']) =>
     {'label': label, 'points': points, 'max': max, 'status': status};
@@ -72,6 +73,8 @@ extension on StockScore {
       );
 }
 
+final en = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   group('audit fixes', () {
     test('a company with GOLD or SILV in its name is not an ETF', () {
@@ -130,7 +133,7 @@ void main() {
 
   group('badges', () {
     List<String> labels(StockFacts f, {bool lender = false}) =>
-        StockInsights.badges(f, lender: lender).map((b) => b.label).toList();
+        StockInsights.badges(f, en, lender: lender).map((b) => b.label).toList();
 
     test('debt-free only at or under 0.05 D/E, and never for lenders', () {
       expect(labels(const StockFacts(debtToEquity: 0.05)), ['Debt-free (D/E 0.05)']);
@@ -153,7 +156,7 @@ void main() {
       expect(StockInsights.pledgeReviewed(notes), isTrue);
       expect(StockInsights.pledgeReviewed(const {'notes': ['Something else']}), isFalse);
       expect(StockInsights.pledgeReviewed(null), isFalse);
-      final b = StockInsights.badges(const StockFacts(pledged: 66.99), lender: false, pledgeReviewed: true);
+      final b = StockInsights.badges(const StockFacts(pledged: 66.99), en, lender: false, pledgeReviewed: true);
       expect(b.single.label, 'Promoter pledge 67% · filings checked');
       expect(b.single.caution, isFalse);
     });
@@ -175,11 +178,11 @@ void main() {
       expect(labels(const StockFacts(ema50: 11)), isEmpty);
     });
     test('pledge and losses are cautions; missing data says nothing', () {
-      final b = StockInsights.badges(const StockFacts(pledged: 32, pat12m: -5), lender: false);
+      final b = StockInsights.badges(const StockFacts(pledged: 32, pat12m: -5), en, lender: false);
       expect(b.map((x) => x.label), ['Promoter pledge 32%', 'Loss-making (12M)']);
       expect(b.every((x) => x.caution), isTrue);
       expect(labels(const StockFacts()), isEmpty);
-      expect(StockInsights.badges(null, lender: false), isEmpty);
+      expect(StockInsights.badges(null, en, lender: false), isEmpty);
     });
   });
 

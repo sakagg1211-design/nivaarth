@@ -233,14 +233,18 @@ class PortfolioCard extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(width: 5),
-                            Text(
-                              '${stock.todayReturnPercent >= 0 ? '+' : ''}${Formatters.currency(stock.todayPL / (stock.portfolio.qty > 0 ? stock.portfolio.qty : 1))} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: stock.todayReturnPercent >= 0
-                                    ? const Color(0xFF00E676)
-                                    : const Color(0xFFFF5252),
+                            Flexible(
+                              child: Text(
+                                '${stock.todayReturnPercent >= 0 ? '+' : ''}${Formatters.currency(stock.todayPL / (stock.portfolio.qty > 0 ? stock.portfolio.qty : 1))} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: stock.todayReturnPercent >= 0
+                                      ? const Color(0xFF00E676)
+                                      : const Color(0xFFFF5252),
+                                ),
                               ),
                             ),
                           ],
@@ -392,7 +396,10 @@ class PortfolioCard extends ConsumerWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(
+                    Flexible(
+                      child: Text(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       isPrivacy
                           ? '••••••'
                           : '${Formatters.currency0(stock.todayPL, signed: true)} (${Formatters.percent(stock.todayReturnPercent, signed: true)})',
@@ -401,6 +408,7 @@ class PortfolioCard extends ConsumerWidget {
                         color: dayTone,
                         fontWeight: FontWeight.w800,
                       ),
+                    ),
                     ),
                     const Spacer(),
                     Text(

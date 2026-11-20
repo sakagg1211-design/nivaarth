@@ -196,24 +196,30 @@
   "healthOpenAdvisor": "Open Advisor",
   "healthMarketOpenNote": "Market open: prices refresh every few minutes. NV Scores update every evening.",
   "healthMarketClosedNote": "Market closed: prices are the last close. NV Scores update every evening.",
-  "heroQuiet": "{count} stocks had no trade in 15 min ({names}) — the price is from the last trade",
+  "heroQuiet": "{count, plural, =1{1 stock} other{{count} stocks}} had no trade in 15 min ({names}) — the price is from the last trade",
   "@heroQuiet": {
     "placeholders": {
-      "count": {},
+      "count": {
+        "type": "int"
+      },
       "names": {}
     }
   },
   "heroClosedNote": "Market closed · today's closing prices",
-  "heroUnpriced": "No price for {count} stocks — not included in the total",
+  "heroUnpriced": "No price for {count, plural, =1{1 stock} other{{count} stocks}} — not included in the total",
   "@heroUnpriced": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "heroStale": "{count} stocks did not update in this refresh — showing the last saved price",
+  "heroStale": "{count, plural, =1{1 stock did} other{{count} stocks did}} not update in this refresh — showing the last saved price",
   "@heroStale": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "heroValue": "PORTFOLIO VALUE",
@@ -265,10 +271,12 @@
   "commonCheckInternet": "Check your internet and try again.",
   "closedEmptyTitle": "No closed positions",
   "closedEmptyBody": "When you fully sell a stock, it will appear here with its realized P&L.",
-  "closedCount": "{count} stocks fully sold",
+  "closedCount": "{count, plural, =1{1 stock fully sold} other{{count} stocks fully sold}}",
   "@closedCount": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "closedRealized": "Realized {amount}",
@@ -295,10 +303,12 @@
       "date": {}
     }
   },
-  "closedTrades": "{count} trades",
+  "closedTrades": "{count, plural, =1{1 trade} other{{count} trades}}",
   "@closedTrades": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "importStarting": "Starting…",
@@ -307,18 +317,26 @@
   "importSteps": "Console → Reports → Tradebook → Segment: Equity → Download (CSV or XLSX). You will see a preview first; nothing is saved until you tap \"Import\". Adding the same file again will not add the earlier trades twice.",
   "importPickFile": "Choose file (CSV / XLSX)",
   "importPickOther": "Choose another file",
-  "importDone": "{count} trades imported ({stocks} stocks).",
+  "importDone": "{count, plural, =1{1 trade} other{{count} trades}} imported ({stocks, plural, =1{1 stock} other{{stocks} stocks}}).",
   "@importDone": {
     "placeholders": {
-      "count": {},
-      "stocks": {}
+      "count": {
+        "type": "int"
+      },
+      "stocks": {
+        "type": "int"
+      }
     }
   },
-  "importSummary": "{stocks} stocks · {trades} new trades",
+  "importSummary": "{stocks, plural, =1{1 stock} other{{stocks} stocks}} · {trades, plural, =1{1 new trade} other{{trades} new trades}}",
   "@importSummary": {
     "placeholders": {
-      "stocks": {},
-      "trades": {}
+      "stocks": {
+        "type": "int"
+      },
+      "trades": {
+        "type": "int"
+      }
     }
   },
   "importUnlisted": "These symbols are not in Nivaarth's list and will not be imported: {symbols}. ",
@@ -330,11 +348,15 @@
   "importRenamed": "(If the name changed, as after a demerger, add the stock yourself from Add Holding.)",
   "importBonusNote": "Bonuses and splits are not in the tradebook. If such a stock's quantity differs from your broker's, check that stock.",
   "importNothingNew": "Nothing new to import",
-  "importConfirm": "Import ({trades} trades, {stocks} stocks)",
+  "importConfirm": "Import ({trades, plural, =1{1 trade} other{{trades} trades}}, {stocks, plural, =1{1 stock} other{{stocks} stocks}})",
   "@importConfirm": {
     "placeholders": {
-      "trades": {},
-      "stocks": {}
+      "trades": {
+        "type": "int"
+      },
+      "stocks": {
+        "type": "int"
+      }
     }
   },
   "importNotHeld": "Not in the portfolio now",
@@ -384,10 +406,12 @@
   "portfolioOpenTradeBook": "View trade book",
   "portfolioImport": "Zerodha tradebook import",
   "tradeBookTitle": "Trade book",
-  "portfolioTracked": "{count} holdings under active tracking.",
+  "portfolioTracked": "{count, plural, =1{1 holding under active tracking.} other{{count} holdings under active tracking.}}",
   "@portfolioTracked": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sortAlphabetical": "Alphabetical (A-Z)",
@@ -411,10 +435,12 @@
   "portfolioValuation": "PORTFOLIO VALUATION",
   "metricInvested": "Invested",
   "metricHoldings": "Holdings",
-  "metricPositions": "{count} Positions",
+  "metricPositions": "{count, plural, =1{1 Position} other{{count} Positions}}",
   "@metricPositions": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "metricWinRatio": "Win Ratio",
@@ -435,11 +461,15 @@
   "tradesEmptyTitle": "No trades yet",
   "tradesEmptyBody": "Every trade you add, buy or sell will appear here by day.",
   "tradesSearchHint": "Search by stock (e.g. POLYCAB)",
-  "tradesCountDays": "{trades} trades · {days} days",
+  "tradesCountDays": "{trades, plural, =1{1 trade} other{{trades} trades}} · {days, plural, =1{1 day} other{{days} days}}",
   "@tradesCountDays": {
     "placeholders": {
-      "trades": {},
-      "days": {}
+      "trades": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
     }
   },
   "tradesNoMatch": "No trade found with this name.",
@@ -651,14 +681,6 @@
   "styleBelowBody": "ETFs and funds are not companies, and loss-making companies have no P/E. So they are listed separately, outside the table.",
   "styleNoteHead": "Keep in mind",
   "styleNoteBody": "The rank is against other companies, so the label can change over time.",
-  "perfBackcast": "If today's holdings had been held the whole time. This is not your actual return.",
-  "perfFooter": "Price only, dividends not included. Data up to {date}.",
-  "@perfFooter": {
-    "placeholders": {
-      "date": {}
-    }
-  },
-  "perfPartial": "Some holdings lack full past data. The graph is built on the remaining holdings without them.",
   "movesToday": "Today",
   "movesLastSession": "Last session",
   "movesLegend": "Box size: share of the portfolio. Colour: that day's change.",
@@ -1006,10 +1028,12 @@
   "advBusy": "NV Advisor is busy or there is a connection issue. Please ask again in a little while.",
   "advNoReply": "No reply yet",
   "advHistoryTitle": "Today's History",
-  "advQueries": "{count} Queries",
+  "advQueries": "{count, plural, =1{1 Query} other{{count} Queries}}",
   "@advQueries": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "advNoHistory": "No conversation yet today.",
@@ -1479,10 +1503,12 @@
       "score": {}
     }
   },
-  "recoLoss": "{count} holdings are below their buy price; each one's \"Why this score\" shows its lowest pillar.",
+  "recoLoss": "{count, plural, =1{1 holding is below its buy price; its} other{{count} holdings are below their buy price; each one's}} \"Why this score\" shows its lowest pillar.",
   "@recoLoss": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "recoLargestFall": "Largest fall: {symbol} ({pct}).",
@@ -1492,19 +1518,270 @@
       "pct": {}
     }
   },
-  "recoUnpriced": "{count} holdings have no current price and are left out of the totals.",
+  "recoUnpriced": "{count, plural, =1{1 holding has no current price and is left out of the totals.} other{{count} holdings have no current price and are left out of the totals.}}",
   "@recoUnpriced": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "recoStale": "{count} holdings show their last saved price, not a live one.",
+  "recoStale": "{count, plural, =1{1 holding shows its last saved price, not a live one.} other{{count} holdings show their last saved price, not a live one.}}",
   "@recoStale": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "recoNoneBelow": "No holding is below its buy price.",
   "errSymbolNotListed": "This symbol is not in the NSE list. Choose the stock from search.",
-  "errLoginRequired": "Please log in first."
+  "errLoginRequired": "Please log in first.",
+  "acctTitle": "Account value",
+  "acctValue": "Value",
+  "acctInvested": "Invested",
+  "acctPrevClose": "Previous close",
+  "acctAssumedNote": "Before {date}, the line assumes today's opening holdings were already held.",
+  "@acctAssumedNote": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "acctFooter": "Price only, dividends not included. Data: {date}.",
+  "@acctFooter": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "acctNoIntraday": "Today's line starts when the market opens.",
+  "factTopDrag": "{symbol} pulled the portfolio down the most today ({pct} of value).",
+  "@factTopDrag": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {}
+    }
+  },
+  "factTopLift": "{symbol} lifted the portfolio the most today ({pct} of value).",
+  "@factTopLift": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {}
+    }
+  },
+  "factVsNifty": "Today you are {pct}, Nifty {niftyPct}.",
+  "@factVsNifty": {
+    "placeholders": {
+      "pct": {},
+      "niftyPct": {}
+    }
+  },
+  "factHigh52": "{symbol} is at its 52-week high ({price}).",
+  "@factHigh52": {
+    "placeholders": {
+      "symbol": {},
+      "price": {}
+    }
+  },
+  "factLow52": "{symbol} is at its 52-week low ({price}).",
+  "@factLow52": {
+    "placeholders": {
+      "symbol": {},
+      "price": {}
+    }
+  },
+  "factVolumeSpike": "{symbol} traded {ratio}× its usual volume today.",
+  "@factVolumeSpike": {
+    "placeholders": {
+      "symbol": {},
+      "ratio": {}
+    }
+  },
+  "factNearAlert": "{symbol} is {gap} away from your alert at {target}.",
+  "@factNearAlert": {
+    "placeholders": {
+      "symbol": {},
+      "gap": {},
+      "target": {}
+    }
+  },
+  "factHeavyStock": "{symbol} is {pct} of your portfolio.",
+  "@factHeavyStock": {
+    "placeholders": {
+      "symbol": {},
+      "pct": {}
+    }
+  },
+  "factHeavySector": "{sector} is {pct} of your portfolio.",
+  "@factHeavySector": {
+    "placeholders": {
+      "sector": {},
+      "pct": {}
+    }
+  },
+  "factScoreDown": "{symbol}'s NV Score fell from {from} to {to} this week.",
+  "@factScoreDown": {
+    "placeholders": {
+      "symbol": {},
+      "from": {},
+      "to": {}
+    }
+  },
+  "factScoreUp": "{symbol}'s NV Score rose from {from} to {to} this week.",
+  "@factScoreUp": {
+    "placeholders": {
+      "symbol": {},
+      "from": {},
+      "to": {}
+    }
+  },
+  "factStalePrice": "{count, plural, =1{1 holding shows an old price.} other{{count} holdings show an old price.}}",
+  "@factStalePrice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "factYearHigh": "Your portfolio is at its highest value in a year.",
+  "factUpStreak": "The market has lifted your portfolio {days} days in a row.",
+  "@factUpStreak": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "factsTitle": "Aaj ki baatein",
+  "pulseLastHour": "Since {time}: {pct}, most moved by {symbol}",
+  "@pulseLastHour": {
+    "placeholders": {
+      "time": {},
+      "pct": {},
+      "symbol": {}
+    }
+  },
+  "pulseVsNifty": "Today you {pct}, Nifty {niftyPct}",
+  "@pulseVsNifty": {
+    "placeholders": {
+      "pct": {},
+      "niftyPct": {}
+    }
+  },
+  "pulseWhyDown": "Why did it fall today?",
+  "pulseWhyUp": "Why did it rise today?",
+  "advQuestionWhyDown": "Why did my portfolio fall today? Which holdings moved it most?",
+  "advQuestionWhyUp": "Why did my portfolio rise today? Which holdings moved it most?",
+  "moversTitle": "Nifty 50: top gainers and losers",
+  "moversFootnote": "* Top gainers and losers: only Nifty 50",
+  "moodLive": "Nifty 50: {adv} up · {dec} down",
+  "@moodLive": {
+    "placeholders": {
+      "adv": {},
+      "dec": {}
+    }
+  },
+  "moodClosed": "Market: {adv} up · {dec} down ({date})",
+  "@moodClosed": {
+    "placeholders": {
+      "adv": {},
+      "dec": {},
+      "date": {}
+    }
+  },
+  "healthSheetTitle": "What sets your NV Health",
+  "healthNotCounted": "not counted",
+  "semSummary": "{title}: {parts}",
+  "@semSummary": {
+    "placeholders": {
+      "title": {},
+      "parts": {}
+    }
+  },
+  "semHealth": "NV Health {score} out of 100, {status}",
+  "@semHealth": {
+    "placeholders": {
+      "score": {},
+      "status": {}
+    }
+  },
+  "semIndex": "{name} {value}, {pct}",
+  "@semIndex": {
+    "placeholders": {
+      "name": {},
+      "value": {},
+      "pct": {}
+    }
+  },
+  "semAccount": "Account value, {range}: {pct}",
+  "@semAccount": {
+    "placeholders": {
+      "range": {},
+      "pct": {}
+    }
+  },
+  "semNoData": "no data",
+  "notifFilterAll": "All",
+  "notifFilterRisks": "Risks",
+  "notifFilterScores": "Scores",
+  "notifFilterSystem": "System",
+  "takeawayPending": "Not enough data for an NV Score yet.",
+  "takeawayPendingWhy": "Not enough data for an NV Score yet ({reason}).",
+  "@takeawayPendingWhy": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "takeawayReview": "Source data under review; no score until it is verified.",
+  "takeawaySpecial": "Specialized asset class ({sector}); standard quantitative scoring withheld.",
+  "@takeawaySpecial": {
+    "placeholders": {
+      "sector": {}
+    }
+  },
+  "takeawayPillars": "NV Score {score}/100 · {pillars}",
+  "@takeawayPillars": {
+    "placeholders": {
+      "score": {},
+      "pillars": {}
+    }
+  },
+  "takeawayScore": "NV Score {score}/100 ({sector}).",
+  "@takeawayScore": {
+    "placeholders": {
+      "score": {},
+      "sector": {}
+    }
+  },
+  "takeawayNoScore": "No NV Score yet ({sector}).",
+  "@takeawayNoScore": {
+    "placeholders": {
+      "sector": {}
+    }
+  },
+  "badgeDebtFree": "Debt-free (D/E {de})",
+  "@badgeDebtFree": {
+    "placeholders": {
+      "de": {}
+    }
+  },
+  "badgeRoceGrowth": "ROCE {roce}% · profit growth {growth}%",
+  "@badgeRoceGrowth": {
+    "placeholders": {
+      "roce": {},
+      "growth": {}
+    }
+  },
+  "badgeGoldenCross": "50-EMA above 200-EMA",
+  "badgePledgeChecked": "Promoter pledge {pct}% · filings checked",
+  "@badgePledgeChecked": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "badgePledge": "Promoter pledge {pct}%",
+  "@badgePledge": {
+    "placeholders": {
+      "pct": {}
+    }
+  },
+  "badgeLossMaking": "Loss-making (12M)",
+  "backToTop": "Back to top"
 }

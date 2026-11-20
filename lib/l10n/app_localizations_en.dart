@@ -510,21 +510,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'Market closed: prices are the last close. NV Scores update every evening.';
 
   @override
-  String heroQuiet(Object count, Object names) {
-    return '$count stocks had no trade in 15 min ($names) — the price is from the last trade';
+  String heroQuiet(int count, Object names) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stocks',
+      one: '1 stock',
+    );
+    return '$_temp0 had no trade in 15 min ($names) — the price is from the last trade';
   }
 
   @override
   String get heroClosedNote => 'Market closed · today\'s closing prices';
 
   @override
-  String heroUnpriced(Object count) {
-    return 'No price for $count stocks — not included in the total';
+  String heroUnpriced(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stocks',
+      one: '1 stock',
+    );
+    return 'No price for $_temp0 — not included in the total';
   }
 
   @override
-  String heroStale(Object count) {
-    return '$count stocks did not update in this refresh — showing the last saved price';
+  String heroStale(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stocks did',
+      one: '1 stock did',
+    );
+    return '$_temp0 not update in this refresh — showing the last saved price';
   }
 
   @override
@@ -595,8 +613,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'When you fully sell a stock, it will appear here with its realized P&L.';
 
   @override
-  String closedCount(Object count) {
-    return '$count stocks fully sold';
+  String closedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stocks fully sold',
+      one: '1 stock fully sold',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -620,8 +644,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String closedTrades(Object count) {
-    return '$count trades';
+  String closedTrades(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trades',
+      one: '1 trade',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -644,13 +674,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importPickOther => 'Choose another file';
 
   @override
-  String importDone(Object count, Object stocks) {
-    return '$count trades imported ($stocks stocks).';
+  String importDone(int count, int stocks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trades',
+      one: '1 trade',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      stocks,
+      locale: localeName,
+      other: '$stocks stocks',
+      one: '1 stock',
+    );
+    return '$_temp0 imported ($_temp1).';
   }
 
   @override
-  String importSummary(Object stocks, Object trades) {
-    return '$stocks stocks · $trades new trades';
+  String importSummary(int stocks, int trades) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stocks,
+      locale: localeName,
+      other: '$stocks stocks',
+      one: '1 stock',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      trades,
+      locale: localeName,
+      other: '$trades new trades',
+      one: '1 new trade',
+    );
+    return '$_temp0 · $_temp1';
   }
 
   @override
@@ -670,8 +724,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importNothingNew => 'Nothing new to import';
 
   @override
-  String importConfirm(Object trades, Object stocks) {
-    return 'Import ($trades trades, $stocks stocks)';
+  String importConfirm(int trades, int stocks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      trades,
+      locale: localeName,
+      other: '$trades trades',
+      one: '1 trade',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      stocks,
+      locale: localeName,
+      other: '$stocks stocks',
+      one: '1 stock',
+    );
+    return 'Import ($_temp0, $_temp1)';
   }
 
   @override
@@ -748,8 +814,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tradeBookTitle => 'Trade book';
 
   @override
-  String portfolioTracked(Object count) {
-    return '$count holdings under active tracking.';
+  String portfolioTracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holdings under active tracking.',
+      one: '1 holding under active tracking.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -803,8 +875,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get metricHoldings => 'Holdings';
 
   @override
-  String metricPositions(Object count) {
-    return '$count Positions';
+  String metricPositions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Positions',
+      one: '1 Position',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -847,8 +925,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tradesSearchHint => 'Search by stock (e.g. POLYCAB)';
 
   @override
-  String tradesCountDays(Object trades, Object days) {
-    return '$trades trades · $days days';
+  String tradesCountDays(int trades, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      trades,
+      locale: localeName,
+      other: '$trades trades',
+      one: '1 trade',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0 · $_temp1';
   }
 
   @override
@@ -1175,19 +1265,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get styleNoteBody =>
       'The rank is against other companies, so the label can change over time.';
-
-  @override
-  String get perfBackcast =>
-      'If today\'s holdings had been held the whole time. This is not your actual return.';
-
-  @override
-  String perfFooter(Object date) {
-    return 'Price only, dividends not included. Data up to $date.';
-  }
-
-  @override
-  String get perfPartial =>
-      'Some holdings lack full past data. The graph is built on the remaining holdings without them.';
 
   @override
   String get movesToday => 'Today';
@@ -1784,8 +1861,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get advHistoryTitle => 'Today\'s History';
 
   @override
-  String advQueries(Object count) {
-    return '$count Queries';
+  String advQueries(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Queries',
+      one: '1 Query',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2597,8 +2680,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String recoLoss(Object count) {
-    return '$count holdings are below their buy price; each one\'s \"Why this score\" shows its lowest pillar.';
+  String recoLoss(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holdings are below their buy price; each one\'s',
+      one: '1 holding is below its buy price; its',
+    );
+    return '$_temp0 \"Why this score\" shows its lowest pillar.';
   }
 
   @override
@@ -2607,13 +2696,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String recoUnpriced(Object count) {
-    return '$count holdings have no current price and are left out of the totals.';
+  String recoUnpriced(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count holdings have no current price and are left out of the totals.',
+      one: '1 holding has no current price and is left out of the totals.',
+    );
+    return '$_temp0';
   }
 
   @override
-  String recoStale(Object count) {
-    return '$count holdings show their last saved price, not a live one.';
+  String recoStale(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holdings show their last saved price, not a live one.',
+      one: '1 holding shows its last saved price, not a live one.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2625,6 +2727,251 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errLoginRequired => 'Please log in first.';
+
+  @override
+  String get acctTitle => 'Account value';
+
+  @override
+  String get acctValue => 'Value';
+
+  @override
+  String get acctInvested => 'Invested';
+
+  @override
+  String get acctPrevClose => 'Previous close';
+
+  @override
+  String acctAssumedNote(Object date) {
+    return 'Before $date, the line assumes today\'s opening holdings were already held.';
+  }
+
+  @override
+  String acctFooter(Object date) {
+    return 'Price only, dividends not included. Data: $date.';
+  }
+
+  @override
+  String get acctNoIntraday => 'Today\'s line starts when the market opens.';
+
+  @override
+  String factTopDrag(Object symbol, Object pct) {
+    return '$symbol pulled the portfolio down the most today ($pct of value).';
+  }
+
+  @override
+  String factTopLift(Object symbol, Object pct) {
+    return '$symbol lifted the portfolio the most today ($pct of value).';
+  }
+
+  @override
+  String factVsNifty(Object pct, Object niftyPct) {
+    return 'Today you are $pct, Nifty $niftyPct.';
+  }
+
+  @override
+  String factHigh52(Object symbol, Object price) {
+    return '$symbol is at its 52-week high ($price).';
+  }
+
+  @override
+  String factLow52(Object symbol, Object price) {
+    return '$symbol is at its 52-week low ($price).';
+  }
+
+  @override
+  String factVolumeSpike(Object symbol, Object ratio) {
+    return '$symbol traded $ratio× its usual volume today.';
+  }
+
+  @override
+  String factNearAlert(Object symbol, Object gap, Object target) {
+    return '$symbol is $gap away from your alert at $target.';
+  }
+
+  @override
+  String factHeavyStock(Object symbol, Object pct) {
+    return '$symbol is $pct of your portfolio.';
+  }
+
+  @override
+  String factHeavySector(Object sector, Object pct) {
+    return '$sector is $pct of your portfolio.';
+  }
+
+  @override
+  String factScoreDown(Object symbol, Object from, Object to) {
+    return '$symbol\'s NV Score fell from $from to $to this week.';
+  }
+
+  @override
+  String factScoreUp(Object symbol, Object from, Object to) {
+    return '$symbol\'s NV Score rose from $from to $to this week.';
+  }
+
+  @override
+  String factStalePrice(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holdings show an old price.',
+      one: '1 holding shows an old price.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get factYearHigh =>
+      'Your portfolio is at its highest value in a year.';
+
+  @override
+  String factUpStreak(Object days) {
+    return 'The market has lifted your portfolio $days days in a row.';
+  }
+
+  @override
+  String get factsTitle => 'Aaj ki baatein';
+
+  @override
+  String pulseLastHour(Object time, Object pct, Object symbol) {
+    return 'Since $time: $pct, most moved by $symbol';
+  }
+
+  @override
+  String pulseVsNifty(Object pct, Object niftyPct) {
+    return 'Today you $pct, Nifty $niftyPct';
+  }
+
+  @override
+  String get pulseWhyDown => 'Why did it fall today?';
+
+  @override
+  String get pulseWhyUp => 'Why did it rise today?';
+
+  @override
+  String get advQuestionWhyDown =>
+      'Why did my portfolio fall today? Which holdings moved it most?';
+
+  @override
+  String get advQuestionWhyUp =>
+      'Why did my portfolio rise today? Which holdings moved it most?';
+
+  @override
+  String get moversTitle => 'Nifty 50: top gainers and losers';
+
+  @override
+  String get moversFootnote => '* Top gainers and losers: only Nifty 50';
+
+  @override
+  String moodLive(Object adv, Object dec) {
+    return 'Nifty 50: $adv up · $dec down';
+  }
+
+  @override
+  String moodClosed(Object adv, Object dec, Object date) {
+    return 'Market: $adv up · $dec down ($date)';
+  }
+
+  @override
+  String get healthSheetTitle => 'What sets your NV Health';
+
+  @override
+  String get healthNotCounted => 'not counted';
+
+  @override
+  String semSummary(Object title, Object parts) {
+    return '$title: $parts';
+  }
+
+  @override
+  String semHealth(Object score, Object status) {
+    return 'NV Health $score out of 100, $status';
+  }
+
+  @override
+  String semIndex(Object name, Object value, Object pct) {
+    return '$name $value, $pct';
+  }
+
+  @override
+  String semAccount(Object range, Object pct) {
+    return 'Account value, $range: $pct';
+  }
+
+  @override
+  String get semNoData => 'no data';
+
+  @override
+  String get notifFilterAll => 'All';
+
+  @override
+  String get notifFilterRisks => 'Risks';
+
+  @override
+  String get notifFilterScores => 'Scores';
+
+  @override
+  String get notifFilterSystem => 'System';
+
+  @override
+  String get takeawayPending => 'Not enough data for an NV Score yet.';
+
+  @override
+  String takeawayPendingWhy(Object reason) {
+    return 'Not enough data for an NV Score yet ($reason).';
+  }
+
+  @override
+  String get takeawayReview =>
+      'Source data under review; no score until it is verified.';
+
+  @override
+  String takeawaySpecial(Object sector) {
+    return 'Specialized asset class ($sector); standard quantitative scoring withheld.';
+  }
+
+  @override
+  String takeawayPillars(Object score, Object pillars) {
+    return 'NV Score $score/100 · $pillars';
+  }
+
+  @override
+  String takeawayScore(Object score, Object sector) {
+    return 'NV Score $score/100 ($sector).';
+  }
+
+  @override
+  String takeawayNoScore(Object sector) {
+    return 'No NV Score yet ($sector).';
+  }
+
+  @override
+  String badgeDebtFree(Object de) {
+    return 'Debt-free (D/E $de)';
+  }
+
+  @override
+  String badgeRoceGrowth(Object roce, Object growth) {
+    return 'ROCE $roce% · profit growth $growth%';
+  }
+
+  @override
+  String get badgeGoldenCross => '50-EMA above 200-EMA';
+
+  @override
+  String badgePledgeChecked(Object pct) {
+    return 'Promoter pledge $pct% · filings checked';
+  }
+
+  @override
+  String badgePledge(Object pct) {
+    return 'Promoter pledge $pct%';
+  }
+
+  @override
+  String get badgeLossMaking => 'Loss-making (12M)';
+
+  @override
+  String get backToTop => 'Back to top';
 }
 
 /// The translations for English, as used in India (`en_IN`).
@@ -3134,7 +3481,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
       'Market band hai: prices aakhri close ke hain. NV Score har shaam update hota hai.';
 
   @override
-  String heroQuiet(Object count, Object names) {
+  String heroQuiet(int count, Object names) {
     return '$count stock me 15 min se koi trade nahi hua ($names) — price aakhri trade ka hai';
   }
 
@@ -3142,12 +3489,12 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get heroClosedNote => 'Market band · aaj ke closing prices';
 
   @override
-  String heroUnpriced(Object count) {
+  String heroUnpriced(int count) {
     return '$count stock ka price nahi mila — total mein shaamil nahi';
   }
 
   @override
-  String heroStale(Object count) {
+  String heroStale(int count) {
     return '$count stock is refresh me update nahi hue — pichhla saved price dikh raha hai';
   }
 
@@ -3219,7 +3566,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
       'Jab koi stock poora bik jayega, wo yahan realized P&L ke saath dikhega.';
 
   @override
-  String closedCount(Object count) {
+  String closedCount(int count) {
     return '$count stock poore beche gaye';
   }
 
@@ -3244,7 +3591,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   }
 
   @override
-  String closedTrades(Object count) {
+  String closedTrades(int count) {
     return '$count trades';
   }
 
@@ -3268,12 +3615,12 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get importPickOther => 'Doosri file chuno';
 
   @override
-  String importDone(Object count, Object stocks) {
+  String importDone(int count, int stocks) {
     return '$count trades import hue ($stocks stocks).';
   }
 
   @override
-  String importSummary(Object stocks, Object trades) {
+  String importSummary(int stocks, int trades) {
     return '$stocks stocks · $trades naye trades';
   }
 
@@ -3294,7 +3641,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get importNothingNew => 'Import ke liye kuch naya nahi';
 
   @override
-  String importConfirm(Object trades, Object stocks) {
+  String importConfirm(int trades, int stocks) {
     return 'Import karo ($trades trades, $stocks stocks)';
   }
 
@@ -3373,7 +3720,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get tradeBookTitle => 'Trade book';
 
   @override
-  String portfolioTracked(Object count) {
+  String portfolioTracked(int count) {
     return '$count holdings track ho rahe hain.';
   }
 
@@ -3428,7 +3775,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get metricHoldings => 'Holdings';
 
   @override
-  String metricPositions(Object count) {
+  String metricPositions(int count) {
     return '$count positions';
   }
 
@@ -3472,7 +3819,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get tradesSearchHint => 'Stock se dhundo (jaise POLYCAB)';
 
   @override
-  String tradesCountDays(Object trades, Object days) {
+  String tradesCountDays(int trades, int days) {
     return '$trades trades · $days din';
   }
 
@@ -3799,19 +4146,6 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   @override
   String get styleNoteBody =>
       'Rank doosri companies ke mukable hai, isliye samay ke saath label badal sakta hai.';
-
-  @override
-  String get perfBackcast =>
-      'Agar aaj ke holdings poore samay rakhe hote. Yeh aapka asli return nahi hai.';
-
-  @override
-  String perfFooter(Object date) {
-    return 'Sirf bhav, dividend shamil nahi. Data: $date tak.';
-  }
-
-  @override
-  String get perfPartial =>
-      'Kuch holdings ka poora purana data nahi hai. Unke bina graph baaki holdings par bana hai.';
 
   @override
   String get movesToday => 'Aaj';
@@ -4409,7 +4743,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   String get advHistoryTitle => 'Aaj ki History';
 
   @override
-  String advQueries(Object count) {
+  String advQueries(int count) {
     return '$count sawaal';
   }
 
@@ -5222,7 +5556,7 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   }
 
   @override
-  String recoLoss(Object count) {
+  String recoLoss(int count) {
     return '$count holdings apne buy price se neeche hain; har ek ke \"Yeh score kyun\" mein uska sabse kam pillar dikhta hai.';
   }
 
@@ -5232,12 +5566,12 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   }
 
   @override
-  String recoUnpriced(Object count) {
+  String recoUnpriced(int count) {
     return '$count holdings ka current price nahi hai, isliye total mein shaamil nahi.';
   }
 
   @override
-  String recoStale(Object count) {
+  String recoStale(int count) {
     return '$count holdings aakhri saved price dikha rahe hain, live nahi.';
   }
 
@@ -5250,4 +5584,243 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
 
   @override
   String get errLoginRequired => 'Login zaroori hai.';
+
+  @override
+  String get acctTitle => 'Account value';
+
+  @override
+  String get acctValue => 'Value';
+
+  @override
+  String get acctInvested => 'Lagaya paisa';
+
+  @override
+  String get acctPrevClose => 'Pichhla close';
+
+  @override
+  String acctAssumedNote(Object date) {
+    return '$date se pehle ka graph maan kar bana hai ki aaj ki opening holdings tab bhi thi.';
+  }
+
+  @override
+  String acctFooter(Object date) {
+    return 'Sirf bhav, dividend shamil nahi. Data: $date.';
+  }
+
+  @override
+  String get acctNoIntraday => 'Aaj ki line market khulne par shuru hogi.';
+
+  @override
+  String factTopDrag(Object symbol, Object pct) {
+    return 'Aaj portfolio ko sabse zyada $symbol ne neeche kheencha ($pct).';
+  }
+
+  @override
+  String factTopLift(Object symbol, Object pct) {
+    return 'Aaj portfolio ko sabse zyada $symbol ne upar uthaya ($pct).';
+  }
+
+  @override
+  String factVsNifty(Object pct, Object niftyPct) {
+    return 'Aaj aap $pct, Nifty $niftyPct.';
+  }
+
+  @override
+  String factHigh52(Object symbol, Object price) {
+    return '$symbol apne 52-week high par hai ($price).';
+  }
+
+  @override
+  String factLow52(Object symbol, Object price) {
+    return '$symbol apne 52-week low par hai ($price).';
+  }
+
+  @override
+  String factVolumeSpike(Object symbol, Object ratio) {
+    return '$symbol mein aaj aam se $ratio guna volume hua.';
+  }
+
+  @override
+  String factNearAlert(Object symbol, Object gap, Object target) {
+    return '$symbol aapke $target wale alert se $gap door hai.';
+  }
+
+  @override
+  String factHeavyStock(Object symbol, Object pct) {
+    return '$symbol aapke portfolio ka $pct hai.';
+  }
+
+  @override
+  String factHeavySector(Object sector, Object pct) {
+    return '$sector aapke portfolio ka $pct hai.';
+  }
+
+  @override
+  String factScoreDown(Object symbol, Object from, Object to) {
+    return '$symbol ka NV Score is hafte $from se ghat kar $to hua.';
+  }
+
+  @override
+  String factScoreUp(Object symbol, Object from, Object to) {
+    return '$symbol ka NV Score is hafte $from se badh kar $to hua.';
+  }
+
+  @override
+  String factStalePrice(int count) {
+    return '$count holdings ka price purana hai.';
+  }
+
+  @override
+  String get factYearHigh =>
+      'Aapka portfolio saal ki sabse oonchi value par hai.';
+
+  @override
+  String factUpStreak(Object days) {
+    return 'Bazaar ne lagatar $days din aapka portfolio upar kiya.';
+  }
+
+  @override
+  String get factsTitle => 'Aaj ki baatein';
+
+  @override
+  String pulseLastHour(Object time, Object pct, Object symbol) {
+    return '$time se: $pct, sabse zyada $symbol se';
+  }
+
+  @override
+  String pulseVsNifty(Object pct, Object niftyPct) {
+    return 'Aaj aap $pct, Nifty $niftyPct';
+  }
+
+  @override
+  String get pulseWhyDown => 'Aaj kyun gira?';
+
+  @override
+  String get pulseWhyUp => 'Aaj kyun badha?';
+
+  @override
+  String get advQuestionWhyDown =>
+      'Aaj mera portfolio kyun gira? Kin holdings ne sabse zyada hilaya?';
+
+  @override
+  String get advQuestionWhyUp =>
+      'Aaj mera portfolio kyun badha? Kin holdings ne sabse zyada hilaya?';
+
+  @override
+  String get moversTitle => 'Nifty 50: sabse zyada badhe aur gire';
+
+  @override
+  String get moversFootnote => '* Top gainers aur losers: sirf Nifty 50';
+
+  @override
+  String moodLive(Object adv, Object dec) {
+    return 'Nifty 50: $adv badhe · $dec gire';
+  }
+
+  @override
+  String moodClosed(Object adv, Object dec, Object date) {
+    return 'Bazaar: $adv badhe · $dec gire ($date)';
+  }
+
+  @override
+  String get healthSheetTitle => 'Aapka NV Health kaun tay karta hai';
+
+  @override
+  String get healthNotCounted => 'gina nahi gaya';
+
+  @override
+  String semSummary(Object title, Object parts) {
+    return '$title: $parts';
+  }
+
+  @override
+  String semHealth(Object score, Object status) {
+    return 'NV Health 100 mein se $score, $status';
+  }
+
+  @override
+  String semIndex(Object name, Object value, Object pct) {
+    return '$name $value, $pct';
+  }
+
+  @override
+  String semAccount(Object range, Object pct) {
+    return 'Account value, $range: $pct';
+  }
+
+  @override
+  String get semNoData => 'data nahi';
+
+  @override
+  String get notifFilterAll => 'Sab';
+
+  @override
+  String get notifFilterRisks => 'Risk';
+
+  @override
+  String get notifFilterScores => 'Score';
+
+  @override
+  String get notifFilterSystem => 'System';
+
+  @override
+  String get takeawayPending => 'NV Score ke liye abhi kaafi data nahi.';
+
+  @override
+  String takeawayPendingWhy(Object reason) {
+    return 'NV Score ke liye abhi kaafi data nahi ($reason).';
+  }
+
+  @override
+  String get takeawayReview =>
+      'Source data review mein hai; jaanch hone tak score nahi.';
+
+  @override
+  String takeawaySpecial(Object sector) {
+    return 'Specialized asset class ($sector); aam quantitative score nahi diya jaata.';
+  }
+
+  @override
+  String takeawayPillars(Object score, Object pillars) {
+    return 'NV Score $score/100 · $pillars';
+  }
+
+  @override
+  String takeawayScore(Object score, Object sector) {
+    return 'NV Score $score/100 ($sector).';
+  }
+
+  @override
+  String takeawayNoScore(Object sector) {
+    return 'Abhi NV Score nahi ($sector).';
+  }
+
+  @override
+  String badgeDebtFree(Object de) {
+    return 'Karz-mukt (D/E $de)';
+  }
+
+  @override
+  String badgeRoceGrowth(Object roce, Object growth) {
+    return 'ROCE $roce% · profit growth $growth%';
+  }
+
+  @override
+  String get badgeGoldenCross => '50-EMA, 200-EMA se upar';
+
+  @override
+  String badgePledgeChecked(Object pct) {
+    return 'Promoter pledge $pct% · filings jaanchi gayi';
+  }
+
+  @override
+  String badgePledge(Object pct) {
+    return 'Promoter pledge $pct%';
+  }
+
+  @override
+  String get badgeLossMaking => 'Ghate mein (12M)';
+
+  @override
+  String get backToTop => 'Upar jaayein';
 }

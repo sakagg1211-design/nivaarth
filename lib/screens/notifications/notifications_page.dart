@@ -14,9 +14,20 @@ import '../../providers/price_alert_provider.dart';
 import '../stock/stock_detail_page.dart';
 import '../stock/widgets/price_alert_sheet.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../l10n/app_localizations.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
+
+  /// Internal filter values; the chips show them through [filterLabel].
+  static const filters = ['All', 'Risks', 'Scores', 'System'];
+
+  static String filterLabel(String f, AppLocalizations t) => switch (f) {
+        'Risks' => t.notifFilterRisks,
+        'Scores' => t.notifFilterScores,
+        'System' => t.notifFilterSystem,
+        _ => t.notifFilterAll,
+      };
 
   @override
   ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
@@ -141,7 +152,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   }
 
   Widget _buildFilterBar() {
-    final filters = ['All', 'Risks', 'Scores', 'System'];
+    const filters = NotificationsPage.filters;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
@@ -159,7 +170,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: ChoiceChip(
-                label: Text(f),
+                label: Text(NotificationsPage.filterLabel(f, context.t)),
                 selected: isSelected,
                 selectedColor: const Color(0xFFE5A93C),
                 backgroundColor: const Color(0xFF1E2024),

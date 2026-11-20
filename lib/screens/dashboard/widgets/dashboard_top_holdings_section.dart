@@ -64,7 +64,7 @@ class DashboardTopHoldingsSection extends ConsumerWidget {
                 child: Text(
                   context.t.commonViewAll,
                   style: TextStyle(
-                    color: Color(0xFFE5A93C),
+                    color: Color(0xFF8E929B),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),

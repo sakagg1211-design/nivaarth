@@ -15,7 +15,7 @@ Map<String, dynamic> arb(String name) =>
 
 Iterable<String> messages(Map<String, dynamic> a) => a.keys.where((k) => !k.startsWith('@'));
 
-Set<String> placeholders(String text) => RegExp(r'\{(\w+)').allMatches(text).map((m) => m.group(1)!).toSet();
+Set<String> placeholders(String text) => RegExp(r'\{(\w+)[,}]').allMatches(text).map((m) => m.group(1)!).toSet();
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

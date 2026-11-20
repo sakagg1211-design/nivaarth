@@ -12,18 +12,21 @@ import '../../providers/live_portfolio_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../advisor/advisor_chat_page.dart';
 import '../home/home_page.dart';
-import 'widgets/ai_briefing_card.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/dashboard_signals_grid.dart';
 import 'widgets/dashboard_top_holdings_section.dart';
 import 'widgets/macro_card.dart';
-import 'widgets/market_indices_bar.dart';
 import 'widgets/portfolio_health_card.dart';
 import 'widgets/allocation_card.dart';
 import 'widgets/portfolio_hero_card.dart';
 import '../portfolio/widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../providers/advisor_question_provider.dart';
+import 'widgets/index_cards_row.dart';
+import 'widgets/nifty_movers_card.dart';
+import 'widgets/pulse_strip.dart';
+import 'widgets/today_facts_card.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final VoidCallback? onOpenAdvisor;
@@ -143,6 +146,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     )),
                 isMarketOpen: isMarketOpen,
               ),
+              footer: PulseStrip(onWhy: _askWhy),
             );
 
             // 3. Compact AI Portfolio Health Gauge Card
@@ -150,6 +154,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               healthScore: data.portfolioHealth,
               action: data.aiRecommendation.recommendation.label,
               dataCoverage: data.dataCoverage,
+              holdingScores: data.holdingScores,
               onOpenAdvisor: widget.onOpenAdvisor ?? () {
                 Navigator.push(
                   context,
@@ -161,20 +166,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             // 4. Compact 2x2 Micro Cards Grid (Winner, Weakest, Opportunity, Diversification)
             final signals = DashboardSignalsGrid(
               summary: data,
-            );
-
-            // 5. Today's AI Briefing & Insight Column (Attached Image 2)
-            final briefing = Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildBriefingHeading(),
-                const SizedBox(height: 12),
-                // AI Verdict & Health Insights Card (Reasons + Actions)
-                AIBriefingCard(
-                  ai: data.aiRecommendation,
-                  dataCoverage: data.dataCoverage,
-                ),
-              ],
             );
 
             // 6. Sector Allocation Preview & Top Holdings List
@@ -197,18 +188,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             if (!hasHoldings) {
               body = [_buildNewUserOnboardingCard(context)];
             } else if (isDesktop) {
-              // Wide screens: valuation stack on the left, briefing on the right.
+              // Wide screens: the live picture on the left, the market on the right.
               body = [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 5,
+                      flex: 6,
                       child: Column(
                         children: [
                           hero,
                           const SizedBox(height: 14),
-                          const MacroCard(),
+                          TodayFactsCard(onOpenPortfolio: _openPortfolio),
                           const SizedBox(height: 14),
                           health,
                           const SizedBox(height: 14),
@@ -217,13 +208,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Expanded(
-                      flex: 6,
+                    const Expanded(
+                      flex: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          briefing,
-                          if (hasHoldings) ...[const SizedBox(height: 14), const AllocationCard()],
+                          NiftyMoversCard(),
+                          SizedBox(height: 14),
+                          MacroCard(),
+                          SizedBox(height: 14),
+                          AllocationCard(),
                         ],
                       ),
                     ),
@@ -236,14 +230,17 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               body = [
                 hero,
                 const SizedBox(height: 14),
-                const MacroCard(),
+                TodayFactsCard(onOpenPortfolio: _openPortfolio),
                 const SizedBox(height: 14),
                 health,
                 const SizedBox(height: 14),
+                const NiftyMoversCard(),
+                const SizedBox(height: 14),
+                const MacroCard(),
+                const SizedBox(height: 14),
+                const AllocationCard(),
+                const SizedBox(height: 14),
                 signals,
-                if (hasHoldings) ...[const SizedBox(height: 14), const AllocationCard()],
-                const SizedBox(height: 22),
-                briefing,
                 const SizedBox(height: 22),
                 topHoldings,
               ];
@@ -278,7 +275,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                               const SizedBox(height: 12),
 
                               // Live NIFTY 50 and SENSEX Benchmark Bar
-                              const MarketIndicesBar(),
+                              const IndexCardsRow(),
 
                               const SizedBox(height: 14),
 
@@ -300,54 +297,24 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     );
   }
 
-  Widget _buildBriefingHeading() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              'NV Briefing',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.4,
-              ),
-            ),
-            SizedBox(width: 8),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: Color(0x1FE5A93C),
-                borderRadius: BorderRadius.all(Radius.circular(6)),
-                border: Border.fromBorderSide(BorderSide(color: Color(0x33E5A93C))),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                child: Text(
-                  context.t.dashToday,
-                  style: TextStyle(
-                    color: Color(0xFFE5A93C),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 4),
-        Text(
-          context.t.dashBriefingSub,
-          style: TextStyle(
-            color: Color(0xFF8E929B),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
+  void _openPortfolio() {
+    final homeState = context.findAncestorStateOfType<State<HomePage>>();
+    if (homeState != null) {
+      // ignore: invalid_use_of_protected_member
+      homeState.setState(() {
+        // ignore: avoid_dynamic_calls
+        (homeState as dynamic).currentIndex = 1;
+      });
+    }
+  }
+
+  void _askWhy(bool up) {
+    ref.read(advisorQuestionProvider.notifier).state = up ? context.t.advQuestionWhyUp : context.t.advQuestionWhyDown;
+    if (widget.onOpenAdvisor != null) {
+      widget.onOpenAdvisor!();
+    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const AdvisorChatPage()));
+    }
   }
 
   Widget _buildNewUserOnboardingCard(BuildContext context) {

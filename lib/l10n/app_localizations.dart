@@ -1006,8 +1006,8 @@ abstract class AppLocalizations {
   /// No description provided for @heroQuiet.
   ///
   /// In en, this message translates to:
-  /// **'{count} stocks had no trade in 15 min ({names}) — the price is from the last trade'**
-  String heroQuiet(Object count, Object names);
+  /// **'{count, plural, =1{1 stock} other{{count} stocks}} had no trade in 15 min ({names}) — the price is from the last trade'**
+  String heroQuiet(int count, Object names);
 
   /// No description provided for @heroClosedNote.
   ///
@@ -1018,14 +1018,14 @@ abstract class AppLocalizations {
   /// No description provided for @heroUnpriced.
   ///
   /// In en, this message translates to:
-  /// **'No price for {count} stocks — not included in the total'**
-  String heroUnpriced(Object count);
+  /// **'No price for {count, plural, =1{1 stock} other{{count} stocks}} — not included in the total'**
+  String heroUnpriced(int count);
 
   /// No description provided for @heroStale.
   ///
   /// In en, this message translates to:
-  /// **'{count} stocks did not update in this refresh — showing the last saved price'**
-  String heroStale(Object count);
+  /// **'{count, plural, =1{1 stock did} other{{count} stocks did}} not update in this refresh — showing the last saved price'**
+  String heroStale(int count);
 
   /// No description provided for @heroValue.
   ///
@@ -1138,8 +1138,8 @@ abstract class AppLocalizations {
   /// No description provided for @closedCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} stocks fully sold'**
-  String closedCount(Object count);
+  /// **'{count, plural, =1{1 stock fully sold} other{{count} stocks fully sold}}'**
+  String closedCount(int count);
 
   /// No description provided for @closedRealized.
   ///
@@ -1168,8 +1168,8 @@ abstract class AppLocalizations {
   /// No description provided for @closedTrades.
   ///
   /// In en, this message translates to:
-  /// **'{count} trades'**
-  String closedTrades(Object count);
+  /// **'{count, plural, =1{1 trade} other{{count} trades}}'**
+  String closedTrades(int count);
 
   /// No description provided for @importStarting.
   ///
@@ -1210,14 +1210,14 @@ abstract class AppLocalizations {
   /// No description provided for @importDone.
   ///
   /// In en, this message translates to:
-  /// **'{count} trades imported ({stocks} stocks).'**
-  String importDone(Object count, Object stocks);
+  /// **'{count, plural, =1{1 trade} other{{count} trades}} imported ({stocks, plural, =1{1 stock} other{{stocks} stocks}}).'**
+  String importDone(int count, int stocks);
 
   /// No description provided for @importSummary.
   ///
   /// In en, this message translates to:
-  /// **'{stocks} stocks · {trades} new trades'**
-  String importSummary(Object stocks, Object trades);
+  /// **'{stocks, plural, =1{1 stock} other{{stocks} stocks}} · {trades, plural, =1{1 new trade} other{{trades} new trades}}'**
+  String importSummary(int stocks, int trades);
 
   /// No description provided for @importUnlisted.
   ///
@@ -1246,8 +1246,8 @@ abstract class AppLocalizations {
   /// No description provided for @importConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Import ({trades} trades, {stocks} stocks)'**
-  String importConfirm(Object trades, Object stocks);
+  /// **'Import ({trades, plural, =1{1 trade} other{{trades} trades}}, {stocks, plural, =1{1 stock} other{{stocks} stocks}})'**
+  String importConfirm(int trades, int stocks);
 
   /// No description provided for @importNotHeld.
   ///
@@ -1372,8 +1372,8 @@ abstract class AppLocalizations {
   /// No description provided for @portfolioTracked.
   ///
   /// In en, this message translates to:
-  /// **'{count} holdings under active tracking.'**
-  String portfolioTracked(Object count);
+  /// **'{count, plural, =1{1 holding under active tracking.} other{{count} holdings under active tracking.}}'**
+  String portfolioTracked(int count);
 
   /// No description provided for @sortAlphabetical.
   ///
@@ -1474,8 +1474,8 @@ abstract class AppLocalizations {
   /// No description provided for @metricPositions.
   ///
   /// In en, this message translates to:
-  /// **'{count} Positions'**
-  String metricPositions(Object count);
+  /// **'{count, plural, =1{1 Position} other{{count} Positions}}'**
+  String metricPositions(int count);
 
   /// No description provided for @metricWinRatio.
   ///
@@ -1552,8 +1552,8 @@ abstract class AppLocalizations {
   /// No description provided for @tradesCountDays.
   ///
   /// In en, this message translates to:
-  /// **'{trades} trades · {days} days'**
-  String tradesCountDays(Object trades, Object days);
+  /// **'{trades, plural, =1{1 trade} other{{trades} trades}} · {days, plural, =1{1 day} other{{days} days}}'**
+  String tradesCountDays(int trades, int days);
 
   /// No description provided for @tradesNoMatch.
   ///
@@ -2082,24 +2082,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The rank is against other companies, so the label can change over time.'**
   String get styleNoteBody;
-
-  /// No description provided for @perfBackcast.
-  ///
-  /// In en, this message translates to:
-  /// **'If today\'s holdings had been held the whole time. This is not your actual return.'**
-  String get perfBackcast;
-
-  /// No description provided for @perfFooter.
-  ///
-  /// In en, this message translates to:
-  /// **'Price only, dividends not included. Data up to {date}.'**
-  String perfFooter(Object date);
-
-  /// No description provided for @perfPartial.
-  ///
-  /// In en, this message translates to:
-  /// **'Some holdings lack full past data. The graph is built on the remaining holdings without them.'**
-  String get perfPartial;
 
   /// No description provided for @movesToday.
   ///
@@ -3112,8 +3094,8 @@ abstract class AppLocalizations {
   /// No description provided for @advQueries.
   ///
   /// In en, this message translates to:
-  /// **'{count} Queries'**
-  String advQueries(Object count);
+  /// **'{count, plural, =1{1 Query} other{{count} Queries}}'**
+  String advQueries(int count);
 
   /// No description provided for @advNoHistory.
   ///
@@ -4426,8 +4408,8 @@ abstract class AppLocalizations {
   /// No description provided for @recoLoss.
   ///
   /// In en, this message translates to:
-  /// **'{count} holdings are below their buy price; each one\'s \"Why this score\" shows its lowest pillar.'**
-  String recoLoss(Object count);
+  /// **'{count, plural, =1{1 holding is below its buy price; its} other{{count} holdings are below their buy price; each one\'s}} \"Why this score\" shows its lowest pillar.'**
+  String recoLoss(int count);
 
   /// No description provided for @recoLargestFall.
   ///
@@ -4438,14 +4420,14 @@ abstract class AppLocalizations {
   /// No description provided for @recoUnpriced.
   ///
   /// In en, this message translates to:
-  /// **'{count} holdings have no current price and are left out of the totals.'**
-  String recoUnpriced(Object count);
+  /// **'{count, plural, =1{1 holding has no current price and is left out of the totals.} other{{count} holdings have no current price and are left out of the totals.}}'**
+  String recoUnpriced(int count);
 
   /// No description provided for @recoStale.
   ///
   /// In en, this message translates to:
-  /// **'{count} holdings show their last saved price, not a live one.'**
-  String recoStale(Object count);
+  /// **'{count, plural, =1{1 holding shows its last saved price, not a live one.} other{{count} holdings show their last saved price, not a live one.}}'**
+  String recoStale(int count);
 
   /// No description provided for @recoNoneBelow.
   ///
@@ -4464,6 +4446,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please log in first.'**
   String get errLoginRequired;
+
+  /// No description provided for @acctTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account value'**
+  String get acctTitle;
+
+  /// No description provided for @acctValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get acctValue;
+
+  /// No description provided for @acctInvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Invested'**
+  String get acctInvested;
+
+  /// No description provided for @acctPrevClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous close'**
+  String get acctPrevClose;
+
+  /// No description provided for @acctAssumedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Before {date}, the line assumes today\'s opening holdings were already held.'**
+  String acctAssumedNote(Object date);
+
+  /// No description provided for @acctFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Price only, dividends not included. Data: {date}.'**
+  String acctFooter(Object date);
+
+  /// No description provided for @acctNoIntraday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s line starts when the market opens.'**
+  String get acctNoIntraday;
+
+  /// No description provided for @factTopDrag.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} pulled the portfolio down the most today ({pct} of value).'**
+  String factTopDrag(Object symbol, Object pct);
+
+  /// No description provided for @factTopLift.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} lifted the portfolio the most today ({pct} of value).'**
+  String factTopLift(Object symbol, Object pct);
+
+  /// No description provided for @factVsNifty.
+  ///
+  /// In en, this message translates to:
+  /// **'Today you are {pct}, Nifty {niftyPct}.'**
+  String factVsNifty(Object pct, Object niftyPct);
+
+  /// No description provided for @factHigh52.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} is at its 52-week high ({price}).'**
+  String factHigh52(Object symbol, Object price);
+
+  /// No description provided for @factLow52.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} is at its 52-week low ({price}).'**
+  String factLow52(Object symbol, Object price);
+
+  /// No description provided for @factVolumeSpike.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} traded {ratio}× its usual volume today.'**
+  String factVolumeSpike(Object symbol, Object ratio);
+
+  /// No description provided for @factNearAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} is {gap} away from your alert at {target}.'**
+  String factNearAlert(Object symbol, Object gap, Object target);
+
+  /// No description provided for @factHeavyStock.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol} is {pct} of your portfolio.'**
+  String factHeavyStock(Object symbol, Object pct);
+
+  /// No description provided for @factHeavySector.
+  ///
+  /// In en, this message translates to:
+  /// **'{sector} is {pct} of your portfolio.'**
+  String factHeavySector(Object sector, Object pct);
+
+  /// No description provided for @factScoreDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol}\'s NV Score fell from {from} to {to} this week.'**
+  String factScoreDown(Object symbol, Object from, Object to);
+
+  /// No description provided for @factScoreUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{symbol}\'s NV Score rose from {from} to {to} this week.'**
+  String factScoreUp(Object symbol, Object from, Object to);
+
+  /// No description provided for @factStalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 holding shows an old price.} other{{count} holdings show an old price.}}'**
+  String factStalePrice(int count);
+
+  /// No description provided for @factYearHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Your portfolio is at its highest value in a year.'**
+  String get factYearHigh;
+
+  /// No description provided for @factUpStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'The market has lifted your portfolio {days} days in a row.'**
+  String factUpStreak(Object days);
+
+  /// No description provided for @factsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Aaj ki baatein'**
+  String get factsTitle;
+
+  /// No description provided for @pulseLastHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {time}: {pct}, most moved by {symbol}'**
+  String pulseLastHour(Object time, Object pct, Object symbol);
+
+  /// No description provided for @pulseVsNifty.
+  ///
+  /// In en, this message translates to:
+  /// **'Today you {pct}, Nifty {niftyPct}'**
+  String pulseVsNifty(Object pct, Object niftyPct);
+
+  /// No description provided for @pulseWhyDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Why did it fall today?'**
+  String get pulseWhyDown;
+
+  /// No description provided for @pulseWhyUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Why did it rise today?'**
+  String get pulseWhyUp;
+
+  /// No description provided for @advQuestionWhyDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Why did my portfolio fall today? Which holdings moved it most?'**
+  String get advQuestionWhyDown;
+
+  /// No description provided for @advQuestionWhyUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Why did my portfolio rise today? Which holdings moved it most?'**
+  String get advQuestionWhyUp;
+
+  /// No description provided for @moversTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nifty 50: top gainers and losers'**
+  String get moversTitle;
+
+  /// No description provided for @moversFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'* Top gainers and losers: only Nifty 50'**
+  String get moversFootnote;
+
+  /// No description provided for @moodLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Nifty 50: {adv} up · {dec} down'**
+  String moodLive(Object adv, Object dec);
+
+  /// No description provided for @moodClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Market: {adv} up · {dec} down ({date})'**
+  String moodClosed(Object adv, Object dec, Object date);
+
+  /// No description provided for @healthSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What sets your NV Health'**
+  String get healthSheetTitle;
+
+  /// No description provided for @healthNotCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'not counted'**
+  String get healthNotCounted;
+
+  /// No description provided for @semSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{title}: {parts}'**
+  String semSummary(Object title, Object parts);
+
+  /// No description provided for @semHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'NV Health {score} out of 100, {status}'**
+  String semHealth(Object score, Object status);
+
+  /// No description provided for @semIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} {value}, {pct}'**
+  String semIndex(Object name, Object value, Object pct);
+
+  /// No description provided for @semAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account value, {range}: {pct}'**
+  String semAccount(Object range, Object pct);
+
+  /// No description provided for @semNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'no data'**
+  String get semNoData;
+
+  /// No description provided for @notifFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notifFilterAll;
+
+  /// No description provided for @notifFilterRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks'**
+  String get notifFilterRisks;
+
+  /// No description provided for @notifFilterScores.
+  ///
+  /// In en, this message translates to:
+  /// **'Scores'**
+  String get notifFilterScores;
+
+  /// No description provided for @notifFilterSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get notifFilterSystem;
+
+  /// No description provided for @takeawayPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data for an NV Score yet.'**
+  String get takeawayPending;
+
+  /// No description provided for @takeawayPendingWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data for an NV Score yet ({reason}).'**
+  String takeawayPendingWhy(Object reason);
+
+  /// No description provided for @takeawayReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Source data under review; no score until it is verified.'**
+  String get takeawayReview;
+
+  /// No description provided for @takeawaySpecial.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialized asset class ({sector}); standard quantitative scoring withheld.'**
+  String takeawaySpecial(Object sector);
+
+  /// No description provided for @takeawayPillars.
+  ///
+  /// In en, this message translates to:
+  /// **'NV Score {score}/100 · {pillars}'**
+  String takeawayPillars(Object score, Object pillars);
+
+  /// No description provided for @takeawayScore.
+  ///
+  /// In en, this message translates to:
+  /// **'NV Score {score}/100 ({sector}).'**
+  String takeawayScore(Object score, Object sector);
+
+  /// No description provided for @takeawayNoScore.
+  ///
+  /// In en, this message translates to:
+  /// **'No NV Score yet ({sector}).'**
+  String takeawayNoScore(Object sector);
+
+  /// No description provided for @badgeDebtFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-free (D/E {de})'**
+  String badgeDebtFree(Object de);
+
+  /// No description provided for @badgeRoceGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'ROCE {roce}% · profit growth {growth}%'**
+  String badgeRoceGrowth(Object roce, Object growth);
+
+  /// No description provided for @badgeGoldenCross.
+  ///
+  /// In en, this message translates to:
+  /// **'50-EMA above 200-EMA'**
+  String get badgeGoldenCross;
+
+  /// No description provided for @badgePledgeChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Promoter pledge {pct}% · filings checked'**
+  String badgePledgeChecked(Object pct);
+
+  /// No description provided for @badgePledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Promoter pledge {pct}%'**
+  String badgePledge(Object pct);
+
+  /// No description provided for @badgeLossMaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss-making (12M)'**
+  String get badgeLossMaking;
+
+  /// No description provided for @backToTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to top'**
+  String get backToTop;
 }
 
 class _AppLocalizationsDelegate

@@ -40,6 +40,7 @@ Built:
 - Price alerts in Notifications (in-app only, no push).
 - NV Advisor: chat grounded in the user's portfolio and database facts, in English, Hindi or Hinglish.
 - What-if and stress test based on one-year beta.
+- English and Hinglish language switch in the user menu.
 
 Constraints:
 
@@ -49,7 +50,7 @@ Constraints:
 - Privacy: each user sees only their own data; shareable cards never show rupee amounts.
 - Terms: NV Score, NV Advisor, Privacy Mode, Trade jodo, Trade book, Closed positions.
 
-Undecided or deferred: XIRR, family portfolio selector, English and Hinglish language switch (planned), BSE-only stocks (planned), Account Aggregator sync, pricing.
+Undecided or deferred: XIRR, family portfolio selector, BSE-only stocks (planned), Account Aggregator sync, pricing.
 
 ## Brand Commitments
 

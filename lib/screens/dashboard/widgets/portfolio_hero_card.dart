@@ -21,6 +21,7 @@ class PortfolioHeroCard extends ConsumerWidget {
   final DateTime? pricesAsOf;
   // Refreshed now but no trade for 15+ minutes (thinly traded), during the session
   final List<String> quietHoldings;
+  final Widget? footer;
 
   const PortfolioHeroCard({
     super.key,
@@ -36,6 +37,7 @@ class PortfolioHeroCard extends ConsumerWidget {
     this.staleHoldings = 0,
     this.pricesAsOf,
     this.quietHoldings = const [],
+    this.footer,
   });
 
   /// Stocks refreshed in this refresh whose last trade is more than [after] older than the
@@ -265,6 +267,7 @@ class PortfolioHeroCard extends ConsumerWidget {
               ],
             ),
           ],
+          if (footer != null) ...[const SizedBox(height: 12), footer!],
         ],
       ),
     );

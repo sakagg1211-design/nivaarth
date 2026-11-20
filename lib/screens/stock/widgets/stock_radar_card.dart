@@ -109,7 +109,7 @@ class StockRadarCard extends ConsumerWidget {
     final facts = ref.watch(stockFactsProvider(symbol)).valueOrNull;
     final lender = StockInsights.isLender(score.scoreBreakdown);
     final badges = StockInsights.badges(
-      facts,
+      facts, context.t,
       lender: lender,
       pledgeReviewed: StockInsights.pledgeReviewed(score.scoreBreakdown),
     );

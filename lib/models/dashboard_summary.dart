@@ -1,6 +1,7 @@
 import 'package:mobile/models/ai_recommendation.dart';
 import 'package:mobile/models/live_portfolio.dart';
 import 'package:mobile/models/stock_score.dart';
+import 'package:mobile/core/utils/health_math.dart';
 
 class DashboardSummary {
   final double totalInvested;
@@ -41,6 +42,9 @@ final String portfolioHealthStatus;
 
   final StockScore weakestHolding;
 
+  // Each holding's NV Score and value, for the Health breakdown
+  final List<HoldingScore> holdingScores;
+
   const DashboardSummary({
     required this.totalInvested,
     required this.currentValue,
@@ -67,5 +71,6 @@ final String portfolioHealthStatus;
     required this.riskHealth,
 
 required this.portfolioHealthStatus,
+    this.holdingScores = const [],
   });
 }
