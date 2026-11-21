@@ -5,6 +5,7 @@ import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/today_facts.dart';
 import '../../../providers/live_portfolio_provider.dart';
+import '../../../providers/news_provider.dart';
 import '../../../providers/today_facts_provider.dart';
 import '../../stock/stock_detail_page.dart';
 
@@ -24,6 +25,7 @@ class TodayFactsCard extends ConsumerWidget {
     final facts = ref.watch(todayFactsProvider).valueOrNull ?? const <Fact>[];
     if (facts.isEmpty) return const SizedBox.shrink();
     final holdings = ref.watch(livePortfolioProvider).valueOrNull ?? const [];
+    final newsCounts = ref.watch(holdingsNewsProvider).valueOrNull?.counts ?? const <String, int>{};
 
     return Container(
       width: double.infinity,
@@ -70,8 +72,19 @@ class TodayFactsCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(factText(f, context.t),
-                          style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.3, fontWeight: FontWeight.w500)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(factText(f, context.t),
+                              style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.3, fontWeight: FontWeight.w500)),
+                          if ((newsCounts[f.symbol] ?? 0) > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(context.t.newsCountToday(newsCounts[f.symbol]!),
+                                  style: const TextStyle(color: _muted, fontSize: 11, fontWeight: FontWeight.w600)),
+                            ),
+                        ],
+                      ),
                     ),
                     const Icon(Icons.chevron_right_rounded, size: 18, color: _muted),
                   ],

@@ -9,6 +9,7 @@ import '../../core/utils/market_hours.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/live_portfolio_provider.dart';
+import '../../providers/news_provider.dart';
 import '../../services/market_sync_service.dart';
 import '../advisor/advisor_chat_page.dart';
 import '../home/home_page.dart';
@@ -27,6 +28,7 @@ import 'widgets/index_cards_row.dart';
 import 'widgets/nifty_movers_card.dart';
 import 'widgets/pulse_strip.dart';
 import 'widgets/today_facts_card.dart';
+import 'widgets/holdings_news_card.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final VoidCallback? onOpenAdvisor;
@@ -41,6 +43,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     with WidgetsBindingObserver {
   bool _isRefreshing = false;
   DateTime _lastUpdated = DateTime.now();
+  DateTime _lastNewsRefresh = DateTime.now();
   // While the market is open and the app is in front, prices refresh every 2 minutes
   static const _autoRefreshEvery = Duration(minutes: 2);
   Timer? _autoRefresh;
@@ -83,6 +86,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
       await MarketSyncService.instance.syncAll(ref);
 
       if (!mounted) return;
+      if (newsRefreshDue(_lastNewsRefresh, DateTime.now())) {
+        _lastNewsRefresh = DateTime.now();
+        ref.invalidate(holdingsNewsProvider);
+      }
       setState(() {
         _lastUpdated = DateTime.now();
       });
@@ -200,6 +207,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                           hero,
                           const SizedBox(height: 14),
                           TodayFactsCard(onOpenPortfolio: _openPortfolio),
+                          const HoldingsNewsCard(),
                           const SizedBox(height: 14),
                           health,
                           const SizedBox(height: 14),
@@ -231,6 +239,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 hero,
                 const SizedBox(height: 14),
                 TodayFactsCard(onOpenPortfolio: _openPortfolio),
+                const HoldingsNewsCard(),
                 const SizedBox(height: 14),
                 health,
                 const SizedBox(height: 14),

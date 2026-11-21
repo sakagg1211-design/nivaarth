@@ -10,6 +10,7 @@ import 'package:mobile/providers/account_value_provider.dart';
 import 'package:mobile/providers/live_portfolio_provider.dart';
 import 'package:mobile/providers/locale_provider.dart';
 import 'package:mobile/providers/market_pulse_provider.dart';
+import 'package:mobile/providers/news_provider.dart';
 import 'package:mobile/providers/today_facts_provider.dart';
 import 'package:mobile/screens/dashboard/widgets/index_cards_row.dart';
 import 'package:mobile/screens/dashboard/widgets/nifty_movers_card.dart';
@@ -48,6 +49,7 @@ Widget host(Widget child, {Locale locale = englishLocale, MarketPulse? p, Accoun
         accountTodayProvider.overrideWith((ref) async => t),
         todayFactsProvider.overrideWith((ref) async => facts),
         livePortfolioProvider.overrideWith((ref) async => const []),
+        holdingsNewsProvider.overrideWith((ref) async => null),
       ],
       child: localizedApp(locale: locale, home: Scaffold(body: SingleChildScrollView(child: child))),
     );

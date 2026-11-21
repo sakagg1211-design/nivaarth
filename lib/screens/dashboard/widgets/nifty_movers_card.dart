@@ -34,7 +34,17 @@ class NiftyMoversCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(t.moversTitle, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+          Row(
+            children: [
+              Expanded(
+                child: Text(t.moversTitle, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+              ),
+              // Always name the session the list belongs to, even when there is no breadth line
+              if (p.live || p.asOf != null)
+                Text(p.live ? t.newsLive : t.newsSessionClose(_day.format(p.asOf!)),
+                    style: const TextStyle(color: _muted, fontSize: 12, fontWeight: FontWeight.w600)),
+            ],
+          ),
           if (p.advances != null && p.declines != null) ...[
             const SizedBox(height: 6),
             Text(

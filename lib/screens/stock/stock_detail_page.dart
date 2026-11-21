@@ -610,9 +610,7 @@ class _StockDetailPageState
               height: AppSpacing.lg,
             ),
 
-            const NewsCard(
-              news: [],
-            ),
+            NewsCard(symbol: cleanSym),
 
             const SizedBox(height: 24),
 

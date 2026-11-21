@@ -812,11 +812,6 @@
   "thesisTitle": "Investment Thesis",
   "thesisNone": "No investment thesis available for this stock yet.",
   "thesisReview": "Review this thesis after every quarterly result.",
-  "newsTitle": "Latest News",
-  "newsSub": "AI curated market updates",
-  "newsEmptyTitle": "No News Available",
-  "newsEmptyBody": "Latest company news and market updates will automatically appear here when available.",
-  "newsAutoRefresh": "Auto Refresh",
   "peersTitle": "Compared with peers",
   "peersAdd": "Add another peer",
   "peersChange": "Change peer",
@@ -1783,5 +1778,34 @@
     }
   },
   "badgeLossMaking": "Loss-making (12M)",
-  "backToTop": "Back to top"
+  "backToTop": "Back to top",
+  "newsTitle": "Why it moved today",
+  "newsLive": "Live",
+  "newsSessionClose": "{date} close",
+  "newsKindMarket": "Most of the market moved the same way today.",
+  "newsKindSector": "Its sector moved the same way today.",
+  "newsKindOwn": "It moved more than the market and its sector.",
+  "newsKindFlat": "Little changed today.",
+  "newsKindSplit": "Today's % is against an old price (split or bonus), so it is not explained here.",
+  "newsSessionHeadlines": "News this session",
+  "newsAfterClose": "After market close",
+  "newsRecent": "Last 14 days",
+  "newsEmptyBody": "No news for this stock in the last 14 days.",
+  "newsHoldingsTitle": "News on your holdings",
+  "newsCountToday": "{count, plural, =1{1 news today} other{{count} news today}}",
+  "@newsSessionClose": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@newsCountToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newsKindAgainst": "It moved the other way from the market or its sector today."
 }

@@ -2461,36 +2461,6 @@ abstract class AppLocalizations {
   /// **'Review this thesis after every quarterly result.'**
   String get thesisReview;
 
-  /// No description provided for @newsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Latest News'**
-  String get newsTitle;
-
-  /// No description provided for @newsSub.
-  ///
-  /// In en, this message translates to:
-  /// **'AI curated market updates'**
-  String get newsSub;
-
-  /// No description provided for @newsEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'No News Available'**
-  String get newsEmptyTitle;
-
-  /// No description provided for @newsEmptyBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Latest company news and market updates will automatically appear here when available.'**
-  String get newsEmptyBody;
-
-  /// No description provided for @newsAutoRefresh.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto Refresh'**
-  String get newsAutoRefresh;
-
   /// No description provided for @peersTitle.
   ///
   /// In en, this message translates to:
@@ -4788,6 +4758,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to top'**
   String get backToTop;
+
+  /// No description provided for @newsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it moved today'**
+  String get newsTitle;
+
+  /// No description provided for @newsLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get newsLive;
+
+  /// No description provided for @newsSessionClose.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} close'**
+  String newsSessionClose(String date);
+
+  /// No description provided for @newsKindMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Most of the market moved the same way today.'**
+  String get newsKindMarket;
+
+  /// No description provided for @newsKindSector.
+  ///
+  /// In en, this message translates to:
+  /// **'Its sector moved the same way today.'**
+  String get newsKindSector;
+
+  /// No description provided for @newsKindOwn.
+  ///
+  /// In en, this message translates to:
+  /// **'It moved more than the market and its sector.'**
+  String get newsKindOwn;
+
+  /// No description provided for @newsKindFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Little changed today.'**
+  String get newsKindFlat;
+
+  /// No description provided for @newsKindSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s % is against an old price (split or bonus), so it is not explained here.'**
+  String get newsKindSplit;
+
+  /// No description provided for @newsSessionHeadlines.
+  ///
+  /// In en, this message translates to:
+  /// **'News this session'**
+  String get newsSessionHeadlines;
+
+  /// No description provided for @newsAfterClose.
+  ///
+  /// In en, this message translates to:
+  /// **'After market close'**
+  String get newsAfterClose;
+
+  /// No description provided for @newsRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 14 days'**
+  String get newsRecent;
+
+  /// No description provided for @newsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No news for this stock in the last 14 days.'**
+  String get newsEmptyBody;
+
+  /// No description provided for @newsHoldingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'News on your holdings'**
+  String get newsHoldingsTitle;
+
+  /// No description provided for @newsCountToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 news today} other{{count} news today}}'**
+  String newsCountToday(int count);
+
+  /// No description provided for @newsKindAgainst.
+  ///
+  /// In en, this message translates to:
+  /// **'It moved the other way from the market or its sector today.'**
+  String get newsKindAgainst;
 }
 
 class _AppLocalizationsDelegate

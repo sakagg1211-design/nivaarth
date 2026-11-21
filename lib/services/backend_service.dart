@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/stock_news.dart';
+
 class BackendService {
   static const String baseUrl = "https://nivaarth-backend.onrender.com";
 
@@ -101,6 +103,32 @@ class BackendService {
     } catch (e) {
       debugPrint("AI Chat Backend Error: $e");
       rethrow;
+    }
+  }
+
+  /// "Aaj kyun hila" for one stock: move split, headlines, summary. Null when unavailable.
+  Future<StockNews?> getStockNews(String symbol) async {
+    try {
+      final r = await http
+          .get(Uri.parse("$baseUrl/news/stock/${Uri.encodeComponent(symbol)}"), headers: _authHeaders())
+          .timeout(const Duration(seconds: 12));
+      if (r.statusCode != 200) return null;
+      return StockNews.fromJson(jsonDecode(r.body) as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint("Stock news error: $e");
+      return null;
+    }
+  }
+
+  /// The user's holdings that have headlines in the current session. Null when unavailable.
+  Future<HoldingsNews?> getHoldingsNews() async {
+    try {
+      final r = await http.get(Uri.parse("$baseUrl/news/holdings"), headers: _authHeaders()).timeout(const Duration(seconds: 12));
+      if (r.statusCode != 200) return null;
+      return HoldingsNews.fromJson(jsonDecode(r.body) as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint("Holdings news error: $e");
+      return null;
     }
   }
 

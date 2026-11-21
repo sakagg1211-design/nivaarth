@@ -1,496 +1,177 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../models/stock_news.dart';
+import '../../../providers/locale_provider.dart';
+import '../../../providers/news_provider.dart';
 
-enum NewsImpact {
-  positive,
-  neutral,
-  negative,
-}
+final _day = DateFormat('d MMM');
+final _time = DateFormat('d MMM, HH:mm');
 
-class NewsItem {
-  final String title;
-  final String source;
-  final String time;
-  final NewsImpact impact;
-
-  const NewsItem({
-    required this.title,
-    required this.source,
-    required this.time,
-    required this.impact,
-  });
-}
-
-class NewsCard extends StatelessWidget {
-  final List<NewsItem> news;
-
-  const NewsCard({
-    super.key,
-    required this.news,
-  });
+/// "Aaj kyun hila": the stock's move next to Nifty 50 and its sector, a one-line summary of the
+/// session's headlines, and the headlines with their sources. Facts only: no good/bad labels.
+class NewsCard extends ConsumerWidget {
+  final String symbol;
+  const NewsCard({super.key, required this.symbol});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(stockNewsProvider(symbol));
+    final n = async.valueOrNull;
+    if (async.isLoading) return const _Skeleton();
+    if (n == null) return const SizedBox.shrink();
+    final t = context.t;
+    final hinglish = Localizations.localeOf(context) == hinglishLocale;
+    final summary = n.move.kind == 'split_day' ? null : (hinglish ? n.summaryHi : n.summaryEn);
+    final sentence = _sentence(n.move.kind, t);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(
-        AppSpacing.lg,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(
-          AppRadius.lg,
-        ),
-        border: Border.all(
-          color: AppColors.outline.withValues(
-            alpha: .18,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(
-              alpha: .04,
-            ),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.outline.withValues(alpha: .18)),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             children: [
-
-              Container(
-                height: 42,
-                width: 42,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(
-                    alpha: .10,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(
-                    12,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.newspaper_rounded,
-                  color: AppColors.primary,
-                ),
-              ),
-
-              const SizedBox(
-                width: AppSpacing.md,
-              ),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
-
-                    Text(
-                      context.t.newsTitle,
-                      style: AppTypography
-                          .titleLarge
-                          .copyWith(
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 2,
-                    ),
-
-                    Text(
-                      context.t.newsSub,
-                      style: AppTypography
-                          .bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primary
-                      .withValues(
-                    alpha: .10,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(
-                    20,
-                  ),
-                ),
-                child: Text(
-                  "${news.length}",
-                  style: AppTypography
-                      .bodySmall
-                      .copyWith(
-                    color:
-                        AppColors.primary,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-              ),
+              const Icon(Icons.newspaper_rounded, color: AppColors.primary, size: 20),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: Text(t.newsTitle, style: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold))),
+              _Chip(n.live ? t.newsLive : t.newsSessionClose(_day.format(n.sessionDate))),
             ],
           ),
+          if (n.move.stockPct != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            _MoveRow(symbol, n.move.stockPct!, strong: true),
+            if (n.move.niftyPct != null) _MoveRow('Nifty 50', n.move.niftyPct!),
+            if (n.move.sectorPct != null && n.move.sector != null) _MoveRow(n.move.sector!, n.move.sectorPct!),
+          ],
+          if (sentence != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(sentence, style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.4)),
+          ],
+          if (summary != null && summary.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(summary, style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600, height: 1.4)),
+          ],
+          const SizedBox(height: AppSpacing.md),
+          if (n.isEmpty)
+            Text(t.newsEmptyBody, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary))
+          else ...[
+            if (n.session.isNotEmpty) _Group(t.newsSessionHeadlines, n.session),
+            if (!n.live && n.afterClose.isNotEmpty) _Group(t.newsAfterClose, n.afterClose),
+            if (n.recent.isNotEmpty) _Group(t.newsRecent, n.recent),
+          ],
+        ],
+      ),
+    );
+  }
 
-          const SizedBox(
-            height: AppSpacing.xl,
-          ),
+  static String? _sentence(String? kind, AppLocalizations t) => switch (kind) {
+        'market' => t.newsKindMarket,
+        'sector' => t.newsKindSector,
+        'own' => t.newsKindOwn,
+        'against' => t.newsKindAgainst,
+        'flat' => t.newsKindFlat,
+        'split_day' => t.newsKindSplit,
+        _ => null,
+      };
+}
 
-          if (news.isEmpty)
+class _MoveRow extends StatelessWidget {
+  final String label;
+  final double pct;
+  final bool strong;
+  const _MoveRow(this.label, this.pct, {this.strong = false});
 
-            const _EmptyNews()
-
-          else
-
-            ...news.map(
-              (item) => _NewsTile(
-                item: item,
-              ),
-            ),
-                    ],
+  @override
+  Widget build(BuildContext context) {
+    final color = pct > 0 ? AppColors.success : (pct < 0 ? AppColors.danger : AppColors.textSecondary);
+    final style = AppTypography.bodyMedium.copyWith(fontWeight: strong ? FontWeight.w700 : FontWeight.w500);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: style, overflow: TextOverflow.ellipsis)),
+          Text(Formatters.percent(pct, signed: true), style: style.copyWith(color: color)),
+        ],
       ),
     );
   }
 }
 
-class _NewsTile extends StatelessWidget {
-  final NewsItem item;
-
-  const _NewsTile({
-    required this.item,
-  });
+class _Group extends StatelessWidget {
+  final String title;
+  final List<NewsHeadline> items;
+  const _Group(this.title, this.items);
 
   @override
   Widget build(BuildContext context) {
-
-    final Color impactColor =
-        _impactColor(item.impact);
-
     return Padding(
-
-      padding: const EdgeInsets.only(
-        bottom: AppSpacing.lg,
-      ),
-
-      child: Row(
-
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          Container(
-            height: 42,
-            width: 42,
-            decoration: BoxDecoration(
-              color: impactColor.withValues(
-                alpha: .10,
-              ),
-              borderRadius:
-                  BorderRadius.circular(
-                12,
-              ),
-            ),
-            child: Icon(
-              _impactIcon(item.impact),
-              color: impactColor,
-              size: 20,
-            ),
-          ),
-
-          const SizedBox(
-            width: AppSpacing.md,
-          ),
-
-          Expanded(
-
-            child: Column(
-
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-
-                Text(
-                  item.title,
-                  maxLines: 3,
-                  overflow:
-                      TextOverflow.ellipsis,
-                  style:
-                      AppTypography.bodyMedium
-                          .copyWith(
-                    fontWeight:
-                        FontWeight.w700,
-                    height: 1.45,
+          Text(title, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          for (final h in items)
+            InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: h.url.isEmpty ? null : () => launchUrl(Uri.parse(h.url), mode: LaunchMode.externalApplication),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(h.title, maxLines: 3, overflow: TextOverflow.ellipsis,
+                          style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600, height: 1.35)),
+                      const SizedBox(height: 2),
+                      Text('${h.source} · ${_time.format(h.publishedAt)}',
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+                    ],
                   ),
                 ),
-
-                const SizedBox(
-                  height: 8,
-                ),
-
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-
-                    _MetaChip(
-                      icon:
-                          Icons.public_rounded,
-                      text: item.source,
-                    ),
-
-                    _MetaChip(
-                      icon:
-                          Icons.schedule_rounded,
-                      text: item.time,
-                    ),
-
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration:
-                          BoxDecoration(
-                        color:
-                            impactColor.withValues(
-                          alpha: .10,
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(
-                          20,
-                        ),
-                      ),
-                      child: Text(
-                        _impactLabel(
-                          item.impact,
-                        ),
-                        style: AppTypography
-                            .bodySmall
-                            .copyWith(
-                          color:
-                              impactColor,
-                          fontWeight:
-                              FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
         ],
       ),
     );
   }
-
-  Color _impactColor(
-    NewsImpact impact,
-  ) {
-    switch (impact) {
-      case NewsImpact.positive:
-        return AppColors.success;
-
-      case NewsImpact.negative:
-        return AppColors.danger;
-
-      case NewsImpact.neutral:
-        return AppColors.warning;
-    }
-  }
-
-  IconData _impactIcon(
-    NewsImpact impact,
-  ) {
-    switch (impact) {
-      case NewsImpact.positive:
-        return Icons.trending_up_rounded;
-
-      case NewsImpact.negative:
-        return Icons.trending_down_rounded;
-
-      case NewsImpact.neutral:
-        return Icons.remove_rounded;
-    }
-  }
-
-  String _impactLabel(
-    NewsImpact impact,
-  ) {
-    switch (impact) {
-      case NewsImpact.positive:
-        return "Positive";
-
-      case NewsImpact.negative:
-        return "Negative";
-
-      case NewsImpact.neutral:
-        return "Neutral";
-    }
-  }
 }
-class _MetaChip extends StatelessWidget {
-  final IconData icon;
+
+class _Chip extends StatelessWidget {
   final String text;
-
-  const _MetaChip({
-    required this.icon,
-    required this.text,
-  });
+  const _Chip(this.text);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(
-          18,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-
-          Icon(
-            icon,
-            size: 14,
-            color: AppColors.textSecondary,
-          ),
-
-          const SizedBox(
-            width: 6,
-          ),
-
-          Text(
-            text,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(color: AppColors.surfaceSecondary, borderRadius: BorderRadius.circular(20)),
+        child: Text(text, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+      );
 }
 
-class _EmptyNews extends StatelessWidget {
-  const _EmptyNews();
+class _Skeleton extends StatelessWidget {
+  const _Skeleton();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 36,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(
-          AppRadius.lg,
-        ),
-      ),
-      child: Column(
-        children: [
-
-          Container(
-            height: 64,
-            width: 64,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(
-                alpha: .10,
-              ),
-              borderRadius:
-                  BorderRadius.circular(
-                20,
-              ),
-            ),
-            child: const Icon(
-              Icons.newspaper_rounded,
-              color: AppColors.primary,
-              size: 30,
-            ),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.lg,
-          ),
-
-          Text(
-            context.t.newsEmptyTitle,
-            style: AppTypography.titleMedium.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.sm,
-          ),
-
-          Text(
-            context.t.newsEmptyBody,
-            textAlign: TextAlign.center,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
-          ),
-
-          const SizedBox(
-            height: AppSpacing.lg,
-          ),
-
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(
-                alpha: .10,
-              ),
-              borderRadius:
-                  BorderRadius.circular(
-                20,
-              ),
-            ),
-            child: Text(
-              context.t.newsAutoRefresh,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        height: 120,
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.lg)),
+      );
 }

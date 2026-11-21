@@ -1489,22 +1489,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisReview => 'Review this thesis after every quarterly result.';
 
   @override
-  String get newsTitle => 'Latest News';
-
-  @override
-  String get newsSub => 'AI curated market updates';
-
-  @override
-  String get newsEmptyTitle => 'No News Available';
-
-  @override
-  String get newsEmptyBody =>
-      'Latest company news and market updates will automatically appear here when available.';
-
-  @override
-  String get newsAutoRefresh => 'Auto Refresh';
-
-  @override
   String get peersTitle => 'Compared with peers';
 
   @override
@@ -2972,6 +2956,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToTop => 'Back to top';
+
+  @override
+  String get newsTitle => 'Why it moved today';
+
+  @override
+  String get newsLive => 'Live';
+
+  @override
+  String newsSessionClose(String date) {
+    return '$date close';
+  }
+
+  @override
+  String get newsKindMarket => 'Most of the market moved the same way today.';
+
+  @override
+  String get newsKindSector => 'Its sector moved the same way today.';
+
+  @override
+  String get newsKindOwn => 'It moved more than the market and its sector.';
+
+  @override
+  String get newsKindFlat => 'Little changed today.';
+
+  @override
+  String get newsKindSplit =>
+      'Today\'s % is against an old price (split or bonus), so it is not explained here.';
+
+  @override
+  String get newsSessionHeadlines => 'News this session';
+
+  @override
+  String get newsAfterClose => 'After market close';
+
+  @override
+  String get newsRecent => 'Last 14 days';
+
+  @override
+  String get newsEmptyBody => 'No news for this stock in the last 14 days.';
+
+  @override
+  String get newsHoldingsTitle => 'News on your holdings';
+
+  @override
+  String newsCountToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count news today',
+      one: '1 news today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get newsKindAgainst =>
+      'It moved the other way from the market or its sector today.';
 }
 
 /// The translations for English, as used in India (`en_IN`).
@@ -4370,22 +4411,6 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   @override
   String get thesisReview =>
       'Har quarterly result ke baad yeh thesis dobara dekhiye.';
-
-  @override
-  String get newsTitle => 'Latest news';
-
-  @override
-  String get newsSub => 'AI ke chune market updates';
-
-  @override
-  String get newsEmptyTitle => 'Koi news nahi';
-
-  @override
-  String get newsEmptyBody =>
-      'Company news aur market updates aane par yahan khud dikhenge.';
-
-  @override
-  String get newsAutoRefresh => 'Auto refresh';
 
   @override
   String get peersTitle => 'Peers se tulna';
@@ -5823,4 +5848,62 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
 
   @override
   String get backToTop => 'Upar jaayein';
+
+  @override
+  String get newsTitle => 'Aaj kyun hila';
+
+  @override
+  String get newsLive => 'Live';
+
+  @override
+  String newsSessionClose(String date) {
+    return '$date close';
+  }
+
+  @override
+  String get newsKindMarket => 'Aaj zyadatar market isi taraf chala.';
+
+  @override
+  String get newsKindSector => 'Aaj iska sector bhi isi taraf chala.';
+
+  @override
+  String get newsKindOwn => 'Ye market aur apne sector se zyada chala.';
+
+  @override
+  String get newsKindFlat => 'Aaj zyada badlav nahi hua.';
+
+  @override
+  String get newsKindSplit =>
+      'Aaj ka % purane bhav se hai (split ya bonus), isliye yahan samjhaya nahi gaya.';
+
+  @override
+  String get newsSessionHeadlines => 'Is session ki khabrein';
+
+  @override
+  String get newsAfterClose => 'Market band hone ke baad';
+
+  @override
+  String get newsRecent => 'Pichhle 14 din';
+
+  @override
+  String get newsEmptyBody =>
+      'Is stock ki pichhle 14 din mein koi khabar nahi mili.';
+
+  @override
+  String get newsHoldingsTitle => 'Aapki holdings ki khabrein';
+
+  @override
+  String newsCountToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'aaj ki $count khabrein',
+      one: 'aaj ki 1 khabar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get newsKindAgainst =>
+      'Aaj ye market ya apne sector se ulti disha mein chala.';
 }
