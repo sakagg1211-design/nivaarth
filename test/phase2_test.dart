@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'dart:typed_data';
 
 import 'package:excel/excel.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/core/import/xlsx_rows.dart';
 import 'package:mobile/core/import/zerodha_tradebook.dart';
 import 'package:mobile/core/utils/corporate_action_math.dart';
@@ -77,11 +79,23 @@ void main() {
       expect(const ListingInfo(instrument: 'X', currentSeries: 'EQ').badges, isEmpty);
     });
 
+    test('badge meanings follow the app language', () {
+      final en = lookupAppLocalizations(const Locale('en'));
+      final hi = lookupAppLocalizations(const Locale('en', 'IN'));
+      const z = ListingBadge('Z', '', ListingBadgeLevel.warn);
+      expect(ListingInfoStrip.meaning(z, en), contains('listing rules'));
+      expect(ListingInfoStrip.meaning(z, hi), contains('paalan nahi'));
+    });
+
     test('fundamentals line names the export day and the last quarter', () {
       final info = ListingInfo(
           instrument: 'TCS', fundamentalsAsOf: DateTime(2026, 10, 30), lastQuarter: DateTime(2026, 9, 30));
-      expect(ListingInfoStrip.fundamentalsLine(info), 'Fundamentals: 30 Oct 2026 tak · aakhri results: Sep 2026 quarter');
-      expect(ListingInfoStrip.fundamentalsLine(const ListingInfo(instrument: 'X')), isNull);
+      final en = lookupAppLocalizations(const Locale('en'));
+      final hi = lookupAppLocalizations(const Locale('en', 'IN'));
+      // English mode stays English; Hinglish keeps the Hinglish line
+      expect(ListingInfoStrip.fundamentalsLine(info, en), 'Fundamentals as of 30 Oct 2026 · latest results: Sep 2026 quarter');
+      expect(ListingInfoStrip.fundamentalsLine(info, hi), 'Fundamentals: 30 Oct 2026 tak · aakhri results: Sep 2026 quarter');
+      expect(ListingInfoStrip.fundamentalsLine(const ListingInfo(instrument: 'X'), en), isNull);
     });
   });
 

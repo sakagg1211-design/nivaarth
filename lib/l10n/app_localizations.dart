@@ -4780,13 +4780,13 @@ abstract class AppLocalizations {
   /// No description provided for @newsKindMarket.
   ///
   /// In en, this message translates to:
-  /// **'Most of the market moved the same way today.'**
+  /// **'Most of the market moved the same way.'**
   String get newsKindMarket;
 
   /// No description provided for @newsKindSector.
   ///
   /// In en, this message translates to:
-  /// **'Its sector moved the same way today.'**
+  /// **'Its sector moved the same way.'**
   String get newsKindSector;
 
   /// No description provided for @newsKindOwn.
@@ -4798,7 +4798,7 @@ abstract class AppLocalizations {
   /// No description provided for @newsKindFlat.
   ///
   /// In en, this message translates to:
-  /// **'Little changed today.'**
+  /// **'Little changed.'**
   String get newsKindFlat;
 
   /// No description provided for @newsKindSplit.
@@ -4840,14 +4840,50 @@ abstract class AppLocalizations {
   /// No description provided for @newsCountToday.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 news today} other{{count} news today}}'**
+  /// **'{count, plural, =1{1 news} other{{count} news}}'**
   String newsCountToday(int count);
 
   /// No description provided for @newsKindAgainst.
   ///
   /// In en, this message translates to:
-  /// **'It moved the other way from the market or its sector today.'**
+  /// **'It moved the other way from the market or its sector.'**
   String get newsKindAgainst;
+
+  /// No description provided for @newsTitleClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it moved'**
+  String get newsTitleClosed;
+
+  /// No description provided for @fundamentalsAsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Fundamentals as of {date}'**
+  String fundamentalsAsOf(String date);
+
+  /// No description provided for @fundamentalsLastQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **' · latest results: {quarter} quarter'**
+  String fundamentalsLastQuarter(String quarter);
+
+  /// No description provided for @badgeZMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Does not meet listing rules (NSE Z / BZ series)'**
+  String get badgeZMeaning;
+
+  /// No description provided for @badgeT2TMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade-for-trade: no intraday, every trade is delivery'**
+  String get badgeT2TMeaning;
+
+  /// No description provided for @badgeSmeMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'SME platform: low liquidity, large lot size'**
+  String get badgeSmeMeaning;
 }
 
 class _AppLocalizationsDelegate

@@ -126,6 +126,13 @@ void main() {
     expect(find.text('Market: 878 up · 2121 down (18 Nov)'), findsOneWidget);
   });
 
+  test('Top Holdings come right after the facts and holdings news, before Health', () {
+    final src = File('lib/screens/dashboard/dashboard_page.dart').readAsStringSync();
+    // both layouts list: facts, holdings news, top holdings, then health
+    final order = RegExp(r'TodayFactsCard\(onOpenPortfolio: _openPortfolio\),\s*const HoldingsNewsCard\(\),\s*const SizedBox\(height: 14\),\s*topHoldings,\s*const SizedBox\(height: 14\),\s*health,');
+    expect(order.allMatches(src).length, 2);
+  });
+
   test('the old NV Briefing is gone from the Dashboard', () {
     final src = File('lib/screens/dashboard/dashboard_page.dart').readAsStringSync();
     expect(src.contains('NV Briefing'), isFalse);

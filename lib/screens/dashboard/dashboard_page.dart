@@ -209,6 +209,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                           TodayFactsCard(onOpenPortfolio: _openPortfolio),
                           const HoldingsNewsCard(),
                           const SizedBox(height: 14),
+                          topHoldings,
+                          const SizedBox(height: 14),
                           health,
                           const SizedBox(height: 14),
                           signals,
@@ -231,8 +233,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     ),
                   ],
                 ),
-                const SizedBox(height: 22),
-                topHoldings,
               ];
             } else {
               body = [
@@ -240,6 +240,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 const SizedBox(height: 14),
                 TodayFactsCard(onOpenPortfolio: _openPortfolio),
                 const HoldingsNewsCard(),
+                const SizedBox(height: 14),
+                topHoldings,
                 const SizedBox(height: 14),
                 health,
                 const SizedBox(height: 14),
@@ -250,8 +252,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 const AllocationCard(),
                 const SizedBox(height: 14),
                 signals,
-                const SizedBox(height: 22),
-                topHoldings,
               ];
             }
 

@@ -679,7 +679,7 @@ class _LivePriceColumn extends ConsumerWidget {
         final isPos = quote.change >= 0;
         final hasChange = quote.changePercent != 0.0 || quote.change != 0.0;
         final changeText = hasChange
-            ? '${isPos ? '+' : ''}${quote.change.toStringAsFixed(1)} (${isPos ? '+' : ''}${quote.changePercent.toStringAsFixed(2)}%)'
+            ? '${Formatters.currency(quote.change, signed: true)} (${Formatters.percent(quote.changePercent, signed: true)})'
             : (price > 0 ? 'Live NSE' : 'Pending');
 
         return Column(

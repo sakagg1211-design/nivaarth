@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/symbol_utils.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/news_provider.dart';
 import '../../../providers/privacy_provider.dart';
@@ -59,7 +60,7 @@ class HoldingsNewsCard extends ConsumerWidget {
             InkWell(
               borderRadius: BorderRadius.circular(10),
               onTap: () {
-                final stock = holdings.where((h) => h.portfolio.instrument.trim().toUpperCase() == it.symbol).firstOrNull;
+                final stock = holdings.where((h) => SymbolUtils.normalize(h.portfolio.instrument) == it.symbol).firstOrNull;
                 if (stock != null) {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => StockDetailPage(stock: stock)));
                 }
@@ -83,7 +84,7 @@ class HoldingsNewsCard extends ConsumerWidget {
                                 if (it.stockPct != null)
                                   Text(Formatters.percent(it.stockPct!, signed: true),
                                       style: TextStyle(
-                                          color: it.stockPct! < 0 ? AppColors.danger : AppColors.success,
+                                          color: it.stockPct! < 0 ? AppColors.danger : (it.stockPct! > 0 ? AppColors.success : _muted),
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700)),
                                 const SizedBox(width: 6),

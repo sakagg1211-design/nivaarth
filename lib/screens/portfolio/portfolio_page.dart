@@ -20,7 +20,6 @@ import 'widgets/today_moves_card.dart';
 import 'widgets/add_holding_sheet.dart';
 import '../../core/utils/error_messages.dart';
 import '../../core/l10n/l10n_ext.dart';
-import '../../core/theme/app_colors.dart';
 
 enum PortfolioSortOption {
   alphabetical,
@@ -136,51 +135,23 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0D10),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            if (_showBackToTop)
-              FloatingActionButton.small(
-                heroTag: 'portfolio_go_top',
-                tooltip: context.t.backToTop,
-                onPressed: () => _scrollController.animateTo(0, duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic),
-                backgroundColor: const Color(0xFF1E2024),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: const BorderSide(color: Color(0xFF282A30)),
-                ),
-                child: const Icon(Icons.arrow_upward_rounded, size: 20),
+      // Only back-to-top floats, after scrolling. Adding a holding lives in the header (+), so nothing
+      // covers the account value footnote or a holding's 1D row at rest.
+      floatingActionButton: _showBackToTop
+          ? FloatingActionButton.small(
+              heroTag: 'portfolio_go_top',
+              tooltip: context.t.backToTop,
+              onPressed: () => _scrollController.animateTo(0, duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic),
+              backgroundColor: const Color(0xFF1E2024),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Color(0xFF282A30)),
               ),
-            const Spacer(),
-            // Collapses to an icon once the list scrolls, keeping its label for TalkBack
-            if (_showBackToTop)
-              FloatingActionButton(
-                heroTag: 'portfolio_add_holding',
-                tooltip: context.t.addHolding,
-                onPressed: _openAddHoldingSheet,
-                backgroundColor: AppColors.ink,
-                foregroundColor: AppColors.background,
-                elevation: 0,
-                child: const Icon(Icons.add_rounded),
-              )
-            else
-              FloatingActionButton.extended(
-                heroTag: 'portfolio_add_holding',
-                tooltip: context.t.addHolding,
-                onPressed: _openAddHoldingSheet,
-                backgroundColor: AppColors.ink,
-                foregroundColor: AppColors.background,
-                elevation: 0,
-                icon: const Icon(Icons.add_rounded),
-                label: Text(context.t.addHolding, style: const TextStyle(fontWeight: FontWeight.w800)),
-              ),
-          ],
-        ),
-      ),
+              child: const Icon(Icons.arrow_upward_rounded, size: 20),
+            )
+          : null,
       body: SafeArea(
         child: portfolioAsync.when(
           loading: () => _PortfolioState(

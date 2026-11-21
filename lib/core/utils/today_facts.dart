@@ -97,16 +97,18 @@ List<Fact> todayFacts(FactInputs i, {int limit = 3}) {
     }
 
     for (final h in i.holdings) {
-      // On a split's ex-date the 52-week range and average volume are still in pre-split units
-      final s = h.todayPct.abs() > 40 ? null : i.signals[h.symbol];
-      if (s?.low52 != null && h.price <= 1.005 * s!.low52!) {
+      final s = i.signals[h.symbol];
+      // On a split's ex-date the 52-week range and average volume are still in pre-split units;
+      // the score does not use the day's price move, so its facts stay
+      final p = h.todayPct.abs() > 40 ? null : s;
+      if (p?.low52 != null && h.price <= 1.005 * p!.low52!) {
         out.add(Fact(FactKind.low52, 65, symbol: h.symbol, values: {'price': h.price}));
-      } else if (s?.high52 != null && h.price >= 0.995 * s!.high52!) {
+      } else if (p?.high52 != null && h.price >= 0.995 * p!.high52!) {
         out.add(Fact(FactKind.high52, 55, symbol: h.symbol, values: {'price': h.price}));
       }
-      if (s?.avgVolume20 != null && s!.avgVolume20! > 0 && h.volume != null && h.volume! >= 3 * s.avgVolume20!) {
-        out.add(Fact(FactKind.volumeSpike, 45, magnitude: h.volume! / s.avgVolume20!, symbol: h.symbol,
-            values: {'ratio': h.volume! / s.avgVolume20!}));
+      if (p?.avgVolume20 != null && p!.avgVolume20! > 0 && h.volume != null && h.volume! >= 3 * p.avgVolume20!) {
+        out.add(Fact(FactKind.volumeSpike, 45, magnitude: h.volume! / p.avgVolume20!, symbol: h.symbol,
+            values: {'ratio': h.volume! / p.avgVolume20!}));
       }
       if (s?.scoreNow != null && s?.scoreWeekAgo != null && (s!.scoreNow! - s.scoreWeekAgo!).abs() >= 5) {
         final down = s.scoreNow! < s.scoreWeekAgo!;

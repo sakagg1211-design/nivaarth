@@ -14,6 +14,12 @@ class InvestmentThesisCard extends StatelessWidget {
     required this.thesis,
   });
 
+  /// The add-holding RPC (migrations 16/17) stores a filler note; only a note the user wrote is a thesis.
+  static bool isUserWritten(String thesis) {
+    final t = thesis.trim();
+    return t.isNotEmpty && t != 'Added manually via portfolio manager.';
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasData = thesis.trim().isNotEmpty;

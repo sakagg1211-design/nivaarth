@@ -1782,17 +1782,17 @@
   "newsTitle": "Why it moved today",
   "newsLive": "Live",
   "newsSessionClose": "{date} close",
-  "newsKindMarket": "Most of the market moved the same way today.",
-  "newsKindSector": "Its sector moved the same way today.",
+  "newsKindMarket": "Most of the market moved the same way.",
+  "newsKindSector": "Its sector moved the same way.",
   "newsKindOwn": "It moved more than the market and its sector.",
-  "newsKindFlat": "Little changed today.",
+  "newsKindFlat": "Little changed.",
   "newsKindSplit": "Today's % is against an old price (split or bonus), so it is not explained here.",
   "newsSessionHeadlines": "News this session",
   "newsAfterClose": "After market close",
   "newsRecent": "Last 14 days",
   "newsEmptyBody": "No news for this stock in the last 14 days.",
   "newsHoldingsTitle": "News on your holdings",
-  "newsCountToday": "{count, plural, =1{1 news today} other{{count} news today}}",
+  "newsCountToday": "{count, plural, =1{1 news} other{{count} news}}",
   "@newsSessionClose": {
     "placeholders": {
       "date": {
@@ -1807,5 +1807,25 @@
       }
     }
   },
-  "newsKindAgainst": "It moved the other way from the market or its sector today."
+  "newsKindAgainst": "It moved the other way from the market or its sector.",
+  "newsTitleClosed": "Why it moved",
+  "fundamentalsAsOf": "Fundamentals as of {date}",
+  "@fundamentalsAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fundamentalsLastQuarter": " · latest results: {quarter} quarter",
+  "@fundamentalsLastQuarter": {
+    "placeholders": {
+      "quarter": {
+        "type": "String"
+      }
+    }
+  },
+  "badgeZMeaning": "Does not meet listing rules (NSE Z / BZ series)",
+  "badgeT2TMeaning": "Trade-for-trade: no intraday, every trade is delivery",
+  "badgeSmeMeaning": "SME platform: low liquidity, large lot size"
 }

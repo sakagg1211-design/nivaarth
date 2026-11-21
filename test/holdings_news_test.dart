@@ -63,8 +63,8 @@ void main() {
     ];
     await tester.pumpWidget(host(const TodayFactsCard(), facts: facts, news: hn(const [], counts: {'TCS': 2})));
     await tester.pumpAndSettle();
-    expect(find.text('2 news today'), findsOneWidget);
-    expect(find.textContaining('news today'), findsOneWidget);
+    expect(find.text('2 news'), findsOneWidget);
+    expect(find.textContaining(' news'), findsOneWidget);
   });
 
   testWidgets('movers title shows Live when live', (tester) async {

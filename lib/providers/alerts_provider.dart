@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/live_portfolio.dart';
 import '../models/user_alert.dart';
 import '../services/backend_service.dart';
 import 'live_portfolio_provider.dart';
@@ -103,8 +104,8 @@ class AlertsNotifier extends StateNotifier<AsyncValue<List<UserAlert>>> {
 
       // 3. Fallback: Synthesize local smart alerts from user's live holdings
       if (alerts.isEmpty) {
-        final portfolioAsync = ref.read(livePortfolioProvider);
-        final holdings = portfolioAsync.valueOrNull ?? [];
+        // Wait for holdings: reading them before they load made a user with stocks see "add your first stock"
+        final holdings = await ref.read(livePortfolioProvider.future).catchError((_) => <LivePortfolio>[]);
 
         if (holdings.isNotEmpty) {
           double totalVal = 0.0;

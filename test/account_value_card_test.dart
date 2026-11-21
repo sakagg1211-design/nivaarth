@@ -34,7 +34,8 @@ List<Map<String, dynamic>> days(int n, {int assumedDays = 0, double Function(int
         },
     ];
 
-Widget host(List<Map<String, dynamic>> history, {List<Map<String, dynamic>> intraday = const [], bool hide = false, Locale locale = englishLocale}) =>
+Widget host(List<Map<String, dynamic>> history,
+        {List<Map<String, dynamic>> intraday = const [], bool hide = false, Locale locale = englishLocale, DateTime? now}) =>
     ProviderScope(
       overrides: [
         livePortfolioProvider.overrideWith((ref) async => [h('A')]),
@@ -42,7 +43,7 @@ Widget host(List<Map<String, dynamic>> history, {List<Map<String, dynamic>> intr
         intradayFetchProvider.overrideWithValue((_) async => intraday),
         privacyModeProvider.overrideWith((ref) => _FixedPrivacy(hide)),
       ],
-      child: localizedApp(locale: locale, home: const Scaffold(body: SingleChildScrollView(child: AccountValueCard()))),
+      child: localizedApp(locale: locale, home: Scaffold(body: SingleChildScrollView(child: AccountValueCard(now: now)))),
     );
 
 class _FixedPrivacy extends PrivacyModeNotifier {
@@ -101,6 +102,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('₹'), findsNothing);
     expect(find.textContaining('%'), findsWidgets);
+  });
+
+  testWidgets('on a Saturday the card shows Friday\'s close, not a "today" point', (tester) async {
+    final friday = [
+      for (var i = 0; i < 30; i++)
+        {
+          'trade_date': DateTime(2026, 11, 20).subtract(Duration(days: 29 - i)).toIso8601String().substring(0, 10),
+          'value': 1000 + i, 'invested': 900, 'assumed': false, 'stocks_priced': 1, 'stocks_held': 1,
+        },
+    ];
+    final saturdayNoonIst = DateTime.utc(2026, 11, 21, 6, 30);
+    await tester.pumpWidget(host(friday, now: saturdayNoonIst));
+    await tester.pumpAndSettle();
+    expect(find.text('20 Nov 2026'), findsOneWidget);
+    expect(find.text('21 Nov 2026'), findsNothing);
+    await tester.tap(find.text('1D'));
+    await tester.pumpAndSettle();
+    // the change line names Friday's session instead of "Today"
+    expect(find.byWidgetPredicate((w) => w is Text && (w.data ?? '').contains('%') && (w.data ?? '').endsWith('Today')), findsNothing);
+    expect(find.byWidgetPredicate((w) => w is Text && (w.data ?? '').contains('%') && (w.data ?? '').endsWith('20 Nov')), findsOneWidget);
   });
 
   testWidgets('1D with no intraday rows says the line starts at market open', (tester) async {

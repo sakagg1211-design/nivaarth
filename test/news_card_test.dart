@@ -48,7 +48,7 @@ void main() {
   testWidgets('sector kind shows the sector sentence and the summary', (tester) async {
     await tester.pumpWidget(host(news(session: [h(1, 'US clients cut tech spending')], summary: 'About US client spending')));
     await tester.pumpAndSettle();
-    expect(find.text('Its sector moved the same way today.'), findsOneWidget);
+    expect(find.text('Its sector moved the same way.'), findsOneWidget);
     expect(find.text('About US client spending'), findsOneWidget);
     expect(find.text('US clients cut tech spending'), findsOneWidget);
     expect(find.text('Live'), findsOneWidget);
@@ -57,7 +57,7 @@ void main() {
   testWidgets('against kind says it moved the other way; no kind says nothing', (tester) async {
     await tester.pumpWidget(host(news(move: const MoveSplit(stockPct: 0.6, niftyPct: -1.5, kind: 'against'))));
     await tester.pumpAndSettle();
-    expect(find.text('It moved the other way from the market or its sector today.'), findsOneWidget);
+    expect(find.text('It moved the other way from the market or its sector.'), findsOneWidget);
     await tester.pumpWidget(Container());
     await tester.pumpWidget(host(news(move: const MoveSplit(stockPct: 3.0))));
     await tester.pumpAndSettle();
@@ -74,6 +74,16 @@ void main() {
     await tester.pumpWidget(host(news(live: true, after: [h(2, 'Results after the bell')])));
     await tester.pumpAndSettle();
     expect(find.text('After market close'), findsNothing);
+  });
+
+  testWidgets('title says "today" only while live', (tester) async {
+    await tester.pumpWidget(host(news(live: true)));
+    await tester.pumpAndSettle();
+    expect(find.text('Why it moved today'), findsOneWidget);
+    await tester.pumpWidget(Container());
+    await tester.pumpWidget(host(news(live: false)));
+    await tester.pumpAndSettle();
+    expect(find.text('Why it moved'), findsOneWidget);
   });
 
   testWidgets('empty lists show the empty text but keep move rows', (tester) async {

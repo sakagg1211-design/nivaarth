@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/market_hours.dart';
 import '../../../core/utils/symbol_utils.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/l10n/l10n_ext.dart';
@@ -195,6 +196,8 @@ class StockHeader extends StatelessWidget {
                     CrossAxisAlignment.end,
                 children: [
 
+                  // LIVE only while NSE trades; on weekends and after hours the price is the last close
+                  if (isMarketOpenIst(DateTime.now().toUtc()))
                   Container(
                     padding:
                         const EdgeInsets.symmetric(

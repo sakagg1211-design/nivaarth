@@ -83,6 +83,13 @@ void main() {
     expect(kinds(f), isNot(contains(FactKind.vsNifty)));
   });
 
+  test('a split day still shows a score change (the score does not use the price move)', () {
+    final f = run(holdings: spread([hold('SP', value: 2000, pct: -50, sector: 'Q')]),
+        signals: {'SP': const FactSignal(scoreNow: 30, scoreWeekAgo: 40, low52: 90, high52: 300)});
+    expect(kinds(f), contains(FactKind.scoreDown));
+    expect(kinds(f), isNot(contains(FactKind.low52)));
+  });
+
   test('volume spike at three times the usual volume', () {
     final f = run(holdings: spread([hold('V', volume: 3000, sector: 'Q')]), signals: {'V': const FactSignal(avgVolume20: 1000)});
     expect(f.firstWhere((x) => x.kind == FactKind.volumeSpike).weight, 45);

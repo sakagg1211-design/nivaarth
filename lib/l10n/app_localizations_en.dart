@@ -2969,16 +2969,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get newsKindMarket => 'Most of the market moved the same way today.';
+  String get newsKindMarket => 'Most of the market moved the same way.';
 
   @override
-  String get newsKindSector => 'Its sector moved the same way today.';
+  String get newsKindSector => 'Its sector moved the same way.';
 
   @override
   String get newsKindOwn => 'It moved more than the market and its sector.';
 
   @override
-  String get newsKindFlat => 'Little changed today.';
+  String get newsKindFlat => 'Little changed.';
 
   @override
   String get newsKindSplit =>
@@ -3004,15 +3004,38 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count news today',
-      one: '1 news today',
+      other: '$count news',
+      one: '1 news',
     );
     return '$_temp0';
   }
 
   @override
   String get newsKindAgainst =>
-      'It moved the other way from the market or its sector today.';
+      'It moved the other way from the market or its sector.';
+
+  @override
+  String get newsTitleClosed => 'Why it moved';
+
+  @override
+  String fundamentalsAsOf(String date) {
+    return 'Fundamentals as of $date';
+  }
+
+  @override
+  String fundamentalsLastQuarter(String quarter) {
+    return ' · latest results: $quarter quarter';
+  }
+
+  @override
+  String get badgeZMeaning => 'Does not meet listing rules (NSE Z / BZ series)';
+
+  @override
+  String get badgeT2TMeaning =>
+      'Trade-for-trade: no intraday, every trade is delivery';
+
+  @override
+  String get badgeSmeMeaning => 'SME platform: low liquidity, large lot size';
 }
 
 /// The translations for English, as used in India (`en_IN`).
@@ -5861,16 +5884,16 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
   }
 
   @override
-  String get newsKindMarket => 'Aaj zyadatar market isi taraf chala.';
+  String get newsKindMarket => 'Zyadatar market isi taraf chala.';
 
   @override
-  String get newsKindSector => 'Aaj iska sector bhi isi taraf chala.';
+  String get newsKindSector => 'Iska sector bhi isi taraf chala.';
 
   @override
   String get newsKindOwn => 'Ye market aur apne sector se zyada chala.';
 
   @override
-  String get newsKindFlat => 'Aaj zyada badlav nahi hua.';
+  String get newsKindFlat => 'Zyada badlav nahi hua.';
 
   @override
   String get newsKindSplit =>
@@ -5897,13 +5920,37 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'aaj ki $count khabrein',
-      one: 'aaj ki 1 khabar',
+      other: '$count khabrein',
+      one: '1 khabar',
     );
     return '$_temp0';
   }
 
   @override
   String get newsKindAgainst =>
-      'Aaj ye market ya apne sector se ulti disha mein chala.';
+      'Ye market ya apne sector se ulti disha mein chala.';
+
+  @override
+  String get newsTitleClosed => 'Kyun hila';
+
+  @override
+  String fundamentalsAsOf(String date) {
+    return 'Fundamentals: $date tak';
+  }
+
+  @override
+  String fundamentalsLastQuarter(String quarter) {
+    return ' · aakhri results: $quarter quarter';
+  }
+
+  @override
+  String get badgeZMeaning =>
+      'Listing rules ka paalan nahi (NSE Z / BZ series)';
+
+  @override
+  String get badgeT2TMeaning =>
+      'Trade-for-trade: intraday nahi, har trade delivery me';
+
+  @override
+  String get badgeSmeMeaning => 'SME platform: kam liquidity, bada lot size';
 }

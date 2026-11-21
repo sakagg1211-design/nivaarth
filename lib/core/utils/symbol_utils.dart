@@ -486,11 +486,13 @@ class SymbolUtils {
     if (name.contains('TECH') || name.contains('INFO') || name.contains('SOFTWARE')) return 'Information Technology';
     if (name.contains('AUTO') || name.contains('MOTOR')) return 'Automobile & Auto Components';
 
-    return (dbSector?.trim().isNotEmpty == true ? dbSector!.trim() : 'Industrials & Services');
+    // A holding row's placeholder ("General") is not a sector: show nothing rather than a made-up one
+    return '—';
   }
 
   static String getIndustry(String symbol, {String? dbIndustry}) {
-    if (dbIndustry != null && dbIndustry.trim().isNotEmpty) {
+    final placeholder = const {'general', 'diversified'}.contains(dbIndustry?.trim().toLowerCase());
+    if (dbIndustry != null && dbIndustry.trim().isNotEmpty && !placeholder) {
       return dbIndustry.trim();
     }
 

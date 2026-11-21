@@ -49,7 +49,7 @@ class NewsCard extends ConsumerWidget {
             children: [
               const Icon(Icons.newspaper_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: AppSpacing.sm),
-              Expanded(child: Text(t.newsTitle, style: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold))),
+              Expanded(child: Text(n.live ? t.newsTitle : t.newsTitleClosed, style: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold))),
               _Chip(n.live ? t.newsLive : t.newsSessionClose(_day.format(n.sessionDate))),
             ],
           ),

@@ -9,6 +9,7 @@ import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/account_value.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/market_hours.dart';
 import '../../../providers/account_value_provider.dart';
 import '../../../providers/privacy_provider.dart';
 
@@ -36,7 +37,9 @@ String _compact(double v) {
 
 /// Account value over time: rises when shares are added, falls when they are sold.
 class AccountValueCard extends ConsumerStatefulWidget {
-  const AccountValueCard({super.key});
+  /// Clock for tests; the real card uses the current time.
+  final DateTime? now;
+  const AccountValueCard({super.key, this.now});
 
   @override
   ConsumerState<AccountValueCard> createState() => _AccountValueCardState();
@@ -59,9 +62,12 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
     final intraday = range == ValueRange.d1;
 
     var points = intraday ? (today?.line ?? const <ValuePoint>[]) : history.slice(range);
+    final now = widget.now ?? DateTime.now();
+    // On a weekend, a holiday or before 09:15 the latest numbers are an earlier session's, not "today"
+    final todaySession = sessionStartedTodayIst(now.toUtc());
+    final lastClose = history.points.isEmpty ? null : history.points.last.time;
     // Today's live value closes the daily line once the last close is from an earlier day
-    if (!intraday && today != null && points.isNotEmpty) {
-      final now = DateTime.now();
+    if (!intraday && todaySession && today != null && points.isNotEmpty) {
       final last = points.last.time;
       if (DateTime(now.year, now.month, now.day).isAfter(last)) {
         points = [...points, ValuePoint(now, today.value, today.invested)];
@@ -80,6 +86,7 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
     }
     final pct = (change != null && base != null && base > 0) ? change / base * 100 : null;
     final assumedShown = !intraday && points.any((p) => p.assumed);
+    final dayLabel = todaySession || lastClose == null ? t.heroToday : _day.format(lastClose);
 
     return Container(
       width: double.infinity,
@@ -109,7 +116,7 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
                   child: Text(
                     '${Formatters.percent(pct, signed: true)}'
                     '${hide ? '' : '  (${Formatters.currency0(change, signed: true)})'}'
-                    '  ${intraday ? t.heroToday : range.label}',
+                    '  ${intraday ? dayLabel : range.label}',
                     style: TextStyle(
                       color: change >= 0 ? AppColors.success : AppColors.danger,
                       fontSize: 13,
@@ -153,7 +160,7 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
               ],
             ),
             const SizedBox(height: 10),
-            Semantics(label: t.semAccount(intraday ? t.heroToday : range.label, pct == null ? t.semNoData : Formatters.percent(pct, signed: true)), excludeSemantics: true, child: SizedBox(
+            Semantics(label: t.semAccount(intraday ? dayLabel : range.label, pct == null ? t.semNoData : Formatters.percent(pct, signed: true)), excludeSemantics: true, child: SizedBox(
               height: 190,
               child: _Chart(points, intraday: intraday, prevClose: today?.prevClose, hide: hide),
             )),

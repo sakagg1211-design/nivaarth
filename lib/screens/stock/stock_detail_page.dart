@@ -1,4 +1,5 @@
 import '../../core/utils/formatters.dart';
+import '../../core/utils/market_hours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,6 +14,7 @@ import '../../models/stock_score.dart';
 import '../../providers/listing_provider.dart';
 import '../../providers/live_quote_provider.dart';
 import '../../providers/price_alert_provider.dart';
+import '../../providers/stock_insights_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../providers/stock_score_provider.dart';
 import '../../providers/watchlist_provider.dart';
@@ -87,6 +89,7 @@ class _StockDetailPageState
     final stock = widget.stock;
     final portfolio = stock.portfolio;
     final cleanSym = SymbolUtils.normalize(portfolio.instrument);
+    final classification = ref.watch(stockClassificationProvider(cleanSym)).valueOrNull;
     final isSaved = ref.watch(watchlistProvider.notifier).isSaved(portfolio.instrument);
 
     final scoreAsync = ref.watch(
@@ -270,6 +273,8 @@ class _StockDetailPageState
                     ),
                   ),
                   const Spacer(),
+                  // "Real-time" only while NSE trades
+                  if (isMarketOpenIst(DateTime.now().toUtc()))
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -434,22 +439,19 @@ class _StockDetailPageState
           companyName: portfolio.companyName.isNotEmpty
               ? portfolio.companyName
               : SymbolUtils.getDisplayName(portfolio.instrument),
-          sector: portfolio.sector.isNotEmpty
-              ? portfolio.sector
-              : SymbolUtils.getSector(portfolio.instrument),
-          industry: SymbolUtils.getIndustry(
-            portfolio.instrument,
-            dbIndustry: portfolio.industry,
-          ),
+          sector: classification?.sector ?? SymbolUtils.getSector(portfolio.instrument, dbSector: portfolio.sector),
+          industry: classification?.industry ??
+              SymbolUtils.getIndustry(
+                portfolio.instrument,
+                dbIndustry: portfolio.industry,
+              ),
           status: isOwned ? portfolio.status : 'DISCOVERY',
         ),
 
-        const SizedBox(height: 16),
-
-        InvestmentThesisCard(
-          thesis:
-              portfolio.investmentThesis,
-        ),
+        if (InvestmentThesisCard.isUserWritten(portfolio.investmentThesis)) ...[
+          const SizedBox(height: 16),
+          InvestmentThesisCard(thesis: portfolio.investmentThesis),
+        ],
       ],
     );
 

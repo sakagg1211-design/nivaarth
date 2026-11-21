@@ -60,15 +60,12 @@ void main() {
     expect(lastCard.overlaps(fab), isFalse);
   });
 
-  testWidgets('the collapsed add button keeps its label for TalkBack', (tester) async {
+  testWidgets('no floating Add button covers the page; the header button adds a holding', (tester) async {
     await phone(tester);
-    final handle = tester.ensureSemantics();
-    await tester.pumpWidget(host(12));
+    await tester.pumpWidget(host(3));
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
-    await tester.pumpAndSettle();
-    expect(find.text('Add Holding'), findsNothing); // collapsed: no visible label
+    // at the top nothing floats over the account value footnote
+    expect(find.byType(FloatingActionButton), findsNothing);
     expect(find.byTooltip('Add Holding'), findsOneWidget);
-    handle.dispose();
   });
 }

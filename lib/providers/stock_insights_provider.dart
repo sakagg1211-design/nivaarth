@@ -4,6 +4,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/utils/stock_insights.dart';
 import '../models/peer_comparison.dart';
 
+/// Sector and industry from StockTaxonomy (the same classification the news and peer cards use).
+/// A holding row's own sector is often the "General" default from when it was added.
+final stockClassificationProvider =
+    FutureProvider.autoDispose.family<({String? sector, String? industry}), String>((ref, symbol) async {
+  final row = await Supabase.instance.client
+      .from('StockTaxonomy')
+      .select('peer_sector,peer_industry')
+      .eq('Instrument', symbol.trim().toUpperCase())
+      .maybeSingle();
+  String? clean(Object? v) => (v == null || v.toString().trim().isEmpty) ? null : v.toString().trim();
+  return (sector: clean(row?['peer_sector']), industry: clean(row?['peer_industry']));
+});
+
 /// Facts behind the badges. The EMA figures are optional: until migration 22 the app cannot read
 /// them, and an old row must not claim today's trend.
 final stockFactsProvider = FutureProvider.autoDispose.family<StockFacts?, String>((ref, symbol) async {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/symbol_utils.dart';
 import '../../../core/utils/today_facts.dart';
 import '../../../providers/live_portfolio_provider.dart';
 import '../../../providers/news_provider.dart';
@@ -46,7 +47,7 @@ class TodayFactsCard extends ConsumerWidget {
               onTap: () {
                 final stock = f.symbol == null
                     ? null
-                    : holdings.where((h) => h.portfolio.instrument.trim().toUpperCase() == f.symbol).firstOrNull;
+                    : holdings.where((h) => SymbolUtils.normalize(h.portfolio.instrument) == SymbolUtils.normalize(f.symbol!)).firstOrNull;
                 if (stock != null) {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => StockDetailPage(stock: stock)));
                 } else {
@@ -77,10 +78,10 @@ class TodayFactsCard extends ConsumerWidget {
                         children: [
                           Text(factText(f, context.t),
                               style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.3, fontWeight: FontWeight.w500)),
-                          if ((newsCounts[f.symbol] ?? 0) > 0)
+                          if ((newsCounts[f.symbol == null ? '' : SymbolUtils.normalize(f.symbol!)] ?? 0) > 0)
                             Padding(
                               padding: const EdgeInsets.only(top: 2),
-                              child: Text(context.t.newsCountToday(newsCounts[f.symbol]!),
+                              child: Text(context.t.newsCountToday(newsCounts[SymbolUtils.normalize(f.symbol!)]!),
                                   style: const TextStyle(color: _muted, fontSize: 11, fontWeight: FontWeight.w600)),
                             ),
                         ],

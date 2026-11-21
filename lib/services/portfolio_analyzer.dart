@@ -90,7 +90,9 @@ class PortfolioAnalyzer {
 
       totalInvested += stock.portfolio.totalInvested;
       currentValue += stock.currentValue;
-      previousPortfolioValue += (stock.currentValue - stock.todayPL);
+      // A move over 40% is a split or bonus read against an unadjusted previous close: count it as flat
+      final splitDay = stock.todayReturnPercent.abs() > 40;
+      previousPortfolioValue += (stock.currentValue - (splitDay ? 0 : stock.todayPL));
       totalPnL += stock.netPL;
 
       if (stock.netPL >= 0) {

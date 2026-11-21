@@ -90,7 +90,7 @@ class DashboardHeader extends ConsumerWidget {
                       child: Text(
                         _getUserDisplayName().substring(0, 1).toUpperCase(),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.background, // the tile is ink (white): white text was invisible
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                         ),

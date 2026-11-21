@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../core/l10n/l10n_ext.dart';
+import '../l10n/app_localizations.dart';
 import '../models/listing_info.dart';
 
 /// Small SME / Z / T2T chips; the meaning shows on long press or hover.
@@ -19,7 +21,7 @@ class ListingBadges extends StatelessWidget {
       children: [
         for (final b in badges)
           Tooltip(
-            message: b.meaning,
+            message: ListingInfoStrip.meaning(b, context.t),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: dense ? 5 : 7, vertical: dense ? 1 : 2),
               decoration: BoxDecoration(
@@ -41,22 +43,30 @@ class ListingBadges extends StatelessWidget {
       b.level == ListingBadgeLevel.warn ? const Color(0xFFFF5252) : const Color(0xFFFFB74D);
 }
 
-/// "Fundamentals: 30 Oct 2026 tak · aakhri results: Sep 2026 quarter", plus what each badge means
+/// "Fundamentals as of 30 Oct 2026 · latest results: Sep 2026 quarter" (Hinglish in Hinglish mode), plus what each badge means
 class ListingInfoStrip extends StatelessWidget {
   final ListingInfo? info;
   const ListingInfoStrip({super.key, required this.info});
 
-  static String? fundamentalsLine(ListingInfo? info) {
+  /// What a badge means, in the app language (the model's own text is Hinglish only).
+  static String meaning(ListingBadge b, AppLocalizations t) => switch (b.label) {
+        'Z' => t.badgeZMeaning,
+        'T2T' => t.badgeT2TMeaning,
+        'SME' => t.badgeSmeMeaning,
+        _ => b.meaning,
+      };
+
+  static String? fundamentalsLine(ListingInfo? info, AppLocalizations t) {
     final asOf = info?.fundamentalsAsOf;
     if (asOf == null) return null;
     final q = info!.lastQuarter;
-    return 'Fundamentals: ${DateFormat('d MMM yyyy').format(asOf)} tak'
-        '${q == null ? '' : ' · aakhri results: ${DateFormat('MMM yyyy').format(q)} quarter'}';
+    return t.fundamentalsAsOf(DateFormat('d MMM yyyy').format(asOf)) +
+        (q == null ? '' : t.fundamentalsLastQuarter(DateFormat('MMM yyyy').format(q)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final line = fundamentalsLine(info);
+    final line = fundamentalsLine(info, context.t);
     final badges = info?.badges ?? const <ListingBadge>[];
     if (line == null && badges.isEmpty) return const SizedBox.shrink();
     return Column(
@@ -65,7 +75,7 @@ class ListingInfoStrip extends StatelessWidget {
         if (badges.isNotEmpty) ...[
           ListingBadges(info: info),
           const SizedBox(height: 4),
-          Text(badges.map((b) => '${b.label}: ${b.meaning}').join('\n'),
+          Text(badges.map((b) => '${b.label}: ${meaning(b, context.t)}').join('\n'),
               style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
           const SizedBox(height: 6),
         ],
