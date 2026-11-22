@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFE5A93C).withValues(alpha: 0.20),
+                          color: AppColors.accent.withValues(alpha: 0.20),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -61,7 +61,7 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
 
                   // Headline
-                  const Text(
+                  Text(
                     'NIVAARTH',
                     style: TextStyle(
                       color: AppColors.textPrimary,
@@ -157,7 +157,7 @@ class WelcomeScreen extends StatelessWidget {
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               minimumSize: const Size.fromHeight(52),
-                              side: const BorderSide(color: AppColors.lineStrong),
+                              side: BorderSide(color: AppColors.lineStrong),
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(AppRadius.lg),

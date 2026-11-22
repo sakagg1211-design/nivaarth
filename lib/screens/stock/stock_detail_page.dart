@@ -194,7 +194,7 @@ class _StockDetailPageState
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.t.savedRemoved(portfolio.instrument)),
-                  backgroundColor: const Color(0xFF16171B),
+                  backgroundColor: AppColors.surface,
                 ),
               );
             } else {
@@ -208,7 +208,7 @@ class _StockDetailPageState
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.t.savedAdded(portfolio.instrument, Formatters.currency(stock.currentPrice))),
-                  backgroundColor: const Color(0xFF16171B),
+                  backgroundColor: AppColors.surface,
                 ),
               );
             }
@@ -225,7 +225,7 @@ class _StockDetailPageState
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFE5A93C),
+              foregroundColor: AppColors.inkSoft,
               padding: const EdgeInsets.symmetric(vertical: 4),
               visualDensity: VisualDensity.compact,
             ),
@@ -258,10 +258,10 @@ class _StockDetailPageState
 
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.insights_rounded,
                     size: 16,
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.inkSoft,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -269,7 +269,7 @@ class _StockDetailPageState
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: AppColors.ink,
                     ),
                   ),
                   const Spacer(),
@@ -281,15 +281,15 @@ class _StockDetailPageState
                       vertical: 3.5,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .06),
+                      color: AppColors.ink.withValues(alpha: .06),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text(
+                    child: Text(
                       "NSE Real-time",
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF8E929B),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -325,18 +325,18 @@ class _StockDetailPageState
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 8, bottom: 4, left: 4, right: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16171B),
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFF282A30)),
+                  border: Border.all(color: AppColors.line),
                 ),
                 child: chartPointsAsync.when(
-                  loading: () => const Center(
+                  loading: () => Center(
                     child: SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Color(0xFFE5A93C),
+                        color: AppColors.inkSoft,
                       ),
                     ),
                   ),
@@ -344,7 +344,7 @@ class _StockDetailPageState
                     child: Text(
                       context.t.stockChartSoon,
                       style: TextStyle(
-                        color: Color(0xFF8E929B),
+                        color: AppColors.textSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -355,7 +355,7 @@ class _StockDetailPageState
                         child: Text(
                           context.t.stockChartSoon,
                           style: TextStyle(
-                            color: Color(0xFF8E929B),
+                            color: AppColors.textSecondary,
                             fontSize: 13,
                           ),
                         ),
@@ -386,21 +386,21 @@ class _StockDetailPageState
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFF16171B),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF282A30)),
+              border: Border.all(color: AppColors.line),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0x1FE5A93C),
+                    color: AppColors.ink.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.visibility_rounded,
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.inkSoft,
                     size: 20,
                   ),
                 ),
@@ -412,7 +412,7 @@ class _StockDetailPageState
                       Text(
                         context.t.stockWatchlistAsset,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.ink,
                           fontWeight: FontWeight.w800,
                           fontSize: 14,
                         ),
@@ -421,7 +421,7 @@ class _StockDetailPageState
                       Text(
                         context.t.stockNotOwned,
                         style: TextStyle(
-                          color: Color(0xFF858A94),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -496,9 +496,9 @@ class _StockDetailPageState
             width: double.infinity,
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
-              color: const Color(0xFF16171B),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF282A30)),
+              border: Border.all(color: AppColors.line),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,12 +508,12 @@ class _StockDetailPageState
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0x1FE5A93C),
+                        color: AppColors.ink.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.auto_awesome_rounded,
-                        color: Color(0xFFE5A93C),
+                        color: AppColors.inkSoft,
                         size: 22,
                       ),
                     ),
@@ -522,10 +522,10 @@ class _StockDetailPageState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'NV Quantitative Engine',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.ink,
                               fontWeight: FontWeight.w800,
                               fontSize: 15,
                             ),
@@ -533,8 +533,8 @@ class _StockDetailPageState
                           const SizedBox(height: 3),
                           Text(
                             context.t.stockAnalyzing(cleanSym),
-                            style: const TextStyle(
-                              color: Color(0xFF8E929B),
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -542,27 +542,27 @@ class _StockDetailPageState
                         ],
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Color(0xFFE5A93C),
+                        color: AppColors.inkSoft,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 18),
-                const LinearProgressIndicator(
-                  backgroundColor: Color(0xFF23252B),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                LinearProgressIndicator(
+                  backgroundColor: AppColors.surfaceSecondary,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.inkSoft),
                   minHeight: 3,
                 ),
                 const SizedBox(height: 14),
                 Text(
                   context.t.stockScoring,
                   style: TextStyle(
-                    color: Color(0xFF858A94),
+                    color: AppColors.textTertiary,
                     fontSize: 12,
                     height: 1.45,
                   ),
@@ -620,20 +620,20 @@ class _StockDetailPageState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFF131418),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF23252B)),
+                border: Border.all(color: AppColors.surfaceSecondary),
               ),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline_rounded, size: 15, color: Color(0xFF858A94)),
+                  Icon(Icons.info_outline_rounded, size: 15, color: AppColors.textTertiary),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Regulatory Notice: Nivaarth is a financial analytics and research technology platform. All quantitative scores, factor models, and signals are algorithmically computed for educational purposes only and do not constitute SEBI-registered investment advice.',
                       style: TextStyle(
-                        color: Color(0xFF858A94),
+                        color: AppColors.textTertiary,
                         fontSize: 11,
                         height: 1.4,
                       ),
@@ -650,18 +650,18 @@ class _StockDetailPageState
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFF0C0D10),
+        backgroundColor: AppColors.background,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.ink, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           portfolio.instrument,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: AppColors.ink,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -680,10 +680,10 @@ class _StockDetailPageState
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isOwned ? const Color(0x2600E676) : const Color(0x1F38BDF8),
+                  color: isOwned ? AppColors.success.withValues(alpha: 0.15) : AppColors.info.withAlpha(0x1F),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isOwned ? const Color(0x4D00E676) : const Color(0x4D38BDF8),
+                    color: isOwned ? AppColors.success.withValues(alpha: 0.30) : AppColors.info.withAlpha(0x4D),
                   ),
                 ),
                 child: Row(
@@ -691,14 +691,14 @@ class _StockDetailPageState
                   children: [
                     Icon(
                       isOwned ? Icons.account_balance_wallet_rounded : Icons.add_business_rounded,
-                      color: isOwned ? const Color(0xFF00E676) : const Color(0xFF38BDF8),
+                      color: isOwned ? AppColors.success : AppColors.info,
                       size: 15,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       isOwned ? context.t.metricHoldings : '+ Port',
                       style: TextStyle(
-                        color: isOwned ? const Color(0xFF00E676) : const Color(0xFF38BDF8),
+                        color: isOwned ? AppColors.success : AppColors.info,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -719,7 +719,7 @@ class _StockDetailPageState
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(context.t.savedRemoved(portfolio.instrument)),
-                      backgroundColor: const Color(0xFF16171B),
+                      backgroundColor: AppColors.surface,
                     ),
                   );
                 } else {
@@ -733,7 +733,7 @@ class _StockDetailPageState
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(context.t.savedAdded(portfolio.instrument, Formatters.currency(stock.currentPrice))),
-                      backgroundColor: const Color(0xFF16171B),
+                      backgroundColor: AppColors.surface,
                     ),
                   );
                 }
@@ -741,10 +741,10 @@ class _StockDetailPageState
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isSaved ? const Color(0x33E5A93C) : const Color(0x1FE5A93C),
+                  color: isSaved ? AppColors.ink.withValues(alpha: 0.14) : AppColors.ink.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0x4DE5A93C),
+                    color: AppColors.ink.withValues(alpha: 0.20),
                   ),
                 ),
                 child: Row(
@@ -752,14 +752,14 @@ class _StockDetailPageState
                   children: [
                     Icon(
                       isSaved ? Icons.bookmark_rounded : Icons.bookmark_add_outlined,
-                      color: const Color(0xFFE5A93C),
+                      color: AppColors.inkSoft,
                       size: 16,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       isSaved ? context.t.stockSaved : context.t.stockSave,
-                      style: const TextStyle(
-                        color: Color(0xFFE5A93C),
+                      style: TextStyle(
+                        color: AppColors.inkSoft,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),

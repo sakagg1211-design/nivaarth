@@ -12,16 +12,17 @@ import '../../providers/privacy_provider.dart';
 import '../../providers/risk_provider.dart';
 import '../../providers/search_provider.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
-const _muted = Color(0xFF8E929B);
-const _gold = Color(0xFFE5A93C);
-const _surface = Color(0xFF16171B);
+Color get _muted => AppColors.textSecondary;
+Color get _gold => AppColors.accent;
+Color get _surface => AppColors.surface;
 const _falls = [5.0, 10.0, 20.0, 30.0];
 
 BoxDecoration _card() => BoxDecoration(
       color: _surface,
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.white.withValues(alpha: .06)),
+      border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
     );
 
 String _beta(double? b) => b == null ? '—' : b.toStringAsFixed(2);
@@ -36,15 +37,15 @@ class RiskLabPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(riskHoldingsProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF111215),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.ink,
         title: Text(context.t.macroWhatIf,
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+            style: TextStyle(color: AppColors.ink, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: _gold)),
+        loading: () => Center(child: CircularProgressIndicator(color: _gold)),
         error: (_, _) => Center(child: Text(context.t.riskLoadFailed, style: TextStyle(color: _muted))),
         data: (holdings) => holdings.isEmpty
             ? Center(child: Text(context.t.riskNoStocks, style: TextStyle(color: _muted)))
@@ -84,9 +85,9 @@ class _Summary extends StatelessWidget {
     Widget metric(String label, String value) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(color: _muted, fontSize: 12)),
+            Text(label, style: TextStyle(color: _muted, fontSize: 12)),
             const SizedBox(height: 2),
-            Text(value, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
+            Text(value, style: TextStyle(color: AppColors.ink, fontSize: 28, fontWeight: FontWeight.w800)),
           ],
         );
     return Container(
@@ -107,12 +108,12 @@ class _Summary extends StatelessWidget {
           if (s.uncoveredCount > 0) ...[
             const SizedBox(height: 6),
             Text(context.t.riskNoBeta(_stocks(s.uncoveredCount), _pct(s.coveragePct)),
-                style: const TextStyle(color: _muted, fontSize: 12)),
+                style: TextStyle(color: _muted, fontSize: 12)),
           ],
           if (pe.excluded > 0 && pe.pe != null) ...[
             const SizedBox(height: 6),
             Text(context.t.riskPeExcluded(_stocks(pe.excluded), _pct(pe.coveragePct)),
-                style: const TextStyle(color: _muted, fontSize: 12)),
+                style: TextStyle(color: _muted, fontSize: 12)),
           ],
         ],
       ),
@@ -143,7 +144,7 @@ class _StressCardState extends ConsumerState<_StressCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(context.t.riskIfFalls,
-              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+              style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -158,11 +159,11 @@ class _StressCardState extends ConsumerState<_StressCard> {
             Text(context.t.riskBetaNa, style: TextStyle(color: _muted))
           else ...[
             Text('${r.changePct >= 0 ? '+' : ''}${r.changePct.toStringAsFixed(1)}%',
-                style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
-            Text(context.t.riskEstimated(money(r.change)), style: const TextStyle(color: _muted, fontSize: 13)),
+                style: TextStyle(color: AppColors.ink, fontSize: 28, fontWeight: FontWeight.w800)),
+            Text(context.t.riskEstimated(money(r.change)), style: TextStyle(color: _muted, fontSize: 13)),
             if (r.uncoveredCount > 0)
               Text(context.t.riskNotCounted(_stocks(r.uncoveredCount)),
-                  style: const TextStyle(color: _muted, fontSize: 12)),
+                  style: TextStyle(color: _muted, fontSize: 12)),
             const SizedBox(height: 10),
             Text(context.t.riskMostImpact, style: TextStyle(color: _muted, fontSize: 12)),
             const SizedBox(height: 4),
@@ -171,9 +172,9 @@ class _StressCardState extends ConsumerState<_StressCard> {
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Row(
                   children: [
-                    Expanded(child: Text(l.symbol, style: const TextStyle(color: Colors.white70, fontSize: 13))),
+                    Expanded(child: Text(l.symbol, style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
                     Text(money(l.change),
-                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                        style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
@@ -210,9 +211,9 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
 
   InputDecoration _field(String hint) => InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: _muted),
+        hintStyle: TextStyle(color: _muted),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: .05),
+        fillColor: AppColors.ink.withValues(alpha: .05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
       );
 
@@ -242,13 +243,13 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               children: [
-                Expanded(child: Text(label, style: const TextStyle(color: Colors.white70, fontSize: 13))),
-                Text(from, style: const TextStyle(color: _muted, fontSize: 13)),
-                const Padding(
+                Expanded(child: Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
+                Text(from, style: TextStyle(color: _muted, fontSize: 13)),
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Icon(Icons.arrow_forward_rounded, size: 14, color: _muted),
                 ),
-                Text(to, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                Text(to, style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
               ],
             ),
           );
@@ -271,9 +272,9 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.warning_amber_rounded, size: 15, color: _gold),
+                  Icon(Icons.warning_amber_rounded, size: 15, color: _gold),
                   const SizedBox(width: 6),
-                  Expanded(child: Text(w, style: const TextStyle(color: Colors.white, fontSize: 12))),
+                  Expanded(child: Text(w, style: TextStyle(color: AppColors.ink, fontSize: 12))),
                 ],
               ),
             ),
@@ -288,11 +289,11 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(context.t.riskIfChange,
-              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+              style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
           TextField(
             controller: _search,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.ink),
             cursorColor: _gold,
             decoration: _field(context.t.riskStockField),
             onChanged: (v) {
@@ -312,8 +313,8 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
                 child: ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                title: Text(s, style: const TextStyle(color: Colors.white, fontSize: 13)),
-                subtitle: Text(m.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: _muted, fontSize: 12)),
+                title: Text(s, style: TextStyle(color: AppColors.ink, fontSize: 13)),
+                subtitle: Text(m.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: _muted, fontSize: 12)),
                 trailing: held.contains(s) ? Text(context.t.riskYouHold, style: TextStyle(color: _muted, fontSize: 11)) : null,
                 onTap: () {
                   FocusScope.of(context).unfocus();
@@ -344,7 +345,7 @@ class _WhatIfCardState extends ConsumerState<_WhatIfCard> {
             controller: _amount,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.ink),
             cursorColor: _gold,
             decoration: _field(context.t.riskAmount),
             onChanged: (_) => setState(() {}),
@@ -371,12 +372,12 @@ class _Chip extends StatelessWidget {
         alignment: Alignment.center,
         constraints: const BoxConstraints(minHeight: 48),
         decoration: BoxDecoration(
-          color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
+          color: active ? AppColors.ink.withValues(alpha: .1) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withValues(alpha: active ? .25 : .08)),
+          border: Border.all(color: AppColors.ink.withValues(alpha: active ? .25 : .08)),
         ),
         child: Text(label,
-            style: TextStyle(color: active ? Colors.white : _muted, fontSize: 13, fontWeight: FontWeight.w700)),
+            style: TextStyle(color: active ? AppColors.ink : _muted, fontSize: 13, fontWeight: FontWeight.w700)),
       ),
     );
   }

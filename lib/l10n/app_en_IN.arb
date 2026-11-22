@@ -797,5 +797,10 @@
   "fundamentalsLastQuarter": " · aakhri results: {quarter} quarter",
   "badgeZMeaning": "Listing rules ka paalan nahi (NSE Z / BZ series)",
   "badgeT2TMeaning": "Trade-for-trade: intraday nahi, har trade delivery me",
-  "badgeSmeMeaning": "SME platform: kam liquidity, bada lot size"
+  "badgeSmeMeaning": "SME platform: kam liquidity, bada lot size",
+  "semChart": "Price chart, {range}: {from} se {to}, {pct}",
+  "themeLabel": "Theme",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themePhone": "Phone jaisa"
 }

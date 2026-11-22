@@ -10,8 +10,8 @@ import '../../../providers/market_pulse_provider.dart';
 import '../index_detail_page.dart';
 import '../../../core/l10n/l10n_ext.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
 const _yahoo = {'NIFTY 50': '^NSEI', 'SENSEX': '^BSESN'};
 
 /// NIFTY 50, SENSEX, Nifty Bank and Nifty IT, each with today's sparkline.
@@ -59,16 +59,16 @@ class _IndexCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(q.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800)),
+              style: TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
           Text(q.value == null ? '—' : Formatters.number(double.parse(q.value!.toStringAsFixed(2))),
-              style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
           Row(
             children: [
               if (q.change != null) Icon(up ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, size: 12, color: color),
@@ -123,7 +123,7 @@ class _Spark extends StatelessWidget {
         borderData: FlBorderData(show: false),
         lineTouchData: const LineTouchData(enabled: false),
         extraLinesData: ExtraLinesData(horizontalLines: [
-          if (q.prevClose != null) HorizontalLine(y: q.prevClose!, color: Colors.white38, strokeWidth: 1, dashArray: const [2, 3]),
+          if (q.prevClose != null) HorizontalLine(y: q.prevClose!, color: AppColors.ink.withValues(alpha: 0.38), strokeWidth: 1, dashArray: const [2, 3]),
         ]),
         lineBarsData: [
           LineChartBarData(

@@ -151,18 +151,18 @@ class RecommendationCard extends StatelessWidget {
               color: AppColors.surfaceSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFF383A42),
+                color: AppColors.lineStrong,
               ),
             ),
             child: Row(
               children: [
-                Icon(_archetypeIcon(narrative.archetypeIcon), size: 18, color: const Color(0xFFE5A93C)),
+                Icon(_archetypeIcon(narrative.archetypeIcon), size: 18, color: AppColors.accent),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     narrative.archetypeTag,
-                    style: const TextStyle(
-                      color: Color(0xFFF3F4F6),
+                    style: TextStyle(
+                      color: AppColors.inkSoft,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.2,
@@ -179,7 +179,7 @@ class RecommendationCard extends StatelessWidget {
                     color: AppColors.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text(
+                  child: Text(
                     "ARCHETYPE",
                     style: TextStyle(
                       color: AppColors.accent,
@@ -202,10 +202,10 @@ class RecommendationCard extends StatelessWidget {
             width: double.infinity,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: const Color(0xFF111215),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFF22242A),
+                color: AppColors.surfaceSecondary,
               ),
             ),
             child: IntrinsicHeight(
@@ -244,8 +244,8 @@ class RecommendationCard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             narrative.analystBriefing,
-                            style: const TextStyle(
-                              color: Color(0xFFD6D9E0),
+                            style: TextStyle(
+                              color: AppColors.inkSoft,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               height: 1.55,
@@ -301,7 +301,7 @@ class RecommendationCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.tune_rounded,
                       size: 16,
                       color: AppColors.accent,
@@ -310,7 +310,7 @@ class RecommendationCard extends StatelessWidget {
                     Text(
                       context.t.recPlaybook,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),
@@ -339,8 +339,8 @@ class RecommendationCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Divider(
-                  color: Color(0xFF2E3038),
+                Divider(
+                  color: AppColors.line,
                   height: 1,
                 ),
                 const SizedBox(height: 12),
@@ -348,7 +348,7 @@ class RecommendationCard extends StatelessWidget {
                 // What the numbers show
                 _PlaybookRow(
                   icon: Icons.account_balance_wallet_outlined,
-                  iconColor: const Color(0xFFE5A93C),
+                  iconColor: AppColors.accent,
                   title: context.t.recShows,
                   guideline: narrative.playbook.dataShows,
                 ),
@@ -358,7 +358,7 @@ class RecommendationCard extends StatelessWidget {
                 // The input holding the score down
                 _PlaybookRow(
                   icon: Icons.add_chart_rounded,
-                  iconColor: const Color(0xFF00E676),
+                  iconColor: AppColors.success,
                   title: context.t.recWatch,
                   guideline: narrative.playbook.toWatch,
                 ),
@@ -368,7 +368,7 @@ class RecommendationCard extends StatelessWidget {
                 // Key Metric to Watch
                 _PlaybookRow(
                   icon: Icons.remove_red_eye_outlined,
-                  iconColor: const Color(0xFFA78BFA),
+                  iconColor: AppColors.violet,
                   title: context.t.recUpdates,
                   guideline: narrative.playbook.updatesWith,
                 ),
@@ -383,17 +383,17 @@ class RecommendationCard extends StatelessWidget {
           // -------------------------------------------------------------------
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.verified_user_outlined,
                 size: 13,
-                color: Color(0xFF858A94),
+                color: AppColors.textTertiary,
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   context.t.recCoverage(score.confidence),
-                  style: const TextStyle(
-                    color: Color(0xFF858A94),
+                  style: TextStyle(
+                    color: AppColors.textTertiary,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -412,13 +412,13 @@ class RecommendationCard extends StatelessWidget {
       return AppColors.success;
     }
     if (rec.contains("DIP") || rec.contains("WAIT FOR DIP")) {
-      return const Color(0xFF38BDF8);
+      return AppColors.info;
     }
     if (rec.contains("HIGH RISK") || rec.contains("FLAG") || rec.contains("AVOID") || rec.contains("SELL") || rec.contains("UNDERPERFORM")) {
       return AppColors.danger;
     }
     if (rec.contains("TRIM") || rec.contains("BELOW HURDLE") || rec.contains("EXTENDED") || rec.contains("ELEVATED") || rec.contains("CAUTION")) {
-      return const Color(0xFFFF7043);
+      return AppColors.warning;
     }
     return AppColors.warning;
   }
@@ -439,7 +439,7 @@ class _SignalTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isBullish ? AppColors.success : const Color(0xFFFF7043);
+    final color = isBullish ? AppColors.success : AppColors.warning;
     final bgColor = color.withValues(alpha: 0.06);
     final borderColor = color.withValues(alpha: 0.22);
 
@@ -497,8 +497,8 @@ class _SignalTile extends StatelessWidget {
           const SizedBox(height: 7),
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.ink,
               fontSize: 13,
               fontWeight: FontWeight.w700,
             ),
@@ -506,8 +506,8 @@ class _SignalTile extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             description,
-            style: const TextStyle(
-              color: Color(0xFF9CA3AF),
+            style: TextStyle(
+              color: AppColors.textSecondary,
               fontSize: 12,
               height: 1.4,
             ),
@@ -565,8 +565,8 @@ class _PlaybookRow extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 guideline,
-                style: const TextStyle(
-                  color: Color(0xFFD1D5DB),
+                style: TextStyle(
+                  color: AppColors.inkSoft,
                   fontSize: 12,
                   height: 1.45,
                 ),

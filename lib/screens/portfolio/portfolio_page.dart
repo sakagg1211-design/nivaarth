@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/layout/breakpoints.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/formatters.dart';
@@ -134,7 +135,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
     final double sidePadding = isDesktop ? 24 : 16;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       // Only back-to-top floats, after scrolling. Adding a holding lives in the header (+), so nothing
       // covers the account value footnote or a holding's 1D row at rest.
       floatingActionButton: _showBackToTop
@@ -142,12 +143,12 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
               heroTag: 'portfolio_go_top',
               tooltip: context.t.backToTop,
               onPressed: () => _scrollController.animateTo(0, duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic),
-              backgroundColor: const Color(0xFF1E2024),
-              foregroundColor: Colors.white,
+              backgroundColor: AppColors.surfaceSecondary,
+              foregroundColor: AppColors.ink,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Color(0xFF282A30)),
+                side: BorderSide(color: AppColors.line),
               ),
               child: const Icon(Icons.arrow_upward_rounded, size: 20),
             )
@@ -181,21 +182,21 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         height: 64,
                         width: 64,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF16171B),
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(AppRadius.xl),
-                          border: Border.all(color: const Color(0xFF282A30)),
+                          border: Border.all(color: AppColors.line),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.account_balance_wallet_outlined,
                           size: 32,
-                          color: Colors.white,
+                          color: AppColors.ink,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Text(
                         context.t.portfolioEmptyTitle,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.ink,
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                         ),
@@ -205,14 +206,14 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         context.t.portfolioEmptyBody,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xFF8E929B),
+                          color: AppColors.textSecondary,
                           fontSize: 14,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE5A93C),
+                          backgroundColor: AppColors.accent,
                           foregroundColor: Colors.black,
                         ),
                         onPressed: _openAddHoldingSheet,
@@ -227,7 +228,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         onPressed: _openTradeBook,
                         icon: const Icon(Icons.receipt_long_rounded, size: 18),
                         label: Text(context.t.portfolioOpenTradeBook),
-                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
                       ),
                       TextButton.icon(
                         onPressed: () => Navigator.push(
@@ -236,13 +237,13 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                         ),
                         icon: const Icon(Icons.upload_file_rounded, size: 18),
                         label: Text(context.t.portfolioImport),
-                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
                       ),
                       TextButton.icon(
                         onPressed: _openClosedPositions,
                         icon: const Icon(Icons.inventory_2_outlined, size: 18),
                         label: Text(context.t.closedTitle),
-                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF8E929B)),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -271,14 +272,14 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
 
             return RefreshIndicator(
               onRefresh: _refreshPortfolio,
-              color: const Color(0xFFE5A93C),
-              backgroundColor: const Color(0xFF16171B),
+              color: AppColors.ink,
+              backgroundColor: AppColors.surface,
               child: RawScrollbar(
                 controller: _scrollController,
                 thumbVisibility: true,
                 thickness: 4.5,
                 radius: const Radius.circular(8),
-                thumbColor: const Color(0xFFE5A93C).withValues(alpha: 0.8),
+                thumbColor: AppColors.textSecondary.withValues(alpha: 0.8),
                 interactive: true,
                 child: CustomScrollView(
                   controller: _scrollController,
@@ -302,11 +303,11 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                             children: [
                               Row(
                                 children: [
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
                                       'Portfolio',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.ink,
                                         fontSize: 24,
                                         fontWeight: FontWeight.w800,
                                         letterSpacing: -0.5,
@@ -316,25 +317,25 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                   IconButton(
                                     onPressed: _openClosedPositions,
                                     icon: const Icon(Icons.inventory_2_outlined),
-                                    color: const Color(0xFF8E929B),
+                                    color: AppColors.textSecondary,
                                     tooltip: context.t.closedTitle,
                                   ),
                                   IconButton(
                                     onPressed: _openTradeBook,
                                     icon: const Icon(Icons.receipt_long_rounded),
-                                    color: const Color(0xFF8E929B),
+                                    color: AppColors.textSecondary,
                                     tooltip: context.t.tradeBookTitle,
                                   ),
                                   IconButton(
                                     onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
                                     icon: Icon(isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded),
-                                    color: isPrivacy ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+                                    color: isPrivacy ? AppColors.ink : AppColors.textSecondary,
                                     tooltip: isPrivacy ? context.t.tipShowValues : context.t.tipHideValues,
                                   ),
                                   IconButton(
                                     onPressed: _openAddHoldingSheet,
                                     icon: const Icon(Icons.add_circle_outline_rounded),
-                                    color: const Color(0xFFE5A93C),
+                                    color: AppColors.accent,
                                     tooltip: context.t.addHolding,
                                   ),
                                 ],
@@ -342,8 +343,8 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                               const SizedBox(height: 2),
                               Text(
                                 context.t.portfolioTracked(stocks.length),
-                                style: const TextStyle(
-                                  color: Color(0xFF8E929B),
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -374,11 +375,11 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                               // Sorting & Filter Controls
                               Row(
                                 children: [
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
                                       'Holdings',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.ink,
                                         fontSize: 17,
                                         fontWeight: FontWeight.w800,
                                         letterSpacing: -0.3,
@@ -387,15 +388,15 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                   ),
                                   PopupMenuButton<PortfolioSortOption>(
                                     initialValue: _selectedSort,
-                                    color: const Color(0xFF1E2024),
+                                    color: AppColors.surfaceSecondary,
                                     onSelected: (option) {
                                       setState(() => _selectedSort = option);
                                     },
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(AppRadius.md),
-                                      side: const BorderSide(
-                                        color: Color(0xFF282A30),
+                                      side: BorderSide(
+                                        color: AppColors.line,
                                       ),
                                     ),
                                     child: Container(
@@ -404,26 +405,26 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                         vertical: 7,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF16171B),
+                                        color: AppColors.surface,
                                         borderRadius:
                                             BorderRadius.circular(AppRadius.pill),
                                         border: Border.all(
-                                          color: const Color(0xFF282A30),
+                                          color: AppColors.line,
                                         ),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.sort_rounded,
                                             size: 15,
-                                            color: Color(0xFFC7CDD6),
+                                            color: AppColors.inkSoft,
                                           ),
                                           const SizedBox(width: 6),
                                           Text(
                                             _getSortLabel(_selectedSort),
-                                            style: const TextStyle(
-                                              color: Colors.white,
+                                            style: TextStyle(
+                                              color: AppColors.ink,
                                               fontSize: 12,
                                               fontWeight: FontWeight.w700,
                                             ),
@@ -436,42 +437,42 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                                         value: PortfolioSortOption.alphabetical,
                                         child: Text(
                                           context.t.sortAlphabetical,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                       PopupMenuItem(
                                         value: PortfolioSortOption.todayGainers,
                                         child: Text(
                                           context.t.sortTodayGainers,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                       PopupMenuItem(
                                         value: PortfolioSortOption.todayLosers,
                                         child: Text(
                                           context.t.sortTodayLosers,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                       PopupMenuItem(
                                         value: PortfolioSortOption.bestPnL,
                                         child: Text(
                                           context.t.sortOverallGainers,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                       PopupMenuItem(
                                         value: PortfolioSortOption.worstPnL,
                                         child: Text(
                                           context.t.sortOverallLosers,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                       PopupMenuItem(
                                         value: PortfolioSortOption.highestValue,
                                         child: Text(
                                           context.t.sortHighestValue,
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: AppColors.ink),
                                         ),
                                       ),
                                     ],
@@ -535,7 +536,7 @@ class _PortfolioPageState extends ConsumerState<PortfolioPage> {
                           ),
                           if (sortedStocks.length > _holdingsPreview)
                             TextButton(
-                              style: TextButton.styleFrom(foregroundColor: const Color(0xFFE5A93C)),
+                              style: TextButton.styleFrom(foregroundColor: AppColors.ink),
                               onPressed: () => setState(() => _showAllHoldings = !_showAllHoldings),
                               child: Text(
                                 _showAllHoldings ? context.t.commonShowLess : context.t.commonSeeAll(sortedStocks.length),
@@ -607,8 +608,8 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
-    final toneBg = isProfit ? const Color(0x1F00E676) : const Color(0x26FF5252);
+    final tone = isProfit ? AppColors.success : AppColors.danger;
+    final toneBg = isProfit ? AppColors.success.withValues(alpha: 0.12) : AppColors.danger.withValues(alpha: 0.15);
 
     return Center(
       child: ConstrainedBox(
@@ -617,10 +618,10 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF16171B),
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFF282A30),
+              color: AppColors.line,
               width: 1,
             ),
           ),
@@ -640,17 +641,17 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF8E929B),
+                            color: AppColors.textSecondary,
                             letterSpacing: 0.8,
                           ),
                         ),
                         const SizedBox(height: 3),
                         Text(
                           isPrivacy ? '₹ ••••••' : Formatters.currency0(totalCurrentValue),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: AppColors.ink,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -694,20 +695,20 @@ class _SummaryAndHeatmapSection extends StatelessWidget {
 
               // 3 Key Stats Strip
               Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF111215),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
                   border: Border(
-                    top: BorderSide(color: Color(0xFF22242B), width: 0.8),
-                    bottom: BorderSide(color: Color(0xFF22242B), width: 0.8),
+                    top: BorderSide(color: AppColors.line, width: 0.8),
+                    bottom: BorderSide(color: AppColors.line, width: 0.8),
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   children: [
                     _InlineMetric(context.t.metricInvested, isPrivacy ? '••••••' : Formatters.currency0(totalInvested)),
-                    Container(width: 1, height: 26, color: const Color(0xFF282A30)),
+                    Container(width: 1, height: 26, color: AppColors.line),
                     _InlineMetric(context.t.metricHoldings, context.t.metricPositions(totalStocks)),
-                    Container(width: 1, height: 26, color: const Color(0xFF282A30)),
+                    Container(width: 1, height: 26, color: AppColors.line),
                     _InlineMetric(context.t.metricWinRatio, _calculateWinRatio()),
                   ],
                 ),
@@ -745,9 +746,9 @@ class _HeatmapCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: _ReturnHeatmap(stocks: stocks),
     );
@@ -769,9 +770,9 @@ class _InlineMetric extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
-              color: Color(0xFF858A94),
+              color: AppColors.textTertiary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -781,10 +782,10 @@ class _InlineMetric extends StatelessWidget {
             child: Text(
               value,
               maxLines: 1,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppColors.ink,
               ),
             ),
           ),
@@ -824,20 +825,20 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
       children: [
         Row(
           children: [
-            const Icon(Icons.grid_view_rounded, size: 13, color: Color(0xFFE5A93C)),
+            Icon(Icons.grid_view_rounded, size: 13, color: AppColors.textSecondary),
             const SizedBox(width: 5),
             Flexible(
               child: Text(
                 context.t.heatReturnTitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.ink),
               ),
             ),
             const Spacer(),
             Text(
               context.t.heatUpDown(up, stocks.length - up),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF858A94)),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textTertiary),
             ),
           ],
         ),
@@ -862,12 +863,12 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
                     Icon(
                       _gainersFirst ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
                       size: 13,
-                      color: const Color(0xFF8E929B),
+                      color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 3),
                     Text(
                       _gainersFirst ? context.t.heatGainersFirst : context.t.heatLosersFirst,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF8E929B)),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -895,16 +896,16 @@ class _ReturnHeatmapState extends State<_ReturnHeatmap> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ? const Color(0x1FE5A93C) : Colors.transparent,
+          color: selected ? AppColors.ink.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: selected ? const Color(0xFFE5A93C) : const Color(0xFF2E3138)),
+          border: Border.all(color: selected ? AppColors.ink : AppColors.line),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: selected ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+            color: selected ? AppColors.ink : AppColors.textSecondary,
           ),
         ),
       ),
@@ -933,7 +934,7 @@ class _PortfolioHeatmapGrid extends StatelessWidget {
         child: Center(
           child: Text(
             context.t.heatEmpty,
-            style: TextStyle(fontSize: 12, color: Color(0xFF858A94)),
+            style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
           ),
         ),
       );
@@ -1038,18 +1039,18 @@ class _PortfolioState extends StatelessWidget {
               height: 54,
               width: 54,
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: Icon(icon, color: AppColors.ink),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -1058,19 +1059,19 @@ class _PortfolioState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF8E929B),
+              style: TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
             if (loading) ...[
               const SizedBox(height: AppSpacing.lg),
-              const SizedBox(
+              SizedBox(
                 width: 140,
                 child: LinearProgressIndicator(
                   minHeight: 2,
-                  backgroundColor: Color(0xFF23252B),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                  backgroundColor: AppColors.surfaceSecondary,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.ink),
                 ),
               ),
             ],

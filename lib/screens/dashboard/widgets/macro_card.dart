@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 import '../../../providers/risk_provider.dart';
 import '../../risk/risk_lab_page.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _muted = Color(0xFF8E929B);
+Color get _muted => AppColors.textSecondary;
 const _up = Color(0xFF199E70);
 const _down = Color(0xFFD95926);
 
@@ -25,9 +26,9 @@ class MacroCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,13 +41,13 @@ class MacroCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('India VIX', style: TextStyle(color: _muted, fontSize: 12)),
+                    Text('India VIX', style: TextStyle(color: _muted, fontSize: 12)),
                     const SizedBox(height: 2),
                     Text(data.vix?.toStringAsFixed(2) ?? '—',
-                        style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
+                        style: TextStyle(color: AppColors.ink, fontSize: 20, fontWeight: FontWeight.w800)),
                     Text(
                       vixChange == null ? '—' : '${vixChange >= 0 ? '+' : ''}${vixChange.toStringAsFixed(2)}%',
-                      style: const TextStyle(color: _muted, fontSize: 12),
+                      style: TextStyle(color: _muted, fontSize: 12),
                     ),
                   ],
                 ),
@@ -61,17 +62,17 @@ class MacroCard extends ConsumerWidget {
                       data.breadthDate == null
                           ? context.t.macroBreadth
                           : 'Breadth · ${DateFormat('d MMM').format(data.breadthDate!)}',
-                      style: const TextStyle(color: _muted, fontSize: 12),
+                      style: TextStyle(color: _muted, fontSize: 12),
                     ),
                     const SizedBox(height: 6),
                     if (data.hasBreadth) ...[
                       Row(
                         children: [
                           Text(context.t.macroAdvances(n.format(data.advances)),
-                              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                              style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                           const Spacer(),
                           Text(context.t.macroDeclines(n.format(data.declines)),
-                              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                              style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -89,7 +90,7 @@ class MacroCard extends ConsumerWidget {
                         ),
                       ),
                     ] else
-                      const Text('—', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      Text('—', style: TextStyle(color: AppColors.ink, fontSize: 16)),
                   ],
                 ),
               ),
@@ -99,7 +100,7 @@ class MacroCard extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: TextButton.icon(
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFE5A93C),
+                foregroundColor: AppColors.accent,
                 visualDensity: VisualDensity.compact,
               ),
               icon: const Icon(Icons.science_outlined, size: 16),

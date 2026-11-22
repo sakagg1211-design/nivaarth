@@ -7,8 +7,9 @@ import '../../../models/stock_score.dart';
 import '../../../providers/stock_insights_provider.dart';
 import 'share_card.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _muted = Color(0xFF8E929B);
+Color get _muted => AppColors.textSecondary;
 const _line = Color(0xFF3987E5);
 
 /// The shape on a fixed 0-100 scale, so two stocks' shapes can be compared.
@@ -30,8 +31,9 @@ class ScoreRadar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final grid = BorderSide(color: Colors.white.withValues(alpha: .1));
-    return RadarChart(
+    final grid = BorderSide(color: AppColors.ink.withValues(alpha: .1));
+    // The same scores are listed as text under the radar, so TalkBack reads those instead
+    return ExcludeSemantics(child: RadarChart(
       RadarChartData(
         radarShape: RadarShape.polygon,
         dataSets: [
@@ -53,12 +55,12 @@ class ScoreRadar extends StatelessWidget {
         radarBorderData: grid,
         radarBackgroundColor: Colors.transparent,
         radarTouchData: RadarTouchData(enabled: false),
-        titleTextStyle: const TextStyle(color: Colors.white70, fontSize: 11),
+        titleTextStyle: TextStyle(color: AppColors.textSecondary, fontSize: 11),
         titlePositionPercentageOffset: 0.14,
         getTitle: (i, _) => RadarChartTitle(text: _drawn[i].shortLabel),
       ),
       duration: Duration.zero,
-    );
+    ));
   }
 }
 
@@ -77,7 +79,7 @@ class BadgeWrap extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: b.caution ? const Color(0x80E5A93C) : Colors.white.withValues(alpha: .16)),
+              border: Border.all(color: b.caution ? AppColors.accent.withValues(alpha: 0.50) : AppColors.ink.withValues(alpha: .16)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -85,10 +87,10 @@ class BadgeWrap extends StatelessWidget {
                 Icon(
                   b.caution ? Icons.warning_amber_rounded : Icons.check_rounded,
                   size: 13,
-                  color: b.caution ? const Color(0xFFE5A93C) : _muted,
+                  color: b.caution ? AppColors.accent : _muted,
                 ),
                 const SizedBox(width: 4),
-                Text(b.label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                Text(b.label, style: TextStyle(color: AppColors.ink, fontSize: 12)),
               ],
             ),
           ),
@@ -121,9 +123,9 @@ class StockRadarCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,13 +134,13 @@ class StockRadarCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(context.t.radarTitle,
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               if (score.overallScore != null)
                 IconButton(
                   tooltip: context.t.commonShare,
                   visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.ios_share_rounded, color: _muted, size: 18),
+                  icon: Icon(Icons.ios_share_rounded, color: _muted, size: 18),
                   onPressed: () => showShareCard(
                     context,
                     fileName: 'Nivaarth_$symbol.png',
@@ -160,9 +162,9 @@ class StockRadarCard extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Row(
                   children: [
-                    Expanded(child: Text(a.label, style: const TextStyle(color: Colors.white70, fontSize: 13))),
+                    Expanded(child: Text(a.label, style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
                     Text(a.value == null ? '—' : a.value!.round().toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                        style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
@@ -171,7 +173,7 @@ class StockRadarCard extends ConsumerWidget {
               lender
                   ? context.t.radarNoteLeverage
                   : context.t.radarNoteDebt,
-              style: const TextStyle(color: _muted, fontSize: 11),
+              style: TextStyle(color: _muted, fontSize: 11),
             ),
           ],
         ],

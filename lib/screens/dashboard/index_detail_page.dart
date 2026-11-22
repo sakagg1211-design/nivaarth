@@ -12,6 +12,7 @@ import '../../providers/market_indices_provider.dart';
 import '../stock/widgets/chart_selector.dart';
 import '../stock/widgets/stock_line_chart.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 class IndexDetailPage extends ConsumerStatefulWidget {
   final String symbol; // ^NSEI or ^BSESN
@@ -57,8 +58,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
     final dayLow = indexData?.dayLow ?? value;
 
     final isUp = pointChange >= 0;
-    final tone = isUp ? const Color(0xFF00E676) : const Color(0xFFFF5252);
-    final toneBg = isUp ? const Color(0x1F00E676) : const Color(0x26FF5252);
+    final tone = isUp ? AppColors.success : AppColors.danger;
+    final toneBg = isUp ? AppColors.success.withValues(alpha: 0.12) : AppColors.danger.withValues(alpha: 0.15);
 
 
     // Wide screens: same centered column as the rest of the app; padding (not a
@@ -69,18 +70,18 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
         : (Breakpoints.isDesktop(context) ? 24.0 : 16.0);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFF0C0D10),
+        backgroundColor: AppColors.background,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.ink, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.name,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: AppColors.ink,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -90,19 +91,19 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0x1FE5A93C),
+              color: AppColors.accent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0x4DE5A93C)),
+              border: Border.all(color: AppColors.accent.withValues(alpha: 0.30)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.token_rounded, size: 13, color: Color(0xFFE5A93C)),
+                Icon(Icons.token_rounded, size: 13, color: AppColors.accent),
                 SizedBox(width: 4),
                 Text(
                   'BENCHMARK',
                   style: TextStyle(
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.accent,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.6,
@@ -123,9 +124,9 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,8 +136,8 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     children: [
                       Text(
                         isNifty ? 'National Stock Exchange of India' : 'Bombay Stock Exchange',
-                        style: const TextStyle(
-                          color: Color(0xFF8E929B),
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -144,7 +145,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                         decoration: BoxDecoration(
-                          color: (hasValue && marketOpen ? const Color(0xFF00E676) : const Color(0xFF8E929B))
+                          color: (hasValue && marketOpen ? AppColors.success : AppColors.textSecondary)
                               .withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
@@ -152,13 +153,13 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.circle,
-                                color: hasValue && marketOpen ? const Color(0xFF00E676) : const Color(0xFF8E929B),
+                                color: hasValue && marketOpen ? AppColors.success : AppColors.textSecondary,
                                 size: 6),
                             const SizedBox(width: 4),
                             Text(
                               !hasValue ? 'UNAVAILABLE' : (marketOpen ? 'LIVE' : context.t.indexMarketClosed),
                               style: TextStyle(
-                                color: hasValue && marketOpen ? const Color(0xFF00E676) : const Color(0xFF8E929B),
+                                color: hasValue && marketOpen ? AppColors.success : AppColors.textSecondary,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -174,10 +175,10 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     children: [
                       Text(
                         hasValue ? Formatters.number(value.round()) : '—',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: AppColors.ink,
                           letterSpacing: -0.8,
                         ),
                       ),
@@ -220,23 +221,23 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.insights_rounded, size: 16, color: Color(0xFFE5A93C)),
+                      Icon(Icons.insights_rounded, size: 16, color: AppColors.accent),
                       SizedBox(width: 8),
                       Text(
                         context.t.indexPerformance,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: AppColors.ink,
                         ),
                       ),
                     ],
@@ -251,20 +252,20 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     height: 220,
                     width: double.infinity,
                     child: chartPointsAsync.when(
-                      loading: () => const Center(
+                      loading: () => Center(
                         child: SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Color(0xFFE5A93C),
+                            color: AppColors.accent,
                           ),
                         ),
                       ),
                       error: (error, stack) => Center(
                         child: Text(
                           context.t.indexChartUnavailable,
-                          style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                         ),
                       ),
                       data: (points) {
@@ -286,9 +287,9 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +299,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: AppColors.ink,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -313,10 +314,10 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     )
                   else
                     Text(context.t.indexTodayRangeNa,
-                        style: TextStyle(fontSize: 12, color: Color(0xFF8E929B))),
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
 
                   const SizedBox(height: 18),
-                  const Divider(color: Color(0xFF23252B), height: 1),
+                  Divider(color: AppColors.surfaceSecondary, height: 1),
                   const SizedBox(height: 18),
 
                   // 52-Week Range from Yahoo's daily history (never a fixed number)
@@ -330,7 +331,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                   else
                     Text(
                       history.isLoading ? context.t.index52wLoading : context.t.index52wNa,
-                      style: const TextStyle(fontSize: 12, color: Color(0xFF8E929B)),
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                     ),
                 ],
               ),
@@ -347,23 +348,23 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.account_balance_rounded, color: Color(0xFFE5A93C), size: 18),
+                      Icon(Icons.account_balance_rounded, color: AppColors.accent, size: 18),
                       const SizedBox(width: 8),
                       Text(
                         context.t.indexAbout(widget.name),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: AppColors.ink,
                         ),
                       ),
                     ],
@@ -373,9 +374,9 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     isNifty
                         ? context.t.indexAboutNifty
                         : context.t.indexAboutSensex,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF8E929B),
+                      color: AppColors.textSecondary,
                       height: 1.55,
                     ),
                   ),
@@ -385,7 +386,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white70,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -406,7 +407,7 @@ class _IndexDetailPageState extends ConsumerState<IndexDetailPage> {
                     isNifty
                         ? context.t.indexWeightsNifty
                         : context.t.indexWeightsSensex,
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF8E929B)),
+                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -446,18 +447,18 @@ class _RangeThermometer extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
               ),
             ),
             Text(
               Formatters.number(currentValue.round()),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppColors.ink,
               ),
             ),
           ],
@@ -469,7 +470,7 @@ class _RangeThermometer extends StatelessWidget {
               height: 6,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xFF23252B),
+                color: AppColors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -478,8 +479,8 @@ class _RangeThermometer extends StatelessWidget {
               child: Container(
                 height: 6,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFE5A93C), Color(0xFF00E676)],
+                  gradient: LinearGradient(
+                    colors: [AppColors.accent, AppColors.success],
                   ),
                   borderRadius: BorderRadius.circular(3),
                 ),
@@ -493,18 +494,18 @@ class _RangeThermometer extends StatelessWidget {
           children: [
             Text(
               'L: ${Formatters.number(lowValue.round())}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFFFF5252),
+                color: AppColors.danger,
               ),
             ),
             Text(
               'H: ${Formatters.number(highValue.round())}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF00E676),
+                color: AppColors.success,
               ),
             ),
           ],
@@ -524,14 +525,14 @@ class _SectorTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F2128),
+        color: AppColors.surfaceSecondary,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF2B2E38)),
+        border: Border.all(color: AppColors.surfaceSecondary),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Colors.white70,
+        style: TextStyle(
+          color: AppColors.textSecondary,
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
@@ -554,21 +555,21 @@ class _IndicatorCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF282A30)),
+        border: Border.all(color: AppColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             context.t.indexTechnical,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.ink),
           ),
           const SizedBox(height: 4),
           Text(
             context.t.indexTechnicalSub,
-            style: TextStyle(fontSize: 12, color: Color(0xFF8E929B)),
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 14),
           ...history.when(
@@ -604,21 +605,21 @@ class _IndicatorCard extends StatelessWidget {
   }
 
   static Widget _note(String text) =>
-      Text(text, style: const TextStyle(fontSize: 12, color: Color(0xFF8E929B)));
+      Text(text, style: TextStyle(fontSize: 12, color: AppColors.textSecondary));
 
   /// [positive] colours the status: true green, false red, null neutral
   static Widget _row(String label, String value, String status, bool? positive) {
     final color = positive == null
-        ? const Color(0xFFC7CDD6)
-        : (positive ? const Color(0xFF00E676) : const Color(0xFFFF5252));
+        ? AppColors.inkSoft
+        : (positive ? AppColors.success : AppColors.danger);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600)),
+            child: Text(label, style: TextStyle(fontSize: 13, color: AppColors.ink, fontWeight: FontWeight.w600)),
           ),
-          Text(value, style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w700)),
+          Text(value, style: TextStyle(fontSize: 13, color: AppColors.ink, fontWeight: FontWeight.w700)),
           const SizedBox(width: 10),
           SizedBox(
             width: 140,

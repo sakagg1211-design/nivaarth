@@ -4884,6 +4884,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SME platform: low liquidity, large lot size'**
   String get badgeSmeMeaning;
+
+  /// No description provided for @semChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Price chart, {range}: {from} to {to}, {pct}'**
+  String semChart(String range, String from, String to, String pct);
+
+  /// No description provided for @themeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeLabel;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get themePhone;
 }
 
 class _AppLocalizationsDelegate

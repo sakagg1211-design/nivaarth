@@ -6,6 +6,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../../core/l10n/l10n_ext.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/theme/app_colors.dart';
 
 class PortfolioHeroCard extends ConsumerWidget {
   final double currentValue;
@@ -99,22 +100,22 @@ class PortfolioHeroCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPrivacy = ref.watch(privacyModeProvider);
-    final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final tone = isProfit ? AppColors.success : AppColors.danger;
     final pnlBadgeBg = isProfit
-        ? const Color(0x1F00E676)
-        : const Color(0x26FF5252);
+        ? AppColors.success.withValues(alpha: 0.12)
+        : AppColors.danger.withValues(alpha: 0.15);
 
     final isDayUp = todayPnL >= 0;
-    final dayTone = isDayUp ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final dayTone = isDayUp ? AppColors.success : AppColors.danger;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF282A30),
+          color: AppColors.line,
           width: 1,
         ),
       ),
@@ -128,7 +129,7 @@ class PortfolioHeroCard extends ConsumerWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF8E929B),
+              color: AppColors.textSecondary,
               letterSpacing: 1.2,
             ),
           ),
@@ -141,8 +142,8 @@ class PortfolioHeroCard extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               isPrivacy ? '₹ ••••••' : Formatters.currency0(currentValue),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.ink,
                 fontSize: 34,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.8,
@@ -190,7 +191,7 @@ class PortfolioHeroCard extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF8E929B),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -202,7 +203,7 @@ class PortfolioHeroCard extends ConsumerWidget {
           Container(
             height: 1,
             width: double.infinity,
-            color: const Color(0xFF23252B),
+            color: AppColors.surfaceSecondary,
           ),
 
           const SizedBox(height: 12),
@@ -216,7 +217,7 @@ class PortfolioHeroCard extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF8E929B),
+                  color: AppColors.textSecondary,
                 ),
               ),
               Text(
@@ -236,10 +237,10 @@ class PortfolioHeroCard extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               _asOfLabel(context.t)!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF858A94),
+                color: AppColors.textTertiary,
               ),
             ),
           ],
@@ -248,19 +249,19 @@ class PortfolioHeroCard extends ConsumerWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.info_outline_rounded,
                   size: 14,
-                  color: Color(0xFFFFB74D),
+                  color: AppColors.warning,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     _priceNote(context.t)!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFFFFB74D),
+                      color: AppColors.warning,
                     ),
                   ),
                 ),

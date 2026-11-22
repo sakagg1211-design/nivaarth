@@ -69,7 +69,7 @@ class AiScoreCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.auto_awesome,
                   color: AppColors.primary,
                   size: 20,
@@ -108,7 +108,7 @@ class AiScoreCard extends StatelessWidget {
               IconButton(
                 tooltip: context.t.aiHowWorks,
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(
+                icon: Icon(
                   Icons.info_outline_rounded,
                   color: AppColors.textSecondary,
                   size: 20,
@@ -396,19 +396,19 @@ class AiScoreCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0x1FE5A93C),
+                    color: AppColors.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0x33E5A93C)),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.20)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.psychology_outlined, size: 14, color: Color(0xFFE5A93C)),
+                      Icon(Icons.psychology_outlined, size: 14, color: AppColors.accent),
                       SizedBox(width: 4),
                       Text(
                         context.t.aiMethodology,
                         style: TextStyle(
-                          color: Color(0xFFE5A93C),
+                          color: AppColors.accent,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
@@ -588,10 +588,10 @@ class _RecommendationChip extends StatelessWidget {
   Color _color(String formattedRec) {
     final upper = formattedRec.toUpperCase();
     if (upper.contains("ROBUST") || upper.contains("ACCUMULATE") || upper.contains("OUTPERFORM") || upper == "BUY") {
-      return const Color(0xFF4ADE80);
+      return AppColors.success;
     }
     if (upper.contains("DIP") || upper.contains("WAIT FOR DIP")) {
-      return const Color(0xFF38BDF8); // Cyan/blue
+      return AppColors.info; // Cyan/blue
     }
     if (upper.contains("HIGH RISK") || upper.contains("FLAG") || upper.contains("AVOID") || upper.contains("SELL")) {
       return AppColors.danger;

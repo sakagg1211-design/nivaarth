@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../models/chart_point.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Date text for the crosshair, at the precision the selected range has.
 String chartDateLabel(DateTime time, String range) {
@@ -41,7 +42,7 @@ class StockLineChart extends StatelessWidget {
       return Center(
         child: Text(
           context.t.chartUpdating,
-          style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
       );
     }
@@ -60,13 +61,19 @@ class StockLineChart extends StatelessWidget {
       maxY *= 1.02;
     }
 
-    final chartColor = isPositive ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final chartColor = isPositive ? AppColors.success : AppColors.danger;
     final spots = <FlSpot>[];
     for (int i = 0; i < series.length; i++) {
       spots.add(FlSpot(i.toDouble(), series[i].close));
     }
 
-    return LineChart(
+    final first = series.first.close, last = series.last.close;
+    // TalkBack cannot use the crosshair, so the chart reads its range, start, end and change
+    return Semantics(
+      label: context.t.semChart(range, Formatters.currency(first), Formatters.currency(last),
+          first > 0 ? Formatters.percent((last / first - 1) * 100, signed: true) : context.t.semNoData),
+      excludeSemantics: true,
+      child: LineChart(
       LineChartData(
         minY: minY,
         maxY: maxY,
@@ -80,14 +87,14 @@ class StockLineChart extends StatelessWidget {
           getTouchLineEnd: (_, _) => maxY,
           getTouchedSpotIndicator: (bar, indexes) => indexes
               .map((_) => TouchedSpotIndicatorData(
-                    FlLine(color: Colors.white.withValues(alpha: .35), strokeWidth: 1, dashArray: const [3, 3]),
+                    FlLine(color: AppColors.ink.withValues(alpha: .35), strokeWidth: 1, dashArray: const [3, 3]),
                     FlDotData(
                       show: true,
                       getDotPainter: (spot, percent, b, i) => FlDotCirclePainter(
                         radius: 4,
                         color: chartColor,
                         strokeWidth: 2,
-                        strokeColor: const Color(0xFF16171B),
+                        strokeColor: AppColors.surface,
                       ),
                     ),
                   ))
@@ -95,22 +102,22 @@ class StockLineChart extends StatelessWidget {
           touchTooltipData: LineTouchTooltipData(
             fitInsideHorizontally: true,
             fitInsideVertically: true,
-            getTooltipColor: (_) => const Color(0xFF1E2026),
+            getTooltipColor: (_) => AppColors.surfaceSecondary,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 final p = series[spot.x.toInt()];
                 return LineTooltipItem(
                   '${Formatters.currency(p.close)}\n',
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
+                  TextStyle(color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 12),
                   children: [
                     TextSpan(
                       text: chartDateLabel(p.time, range),
-                      style: const TextStyle(color: Color(0xFF8E929B), fontWeight: FontWeight.w500, fontSize: 11),
+                      style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w500, fontSize: 11),
                     ),
                     if (p.volume > 0)
                       TextSpan(
                         text: '\nVol ${chartVolumeLabel(p.volume)}',
-                        style: const TextStyle(color: Color(0xFF8E929B), fontWeight: FontWeight.w500, fontSize: 11),
+                        style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w500, fontSize: 11),
                       ),
                   ],
                 );
@@ -141,6 +148,7 @@ class StockLineChart extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

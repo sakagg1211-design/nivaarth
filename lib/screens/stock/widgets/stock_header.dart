@@ -62,20 +62,20 @@ class StockHeader extends StatelessWidget {
         borderRadius:
             BorderRadius.circular(28),
 
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
 
-            Color(0xff20283B),
+            AppColors.surfaceSecondary,
 
-            Color(0xff111318),
+            AppColors.surface,
 
           ],
         ),
 
         border: Border.all(
-          color: Colors.white.withValues(
+          color: AppColors.ink.withValues(
             alpha: .05,
           ),
         ),
@@ -111,7 +111,7 @@ class StockHeader extends StatelessWidget {
 
                 decoration: BoxDecoration(
 
-                  color: Colors.white.withValues(
+                  color: AppColors.ink.withValues(
                     alpha: .06,
                   ),
 
@@ -129,9 +129,9 @@ class StockHeader extends StatelessWidget {
                         ? "-"
                         : instrument[0],
 
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
-                      color: Colors.white,
+                      color: AppColors.ink,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -160,7 +160,7 @@ class StockHeader extends StatelessWidget {
                         style:
                             AppTypography.titleLarge
                                 .copyWith(
-                          color: Colors.white,
+                          color: AppColors.ink,
                           fontWeight:
                               FontWeight.w800,
                           fontSize: 20,
@@ -168,7 +168,7 @@ class StockHeader extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(
+                    SizedBox(
                       height: 3,
                     ),
 
@@ -183,14 +183,14 @@ class StockHeader extends StatelessWidget {
                           AppTypography.bodySmall
                               .copyWith(
                         color:
-                            Colors.white70,
+                            AppColors.textSecondary,
                         fontSize: 12,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Column(
                 crossAxisAlignment:
                     CrossAxisAlignment.end,
@@ -200,7 +200,7 @@ class StockHeader extends StatelessWidget {
                   if (isMarketOpenIst(DateTime.now().toUtc()))
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(
+                        EdgeInsets.symmetric(
                       horizontal: 9,
                       vertical: 5,
                     ),
@@ -217,7 +217,7 @@ class StockHeader extends StatelessWidget {
                     child: Row(
                       mainAxisSize:
                           MainAxisSize.min,
-                      children: const [
+                      children: [
 
                         Icon(
                           Icons.circle,
@@ -251,8 +251,8 @@ class StockHeader extends StatelessWidget {
                     width: 36,
                     decoration: BoxDecoration(
                       color: isSaved
-                          ? const Color(0x33E5A93C)
-                          : Colors.white.withValues(alpha: .06),
+                          ? AppColors.accent.withValues(alpha: 0.20)
+                          : AppColors.ink.withValues(alpha: .06),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
@@ -261,7 +261,7 @@ class StockHeader extends StatelessWidget {
                       onPressed: onSaveToggle,
                       icon: Icon(
                         isSaved ? Icons.star_rounded : Icons.star_outline_rounded,
-                        color: isSaved ? const Color(0xFFE5A93C) : Colors.white,
+                        color: isSaved ? AppColors.accent : AppColors.ink,
                         size: 20,
                       ),
                     ),
@@ -283,7 +283,7 @@ class StockHeader extends StatelessWidget {
               style: AppTypography
                   .displaySmall
                   .copyWith(
-                color: Colors.white,
+                color: AppColors.ink,
                 fontWeight:
                     FontWeight.w900,
                 fontSize: 32,
@@ -426,14 +426,14 @@ class _HeaderMetric extends StatelessWidget {
         vertical: 10,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(
+        color: AppColors.ink.withValues(
           alpha: .05,
         ),
         borderRadius: BorderRadius.circular(
           14,
         ),
         border: Border.all(
-          color: Colors.white.withValues(
+          color: AppColors.ink.withValues(
             alpha: .06,
           ),
         ),
@@ -450,7 +450,7 @@ class _HeaderMetric extends StatelessWidget {
               title,
               maxLines: 1,
               style: AppTypography.bodySmall.copyWith(
-                color: Colors.white60,
+                color: AppColors.textSecondary,
                 fontSize: 11,
               ),
             ),
@@ -467,7 +467,7 @@ class _HeaderMetric extends StatelessWidget {
               value,
               maxLines: 1,
               style: AppTypography.titleMedium.copyWith(
-                color: Colors.white,
+                color: AppColors.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),

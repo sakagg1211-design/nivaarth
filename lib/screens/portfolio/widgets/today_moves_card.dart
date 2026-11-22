@@ -11,9 +11,11 @@ import '../../../providers/live_portfolio_provider.dart';
 import '../../../repositories/listing_repository.dart';
 import '../../stock/stock_detail_page.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
+// Fixed fills: the text on them reads in both modes
 const _up = Color(0xFF0C9F6E);
 const _down = Color(0xFFD64545);
 
@@ -59,18 +61,18 @@ class TodayMovesCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text('Sector heatmap',
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
-              Text(open ? context.t.movesToday : context.t.movesLastSession, style: const TextStyle(color: _muted, fontSize: 12)),
+              Text(open ? context.t.movesToday : context.t.movesLastSession, style: TextStyle(color: _muted, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 12),
@@ -99,7 +101,7 @@ class _Heatmap extends StatelessWidget {
 
   // A move of 2% or more is shown at full strength
   Color _color(double change) {
-    if (change.abs() < 0.005) return Colors.white.withValues(alpha: .06);
+    if (change.abs() < 0.005) return AppColors.ink.withValues(alpha: .06);
     final strength = (change.abs() / 2).clamp(0.0, 1.0);
     return (change > 0 ? _up : _down).withValues(alpha: .28 + strength * .62);
   }
@@ -132,13 +134,13 @@ class _Heatmap extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.white, fontSize: 11, height: 1.15, fontWeight: FontWeight.w600)),
+                              style: TextStyle(color: AppColors.ink, fontSize: 11, height: 1.15, fontWeight: FontWeight.w600)),
                           const SizedBox(height: 2),
                           FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(_pct(s.change),
                                 maxLines: 1,
-                                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800)),
+                                style: TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w800)),
                           ),
                         ],
                       ),
@@ -164,9 +166,9 @@ class _Movers extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+        Text(title, style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
         const SizedBox(height: 6),
-        if (items.isEmpty) const Text('—', style: TextStyle(color: _muted, fontSize: 13)),
+        if (items.isEmpty) Text('—', style: TextStyle(color: _muted, fontSize: 13)),
         for (final h in items)
           InkWell(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => StockDetailPage(stock: h))),
@@ -181,10 +183,10 @@ class _Movers extends StatelessWidget {
                         child: Text(SymbolUtils.normalize(h.portfolio.instrument),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                            style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       ),
                       Text(_pct(h.todayReturnPercent),
-                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                          style: TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w700)),
                     ],
                   ),
                   const SizedBox(height: 5),

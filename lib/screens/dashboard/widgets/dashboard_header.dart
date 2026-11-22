@@ -18,6 +18,7 @@ import '../../login/welcome_screen.dart';
 import '../../notifications/notifications_page.dart';
 import '../../../widgets/legal_disclaimer_sheet.dart';
 import '../../../widgets/language_switcher.dart';
+import '../../../widgets/theme_switcher.dart';
 import '../../../core/l10n/l10n_ext.dart';
 
 class DashboardHeader extends ConsumerWidget {
@@ -89,7 +90,7 @@ class DashboardHeader extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         _getUserDisplayName().substring(0, 1).toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.background, // the tile is ink (white): white text was invisible
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -129,7 +130,7 @@ class DashboardHeader extends ConsumerWidget {
                     child: Text(
                       'Beta',
                       style: AppTypography.caption.copyWith(
-                        color: AppColors.accent,
+                        color: AppColors.textSecondary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -139,6 +140,7 @@ class DashboardHeader extends ConsumerWidget {
 
               const SizedBox(height: AppSpacing.md),
               const LanguageSwitcher(),
+              const ThemeSwitcher(),
               const SizedBox(height: AppSpacing.sm),
               // Feedback & Issue Report Action
               ListTile(
@@ -159,7 +161,7 @@ class DashboardHeader extends ConsumerWidget {
                 title: Text(
                   context.t.menuFeedbackTitle,
                   style: AppTypography.title.copyWith(
-                    color: Colors.white,
+                    color: AppColors.ink,
                     fontSize: 15,
                   ),
                 ),
@@ -167,10 +169,10 @@ class DashboardHeader extends ConsumerWidget {
                   context.t.menuFeedbackBody,
                   style: AppTypography.caption,
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: Colors.white38,
+                  color: AppColors.ink.withValues(alpha: 0.38),
                 ),
                 onTap: () {
                   Navigator.pop(modalContext);
@@ -179,7 +181,7 @@ class DashboardHeader extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.sm),
-              const Divider(color: AppColors.line),
+              Divider(color: AppColors.line),
               const SizedBox(height: AppSpacing.sm),
 
               // Regulatory & Legal Disclaimers Action
@@ -189,19 +191,19 @@ class DashboardHeader extends ConsumerWidget {
                   height: 38,
                   width: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0x1FE5A93C),
+                    color: AppColors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.gavel_rounded,
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.inkSoft,
                     size: 20,
                   ),
                 ),
                 title: Text(
                   context.t.menuLegalTitle,
                   style: AppTypography.title.copyWith(
-                    color: Colors.white,
+                    color: AppColors.ink,
                     fontSize: 15,
                   ),
                 ),
@@ -209,10 +211,10 @@ class DashboardHeader extends ConsumerWidget {
                   context.t.menuLegalBody,
                   style: AppTypography.caption,
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: Colors.white38,
+                  color: AppColors.ink.withValues(alpha: 0.38),
                 ),
                 onTap: () {
                   Navigator.pop(modalContext);
@@ -221,7 +223,7 @@ class DashboardHeader extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.sm),
-              const Divider(color: AppColors.line),
+              Divider(color: AppColors.line),
               const SizedBox(height: AppSpacing.sm),
 
               // Logout Action
@@ -234,7 +236,7 @@ class DashboardHeader extends ConsumerWidget {
                     color: AppColors.dangerSoft,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.logout_rounded,
                     color: AppColors.danger,
                     size: 20,
@@ -268,8 +270,8 @@ class DashboardHeader extends ConsumerWidget {
                       info == null
                           ? 'Nivaarth Friends Beta'
                           : 'Nivaarth Friends Beta v${info.version} (Build ${info.buildNumber})',
-                      style: const TextStyle(
-                        color: Color(0xFF858A94),
+                      style: TextStyle(
+                        color: AppColors.textTertiary,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -291,13 +293,13 @@ class DashboardHeader extends ConsumerWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF16171B),
+          backgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
-              Icon(Icons.feedback_outlined, color: Color(0xFFE5A93C), size: 22),
+              Icon(Icons.feedback_outlined, color: AppColors.inkSoft, size: 22),
               SizedBox(width: 10),
-              Text(context.t.feedbackTitle, style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
+              Text(context.t.feedbackTitle, style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w700)),
             ],
           ),
           content: Column(
@@ -306,25 +308,25 @@ class DashboardHeader extends ConsumerWidget {
             children: [
               Text(
                 context.t.feedbackPrompt,
-                style: TextStyle(color: Color(0xFFD1D5DB), fontSize: 13),
+                style: TextStyle(color: AppColors.inkSoft, fontSize: 13),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: feedbackCtrl,
                 maxLines: 4,
-                style: const TextStyle(color: Colors.white, fontSize: 13),
+                style: TextStyle(color: AppColors.ink, fontSize: 13),
                 decoration: InputDecoration(
                   hintText: context.t.feedbackHint,
-                  hintStyle: const TextStyle(color: Color(0xFF858A94)),
+                  hintStyle: TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFF111215),
+                  fillColor: AppColors.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFF282A30)),
+                    borderSide: BorderSide(color: AppColors.line),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFE5A93C)),
+                    borderSide: BorderSide(color: AppColors.ink),
                   ),
                 ),
               ),
@@ -333,11 +335,11 @@ class DashboardHeader extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: Text(context.t.commonCancel, style: TextStyle(color: Colors.white54)),
+              child: Text(context.t.commonCancel, style: TextStyle(color: AppColors.ink.withValues(alpha: 0.54))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE5A93C),
+                backgroundColor: AppColors.accent,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -346,7 +348,7 @@ class DashboardHeader extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(context.t.feedbackThanks),
-                    backgroundColor: Color(0xFF16171B),
+                    backgroundColor: AppColors.surface,
                   ),
                 );
               },
@@ -440,7 +442,7 @@ class DashboardHeader extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFE5A93C).withValues(alpha: 0.20),
+                color: AppColors.accent.withValues(alpha: 0.20),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
@@ -463,8 +465,8 @@ class DashboardHeader extends ConsumerWidget {
                 greeting,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF9E9E9E),
+                style: TextStyle(
+                  color: AppColors.textTertiary,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   letterSpacing: -0.2,
@@ -475,8 +477,8 @@ class DashboardHeader extends ConsumerWidget {
                 displayName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.ink,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
@@ -490,7 +492,7 @@ class DashboardHeader extends ConsumerWidget {
         _HeaderIconButton(
           icon: isPrivacy ? Icons.visibility_off_rounded : Icons.visibility_rounded,
           tooltip: isPrivacy ? context.t.tipShowValues : context.t.tipHideValues,
-          iconColor: isPrivacy ? const Color(0xFFE5A93C) : null,
+          iconColor: isPrivacy ? AppColors.ink : null,
           onTap: () => ref.read(privacyModeProvider.notifier).toggle(),
         ),
         const SizedBox(width: 8),
@@ -560,16 +562,16 @@ class _HeaderIconButton extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF1E2024),
+                color: AppColors.surfaceSecondary,
                 border: Border.all(
-                  color: hasBadge ? const Color(0xFFE5A93C).withValues(alpha: 0.6) : const Color(0xFF2C2F36),
+                  color: AppColors.line,
                   width: 1,
                 ),
               ),
               child: Icon(
                 icon,
                 size: 19,
-                color: iconColor ?? (hasBadge ? const Color(0xFFE5A93C) : const Color(0xFFC7CDD6)),
+                color: iconColor ?? AppColors.inkSoft,
               ),
             ),
             if (hasBadge)
@@ -579,16 +581,16 @@ class _HeaderIconButton extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF5252),
+                    color: AppColors.danger,
                     shape: badgeCount > 9 ? BoxShape.rectangle : BoxShape.circle,
                     borderRadius: badgeCount > 9 ? BorderRadius.circular(10) : null,
-                    border: Border.all(color: const Color(0xFF111215), width: 1.5),
+                    border: Border.all(color: AppColors.surface, width: 1.5),
                   ),
                   constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                   child: Center(
                     child: Text(
                       badgeCount > 9 ? '9+' : '$badgeCount',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,

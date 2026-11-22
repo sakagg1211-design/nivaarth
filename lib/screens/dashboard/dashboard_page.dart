@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/layout/breakpoints.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/utils/market_hours.dart';
 import '../../core/theme/app_spacing.dart';
@@ -109,7 +110,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     final isMarketOpen = _checkIsMarketOpen();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: dashboard.when(
           loading: () => _ScreenState(
@@ -257,8 +258,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
 
             return RefreshIndicator(
               onRefresh: _refreshDashboard,
-              color: const Color(0xFFE5A93C),
-              backgroundColor: const Color(0xFF16171B),
+              color: AppColors.ink,
+              backgroundColor: AppColors.surface,
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(
                   parent: BouncingScrollPhysics(),
@@ -331,12 +332,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0x33E5A93C)),
+        border: Border.all(color: AppColors.line),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFE5A93C).withValues(alpha: 0.08),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),
@@ -351,13 +352,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                 height: 44,
                 width: 44,
                 decoration: BoxDecoration(
-                  color: const Color(0x1FE5A93C),
+                  color: AppColors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0x40E5A93C)),
+                  border: Border.all(color: AppColors.lineStrong),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.rocket_launch_rounded,
-                  color: Color(0xFFE5A93C),
+                  color: AppColors.ink,
                   size: 22,
                 ),
               ),
@@ -369,7 +370,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     Text(
                       context.t.dashWelcome,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.ink,
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.3,
@@ -379,7 +380,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
                     Text(
                       context.t.dashTools,
                       style: TextStyle(
-                        color: Color(0xFF8E929B),
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -394,7 +395,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
           Text(
             context.t.dashAddPrompt,
             style: TextStyle(
-              color: Color(0xFFD1D5DB),
+              color: AppColors.inkSoft,
               fontSize: 13,
               height: 1.4,
             ),
@@ -424,7 +425,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             width: double.infinity,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE5A93C),
+                backgroundColor: AppColors.accent,
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 shape: RoundedRectangleBorder(
@@ -463,7 +464,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: const Color(0xFFE5A93C)),
+        Icon(icon, size: 16, color: AppColors.textSecondary),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -471,8 +472,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.ink,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -480,8 +481,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage>
               const SizedBox(height: 1),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  color: Color(0xFF858A94),
+                style: TextStyle(
+                  color: AppColors.textTertiary,
                   fontSize: 11,
                   height: 1.3,
                 ),
@@ -521,18 +522,18 @@ class _ScreenState extends StatelessWidget {
               height: 52,
               width: 52,
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: Icon(icon, color: AppColors.ink),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
@@ -541,19 +542,19 @@ class _ScreenState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF8E929B),
+              style: TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
             if (loading) ...[
               const SizedBox(height: AppSpacing.lg),
-              const SizedBox(
+              SizedBox(
                 width: 140,
                 child: LinearProgressIndicator(
                   minHeight: 2,
-                  backgroundColor: Color(0xFF23252B),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                  backgroundColor: AppColors.surfaceSecondary,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.ink),
                 ),
               ),
             ],

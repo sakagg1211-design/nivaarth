@@ -126,7 +126,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.auto_awesome_rounded,
                     size: 64,
                     color: AppColors.primary,
@@ -134,7 +134,7 @@ class _SyncLoadingPageState extends ConsumerState<SyncLoadingPage>
 
                   const SizedBox(height: AppSpacing.xl),
 
-                  const Text(
+                  Text(
                     "NIVAARTH",
                     style: AppTypography.heading1,
                   ),

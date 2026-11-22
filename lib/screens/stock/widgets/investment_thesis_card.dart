@@ -44,7 +44,7 @@ class InvestmentThesisCard extends StatelessWidget {
           Row(
             children: [
 
-              const Icon(
+              Icon(
                 Icons.lightbulb_outline,
                 color: AppColors.primary,
               ),

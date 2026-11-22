@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../core/l10n/l10n_ext.dart';
 import '../l10n/app_localizations.dart';
 import '../models/listing_info.dart';
+import '../core/theme/app_colors.dart';
 
 /// Small SME / Z / T2T chips; the meaning shows on long press or hover.
 class ListingBadges extends StatelessWidget {
@@ -40,7 +41,7 @@ class ListingBadges extends StatelessWidget {
   }
 
   static Color _color(ListingBadge b) =>
-      b.level == ListingBadgeLevel.warn ? const Color(0xFFFF5252) : const Color(0xFFFFB74D);
+      b.level == ListingBadgeLevel.warn ? AppColors.danger : AppColors.warning;
 }
 
 /// "Fundamentals as of 30 Oct 2026 · latest results: Sep 2026 quarter" (Hinglish in Hinglish mode), plus what each badge means
@@ -76,10 +77,10 @@ class ListingInfoStrip extends StatelessWidget {
           ListingBadges(info: info),
           const SizedBox(height: 4),
           Text(badges.map((b) => '${b.label}: ${meaning(b, context.t)}').join('\n'),
-              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
           const SizedBox(height: 6),
         ],
-        if (line != null) Text(line, style: const TextStyle(color: Color(0xFF858A94), fontSize: 11)),
+        if (line != null) Text(line, style: TextStyle(color: AppColors.textTertiary, fontSize: 11)),
       ],
     );
   }

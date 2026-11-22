@@ -16,6 +16,7 @@ import '../stock/stock_detail_page.dart';
 import 'widgets/watchlist_table_view.dart';
 import '../../core/utils/error_messages.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -49,7 +50,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final watchlistNotifier = ref.read(watchlistProvider.notifier);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -68,7 +69,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   Text(
                     context.t.searchTitle,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.ink,
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
@@ -77,14 +78,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0x1FE5A93C),
+                      color: AppColors.ink.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0x33E5A93C)),
+                      border: Border.all(color: AppColors.ink.withValues(alpha: 0.14)),
                     ),
                     child: Text(
                       context.t.searchTracked(savedList.length),
-                      style: const TextStyle(
-                        color: Color(0xFFE5A93C),
+                      style: TextStyle(
+                        color: AppColors.inkSoft,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -96,7 +97,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               Text(
                 context.t.searchSub,
                 style: TextStyle(
-                  color: Color(0xFF8E929B),
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                 ),
               ),
@@ -107,9 +108,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16171B),
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF282A30)),
+                  border: Border.all(color: AppColors.line),
                 ),
                 child: Row(
                   children: [
@@ -120,7 +121,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-                            color: _activeTab == 0 ? const Color(0xFF23252B) : Colors.transparent,
+                            color: _activeTab == 0 ? AppColors.surfaceSecondary : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
@@ -130,13 +131,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               Icon(
                                 Icons.search_rounded,
                                 size: 16,
-                                color: _activeTab == 0 ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+                                color: _activeTab == 0 ? AppColors.inkSoft : AppColors.textSecondary,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 context.t.searchExplore,
                                 style: TextStyle(
-                                  color: _activeTab == 0 ? Colors.white : const Color(0xFF8E929B),
+                                  color: _activeTab == 0 ? AppColors.ink : AppColors.textSecondary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 13,
                                 ),
@@ -153,7 +154,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-                            color: _activeTab == 1 ? const Color(0xFF23252B) : Colors.transparent,
+                            color: _activeTab == 1 ? AppColors.surfaceSecondary : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
@@ -163,13 +164,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               Icon(
                                 Icons.bookmark_rounded,
                                 size: 16,
-                                color: _activeTab == 1 ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+                                color: _activeTab == 1 ? AppColors.inkSoft : AppColors.textSecondary,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'MY SAVED LIST',
                                 style: TextStyle(
-                                  color: _activeTab == 1 ? Colors.white : const Color(0xFF8E929B),
+                                  color: _activeTab == 1 ? AppColors.ink : AppColors.textSecondary,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 13,
                                 ),
@@ -189,14 +190,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 TextField(
                   controller: _searchController,
                   textInputAction: TextInputAction.search,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.ink),
                   decoration: InputDecoration(
                     hintText: context.t.searchHint,
-                    hintStyle: const TextStyle(color: Color(0xFF858A94), fontSize: 13),
-                    prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B)),
+                    hintStyle: TextStyle(color: AppColors.textTertiary, fontSize: 13),
+                    prefixIcon: Icon(Icons.search_rounded, color: AppColors.textSecondary),
                     suffixIcon: query.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear_rounded, color: Color(0xFF8E929B), size: 20),
+                            icon: Icon(Icons.clear_rounded, color: AppColors.textSecondary, size: 20),
                             onPressed: () {
                               _searchController.clear();
                               setState(() {
@@ -206,18 +207,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           )
                         : null,
                     filled: true,
-                    fillColor: const Color(0xFF16171B),
+                    fillColor: AppColors.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFF282A30)),
+                      borderSide: BorderSide(color: AppColors.line),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFF282A30)),
+                      borderSide: BorderSide(color: AppColors.line),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
+                      borderSide: BorderSide(color: AppColors.inkSoft, width: 1.2),
                     ),
                   ),
                   onChanged: (value) {
@@ -258,8 +259,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       }
 
                     return RefreshIndicator(
-                      color: const Color(0xFFE5A93C),
-                      backgroundColor: const Color(0xFF16171B),
+                      color: AppColors.inkSoft,
+                      backgroundColor: AppColors.surface,
                       onRefresh: () async {
                         ref.invalidate(searchProvider(query));
                       },
@@ -273,11 +274,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         final stock = stocks[index];
 
                         return Material(
-                          color: const Color(0xFF16171B),
+                          color: AppColors.surface,
                           clipBehavior: Clip.antiAlias,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: const BorderSide(color: Color(0xFF282A30)),
+                            side: BorderSide(color: AppColors.line),
                           ),
                           child: ListTile(
                             minVerticalPadding: 12,
@@ -341,7 +342,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               height: 38,
                               width: 38,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppColors.ink,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -349,8 +350,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                   stock.instrument.isEmpty
                                       ? '-'
                                       : stock.instrument.substring(0, 1),
-                                  style: const TextStyle(
-                                    color: Colors.black,
+                                  style: TextStyle(
+                                    color: AppColors.background,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 16,
                                   ),
@@ -361,8 +362,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               SymbolUtils.normalize(stock.instrument),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppColors.ink,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 15,
                               ),
@@ -377,8 +378,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                     : SymbolUtils.getDisplayName(stock.instrument),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Color(0xFF8E929B),
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -396,7 +397,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                     return IconButton(
                                       icon: Icon(
                                         isSaved ? Icons.star_rounded : Icons.star_outline_rounded,
-                                        color: isSaved ? const Color(0xFFE5A93C) : const Color(0xFF858A94),
+                                        color: isSaved ? AppColors.inkSoft : AppColors.textTertiary,
                                         size: 24,
                                       ),
                                       splashRadius: 20,
@@ -433,7 +434,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                                     ? context.t.watchSavedAt(SymbolUtils.normalize(stock.instrument), Formatters.currency(savePrice))
                                                     : context.t.watchAdded(SymbolUtils.normalize(stock.instrument)),
                                               ),
-                                              backgroundColor: const Color(0xFF16171B),
+                                              backgroundColor: AppColors.surface,
                                             ),
                                           );
                                         }
@@ -457,13 +458,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
-                    style: TextButton.styleFrom(foregroundColor: const Color(0xFFE5A93C)),
+                    style: TextButton.styleFrom(foregroundColor: AppColors.inkSoft),
                     onPressed: _refreshingSaved ? null : _refreshSaved,
                     icon: _refreshingSaved
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 14,
                             height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.inkSoft),
                           )
                         : const Icon(Icons.refresh_rounded, size: 18),
                     label: Text(context.t.commonRefresh, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
@@ -471,8 +472,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 ),
               Expanded(
                 child: RefreshIndicator(
-                  color: const Color(0xFFE5A93C),
-                  backgroundColor: const Color(0xFF16171B),
+                  color: AppColors.inkSoft,
+                  backgroundColor: AppColors.surface,
                   onRefresh: () async {
                     await MarketSyncService.instance.syncAll(ref);
                   },
@@ -513,22 +514,22 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF16171B),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF282A30)),
+          side: BorderSide(color: AppColors.line),
         ),
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: const Color(0x26FF5252),
+                color: AppColors.danger.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.delete_outline_rounded,
-                color: Color(0xFFFF5252),
+                color: AppColors.danger,
                 size: 20,
               ),
             ),
@@ -537,7 +538,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               child: Text(
                 context.t.watchRemoveConfirm,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.ink,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
@@ -549,8 +550,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           addedPrice != null && addedPrice > 0
               ? context.t.watchRemoveBodyPrice(displayName, cleanSym, Formatters.currency(addedPrice))
               : context.t.watchRemoveBody(displayName, cleanSym),
-          style: const TextStyle(
-            color: Color(0xFF8E929B),
+          style: TextStyle(
+            color: AppColors.textSecondary,
             fontSize: 13,
             height: 1.4,
           ),
@@ -561,14 +562,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             child: Text(
               context.t.commonCancel,
               style: TextStyle(
-                color: Colors.white70,
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5252),
+              backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -580,7 +581,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.t.savedRemoved(cleanSym)),
-                  backgroundColor: const Color(0xFF16171B),
+                  backgroundColor: AppColors.surface,
                 ),
               );
             },
@@ -620,18 +621,18 @@ class _SearchState extends StatelessWidget {
               height: 54,
               width: 54,
               decoration: BoxDecoration(
-                color: const Color(0xFF16171B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: Icon(icon, color: AppColors.ink),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -640,19 +641,19 @@ class _SearchState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF8E929B),
+              style: TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
             if (loading) ...[
               const SizedBox(height: AppSpacing.lg),
-              const SizedBox(
+              SizedBox(
                 width: 140,
                 child: LinearProgressIndicator(
                   minHeight: 2,
-                  backgroundColor: Color(0xFF23252B),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                  backgroundColor: AppColors.surfaceSecondary,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.inkSoft),
                 ),
               ),
             ],
@@ -689,7 +690,7 @@ class _LivePriceColumn extends ConsumerWidget {
             Text(
               price > 0 ? Formatters.currency(price) : context.t.stockSyncing,
               style: TextStyle(
-                color: price > 0 ? Colors.white : const Color(0xFF8E929B),
+                color: price > 0 ? AppColors.ink : AppColors.textSecondary,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
               ),
@@ -704,7 +705,7 @@ class _LivePriceColumn extends ConsumerWidget {
                     height: 6,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252),
+                      color: isPos ? AppColors.success : AppColors.danger,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -713,8 +714,8 @@ class _LivePriceColumn extends ConsumerWidget {
                   changeText,
                   style: TextStyle(
                     color: hasChange
-                        ? (isPos ? const Color(0xFF00E676) : const Color(0xFFFF5252))
-                        : const Color(0xFF8E929B),
+                        ? (isPos ? AppColors.success : AppColors.danger)
+                        : AppColors.textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
@@ -732,7 +733,7 @@ class _LivePriceColumn extends ConsumerWidget {
             Text(
               context.t.stockSyncing,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
               ),
@@ -741,7 +742,7 @@ class _LivePriceColumn extends ConsumerWidget {
             Text(
               'Live NSE',
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
@@ -750,14 +751,14 @@ class _LivePriceColumn extends ConsumerWidget {
         );
       },
       error: (error, stack) {
-        return const Column(
+        return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               '—',
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
               ),
@@ -766,7 +767,7 @@ class _LivePriceColumn extends ConsumerWidget {
             Text(
               'Offline',
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),

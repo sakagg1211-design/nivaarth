@@ -8,6 +8,7 @@ import '../../../models/watchlist_item.dart';
 import '../../stock/stock_detail_page.dart';
 import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/utils/watch_takeaway.dart';
+import '../../../core/theme/app_colors.dart';
 
 class WatchlistTableView extends StatelessWidget {
   final List<WatchlistItem> items;
@@ -36,12 +37,12 @@ class WatchlistTableView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF16171B),
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.bookmark_border_rounded,
-                      color: Color(0xFF858A94),
+                      color: AppColors.textTertiary,
                       size: 32,
                     ),
                   ),
@@ -49,7 +50,7 @@ class WatchlistTableView extends StatelessWidget {
                   Text(
                     context.t.watchEmptyTitle,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.ink,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -58,7 +59,7 @@ class WatchlistTableView extends StatelessWidget {
                   Text(
                     context.t.watchEmptyBody,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF858A94), fontSize: 12),
+                    style: TextStyle(color: AppColors.textTertiary, fontSize: 12),
                   ),
                 ],
               ),
@@ -84,8 +85,8 @@ class WatchlistTableView extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: items.length + 1, // +1 for Header row
-                separatorBuilder: (context, index) => const Divider(
-                  color: Color(0xFF23252B),
+                separatorBuilder: (context, index) => Divider(
+                  color: AppColors.surfaceSecondary,
                   height: 1,
                   thickness: 1,
                 ),
@@ -107,7 +108,7 @@ class WatchlistTableView extends StatelessWidget {
 
   Widget _buildTableHeader(BuildContext context, bool wide) {
     return Container(
-      color: const Color(0xFF131418),
+      color: AppColors.surface,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       child: Row(
         children: [
@@ -116,7 +117,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColCompany,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -127,7 +128,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColScore,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -138,7 +139,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColAdded,
               style: TextStyle(
-                color: Color(0xFFE5A93C),
+                color: AppColors.accent,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -149,7 +150,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColLatest,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 height: 1.1,
@@ -161,7 +162,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColReturns,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 height: 1.1,
@@ -172,7 +173,7 @@ class WatchlistTableView extends StatelessWidget {
             child: Text(
               context.t.watchColTech,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -184,7 +185,7 @@ class WatchlistTableView extends StatelessWidget {
               context.t.watchColAction,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -202,12 +203,12 @@ class WatchlistTableView extends StatelessWidget {
   Widget _buildTableRow(BuildContext context, WatchlistItem item, bool wide) {
     final isPos = item.dayChangePercent >= 0;
     final changeColor = isPos
-        ? const Color(0xFF00E676)
-        : const Color(0xFFFF5252);
+        ? AppColors.success
+        : AppColors.danger;
     final isRetPos = item.returnPercent >= 0;
     final retColor = isRetPos
-        ? const Color(0xFF00E676)
-        : const Color(0xFFFF5252);
+        ? AppColors.success
+        : AppColors.danger;
 
     return InkWell(
       onTap: () {
@@ -247,7 +248,7 @@ class WatchlistTableView extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -262,8 +263,8 @@ class WatchlistTableView extends StatelessWidget {
                     item.companyName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Color(0xFF38BDF8),
+                    style: TextStyle(
+                      color: AppColors.info,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -271,8 +272,8 @@ class WatchlistTableView extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     item.instrument,
-                    style: const TextStyle(
-                      color: Color(0xFF858A94),
+                    style: TextStyle(
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -292,16 +293,16 @@ class WatchlistTableView extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0x1FE5A93C),
+                    color: AppColors.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: const Color(0x33E5A93C)),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.20)),
                   ),
                   child: Text(
                     (item.score != null && item.score! > 0)
                         ? '${item.score}'
                         : '—',
-                    style: const TextStyle(
-                      color: Color(0xFFE5A93C),
+                    style: TextStyle(
+                      color: AppColors.accent,
                       fontWeight: FontWeight.w800,
                       fontSize: 12,
                     ),
@@ -319,8 +320,8 @@ class WatchlistTableView extends StatelessWidget {
                 children: [
                   Text(
                     Formatters.currency(item.addedPrice),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.ink,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -329,7 +330,7 @@ class WatchlistTableView extends StatelessWidget {
                   Text(
                     context.t.watchEntry,
                     style: TextStyle(
-                      color: Color(0xFF858A94),
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -384,8 +385,8 @@ class WatchlistTableView extends StatelessWidget {
                   const SizedBox(height: 1),
                   Text(
                     item.trackedDate,
-                    style: const TextStyle(
-                      color: Color(0xFF858A94),
+                    style: TextStyle(
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                     ),
                   ),
@@ -406,30 +407,30 @@ class WatchlistTableView extends StatelessWidget {
                       final Color tagBg;
                       if (upper.contains('STRONG') ||
                           upper.contains('OUTPERFORM')) {
-                        tagBg = const Color(0xFF00E676);
+                        tagBg = AppColors.success;
                       } else if (upper.contains('MODERATE') ||
                           upper.contains('STRENGTH')) {
-                        tagBg = const Color(0xFF4ADE80);
+                        tagBg = AppColors.success;
                       } else if (upper.contains('WATCH') ||
                           upper.contains('NEUTRAL') ||
                           upper.contains('RANGE')) {
-                        tagBg = const Color(0xFFE5A93C);
+                        tagBg = AppColors.accent;
                       } else if (upper.contains('ELEVATED') ||
                           upper.contains('RISK') && !upper.contains('HIGH')) {
-                        tagBg = const Color(0xFFFF9800);
+                        tagBg = AppColors.warning;
                       } else if (upper.contains('HIGH RISK') ||
                           upper.contains('UNDERPERFORM') ||
                           upper.contains('AVOID')) {
-                        tagBg = const Color(0xFFFF5252);
+                        tagBg = AppColors.danger;
                       } else {
-                        tagBg = const Color(0xFF282A30);
+                        tagBg = AppColors.line;
                       }
 
                       final Color textColor =
-                          (tagBg == const Color(0xFF00E676) ||
-                              tagBg == const Color(0xFF4ADE80))
+                          (tagBg == AppColors.success ||
+                              tagBg == AppColors.success)
                           ? Colors.black
-                          : Colors.white;
+                          : tagBg == AppColors.line ? AppColors.ink : Colors.white;
 
                       return Container(
                         padding: const EdgeInsets.symmetric(
@@ -458,8 +459,8 @@ class WatchlistTableView extends StatelessWidget {
                       takeawayText(item, context.t),
                       maxLines: wide ? 3 : 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFFC9D1D8),
+                      style: TextStyle(
+                        color: AppColors.inkSoft,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -473,9 +474,9 @@ class WatchlistTableView extends StatelessWidget {
             SizedBox(
               width: 44,
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.delete_outline_rounded,
-                  color: Color(0xFFFF5252),
+                  color: AppColors.danger,
                   size: 19,
                 ),
                 tooltip: context.t.watchRemove,

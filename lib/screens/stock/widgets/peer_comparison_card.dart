@@ -7,8 +7,9 @@ import '../../../models/stock_score.dart';
 import '../../../providers/stock_insights_provider.dart';
 import '../../../providers/stock_score_provider.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _muted = Color(0xFF8E929B);
+Color get _muted => AppColors.textSecondary;
 const _labelWidth = 112.0;
 const _columnWidth = 88.0;
 const _rowHeight = 30.0;
@@ -31,15 +32,15 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
     final options = data.others.where((p) => !shown.any((s) => s.symbol == p.symbol)).toList();
     final choice = await showModalBottomSheet<PeerRow>(
       context: context,
-      backgroundColor: const Color(0xFF16171B),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheet) => SafeArea(
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: options.length,
           itemBuilder: (_, i) => ListTile(
-            title: Text(options[i].symbol, style: const TextStyle(color: Colors.white, fontSize: 14)),
-            subtitle: Text(options[i].name, style: const TextStyle(color: _muted, fontSize: 12)),
+            title: Text(options[i].symbol, style: TextStyle(color: AppColors.ink, fontSize: 14)),
+            subtitle: Text(options[i].name, style: TextStyle(color: _muted, fontSize: 12)),
             onTap: () => Navigator.pop(sheet, options[i]),
           ),
         ),
@@ -91,7 +92,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    color: Colors.white, fontSize: 13, fontWeight: strong ? FontWeight.w800 : FontWeight.w500)),
+                    color: AppColors.ink, fontSize: 13, fontWeight: strong ? FontWeight.w800 : FontWeight.w500)),
           ),
         );
 
@@ -99,17 +100,17 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(context.t.peersTitle,
-              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+              style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
-          Text(data.industry, style: const TextStyle(color: _muted, fontSize: 12)),
+          Text(data.industry, style: TextStyle(color: _muted, fontSize: 12)),
           const SizedBox(height: 10),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +126,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
                         height: _rowHeight,
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(r.$1, style: const TextStyle(color: _muted, fontSize: 12)),
+                          child: Text(r.$1, style: TextStyle(color: _muted, fontSize: 12)),
                         ),
                       ),
                   ],
@@ -161,7 +162,7 @@ class _PeerComparisonCardState extends ConsumerState<PeerComparisonCard> {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFE5A93C),
+                  foregroundColor: AppColors.accent,
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   visualDensity: VisualDensity.compact,
                 ),

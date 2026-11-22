@@ -9,6 +9,7 @@ import '../../providers/privacy_provider.dart';
 import '../../repositories/trade_repository.dart';
 import 'import_trades_page.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Day-wise list of every buy and sell of the user, newest day first, with what was bought
 /// and sold each day and the realized P&L (average cost) of each sell.
@@ -56,10 +57,10 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
     final hide = ref.watch(privacyModeProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0C0D10),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.ink,
         elevation: 0,
         title: Text(context.t.tradeBookTitle, style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
@@ -69,13 +70,13 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
               if (mounted) _reload();
             },
             icon: const Icon(Icons.upload_file_rounded),
-            color: const Color(0xFF8E929B),
+            color: AppColors.textSecondary,
             tooltip: context.t.portfolioImport,
           ),
           IconButton(
             onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
             icon: Icon(hide ? Icons.visibility_off_rounded : Icons.visibility_rounded),
-            color: hide ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+            color: hide ? AppColors.accent : AppColors.textSecondary,
             tooltip: hide ? context.t.tipShowValues : context.t.tipHideValues,
           ),
         ],
@@ -88,8 +89,8 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
               future: _tradesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFE5A93C)),
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.accent),
                   );
                 }
                 if (snapshot.hasError) {
@@ -121,8 +122,8 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
 
                 return RefreshIndicator(
                   onRefresh: _reload,
-                  color: const Color(0xFFE5A93C),
-                  backgroundColor: const Color(0xFF16171B),
+                  color: AppColors.accent,
+                  backgroundColor: AppColors.surface,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
@@ -130,24 +131,24 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                       TextField(
                         controller: _searchController,
                         textCapitalization: TextCapitalization.characters,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: AppColors.ink),
                         decoration: InputDecoration(
                           hintText: context.t.tradesSearchHint,
-                          hintStyle: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
-                          prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF8E929B), size: 18),
+                          hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                          prefixIcon: Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 18),
                           filled: true,
-                          fillColor: const Color(0xFF1E2024),
+                          fillColor: AppColors.surfaceSecondary,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF282A30)),
+                            borderSide: BorderSide(color: AppColors.line),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF282A30)),
+                            borderSide: BorderSide(color: AppColors.line),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
+                            borderSide: BorderSide(color: AppColors.accent, width: 1.2),
                           ),
                         ),
                         onChanged: (v) => setState(() => _query = v),
@@ -155,7 +156,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                       const SizedBox(height: 10),
                       Text(
                         context.t.tradesCountDays(shown.length, keys.length),
-                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                       ),
                       if (shown.isEmpty)
                         Padding(
@@ -163,7 +164,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                           child: Text(
                             context.t.tradesNoMatch,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+                            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                           ),
                         ),
                       for (final day in keys) _daySection(day, days[day]!, sellPl, hide),
@@ -202,10 +203,10 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
               Expanded(
                 child: Text(
                   _dayFormat.format(day),
-                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800),
+                  style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w800),
                 ),
               ),
-              Text(totals, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+              Text(totals, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 8),
@@ -217,7 +218,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
 
   Widget _tradeRow(Trade t, double? pl, bool hide) {
     final isBuy = t.side == TradeSide.buy;
-    final tone = isBuy ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final tone = isBuy ? AppColors.success : AppColors.danger;
     final qty = t.qty == t.qty.roundToDouble() ? t.qty.toStringAsFixed(0) : t.qty.toString();
     final subtitle = [
       '$qty @ ${hide ? '••••' : Formatters.currency(t.price)}',
@@ -230,9 +231,9 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF23252B)),
+        border: Border.all(color: AppColors.surfaceSecondary),
       ),
       child: Row(
         children: [
@@ -256,10 +257,10 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
               children: [
                 Text(
                   t.instrument,
-                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800),
+                  style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 2),
-                Text(subtitle, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                Text(subtitle, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ],
             ),
           ),
@@ -268,7 +269,7 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
             children: [
               Text(
                 hide ? '••••' : Formatters.currency(t.qty * t.price),
-                style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700),
               ),
               if (pl != null) ...[
                 const SizedBox(height: 2),
@@ -276,8 +277,8 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
                   hide ? 'P&L ••••' : 'P&L ${Formatters.currency(pl, signed: true)}',
                   style: TextStyle(
                     color: hide
-                        ? const Color(0xFF8E929B)
-                        : (pl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252)),
+                        ? AppColors.textSecondary
+                        : (pl >= 0 ? AppColors.success : AppColors.danger),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -297,14 +298,14 @@ class _TradeBookPageState extends ConsumerState<TradeBookPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 36, color: const Color(0xFF8E929B)),
+            Icon(icon, size: 36, color: AppColors.textSecondary),
             const SizedBox(height: 12),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+            Text(title, style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
             Text(
               body,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
             if (action != null) ...[const SizedBox(height: 16), action],
           ],

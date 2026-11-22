@@ -10,8 +10,8 @@ import '../../../providers/news_provider.dart';
 import '../../../providers/today_facts_provider.dart';
 import '../../stock/stock_detail_page.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
 
 const _down = {FactKind.topDrag, FactKind.low52, FactKind.scoreDown};
 const _up = {FactKind.topLift, FactKind.high52, FactKind.scoreUp, FactKind.yearHigh, FactKind.upStreak};
@@ -34,12 +34,12 @@ class TodayFactsCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.t.factsTitle, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+          Text(context.t.factsTitle, style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
           for (final f in facts)
             InkWell(
@@ -77,17 +77,17 @@ class TodayFactsCard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(factText(f, context.t),
-                              style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.3, fontWeight: FontWeight.w500)),
+                              style: TextStyle(color: AppColors.ink, fontSize: 13, height: 1.3, fontWeight: FontWeight.w500)),
                           if ((newsCounts[f.symbol == null ? '' : SymbolUtils.normalize(f.symbol!)] ?? 0) > 0)
                             Padding(
                               padding: const EdgeInsets.only(top: 2),
                               child: Text(context.t.newsCountToday(newsCounts[SymbolUtils.normalize(f.symbol!)]!),
-                                  style: const TextStyle(color: _muted, fontSize: 11, fontWeight: FontWeight.w600)),
+                                  style: TextStyle(color: _muted, fontSize: 11, fontWeight: FontWeight.w600)),
                             ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right_rounded, size: 18, color: _muted),
+                    Icon(Icons.chevron_right_rounded, size: 18, color: _muted),
                   ],
                 ),
               ),

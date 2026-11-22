@@ -67,7 +67,7 @@ class CompanyOverviewCard extends StatelessWidget {
                     12,
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.business,
                   color: AppColors.primary,
                 ),

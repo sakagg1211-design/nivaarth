@@ -6,6 +6,7 @@ import '../../../core/utils/symbol_utils.dart';
 import '../../../models/dashboard_summary.dart';
 import '../../../providers/allocation_provider.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 class DashboardSignalsGrid extends ConsumerWidget {
   final DashboardSummary summary;
@@ -48,7 +49,7 @@ class DashboardSignalsGrid extends ConsumerWidget {
                 title: context.t.signalWinner,
                 subtitle: winnerSym.isEmpty ? dash : winnerSym,
                 value: winnerSym.isEmpty ? dash : Formatters.percent(winnerPct, signed: true),
-                valueColor: winnerPct >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252),
+                valueColor: winnerPct >= 0 ? AppColors.success : AppColors.danger,
               ),
             ),
             const SizedBox(width: 12),
@@ -57,7 +58,7 @@ class DashboardSignalsGrid extends ConsumerWidget {
                 title: context.t.signalWeakest,
                 subtitle: weakestSym.isEmpty ? dash : weakestSym,
                 value: weakestSym.isEmpty ? dash : Formatters.percent(weakestPct, signed: true),
-                valueColor: weakestPct < 0 ? const Color(0xFFFF5252) : const Color(0xFF00E676),
+                valueColor: weakestPct < 0 ? AppColors.danger : AppColors.success,
               ),
             ),
           ],
@@ -71,7 +72,7 @@ class DashboardSignalsGrid extends ConsumerWidget {
                 title: context.t.signalStrongest,
                 subtitle: hasStrong ? strongSym : context.t.signalNotAssessed,
                 value: hasStrong ? '$strongScore/100' : dash,
-                valueColor: const Color(0xFFE5A93C),
+                valueColor: AppColors.accent,
               ),
             ),
             const SizedBox(width: 12),
@@ -80,7 +81,7 @@ class DashboardSignalsGrid extends ConsumerWidget {
                 title: context.t.signalDiversification,
                 subtitle: topSector == null ? dash : context.t.signalTopSector(topSector.toStringAsFixed(0)),
                 value: divScore == null ? dash : '$divScore/100',
-                valueColor: (divScore ?? 0) >= 60 ? const Color(0xFF00E676) : const Color(0xFFE5A93C),
+                valueColor: (divScore ?? 0) >= 60 ? AppColors.success : AppColors.accent,
               ),
             ),
           ],
@@ -108,10 +109,10 @@ class _SignalMicroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF282A30),
+          color: AppColors.line,
           width: 1,
         ),
       ),
@@ -124,10 +125,10 @@ class _SignalMicroCard extends StatelessWidget {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF858A94),
+              color: AppColors.textTertiary,
               letterSpacing: 1.0,
             ),
           ),
@@ -137,10 +138,10 @@ class _SignalMicroCard extends StatelessWidget {
             subtitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: AppColors.ink,
             ),
           ),
           const SizedBox(height: 4),

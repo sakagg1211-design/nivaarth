@@ -8,8 +8,10 @@ import '../../../providers/allocation_provider.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../stock/widgets/share_card.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Colour-blind-safe categorical order, validated against the card surface (dark mode).
+// Categorical data colours stay fixed in both modes: validated as a set, and each reads on light and dark
 const _series = [
   Color(0xFF3987E5), // blue
   Color(0xFFD95926), // orange
@@ -64,9 +66,9 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +77,7 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
             children: [
               Expanded(
                 child: Text(context.t.allocTitle,
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               _tab(context.t.allocMarketCap, !_sector, () => setState(() {
                     _sector = false;
@@ -125,12 +127,12 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(Formatters.percent(focus.percent),
-                            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+                            style: TextStyle(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w800)),
                         Text(focus.label,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
+                            style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                       ],
                     ),
                   ),
@@ -154,16 +156,16 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
                     child: Text('${s.label} · ${s.stocks}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                   ),
                   Text(hide ? '••••' : Formatters.currency0(s.value),
-                      style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   const SizedBox(width: 12),
                   SizedBox(
                     width: 60,
                     child: Text(Formatters.percent(s.percent),
                         textAlign: TextAlign.right,
-                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                        style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                   ),
                 ],
               ),
@@ -171,13 +173,13 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
           if (!_sector) ...[
             const SizedBox(height: 6),
             Text(context.t.allocCapNote,
-                style: TextStyle(color: Color(0xFF8E929B), fontSize: 11)),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
           ],
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF8E929B),
+                foregroundColor: AppColors.textSecondary,
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 visualDensity: VisualDensity.compact,
               ),
@@ -209,12 +211,12 @@ class _AllocationCardState extends ConsumerState<AllocationCard> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
+            color: active ? AppColors.ink.withValues(alpha: .1) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(label,
               style: TextStyle(
-                  color: active ? Colors.white : const Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w700)),
+                  color: active ? AppColors.ink : AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w700)),
         ),
       ),
     );

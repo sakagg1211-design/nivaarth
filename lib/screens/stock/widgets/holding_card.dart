@@ -72,7 +72,7 @@ class HoldingCard extends ConsumerWidget {
                     12,
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.account_balance_wallet_outlined,
                   color: AppColors.primary,
                 ),

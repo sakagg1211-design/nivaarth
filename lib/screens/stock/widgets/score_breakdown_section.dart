@@ -111,7 +111,7 @@ class _PillarTile extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 2),
-              Text(hint, style: const TextStyle(color: Color(0xFF858A94), fontSize: 11)),
+              Text(hint, style: TextStyle(color: AppColors.textTertiary, fontSize: 11)),
               const SizedBox(height: 6),
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -153,7 +153,7 @@ class _PartRow extends StatelessWidget {
               children: [
                 Text('${part['label']}', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w700)),
                 if (detail != null)
-                  Text(detail, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 11, height: 1.35)),
+                  Text(detail, style: TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.35)),
               ],
             ),
           ),

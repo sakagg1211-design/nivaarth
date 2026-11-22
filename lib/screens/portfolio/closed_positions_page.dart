@@ -10,6 +10,7 @@ import '../../repositories/portfolio_repository.dart';
 import '../../repositories/trade_repository.dart';
 import 'trade_book_page.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 /// One fully sold stock: what was bought and sold in all, the realized P&L (average cost,
 /// from Portfolio.realized_pl) and the day of the last sell.
@@ -96,17 +97,17 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
     final hide = ref.watch(privacyModeProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0C0D10),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.ink,
         elevation: 0,
         title: Text(context.t.closedTitle, style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             onPressed: () => ref.read(privacyModeProvider.notifier).toggle(),
             icon: Icon(hide ? Icons.visibility_off_rounded : Icons.visibility_rounded),
-            color: hide ? const Color(0xFFE5A93C) : const Color(0xFF8E929B),
+            color: hide ? AppColors.accent : AppColors.textSecondary,
             tooltip: hide ? context.t.tipShowValues : context.t.tipHideValues,
           ),
         ],
@@ -119,7 +120,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Center(child: CircularProgressIndicator(color: Color(0xFFE5A93C)));
+                  return Center(child: CircularProgressIndicator(color: AppColors.accent));
                 }
                 if (snapshot.hasError) {
                   return _message(Icons.error_outline_rounded, context.t.closedLoadFailed,
@@ -134,7 +135,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                 final total = items.fold<double>(0, (s, p) => s + p.realizedPl);
                 return RefreshIndicator(
                   onRefresh: _reload,
-                  color: const Color(0xFFE5A93C),
+                  color: AppColors.accent,
                   child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     itemCount: items.length + 1,
@@ -153,25 +154,25 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
     );
   }
 
-  Color _tone(double v) => v >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+  Color _tone(double v) => v >= 0 ? AppColors.success : AppColors.danger;
 
   Widget _totalCard(double total, int count, bool hide) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Row(
         children: [
           Expanded(
             child: Text(context.t.closedCount(count),
-                style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
           ),
           Text(
             hide ? context.t.closedRealized('••••') : context.t.closedRealized(Formatters.currency(total, signed: true)),
-            style: TextStyle(color: hide ? Colors.white70 : _tone(total), fontSize: 15, fontWeight: FontWeight.w800),
+            style: TextStyle(color: hide ? AppColors.textSecondary : _tone(total), fontSize: 15, fontWeight: FontWeight.w800),
           ),
         ],
       ),
@@ -189,9 +190,9 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF16171B),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: .06)),
+          border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,12 +204,12 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(p.holding.instrument,
-                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                          style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
                       if (p.holding.companyName.isNotEmpty)
                         Text(p.holding.companyName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                            style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -218,7 +219,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                     Text(
                       hide ? '••••' : Formatters.currency(p.realizedPl, signed: true),
                       style: TextStyle(
-                          color: hide ? Colors.white70 : _tone(p.realizedPl), fontSize: 15, fontWeight: FontWeight.w800),
+                          color: hide ? AppColors.textSecondary : _tone(p.realizedPl), fontSize: 15, fontWeight: FontWeight.w800),
                     ),
                     if (pct != null)
                       Text(Formatters.percent(pct, signed: true),
@@ -235,7 +236,7 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
                 if (p.lastSell != null) context.t.closedLastSell(_dayFormat.format(p.lastSell!)),
                 context.t.closedTrades(p.trades),
               ].join(' · '),
-              style: const TextStyle(color: Color(0xFF858A94), fontSize: 12),
+              style: TextStyle(color: AppColors.textTertiary, fontSize: 12),
             ),
           ],
         ),
@@ -250,11 +251,11 @@ class _ClosedPositionsPageState extends ConsumerState<ClosedPositionsPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 36, color: const Color(0xFF8E929B)),
+            Icon(icon, size: 36, color: AppColors.textSecondary),
             const SizedBox(height: 12),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+            Text(title, style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Text(body, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
             if (action != null) ...[const SizedBox(height: 16), action],
           ],
         ),

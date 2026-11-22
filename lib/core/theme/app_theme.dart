@@ -5,13 +5,17 @@ import 'app_radius.dart';
 import 'app_typography.dart';
 
 class AppTheme {
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
+  // Kept for callers and tests written before light mode existed
+  static ThemeData get darkTheme => current;
+
+  /// Built from the current palette (AppColors.isLight), so it matches whichever mode is on.
+  static ThemeData get current => ThemeData(
+    brightness: AppColors.isLight ? Brightness.light : Brightness.dark,
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.background,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.accent,
-      brightness: Brightness.dark,
+      brightness: AppColors.isLight ? Brightness.light : Brightness.dark,
     ).copyWith(
       primary: AppColors.ink,
       onPrimary: AppColors.background,
@@ -22,7 +26,7 @@ class AppTheme {
       outline: AppColors.line,
       error: AppColors.danger,
     ),
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       displaySmall: AppTypography.heading1,
       headlineSmall: AppTypography.heading2,
       titleLarge: AppTypography.heading2,
@@ -31,7 +35,7 @@ class AppTheme {
       bodyMedium: AppTypography.body,
       labelLarge: AppTypography.caption,
     ),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: AppColors.background,
       foregroundColor: AppColors.textPrimary,
       surfaceTintColor: Colors.transparent,
@@ -46,7 +50,7 @@ class AppTheme {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        side: const BorderSide(color: AppColors.line),
+        side: BorderSide(color: AppColors.line),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -56,38 +60,38 @@ class AppTheme {
         horizontal: 14,
         vertical: 14,
       ),
-      hintStyle: const TextStyle(
+      hintStyle: TextStyle(
         color: AppColors.textTertiary,
         fontWeight: FontWeight.w500,
       ),
-      labelStyle: const TextStyle(
+      labelStyle: TextStyle(
         color: AppColors.textSecondary,
         fontWeight: FontWeight.w600,
       ),
       prefixIconColor: AppColors.textTertiary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        borderSide: const BorderSide(color: AppColors.line),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        borderSide: const BorderSide(color: AppColors.line),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        borderSide: const BorderSide(color: AppColors.ink, width: 1.2),
+        borderSide: BorderSide(color: AppColors.ink, width: 1.2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        borderSide: const BorderSide(color: AppColors.danger),
+        borderSide: BorderSide(color: AppColors.danger),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: const WidgetStatePropertyAll(Size.fromHeight(52)),
         elevation: const WidgetStatePropertyAll(0),
-        backgroundColor: const WidgetStatePropertyAll(AppColors.ink),
-        foregroundColor: const WidgetStatePropertyAll(Color(0xFF0C0D10)),
+        backgroundColor: WidgetStatePropertyAll(AppColors.ink),
+        foregroundColor: WidgetStatePropertyAll(AppColors.background),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -108,8 +112,8 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.surfaceSecondary,
-      contentTextStyle: const TextStyle(
-        color: Colors.white,
+      contentTextStyle: TextStyle(
+        color: AppColors.ink,
         fontWeight: FontWeight.w600,
       ),
       shape: RoundedRectangleBorder(
@@ -117,11 +121,11 @@ class AppTheme {
       ),
       behavior: SnackBarBehavior.floating,
     ),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
+    progressIndicatorTheme: ProgressIndicatorThemeData(
       color: AppColors.ink,
       linearTrackColor: AppColors.surfaceSecondary,
     ),
-    dividerTheme: const DividerThemeData(
+    dividerTheme: DividerThemeData(
       color: AppColors.line,
       thickness: 1,
       space: 1,

@@ -13,6 +13,7 @@ import '../providers/privacy_provider.dart';
 import '../repositories/portfolio_repository.dart';
 import '../repositories/trade_repository.dart';
 import '../core/l10n/l10n_ext.dart';
+import '../core/theme/app_colors.dart';
 
 /// Bonus/split events after a holding's trades: the app asks, the user confirms (decided 5 Nov
 /// 2026). "Haan" adds the extra shares as a price-0 BUY (source CORP_ACT, broker trade id = the
@@ -97,8 +98,8 @@ class CorporateActionPrompt {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E2024),
-        title: Text(context.t.caTitle(a.instrument, a.label), style: const TextStyle(color: Colors.white, fontSize: 17)),
+        backgroundColor: AppColors.surfaceSecondary,
+        title: Text(context.t.caTitle(a.instrument, a.label), style: TextStyle(color: AppColors.ink, fontSize: 17)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,23 +107,23 @@ class CorporateActionPrompt {
             Text(
               context.t.caExDate(DateFormat('d MMM yyyy').format(a.exDate), q(a.multiplier)) +
               context.t.caBody(q(p.sharesBefore), p.extraShares),
-              style: const TextStyle(color: Color(0xFFB0B4BC), fontSize: 13),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 12),
             Text(context.t.caNow(q(p.now.qty), money(p.now.avgPrice)),
-                style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
             Text(context.t.caAfter(q(p.after.qty), money(p.after.avgPrice)),
-                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w700)),
             Text(context.t.caInvested(money(p.after.totalInvested)),
-                style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             if (p.fractionDropped) ...[
               const SizedBox(height: 8),
               Text(context.t.caFraction,
-                  style: TextStyle(color: Color(0xFFFFB74D), fontSize: 12)),
+                  style: TextStyle(color: AppColors.warning, fontSize: 12)),
             ],
             const SizedBox(height: 8),
             Text(context.t.caMatch,
-                style: TextStyle(color: Color(0xFF6B6F78), fontSize: 11)),
+                style: TextStyle(color: AppColors.textTertiary, fontSize: 11)),
           ],
         ),
         actions: [

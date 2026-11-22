@@ -11,8 +11,8 @@ import '../../../providers/news_provider.dart';
 import '../../../providers/privacy_provider.dart';
 import '../../stock/stock_detail_page.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
 final _day = DateFormat('d MMM');
 final _time = DateFormat('HH:mm');
 
@@ -37,7 +37,7 @@ class HoldingsNewsCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,12 +46,12 @@ class HoldingsNewsCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(t.newsHoldingsTitle,
-                    style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(n.live ? t.newsLive : t.newsSessionClose(_day.format(n.sessionDate)),
-                    style: const TextStyle(color: _muted, fontSize: 12, fontWeight: FontWeight.w600)),
+                    style: TextStyle(color: _muted, fontSize: 12, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -79,7 +79,7 @@ class HoldingsNewsCard extends ConsumerWidget {
                             Row(
                               children: [
                                 Text(it.symbol,
-                                    style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                                    style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
                                 const SizedBox(width: 8),
                                 if (it.stockPct != null)
                                   Text(Formatters.percent(it.stockPct!, signed: true),
@@ -90,21 +90,21 @@ class HoldingsNewsCard extends ConsumerWidget {
                                 const SizedBox(width: 6),
                                 if (it.rupeeMove != null)
                                   Text(hide ? '••••' : Formatters.currency0(it.rupeeMove!, signed: true),
-                                      style: const TextStyle(color: _muted, fontSize: 12)),
+                                      style: TextStyle(color: _muted, fontSize: 12)),
                               ],
                             ),
                             const SizedBox(height: 3),
                             Text(it.title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.3)),
+                                style: TextStyle(color: AppColors.ink, fontSize: 13, height: 1.3)),
                             const SizedBox(height: 2),
                             Text('${it.source} · ${_time.format(it.publishedAt)}',
-                                style: const TextStyle(color: _muted, fontSize: 11)),
+                                style: TextStyle(color: _muted, fontSize: 11)),
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right_rounded, size: 18, color: _muted),
+                      Icon(Icons.chevron_right_rounded, size: 18, color: _muted),
                     ],
                   ),
                 ),

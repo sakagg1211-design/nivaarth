@@ -15,6 +15,8 @@ import 'package:mobile/screens/dashboard/widgets/index_cards_row.dart';
 import 'package:mobile/screens/dashboard/widgets/portfolio_health_card.dart';
 import 'package:mobile/screens/portfolio/widgets/account_value_card.dart';
 import 'package:mobile/screens/portfolio/widgets/today_moves_card.dart';
+import 'package:mobile/models/chart_point.dart';
+import 'package:mobile/screens/stock/widgets/stock_line_chart.dart';
 
 import 'helpers/localized_app.dart';
 
@@ -30,6 +32,15 @@ Widget host(Widget child, List<Override> overrides) =>
 final _today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
 void main() {
+  testWidgets('price chart reads its range, start, end and change', (tester) async {
+    final handle = tester.ensureSemantics();
+    final pts = [ChartPoint(DateTime(2026, 11, 1), 100, 0), ChartPoint(DateTime(2026, 11, 20), 110, 0)];
+    await tester.pumpWidget(host(SizedBox(height: 300, child: StockLineChart(series: pts, isPositive: true, range: '1M')), const []));
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel(RegExp(r'Price chart, 1M: .*100.* to .*110.*\+10\.00%')), findsOneWidget);
+    handle.dispose();
+  });
+
   testWidgets('allocation donut reads its slices', (tester) async {
     final handle = tester.ensureSemantics();
     const s = [AllocationSlice('Large cap', 720, 72, 4), AllocationSlice('Small cap', 280, 28, 2)];

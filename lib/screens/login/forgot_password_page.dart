@@ -83,7 +83,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -105,12 +105,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFFE5A93C).withValues(alpha: 0.4),
+                        color: AppColors.accent.withValues(alpha: 0.4),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFE5A93C).withValues(alpha: 0.15),
+                          color: AppColors.accent.withValues(alpha: 0.15),
                           blurRadius: 16,
                           spreadRadius: 1,
                         ),
@@ -122,12 +122,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         'assets/images/logo.jpg',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
-                          color: const Color(0xFF16171B),
-                          child: const Center(
+                          color: AppColors.surface,
+                          child: Center(
                             child: Text(
                               'N',
                               style: TextStyle(
-                                color: Color(0xFFE5A93C),
+                                color: AppColors.accent,
                                 fontSize: 28,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -162,7 +162,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       child: Column(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.mark_email_read_rounded,
                             size: 48,
                             color: AppColors.success,
@@ -221,7 +221,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             const SizedBox(height: AppSpacing.sm),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.error_outline_rounded,
                                   size: 16,
                                   color: AppColors.danger,
@@ -246,12 +246,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             child: ElevatedButton(
                               onPressed: _loading ? null : _handleReset,
                               child: _loading
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       height: 20,
                                       width: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        color: AppColors.ink,
                                       ),
                                     )
                                   : Text(context.t.authSendReset),

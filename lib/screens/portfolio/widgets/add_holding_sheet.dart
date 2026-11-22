@@ -21,6 +21,7 @@ import '../../../services/backend_service.dart';
 import '../../../services/market_quote_service.dart';
 import 'trade_widgets.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Modal bottom sheet for adding a stock with live autocomplete search. Saves a BUY trade:
 /// a new stock is added, a stock already held gets the weighted average.
@@ -168,21 +169,21 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     final hide = ref.read(privacyModeProvider);
     final day = DateFormat('d MMM yyyy');
     String qty(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
-    final plColor = last.realizedPl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final plColor = last.realizedPl >= 0 ? AppColors.success : AppColors.danger;
 
     Widget line(String label, String value, {Color? color}) => Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+              Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
               const SizedBox(width: 12),
               Flexible(
                 child: Text(
                   value,
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: color ?? Colors.white,
+                    color: color ?? AppColors.ink,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
@@ -195,19 +196,19 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E2024),
+        backgroundColor: AppColors.surfaceSecondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF282A30)),
+          side: BorderSide(color: AppColors.line),
         ),
         title: Row(
           children: [
-            const Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+            Icon(Icons.history_rounded, color: AppColors.accent, size: 22),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 context.t.lastTimeTitle(sym),
-                style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+                style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w700),
               ),
             ),
           ],
@@ -218,7 +219,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
           children: [
             Text(
               context.t.lastTimeDates(day.format(last.firstBuy), day.format(last.lastSell), last.daysHeld),
-              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 14),
             line(context.t.lastTimeBought, hide ? '••••' : '${qty(last.qtyBought)} @ ${Formatters.currency(last.avgBuy)} (avg)'),
@@ -231,14 +232,14 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             if (rounds.length > 1)
               Text(
                 context.t.lastTimeRounds(rounds.length),
-                style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(context.t.commonOk, style: TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w700)),
+            child: Text(context.t.commonOk, style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -312,8 +313,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
         SnackBar(
           content: Text(held == null
               ? context.t.addDone(instrument)
-              : context.t.addMerged(instrument, qty)),
-          backgroundColor: const Color(0xFF0C9F6E),
+              : context.t.addMerged(instrument, qty), style: const TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.successFill,
         ),
       );
     } catch (e) {
@@ -338,8 +339,8 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
         AppSpacing.xl,
         AppSpacing.xl + bottomInset,
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF16171B),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppRadius.sheet),
         ),
@@ -354,7 +355,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                 height: 4,
                 width: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF282A30),
+                  color: AppColors.line,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
               ),
@@ -367,7 +368,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   height: 38,
                   width: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5A93C),
+                    color: AppColors.accent,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: const Icon(
@@ -381,7 +382,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   child: Text(
                     context.t.addTitle,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.ink,
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -394,7 +395,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             Text(
               context.t.addSubtitle,
               style: TextStyle(
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
                 fontSize: 13,
               ),
             ),
@@ -405,15 +406,15 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             TextField(
               controller: _instrumentController,
               textCapitalization: TextCapitalization.characters,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: TextStyle(color: AppColors.ink, fontWeight: FontWeight.w700),
               decoration: _inputDecoration(
                 context.t.addSearchHint,
                 Icons.search_rounded,
                 suffix: _isSearching
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 16,
                         width: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
                       )
                     : null,
               ),
@@ -429,9 +430,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               Container(
                 constraints: const BoxConstraints(maxHeight: 220),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E2024),
+                  color: AppColors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF282A30)),
+                  border: Border.all(color: AppColors.line),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black45,
@@ -444,7 +445,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   itemCount: _suggestions.length,
-                  separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFF282A30)),
+                  separatorBuilder: (context, index) => Divider(height: 1, color: AppColors.line),
                   itemBuilder: (context, index) {
                     final item = _suggestions[index];
                     final cleanSym = SymbolUtils.normalize(item.instrument);
@@ -454,36 +455,36 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                         height: 28,
                         width: 28,
                         decoration: BoxDecoration(
-                          color: const Color(0x33E5A93C),
+                          color: AppColors.accent.withValues(alpha: 0.20),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Center(
                           child: Text(
                             cleanSym.isNotEmpty ? cleanSym[0] : 'S',
-                            style: const TextStyle(color: Color(0xFFE5A93C), fontWeight: FontWeight.w800, fontSize: 13),
+                            style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w800, fontSize: 13),
                           ),
                         ),
                       ),
                       title: Text(
                         cleanSym,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14),
+                        style: TextStyle(color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 14),
                       ),
                       subtitle: Text(
                         item.companyName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                       ),
                       trailing: (item.overallScore != null && item.overallScore! > 0)
                           ? Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0x1F00E676),
+                                color: AppColors.success.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 '${item.overallScore} ${item.recommendation}',
-                                style: const TextStyle(color: Color(0xFF00E676), fontSize: 11, fontWeight: FontWeight.w700),
+                                style: TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700),
                               ),
                             )
                           : (item.isExcluded
@@ -512,7 +513,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
             TextField(
               controller: _companyController,
               textCapitalization: TextCapitalization.words,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: AppColors.ink),
               decoration: _inputDecoration(context.t.addCompanyName, Icons.business_rounded),
             ),
 
@@ -521,9 +522,9 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFE5A93C))),
+                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.accent)),
                   SizedBox(width: 8),
-                  Text(context.t.addFetchingPrice, style: TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                  Text(context.t.addFetchingPrice, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ],
               ),
             ] else if (_liveLtp != null && _liveLtp! > 0) ...[
@@ -531,18 +532,18 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0x1FE5A93C),
+                  color: AppColors.accent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0x33E5A93C)),
+                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.20)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.show_chart_rounded, size: 15, color: Color(0xFFE5A93C)),
+                    Icon(Icons.show_chart_rounded, size: 15, color: AppColors.accent),
                     const SizedBox(width: 6),
                     Text(
                       context.t.addCurrentPrice(Formatters.currency(_liveLtp!)),
-                      style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 12, fontWeight: FontWeight.w700),
+                      style: TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(width: 8),
                     InkWell(
@@ -553,7 +554,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                       },
                       child: Text(
                         context.t.addUseAsBuy,
-                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800, decoration: TextDecoration.underline),
+                        style: TextStyle(color: AppColors.ink, fontSize: 11, fontWeight: FontWeight.w800, decoration: TextDecoration.underline),
                       ),
                     ),
                   ],
@@ -571,7 +572,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                     controller: _qtyController,
                     focusNode: _qtyFocusNode,
                     keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.ink),
                     decoration: _inputDecoration(context.t.commonQuantity, Icons.pin_outlined),
                     onChanged: (_) => setState(() => _errorMessage = null),
                   ),
@@ -582,7 +583,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
                   child: TextField(
                     controller: _avgPriceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.ink),
                     decoration: _inputDecoration(
                       held == null ? context.t.addAvgBuyPrice : context.t.commonBuyPrice,
                       Icons.currency_rupee_rounded,
@@ -618,12 +619,12 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               const SizedBox(height: AppSpacing.md),
               Row(
                 children: [
-                  const Icon(Icons.error_outline_rounded, size: 16, color: Color(0xFFFF5252)),
+                  Icon(Icons.error_outline_rounded, size: 16, color: AppColors.danger),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12),
+                      style: TextStyle(color: AppColors.danger, fontSize: 12),
                     ),
                   ),
                 ],
@@ -637,7 +638,7 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
               height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE5A93C),
+                  backgroundColor: AppColors.accent,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -671,22 +672,22 @@ class _AddHoldingSheetState extends ConsumerState<AddHoldingSheet> {
   InputDecoration _inputDecoration(String label, IconData icon, {Widget? suffix}) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
-      prefixIcon: Icon(icon, color: const Color(0xFF8E929B), size: 18),
+      labelStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+      prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 18),
       suffixIcon: suffix != null ? Padding(padding: const EdgeInsets.all(12), child: suffix) : null,
       filled: true,
-      fillColor: const Color(0xFF1E2024),
+      fillColor: AppColors.surfaceSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF282A30)),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF282A30)),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
+        borderSide: BorderSide(color: AppColors.accent, width: 1.2),
       ),
     );
   }

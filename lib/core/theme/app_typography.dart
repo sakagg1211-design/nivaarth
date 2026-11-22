@@ -7,42 +7,42 @@ class AppTypography {
   // Existing Styles (Keep)
   // ---------------------------------------------------------------------------
 
-  static const heading1 = TextStyle(
+  static TextStyle get heading1 => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 30,
     fontWeight: FontWeight.w800,
     height: 1.08,
   );
 
-  static const heading2 = TextStyle(
+  static TextStyle get heading2 => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 22,
     fontWeight: FontWeight.w800,
     height: 1.15,
   );
 
-  static const title = TextStyle(
+  static TextStyle get title => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 17,
     fontWeight: FontWeight.w700,
     height: 1.20,
   );
 
-  static const body = TextStyle(
+  static TextStyle get body => TextStyle(
     color: AppColors.textSecondary,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.42,
   );
 
-  static const caption = TextStyle(
+  static TextStyle get caption => TextStyle(
     color: AppColors.textTertiary,
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.25,
   );
 
-  static const metric = TextStyle(
+  static TextStyle get metric => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 24,
     fontWeight: FontWeight.w800,
@@ -53,69 +53,69 @@ class AppTypography {
   // Material 3 Compatible Styles
   // ---------------------------------------------------------------------------
 
-  static const displaySmall = TextStyle(
+  static TextStyle get displaySmall => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 36,
     fontWeight: FontWeight.w800,
     height: 1.05,
   );
 
-  static const headlineSmall = TextStyle(
+  static TextStyle get headlineSmall => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 24,
     fontWeight: FontWeight.w700,
     height: 1.15,
   );
 
-  static const titleLarge = TextStyle(
+  static TextStyle get titleLarge => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 20,
     fontWeight: FontWeight.w700,
     height: 1.20,
   );
 
-  static const titleMedium = TextStyle(
+  static TextStyle get titleMedium => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.25,
   );
 
-  static const bodyLarge = TextStyle(
+  static TextStyle get bodyLarge => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 1.45,
   );
 
-  static const bodyMedium = TextStyle(
+  static TextStyle get bodyMedium => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.45,
   );
 
-  static const bodySmall = TextStyle(
+  static TextStyle get bodySmall => TextStyle(
     color: AppColors.textSecondary,
     fontSize: 12,
     fontWeight: FontWeight.w500,
     height: 1.35,
   );
 
-  static const labelMedium = TextStyle(
+  static TextStyle get labelMedium => TextStyle(
     color: AppColors.textPrimary,
     fontSize: 13,
     fontWeight: FontWeight.w600,
     height: 1.25,
   );
 
-  static const labelSmall = TextStyle(
+  static TextStyle get labelSmall => TextStyle(
     color: AppColors.textSecondary,
     fontSize: 11,
     fontWeight: FontWeight.w600,
     height: 1.20,
   );
-  static const headlineMedium = TextStyle(
+  static TextStyle get headlineMedium => TextStyle(
   color: AppColors.textPrimary,
   fontSize: 28,
   fontWeight: FontWeight.w800,

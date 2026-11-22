@@ -13,9 +13,9 @@ import '../../../core/utils/market_hours.dart';
 import '../../../providers/account_value_provider.dart';
 import '../../../providers/privacy_provider.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
-const _investedLine = Colors.white54;
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
+Color get _investedLine => AppColors.ink.withValues(alpha: 0.54);
 const _mask = '••••';
 
 final _day = DateFormat('d MMM');
@@ -94,16 +94,16 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(t.acctTitle, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+          Text(t.acctTitle, style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
           Text(
             current == null ? '—' : (hide ? _mask : Formatters.currency0(current)),
-            style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, height: 1.1),
+            style: TextStyle(color: AppColors.ink, fontSize: 26, fontWeight: FontWeight.w800, height: 1.1),
           ),
           if (change != null && pct != null) ...[
             const SizedBox(height: 4),
@@ -131,7 +131,7 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
             const SizedBox(height: 2),
             Text(
               intraday ? '${_day.format(points.last.time)}, ${_time.format(points.last.time)}' : _dayYear.format(points.last.time),
-              style: const TextStyle(color: _muted, fontSize: 11),
+              style: TextStyle(color: _muted, fontSize: 11),
             ),
           ],
           Row(
@@ -144,7 +144,7 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Center(
                 child: Text(intraday ? t.acctNoIntraday : '—',
-                    textAlign: TextAlign.center, style: const TextStyle(color: _muted, fontSize: 12)),
+                    textAlign: TextAlign.center, style: TextStyle(color: _muted, fontSize: 12)),
               ),
             )
           else ...[
@@ -170,10 +170,10 @@ class _AccountValueCardState extends ConsumerState<AccountValueCard> {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(t.acctAssumedNote(_dayYear.format(points.firstWhere((p) => !p.assumed, orElse: () => points.last).time)),
-                  style: const TextStyle(color: _muted, fontSize: 11)),
+                  style: TextStyle(color: _muted, fontSize: 11)),
             ),
           if (history.points.isNotEmpty)
-            Text(t.acctFooter(_dayYear.format(history.points.last.time)), style: const TextStyle(color: _muted, fontSize: 11)),
+            Text(t.acctFooter(_dayYear.format(history.points.last.time)), style: TextStyle(color: _muted, fontSize: 11)),
         ],
       ),
     );
@@ -196,12 +196,12 @@ class _RangeChip extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: selected ? Colors.white.withValues(alpha: .12) : Colors.transparent,
+              color: selected ? AppColors.ink.withValues(alpha: .12) : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(label,
                 style: TextStyle(
-                  color: selected ? Colors.white : _muted,
+                  color: selected ? AppColors.ink : _muted,
                   fontSize: 12,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 )),
@@ -226,7 +226,7 @@ class _Legend extends StatelessWidget {
       children: [
         if (dashed) ...[dash(6), const SizedBox(width: 3), dash(6)] else dash(15),
         const SizedBox(width: 6),
-        Flexible(child: Text(text, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w700))),
+        Flexible(child: Text(text, style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w700))),
       ],
     );
   }
@@ -272,7 +272,7 @@ class _Chart extends StatelessWidget {
         maxY: maxY,
         gridData: FlGridData(
           drawVerticalLine: false,
-          getDrawingHorizontalLine: (_) => FlLine(color: Colors.white.withValues(alpha: .05), strokeWidth: 1),
+          getDrawingHorizontalLine: (_) => FlLine(color: AppColors.ink.withValues(alpha: .05), strokeWidth: 1),
         ),
         extraLinesData: ExtraLinesData(horizontalLines: [
           if (intraday && prevClose != null)
@@ -291,7 +291,7 @@ class _Chart extends StatelessWidget {
                   ? const SizedBox.shrink()
                   : SideTitleWidget(
                       meta: meta,
-                      child: Text(hide ? '••' : _compact(v), style: const TextStyle(color: _muted, fontSize: 10)),
+                      child: Text(hide ? '••' : _compact(v), style: TextStyle(color: _muted, fontSize: 10)),
                     ),
             ),
           ),
@@ -301,14 +301,14 @@ class _Chart extends StatelessWidget {
           touchTooltipData: LineTouchTooltipData(
             fitInsideHorizontally: true,
             fitInsideVertically: true,
-            getTooltipColor: (_) => const Color(0xFF1E2026),
+            getTooltipColor: (_) => AppColors.surfaceSecondary,
             getTooltipItems: (touched) => [
               for (final s in touched)
                 identical(s, touched.first)
                     ? LineTooltipItem(
                         '${(intraday ? _time : _dayYear).format(points[s.x.toInt()].time)}\n'
                         '${hide ? _mask : Formatters.currency0(points[s.x.toInt()].value)}',
-                        const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+                        TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w700),
                       )
                     : null,
             ],

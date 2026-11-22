@@ -4,6 +4,7 @@ import '../../../core/utils/market_hours.dart';
 import '../../../core/l10n/l10n_ext.dart';
 import '../../../core/utils/health_math.dart';
 import 'health_breakdown_sheet.dart';
+import '../../../core/theme/app_colors.dart';
 
 class PortfolioHealthCard extends StatelessWidget {
   final double healthScore;
@@ -39,19 +40,19 @@ class PortfolioHealthCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = healthScore.round().clamp(0, 100);
-    const gaugeColor = Color(0xFFE5A93C);
+    final gaugeColor = AppColors.accent;
     final status = healthStatus ?? statusFor(score);
     final live = isMarketOpenIst(DateTime.now());
-    final badgeColor = live ? const Color(0xFF00E676) : const Color(0xFF8E929B);
+    final badgeColor = live ? AppColors.success : AppColors.textSecondary;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16171B),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF282A30),
+          color: AppColors.line,
           width: 1,
         ),
       ),
@@ -62,10 +63,10 @@ class PortfolioHealthCard extends StatelessWidget {
           // Header: title + market badge ("Live" only while NSE is open)
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.health_and_safety_rounded,
                 size: 14,
-                color: Color(0xFF8E929B),
+                color: AppColors.textSecondary,
               ),
               const SizedBox(width: 8),
               Text(
@@ -73,7 +74,7 @@ class PortfolioHealthCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF8E929B),
+                  color: AppColors.textSecondary,
                   letterSpacing: 1.1,
                 ),
               ),
@@ -126,8 +127,8 @@ class PortfolioHealthCard extends StatelessWidget {
                         value: (score / 100).clamp(0.05, 1.0),
                         strokeWidth: 8,
                         strokeCap: StrokeCap.round,
-                        backgroundColor: const Color(0xFF23252B),
-                        valueColor: const AlwaysStoppedAnimation<Color>(gaugeColor),
+                        backgroundColor: AppColors.surfaceSecondary,
+                        valueColor: AlwaysStoppedAnimation<Color>(gaugeColor),
                       ),
                     ),
                     Column(
@@ -135,8 +136,8 @@ class PortfolioHealthCard extends StatelessWidget {
                       children: [
                         Text(
                           '$score',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.ink,
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
@@ -144,10 +145,10 @@ class PortfolioHealthCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        const Text(
+                        Text(
                           '/100',
                           style: TextStyle(
-                            color: Color(0xFF858A94),
+                            color: AppColors.textTertiary,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -173,8 +174,8 @@ class PortfolioHealthCard extends StatelessWidget {
                           dataCoverage == null
                               ? context.t.healthCoverageNa
                               : context.t.healthCoverage(dataCoverage!.round()),
-                          style: const TextStyle(
-                            color: Color(0xFF8E929B),
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
@@ -184,8 +185,8 @@ class PortfolioHealthCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       context.t.healthStatus(status),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppColors.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -194,7 +195,7 @@ class PortfolioHealthCard extends StatelessWidget {
                     Text(
                       context.t.healthExplain,
                       style: TextStyle(
-                        color: Color(0xFF8E929B),
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -219,7 +220,7 @@ class PortfolioHealthCard extends StatelessWidget {
                             Text(
                               context.t.healthOpenAdvisor,
                               style: TextStyle(
-                                color: Color(0xFF8E929B),
+                                color: AppColors.textSecondary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -228,7 +229,7 @@ class PortfolioHealthCard extends StatelessWidget {
                             Icon(
                               Icons.arrow_forward_rounded,
                               size: 14,
-                              color: Color(0xFF8E929B),
+                              color: AppColors.textSecondary,
                             ),
                           ],
                         ),
@@ -246,13 +247,13 @@ class PortfolioHealthCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E2024),
+              color: AppColors.surfaceSecondary,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFF282A30)),
+              border: Border.all(color: AppColors.line),
             ),
             child: Row(
               children: [
-                const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFF8E929B)),
+                Icon(Icons.schedule_rounded, size: 14, color: AppColors.textSecondary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -260,7 +261,7 @@ class PortfolioHealthCard extends StatelessWidget {
                         ? context.t.healthMarketOpenNote
                         : context.t.healthMarketClosedNote,
                     style: TextStyle(
-                      color: Color(0xFFC7CDD6),
+                      color: AppColors.inkSoft,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),

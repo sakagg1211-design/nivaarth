@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/investment_style.dart';
 import '../../../providers/investment_style_provider.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
 const _blue = Color(0xFF3987E5);
-const _gold = Color(0xFFE5A93C);
+Color get _gold => AppColors.accent;
 const _labelWidth = 44.0;
 const _totalWidth = 46.0;
 const _headers = ['Growth', 'Growth\n+ Value', 'Value', 'Others'];
@@ -48,10 +49,10 @@ class InvestmentStyleCard extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(1),
           child: Material(
-            color: empty ? Colors.white.withValues(alpha: .03) : _blue.withValues(alpha: .14 + strength * .56),
+            color: empty ? AppColors.ink.withValues(alpha: .03) : _blue.withValues(alpha: .14 + strength * .56),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
-              side: top == (r, c) ? const BorderSide(color: _gold, width: 1.5) : BorderSide.none,
+              side: top == (r, c) ? BorderSide(color: _gold, width: 1.5) : BorderSide.none,
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
@@ -60,7 +61,7 @@ class InvestmentStyleCard extends ConsumerWidget {
                 height: 48,
                 alignment: Alignment.center,
                 child: Text(_p(v),
-                    style: TextStyle(color: empty ? _muted : Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                    style: TextStyle(color: empty ? _muted : AppColors.ink, fontSize: 12, fontWeight: FontWeight.w700)),
               ),
             ),
           ),
@@ -80,7 +81,7 @@ class InvestmentStyleCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,11 +90,11 @@ class InvestmentStyleCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(context.t.styleTitle,
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               IconButton(
                 tooltip: context.t.styleWhatTip,
-                icon: const Icon(Icons.info_outline_rounded, color: _muted, size: 20),
+                icon: Icon(Icons.info_outline_rounded, color: _muted, size: 20),
                 onPressed: () => _sheet(context, const _Explainer()),
               ),
             ],
@@ -107,8 +108,8 @@ class InvestmentStyleCard extends ConsumerWidget {
                   Text(context.t.styleLargest, style: TextStyle(color: _muted, fontSize: 12)),
                   const SizedBox(height: 2),
                   Text('${StyleGrid.rows[top.$1]} Cap · ${StyleGrid.cols[top.$2].replaceAll('+', ' + ')}',
-                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-                  Text(context.t.stylePctPortfolio(topValue.toStringAsFixed(1)), style: const TextStyle(color: _muted, fontSize: 13)),
+                      style: TextStyle(color: AppColors.ink, fontSize: 20, fontWeight: FontWeight.w800)),
+                  Text(context.t.stylePctPortfolio(topValue.toStringAsFixed(1)), style: TextStyle(color: _muted, fontSize: 13)),
                   const SizedBox(height: 14),
                 ],
                 Row(
@@ -118,7 +119,7 @@ class InvestmentStyleCard extends ConsumerWidget {
                       Expanded(
                         child: Text(h,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: _muted, fontSize: 11, height: 1.2)),
+                            style: TextStyle(color: _muted, fontSize: 11, height: 1.2)),
                       ),
                     const SizedBox(width: _totalWidth),
                   ],
@@ -129,21 +130,21 @@ class InvestmentStyleCard extends ConsumerWidget {
                     children: [
                       SizedBox(
                         width: _labelWidth,
-                        child: Text(StyleGrid.rows[r], style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        child: Text(StyleGrid.rows[r], style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       ),
                       for (var c = 0; c < StyleGrid.cols.length; c++) cell(r, c),
                       SizedBox(
                         width: _totalWidth,
                         child: Text(_p(grid.rowTotal(r)),
                             textAlign: TextAlign.right,
-                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                            style: TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: _labelWidth,
                       child: Text('Total', style: TextStyle(color: _muted, fontSize: 12)),
                     ),
@@ -151,14 +152,14 @@ class InvestmentStyleCard extends ConsumerWidget {
                       Expanded(
                         child: Text(_p(grid.colTotal(c)),
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                            style: TextStyle(color: AppColors.ink, fontSize: 12, fontWeight: FontWeight.w700)),
                       ),
                     const SizedBox(width: _totalWidth),
                   ],
                 ),
                 if (extras.isNotEmpty) ...[
                   const SizedBox(height: 12),
-                  Text(extras.join('  ·  '), style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text(extras.join('  ·  '), style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ],
               ],
             ),
@@ -183,7 +184,7 @@ class _CellStocks extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text('${StyleGrid.rows[row]} Cap · ${StyleGrid.cols[col].replaceAll('+', ' + ')}',
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+            style: TextStyle(color: AppColors.ink, fontSize: 16, fontWeight: FontWeight.w800)),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -199,10 +200,10 @@ class _CellStocks extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: Row(
               children: [
-                Expanded(child: Text(s.symbol, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 13))),
-                SizedBox(width: 56, child: Text(_p(grid.weight(s)), textAlign: TextAlign.right, style: const TextStyle(color: Colors.white, fontSize: 13))),
-                SizedBox(width: 56, child: Text(_rank(s.growthRank), textAlign: TextAlign.right, style: const TextStyle(color: Colors.white70, fontSize: 13))),
-                SizedBox(width: 48, child: Text(_rank(s.valueRank), textAlign: TextAlign.right, style: const TextStyle(color: Colors.white70, fontSize: 13))),
+                Expanded(child: Text(s.symbol, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.ink, fontSize: 13))),
+                SizedBox(width: 56, child: Text(_p(grid.weight(s)), textAlign: TextAlign.right, style: TextStyle(color: AppColors.ink, fontSize: 13))),
+                SizedBox(width: 56, child: Text(_rank(s.growthRank), textAlign: TextAlign.right, style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
+                SizedBox(width: 48, child: Text(_rank(s.valueRank), textAlign: TextAlign.right, style: TextStyle(color: AppColors.textSecondary, fontSize: 13))),
               ],
             ),
           ),
@@ -219,12 +220,12 @@ class _Explainer extends StatelessWidget {
 
   Widget _heading(String t) => Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 6),
-        child: Text(t, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
+        child: Text(t, style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w800)),
       );
 
   Widget _line(String t) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
-        child: Text(t, style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4)),
+        child: Text(t, style: TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.4)),
       );
 
   @override
@@ -234,7 +235,7 @@ class _Explainer extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(context.t.styleWhatTitle,
-            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+            style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),
         _line(context.t.styleWhatIntro),
         _heading(context.t.styleSizeHead),

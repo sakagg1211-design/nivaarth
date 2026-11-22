@@ -7,6 +7,7 @@ import '../dashboard/dashboard_page.dart';
 import '../portfolio/portfolio_page.dart';
 import '../search/search_page.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 class _NavItem {
   final IconData icon;
@@ -24,10 +25,10 @@ const _navItems = [
   _NavItem(Icons.search_rounded, Icons.search_rounded, 'Search'),
 ];
 
-const _gold = Color(0xFFE5A93C);
-const _muted = Color(0xFF858A94);
-const _panel = Color(0xFF111215);
-const _border = Color(0xFF23252B);
+Color get _gold => AppColors.accent;
+Color get _muted => AppColors.textTertiary;
+Color get _panel => AppColors.surface;
+Color get _border => AppColors.surfaceSecondary;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             SnackBar(
               content: Text(context.t.homeBackToExit),
               duration: Duration(seconds: 2),
-              backgroundColor: Color(0xFF16171B),
+              backgroundColor: AppColors.surface,
             ),
           );
         } else {
@@ -83,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0C0D10),
+        backgroundColor: AppColors.background,
         // Wide screens: sidebar + one centered content column for every tab.
         body: isDesktop
             ? Row(
@@ -108,7 +109,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _bottomBar() {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: _panel,
         border: Border(
           top: BorderSide(color: _border, width: 1),
@@ -116,16 +117,16 @@ class _HomePageState extends State<HomePage> {
       ),
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: const Color(0xFF1E2024),
+          indicatorColor: AppColors.surfaceSecondary,
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const TextStyle(
+              return TextStyle(
                 color: _gold,
                 fontWeight: FontWeight.w700,
                 fontSize: 12,
               );
             }
-            return const TextStyle(
+            return TextStyle(
               color: _muted,
               fontWeight: FontWeight.w500,
               fontSize: 12,
@@ -133,12 +134,12 @@ class _HomePageState extends State<HomePage> {
           }),
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(
+              return IconThemeData(
                 color: _gold,
                 size: 22,
               );
             }
-            return const IconThemeData(
+            return IconThemeData(
               color: _muted,
               size: 22,
             );
@@ -176,7 +177,7 @@ class _Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 232,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: _panel,
         border: Border(right: BorderSide(color: _border, width: 1)),
       ),
@@ -197,10 +198,10 @@ class _Sidebar extends StatelessWidget {
                           width: 36, height: 36, fit: BoxFit.cover),
                     ),
                     const SizedBox(width: 12),
-                    const Text(
+                    Text(
                       'NIVAARTH',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.ink,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.6,
@@ -217,7 +218,7 @@ class _Sidebar extends StatelessWidget {
                   onTap: () => onSelect(i),
                 ),
               const Spacer(),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   'Private Beta',
@@ -245,15 +246,15 @@ class _SidebarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? _gold : const Color(0xFFB4B8C2);
+    final color = selected ? _gold : AppColors.textSecondary;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
-        color: selected ? const Color(0xFF1E2024) : Colors.transparent,
+        color: selected ? AppColors.surfaceSecondary : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          hoverColor: const Color(0xFF191B1F),
+          hoverColor: AppColors.surface,
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

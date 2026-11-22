@@ -1827,5 +1827,26 @@
   },
   "badgeZMeaning": "Does not meet listing rules (NSE Z / BZ series)",
   "badgeT2TMeaning": "Trade-for-trade: no intraday, every trade is delivery",
-  "badgeSmeMeaning": "SME platform: low liquidity, large lot size"
+  "badgeSmeMeaning": "SME platform: low liquidity, large lot size",
+  "semChart": "Price chart, {range}: {from} to {to}, {pct}",
+  "@semChart": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "themeLabel": "Theme",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themePhone": "Phone"
 }

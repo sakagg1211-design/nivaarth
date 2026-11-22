@@ -8,8 +8,8 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/market_pulse.dart';
 import '../../../providers/market_pulse_provider.dart';
 
-const _surface = Color(0xFF16171B);
-const _muted = Color(0xFF8E929B);
+Color get _surface => AppColors.surface;
+Color get _muted => AppColors.textSecondary;
 final _day = DateFormat('d MMM');
 
 /// Nifty 50 top gainers and losers, with the market's mood: live Nifty 50 breadth in market
@@ -29,7 +29,7 @@ class NiftyMoversCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: .06)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,12 +37,12 @@ class NiftyMoversCard extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                child: Text(t.moversTitle, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                child: Text(t.moversTitle, style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               // Always name the session the list belongs to, even when there is no breadth line
               if (p.live || p.asOf != null)
                 Text(p.live ? t.newsLive : t.newsSessionClose(_day.format(p.asOf!)),
-                    style: const TextStyle(color: _muted, fontSize: 12, fontWeight: FontWeight.w600)),
+                    style: TextStyle(color: _muted, fontSize: 12, fontWeight: FontWeight.w600)),
             ],
           ),
           if (p.advances != null && p.declines != null) ...[
@@ -51,7 +51,7 @@ class NiftyMoversCard extends ConsumerWidget {
               p.live
                   ? t.moodLive('${p.advances}', '${p.declines}')
                   : t.moodClosed('${p.advances}', '${p.declines}', p.asOf == null ? '—' : _day.format(p.asOf!)),
-              style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
             ),
             if (p.leaders.isNotEmpty) ...[
               const SizedBox(height: 6),
@@ -64,7 +64,7 @@ class NiftyMoversCard extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: AppColors.surfaceSecondary, borderRadius: BorderRadius.circular(8)),
                       child: Text('${l.$1} ${Formatters.percent(l.$2, signed: true)}',
-                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                          style: TextStyle(color: AppColors.ink, fontSize: 11, fontWeight: FontWeight.w600)),
                     ),
                 ],
               ),
@@ -80,7 +80,7 @@ class NiftyMoversCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Text(t.moversFootnote, style: const TextStyle(color: _muted, fontSize: 11)),
+          Text(t.moversFootnote, style: TextStyle(color: _muted, fontSize: 11)),
         ],
       ),
     );
@@ -97,9 +97,9 @@ class _Column extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+        Text(title, style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700)),
         const SizedBox(height: 6),
-        if (items.isEmpty) const Text('—', style: TextStyle(color: _muted, fontSize: 13)),
+        if (items.isEmpty) Text('—', style: TextStyle(color: _muted, fontSize: 13)),
         for (final m in items)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -107,7 +107,7 @@ class _Column extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(m.symbol, maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ),
                 Text(Formatters.percent(m.pct, signed: true),
                     style: TextStyle(color: m.pct >= 0 ? AppColors.success : AppColors.danger, fontSize: 12, fontWeight: FontWeight.w700)),

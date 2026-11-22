@@ -30,7 +30,7 @@ class LanguageSwitcher extends ConsumerWidget {
               ),
               child: Text(label,
                   style: AppTypography.caption.copyWith(
-                    color: selected ? Colors.white : Colors.white70,
+                    color: selected ? AppColors.ink : AppColors.textSecondary,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   )),
             ),
@@ -41,7 +41,7 @@ class LanguageSwitcher extends ConsumerWidget {
 
     return Row(
       children: [
-        Expanded(child: Text(context.t.menuLanguage, style: AppTypography.title.copyWith(color: Colors.white, fontSize: 15))),
+        Expanded(child: Text(context.t.menuLanguage, style: AppTypography.title.copyWith(color: AppColors.ink, fontSize: 15))),
         choice('English', englishLocale),
         const SizedBox(width: 8),
         choice('Hinglish', hinglishLocale),

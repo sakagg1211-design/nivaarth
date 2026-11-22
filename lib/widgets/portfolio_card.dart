@@ -15,6 +15,7 @@ import '../screens/portfolio/widgets/edit_holding_sheet.dart';
 import '../screens/stock/stock_detail_page.dart';
 import 'listing_badges.dart';
 import '../core/l10n/l10n_ext.dart';
+import '../core/theme/app_colors.dart';
 
 class PortfolioCard extends ConsumerWidget {
   final LivePortfolio stock;
@@ -28,33 +29,33 @@ class PortfolioCard extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E2024),
+        backgroundColor: AppColors.surfaceSecondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF282A30)),
+          side: BorderSide(color: AppColors.line),
         ),
         title: Row(
           children: [
-            const Icon(Icons.delete_forever_rounded, color: Color(0xFFFF5252), size: 24),
+            Icon(Icons.delete_forever_rounded, color: AppColors.danger, size: 24),
             const SizedBox(width: 8),
             Text(
               context.t.holdingRemoveTitle(stock.portfolio.instrument),
-              style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+              style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w700),
             ),
           ],
         ),
         content: Text(
           context.t.holdingRemoveBody(stock.portfolio.instrument),
-          style: const TextStyle(color: Color(0xFF8E929B), fontSize: 14),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.t.commonCancel, style: TextStyle(color: Color(0xFF8E929B))),
+            child: Text(context.t.commonCancel, style: TextStyle(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5252),
+              backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
@@ -73,8 +74,8 @@ class PortfolioCard extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.t.holdingRemoved(stock.portfolio.instrument)),
-            backgroundColor: const Color(0xFFFF5252),
+            content: Text(context.t.holdingRemoved(stock.portfolio.instrument), style: const TextStyle(color: Colors.white)),
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -95,8 +96,8 @@ class PortfolioCard extends ConsumerWidget {
     final isPrivacy = ref.watch(privacyModeProvider);
     final portfolio = stock.portfolio;
     final isProfit = stock.netPL >= 0;
-    final tone = isProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
-    final toneBg = isProfit ? const Color(0x1F00E676) : const Color(0x26FF5252);
+    final tone = isProfit ? AppColors.success : AppColors.danger;
+    final toneBg = isProfit ? AppColors.success.withValues(alpha: 0.12) : AppColors.danger.withValues(alpha: 0.15);
 
     final displayName = SymbolUtils.getDisplayName(
       portfolio.instrument,
@@ -105,15 +106,15 @@ class PortfolioCard extends ConsumerWidget {
     final cleanSymbol = SymbolUtils.normalize(portfolio.instrument);
 
     final isDayProfit = stock.todayPL >= 0;
-    final dayTone = isDayProfit ? const Color(0xFF00E676) : const Color(0xFFFF5252);
-    final dayToneBg = isDayProfit ? const Color(0x1F00E676) : const Color(0x26FF5252);
+    final dayTone = isDayProfit ? AppColors.success : AppColors.danger;
+    final dayToneBg = isDayProfit ? AppColors.success.withValues(alpha: 0.12) : AppColors.danger.withValues(alpha: 0.15);
 
     return Material(
-      color: const Color(0xFF16171B),
+      color: AppColors.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFF282A30), width: 1),
+        side: BorderSide(color: AppColors.line, width: 1),
       ),
       child: InkWell(
         onTap: () {
@@ -138,14 +139,14 @@ class PortfolioCard extends ConsumerWidget {
                     height: 34,
                     width: 34,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.ink,
                       borderRadius: BorderRadius.circular(AppRadius.sm),
                     ),
                     child: Center(
                       child: Text(
                         cleanSymbol.isEmpty ? '-' : cleanSymbol.substring(0, 1),
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style: TextStyle(
+                          color: AppColors.background,
                           fontSize: 15,
                           fontWeight: FontWeight.w900,
                         ),
@@ -164,10 +165,10 @@ class PortfolioCard extends ConsumerWidget {
                                 cleanSymbol,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,
-                                  color: Colors.white,
+                                  color: AppColors.ink,
                                 ),
                               ),
                             ),
@@ -183,9 +184,9 @@ class PortfolioCard extends ConsumerWidget {
                           displayName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF8E929B),
+                            color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -196,7 +197,7 @@ class PortfolioCard extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFFFB74D),
+                              color: AppColors.warning,
                             ),
                           )
                         else
@@ -209,15 +210,15 @@ class PortfolioCard extends ConsumerWidget {
                                   vertical: 1,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0x26FFB74D),
+                                  color: AppColors.warning.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(3),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'DELAYED',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
-                                    color: Color(0xFFFFB74D),
+                                    color: AppColors.warning,
                                     letterSpacing: 0.3,
                                   ),
                                 ),
@@ -226,10 +227,10 @@ class PortfolioCard extends ConsumerWidget {
                             ],
                             Text(
                               Formatters.currency(stock.currentPrice),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                                color: AppColors.ink,
                               ),
                             ),
                             const SizedBox(width: 5),
@@ -242,8 +243,8 @@ class PortfolioCard extends ConsumerWidget {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   color: stock.todayReturnPercent >= 0
-                                      ? const Color(0xFF00E676)
-                                      : const Color(0xFFFF5252),
+                                      ? AppColors.success
+                                      : AppColors.danger,
                                 ),
                               ),
                             ),
@@ -267,37 +268,37 @@ class PortfolioCard extends ConsumerWidget {
                               vertical: 1.5,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0x1F00E676),
+                              color: AppColors.success.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Text(
+                            child: Text(
                               'ACTIVE',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF00E676),
+                                color: AppColors.success,
                                 letterSpacing: 0.3,
                               ),
                             ),
                           ),
                           const SizedBox(width: 4),
                           PopupMenuButton<String>(
-                            icon: const Icon(Icons.more_vert_rounded, size: 18, color: Color(0xFF8E929B)),
+                            icon: Icon(Icons.more_vert_rounded, size: 18, color: AppColors.textSecondary),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
-                            color: const Color(0xFF1E2024),
+                            color: AppColors.surfaceSecondary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(color: Color(0xFF282A30)),
+                              side: BorderSide(color: AppColors.line),
                             ),
                             itemBuilder: (context) => [
                               PopupMenuItem(
                                 value: 'edit',
                                 child: Row(
                                   children: [
-                                    Icon(Icons.edit_outlined, size: 16, color: Color(0xFFE5A93C)),
+                                    Icon(Icons.edit_outlined, size: 16, color: AppColors.accent),
                                     SizedBox(width: 8),
-                                    Text(context.t.holdingEdit, style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                                    Text(context.t.holdingEdit, style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),
@@ -305,9 +306,9 @@ class PortfolioCard extends ConsumerWidget {
                                 value: 'delete',
                                 child: Row(
                                   children: [
-                                    Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFFF5252)),
+                                    Icon(Icons.delete_outline_rounded, size: 16, color: AppColors.danger),
                                     SizedBox(width: 8),
-                                    Text(context.t.holdingDelete, style: TextStyle(color: Color(0xFFFF5252), fontSize: 13, fontWeight: FontWeight.w600)),
+                                    Text(context.t.holdingDelete, style: TextStyle(color: AppColors.danger, fontSize: 13, fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),
@@ -347,7 +348,7 @@ class PortfolioCard extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const Divider(height: 1, color: Color(0xFF23252B)),
+              Divider(height: 1, color: AppColors.surfaceSecondary),
               const SizedBox(height: 8),
               // Metrics Bar
               Row(
@@ -388,11 +389,11 @@ class PortfolioCard extends ConsumerWidget {
                       color: dayTone,
                       size: 18,
                     ),
-                    const Text(
+                    Text(
                       "1D P&L: ",
                       style: TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF8E929B),
+                        color: AppColors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -413,9 +414,9 @@ class PortfolioCard extends ConsumerWidget {
                     const Spacer(),
                     Text(
                       context.t.cardLtp(Formatters.currency(stock.currentPrice)),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Color(0xFFC7CDD6),
+                        color: AppColors.inkSoft,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -451,9 +452,9 @@ class _CompactMetric extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
-            color: Color(0xFF8E929B),
+            color: AppColors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -463,7 +464,7 @@ class _CompactMetric extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: valueColor ?? Colors.white,
+            color: valueColor ?? AppColors.ink,
           ),
         ),
       ],

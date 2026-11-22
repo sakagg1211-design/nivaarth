@@ -10,6 +10,7 @@ import '../../providers/portfolio_provider.dart';
 import '../../providers/privacy_provider.dart';
 import '../../services/tradebook_importer.dart';
 import '../../core/l10n/l10n_ext.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Zerodha Console tradebook CSV -> preview -> import. Nothing is written until "Import karo".
 class ImportTradesPage extends ConsumerStatefulWidget {
@@ -83,10 +84,10 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
   Widget build(BuildContext context) {
     final hide = ref.watch(privacyModeProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0C0D10),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.ink,
         elevation: 0,
         title: Text(context.t.importTitle, style: TextStyle(fontWeight: FontWeight.w800)),
       ),
@@ -102,11 +103,11 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(context.t.importHeading,
-                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                          style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
                       const SizedBox(height: 6),
                       Text(
                         context.t.importSteps,
-                        style: TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
@@ -114,29 +115,29 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
                         icon: const Icon(Icons.upload_file_rounded),
                         label: Text(_fileName == null ? context.t.importPickFile : context.t.importPickOther),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE5A93C),
+                          backgroundColor: AppColors.accent,
                           foregroundColor: Colors.black,
                         ),
                       ),
                       if (_fileName != null) ...[
                         const SizedBox(height: 8),
-                        Text(_fileName!, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                        Text(_fileName!, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       ],
                     ],
                   ),
                 ),
                 if (_busy) ...[
                   const SizedBox(height: 16),
-                  const Center(child: CircularProgressIndicator(color: Color(0xFFE5A93C))),
+                  Center(child: CircularProgressIndicator(color: AppColors.accent)),
                   if (_progress != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text(_progress!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70)),
+                      child: Text(_progress!, textAlign: TextAlign.center, style: TextStyle(color: AppColors.textSecondary)),
                     ),
                 ],
                 if (_error != null) ...[
                   const SizedBox(height: 12),
-                  _note(_error!, const Color(0xFFFF5252)),
+                  _note(_error!, AppColors.danger),
                 ],
                 if (_result != null) ..._resultView(_result!),
                 if (_plan != null && !_busy) ..._preview(_plan!, hide),
@@ -153,12 +154,12 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
         _note(
           context.t.importDone(r.imported, r.doneStocks.length) +
           (r.failedStocks.isEmpty ? '' : context.t.importFailed(r.failedStocks.length)),
-          r.failedStocks.isEmpty ? const Color(0xFF00E676) : const Color(0xFFFFB74D),
+          r.failedStocks.isEmpty ? AppColors.success : AppColors.warning,
         ),
         for (final e in r.failedStocks.entries)
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: Text('${e.key}: ${e.value}', style: const TextStyle(color: Color(0xFFFFB74D), fontSize: 12)),
+            child: Text('${e.key}: ${e.value}', style: TextStyle(color: AppColors.warning, fontSize: 12)),
           ),
       ];
 
@@ -173,18 +174,18 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
         context.t.importSummary(plan.stocks.length, plan.newTradeCount) +
         (plan.duplicateCount > 0 ? context.t.importDuplicates(plan.duplicateCount) : '') +
         (plan.skipped.isNotEmpty ? context.t.importSkipped(plan.skipped.length) : ''),
-        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+        style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700),
       )),
       if (plan.unlisted.isNotEmpty) ...[
         const SizedBox(height: 8),
         _note(
             context.t.importUnlisted(plan.unlisted.map((s) => s.symbol).join(', ')) +
             context.t.importRenamed,
-            const Color(0xFFFFB74D)),
+            AppColors.warning),
       ],
       const SizedBox(height: 8),
       _note(context.t.importBonusNote,
-          const Color(0xFF8E929B)),
+          AppColors.textSecondary),
       for (final s in plan.stocks.where((s) => s.listed && s.newTrades.isNotEmpty)) ...[
         const SizedBox(height: 10),
         _stockCard(s, money, q),
@@ -193,7 +194,7 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
       ElevatedButton(
         onPressed: writeCount == 0 ? null : _run,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0C9F6E),
+          backgroundColor: AppColors.successFill,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
@@ -213,16 +214,16 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
           Row(
             children: [
               Expanded(
-                child: Text(s.symbol, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                child: Text(s.symbol, style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800)),
               ),
               Text(context.t.importStockLine(s.newTrades.length, s.duplicates > 0 ? ' (+${s.duplicates} skip)' : ''),
-                  style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 6),
           Text(
             cur == null ? context.t.importNotHeld : context.t.importHeldNow(q(cur.qty)),
-            style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
           if (s.hasOpening) ...[
             const SizedBox(height: 8),
@@ -240,25 +241,25 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
               s.mode == ImportMode.replaceOpening
                   ? context.t.importFromBookNote
                   : context.t.importOnlyNewNote,
-              style: const TextStyle(color: Color(0xFF858A94), fontSize: 11),
+              style: TextStyle(color: AppColors.textTertiary, fontSize: 11),
             ),
           ],
           if (s.manualTrades > 0) ...[
             const SizedBox(height: 6),
             Text(
               context.t.importManualWarn(s.manualTrades),
-              style: const TextStyle(color: Color(0xFFFFB74D), fontSize: 11),
+              style: TextStyle(color: AppColors.warning, fontSize: 11),
             ),
           ],
           const SizedBox(height: 8),
           if (err != null)
-            Text(context.t.importError(err), style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12))
+            Text(context.t.importError(err), style: TextStyle(color: AppColors.danger, fontSize: 12))
           else if (res != null)
             Text(
               res.isClosed
                   ? context.t.importResultClosed(money(res.realizedPl))
                   : context.t.importResultOpen(q(res.qty), money(res.avgPrice), money(res.totalInvested)),
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w600),
             ),
         ],
       ),
@@ -268,9 +269,9 @@ class _ImportTradesPageState extends ConsumerState<ImportTradesPage> {
   Widget _card(Widget child) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF16171B),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: .06)),
+          border: Border.all(color: AppColors.ink.withValues(alpha: .06)),
         ),
         child: child,
       );

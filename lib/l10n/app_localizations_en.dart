@@ -3036,6 +3036,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get badgeSmeMeaning => 'SME platform: low liquidity, large lot size';
+
+  @override
+  String semChart(String range, String from, String to, String pct) {
+    return 'Price chart, $range: $from to $to, $pct';
+  }
+
+  @override
+  String get themeLabel => 'Theme';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themePhone => 'Phone';
 }
 
 /// The translations for English, as used in India (`en_IN`).
@@ -5953,4 +5970,21 @@ class AppLocalizationsEnIn extends AppLocalizationsEn {
 
   @override
   String get badgeSmeMeaning => 'SME platform: kam liquidity, bada lot size';
+
+  @override
+  String semChart(String range, String from, String to, String pct) {
+    return 'Price chart, $range: $from se $to, $pct';
+  }
+
+  @override
+  String get themeLabel => 'Theme';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themePhone => 'Phone jaisa';
 }

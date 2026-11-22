@@ -16,6 +16,7 @@ import '../../../providers/privacy_provider.dart';
 import '../../../repositories/trade_repository.dart';
 import 'trade_widgets.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// "Trade jodo" sheet for a held stock: add a buy or sell, see the trades behind the holding,
 /// remove a trade or the whole stock. Qty and average are never typed in directly; the database
@@ -80,7 +81,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color),
+      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: color),
     );
   }
 
@@ -143,7 +144,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
         _side == TradeSide.buy
             ? t.addMerged(_instrument, qty)
             : t.tradeSellSaved(_instrument, qty),
-        const Color(0xFF0C9F6E),
+        AppColors.successFill,
       );
     } catch (e) {
       if (!mounted) return;
@@ -158,32 +159,32 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E2024),
+        backgroundColor: AppColors.surfaceSecondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF282A30)),
+          side: BorderSide(color: AppColors.line),
         ),
         title: Row(
           children: [
-            const Icon(Icons.delete_forever_rounded, color: Color(0xFFFF5252), size: 24),
+            Icon(Icons.delete_forever_rounded, color: AppColors.danger, size: 24),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
+                style: TextStyle(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w700),
               ),
             ),
           ],
         ),
-        content: Text(body, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 14)),
+        content: Text(body, style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.t.commonCancel, style: TextStyle(color: Color(0xFF8E929B))),
+            child: Text(context.t.commonCancel, style: TextStyle(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5252),
+              backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
@@ -217,7 +218,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     final t = context.t;
     try {
       await _repository.deleteTrade(trade.id);
-      await _closeWith(t.tradeRemoved(_instrument), const Color(0xFFFF5252));
+      await _closeWith(t.tradeRemoved(_instrument), AppColors.danger);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -243,7 +244,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     final t = context.t;
     try {
       await _repository.deleteHolding(_instrument);
-      await _closeWith(t.holdingRemovedFull(_instrument), const Color(0xFFFF5252));
+      await _closeWith(t.holdingRemovedFull(_instrument), AppColors.danger);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -273,8 +274,8 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
         AppSpacing.xl,
         AppSpacing.xl + bottomInset,
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF16171B),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppRadius.sheet),
         ),
@@ -289,7 +290,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                 height: 4,
                 width: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF282A30),
+                  color: AppColors.line,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
               ),
@@ -303,7 +304,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                   height: 38,
                   width: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5A93C),
+                    color: AppColors.accent,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: const Icon(
@@ -319,8 +320,8 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                     children: [
                       Text(
                         context.t.tradeAddFor(portfolio.instrument),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppColors.ink,
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                         ),
@@ -329,8 +330,8 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                         displayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xFF8E929B),
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -340,9 +341,9 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                 IconButton(
                   tooltip: context.t.holdingDelete,
                   onPressed: _loading ? null : _handleDeleteStock,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_outline_rounded,
-                    color: Color(0xFFFF5252),
+                    color: AppColors.danger,
                     size: 22,
                   ),
                 ),
@@ -355,9 +356,9 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E2024),
+                color: AppColors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF282A30)),
+                border: Border.all(color: AppColors.line),
               ),
               child: Column(
                 children: [
@@ -370,8 +371,8 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                       context.t.editRealized,
                       Formatters.currency(portfolio.realizedPl, signed: true),
                       color: portfolio.realizedPl >= 0
-                          ? const Color(0xFF00E676)
-                          : const Color(0xFFFF5252),
+                          ? AppColors.success
+                          : AppColors.danger,
                     ),
                   ],
                   if (livePrice > 0) ...[
@@ -387,9 +388,9 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
             // Buy / Sell
             Row(
               children: [
-                Expanded(child: _sideButton(TradeSide.buy, 'BUY', const Color(0xFF00E676))),
+                Expanded(child: _sideButton(TradeSide.buy, 'BUY', AppColors.success)),
                 const SizedBox(width: AppSpacing.md),
-                Expanded(child: _sideButton(TradeSide.sell, 'SELL', const Color(0xFFFF5252))),
+                Expanded(child: _sideButton(TradeSide.sell, 'SELL', AppColors.danger)),
               ],
             ),
 
@@ -401,7 +402,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                   child: TextField(
                     controller: _qtyController,
                     keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.ink),
                     decoration: _inputDecoration(context.t.commonQuantity, Icons.pin_outlined),
                     onChanged: (_) => setState(() => _errorMessage = null),
                   ),
@@ -411,7 +412,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                   child: TextField(
                     controller: _priceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.ink),
                     decoration: _inputDecoration(
                       _side == TradeSide.buy ? context.t.commonBuyPrice : context.t.commonSellPrice,
                       Icons.currency_rupee_rounded,
@@ -440,12 +441,12 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
               const SizedBox(height: AppSpacing.md),
               Row(
                 children: [
-                  const Icon(Icons.error_outline_rounded, size: 16, color: Color(0xFFFF5252)),
+                  Icon(Icons.error_outline_rounded, size: 16, color: AppColors.danger),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12),
+                      style: TextStyle(color: AppColors.danger, fontSize: 12),
                     ),
                   ),
                 ],
@@ -459,7 +460,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
               height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE5A93C),
+                  backgroundColor: AppColors.accent,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -481,20 +482,20 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
             // Trade history
             Text(
               context.t.tradesHeading,
-              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800),
+              style: TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: AppSpacing.sm),
             FutureBuilder<List<Trade>>(
               future: _tradesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Padding(
+                  return Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Center(
                       child: SizedBox(
                         height: 18,
                         width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE5A93C)),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
                       ),
                     ),
                   );
@@ -502,14 +503,14 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
                 if (snapshot.hasError) {
                   return Text(
                     context.t.tradesLoadError(TradeRepository.message(snapshot.error!, context.t)),
-                    style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12),
+                    style: TextStyle(color: AppColors.danger, fontSize: 12),
                   );
                 }
                 final trades = snapshot.data ?? const <Trade>[];
                 if (trades.isEmpty) {
                   return Text(
                     context.t.tradesNoneYet,
-                    style: TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                   );
                 }
                 return Column(
@@ -527,14 +528,14 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
 
   Widget _tradeRow(Trade t) {
     final isBuy = t.side == TradeSide.buy;
-    final tone = isBuy ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final tone = isBuy ? AppColors.success : AppColors.danger;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF121316),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF23252B)),
+        border: Border.all(color: AppColors.surfaceSecondary),
       ),
       child: Row(
         children: [
@@ -556,13 +557,13 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
               children: [
                 Text(
                   '${_plainQty(t.qty)} @ ${Formatters.currency(t.price)}',
-                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700),
                 ),
                 Text(
                   t.isOpening
                       ? '${DateFormat('d MMM yyyy').format(t.tradeDate)} · Shuruaati holding'
                       : DateFormat('d MMM yyyy').format(t.tradeDate),
-                  style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                 ),
               ],
             ),
@@ -570,7 +571,7 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
           IconButton(
             tooltip: context.t.tradeRemoveTip,
             onPressed: _loading ? null : () => _handleDeleteTrade(t),
-            icon: const Icon(Icons.close_rounded, color: Color(0xFF8E929B), size: 18),
+            icon: Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 18),
           ),
         ],
       ),
@@ -582,8 +583,8 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         backgroundColor: selected ? color.withValues(alpha: 0.14) : Colors.transparent,
-        foregroundColor: selected ? color : const Color(0xFF8E929B),
-        side: BorderSide(color: selected ? color : const Color(0xFF282A30)),
+        foregroundColor: selected ? color : AppColors.textSecondary,
+        side: BorderSide(color: selected ? color : AppColors.line),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
@@ -601,10 +602,10 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
         Text(
           value,
-          style: TextStyle(color: color ?? Colors.white, fontSize: 13, fontWeight: FontWeight.w800),
+          style: TextStyle(color: color ?? AppColors.ink, fontSize: 13, fontWeight: FontWeight.w800),
         ),
       ],
     );
@@ -613,21 +614,21 @@ class _EditHoldingSheetState extends ConsumerState<EditHoldingSheet> {
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF8E929B), fontSize: 13),
-      prefixIcon: Icon(icon, color: const Color(0xFF8E929B), size: 18),
+      labelStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+      prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 18),
       filled: true,
-      fillColor: const Color(0xFF1E2024),
+      fillColor: AppColors.surfaceSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF282A30)),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF282A30)),
+        borderSide: BorderSide(color: AppColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
+        borderSide: BorderSide(color: AppColors.accent, width: 1.2),
       ),
     );
   }
@@ -648,33 +649,33 @@ Future<void> showSellResult(
   final pl = after.realizedPl - before.realizedPl;
   final cost = before.avgPrice * qty;
   final pct = cost > 0 ? pl / cost * 100 : null;
-  final tone = pl >= 0 ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+  final tone = pl >= 0 ? AppColors.success : AppColors.danger;
   String money(num v, {bool signed = false}) => hide ? '••••' : Formatters.currency(v, signed: signed);
   final left = after.qty == after.qty.roundToDouble() ? after.qty.toStringAsFixed(0) : after.qty.toString();
   return showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: const Color(0xFF1E2024),
-      title: Text(context.t.sellDoneTitle(instrument, qty), style: const TextStyle(color: Colors.white, fontSize: 17)),
+      backgroundColor: AppColors.surfaceSecondary,
+      title: Text(context.t.sellDoneTitle(instrument, qty), style: TextStyle(color: AppColors.ink, fontSize: 17)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.t.sellRealized, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+          Text(context.t.sellRealized, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 4),
           Text(
             '${money(pl, signed: true)}${pct != null && !hide ? '  (${Formatters.percent(pct, signed: true)})' : ''}',
-            style: TextStyle(color: hide ? Colors.white70 : tone, fontSize: 20, fontWeight: FontWeight.w800),
+            style: TextStyle(color: hide ? AppColors.textSecondary : tone, fontSize: 20, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
           Text(context.t.sellDetail(qty, money(price), money(before.avgPrice)),
-              style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 14),
           Text(
             after.isClosed
                 ? context.t.sellAllGone(instrument)
                 : context.t.sellRemaining(left, money(after.avgPrice), money(after.totalInvested)),
-            style: const TextStyle(color: Colors.white, fontSize: 13),
+            style: TextStyle(color: AppColors.ink, fontSize: 13),
           ),
         ],
       ),

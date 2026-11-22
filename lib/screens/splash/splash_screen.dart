@@ -125,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen>
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFE5A93C).withValues(alpha: 0.25),
+                        color: AppColors.accent.withValues(alpha: 0.25),
                         blurRadius: 32,
                         offset: const Offset(0, 12),
                       ),
@@ -143,7 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: AppSpacing.xl),
 
                 // Brand Title
-                const Text(
+                Text(
                   'NIVAARTH',
                   style: TextStyle(
                     color: AppColors.textPrimary,
@@ -156,7 +156,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: AppSpacing.sm),
 
                 // Tagline / Subtitle
-                const Text(
+                Text(
                   'Private Portfolio Intelligence',
                   style: TextStyle(
                     color: AppColors.textSecondary,
@@ -169,7 +169,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const Spacer(),
 
                 // Subtle Progress Indicator
-                const SizedBox(
+                SizedBox(
                   width: 28,
                   height: 28,
                   child: CircularProgressIndicator(

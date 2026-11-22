@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
         elevation: 0,
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_rounded,
                   color: AppColors.textPrimary,
                 ),
@@ -140,12 +140,12 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFFE5A93C).withValues(alpha: 0.4),
+                          color: AppColors.accent.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFE5A93C).withValues(alpha: 0.15),
+                            color: AppColors.accent.withValues(alpha: 0.15),
                             blurRadius: 16,
                             spreadRadius: 1,
                           ),
@@ -157,12 +157,12 @@ class _LoginPageState extends State<LoginPage> {
                           'assets/images/logo.jpg',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => Container(
-                            color: const Color(0xFF16171B),
-                            child: const Center(
+                            color: AppColors.surface,
+                            child: Center(
                               child: Text(
                                 'N',
                                 style: TextStyle(
-                                  color: Color(0xFFE5A93C),
+                                  color: AppColors.accent,
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    const Text('NIVAARTH', style: AppTypography.heading1),
+                    Text('NIVAARTH', style: AppTypography.heading1),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       context.t.authTagline,
@@ -292,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.error_outline_rounded,
                                     size: 16,
                                     color: AppColors.danger,
@@ -320,12 +320,12 @@ class _LoginPageState extends State<LoginPage> {
                             child: ElevatedButton(
                               onPressed: loading ? null : login,
                               child: loading
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       height: 20,
                                       width: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        color: AppColors.ink,
                                       ),
                                     )
                                   : Text(context.t.authSignIn),
@@ -375,29 +375,29 @@ class _LoginPageState extends State<LoginPage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF131418),
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0xFF23252B)),
+                          border: Border.all(color: AppColors.surfaceSecondary),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF858A94)),
+                            Icon(Icons.info_outline_rounded, size: 14, color: AppColors.textTertiary),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'Nivaarth is an educational & analytical technology platform. Not registered with SEBI as an Investment Adviser.',
                                 style: AppTypography.caption.copyWith(
-                                  color: const Color(0xFF858A94),
+                                  color: AppColors.textTertiary,
                                   fontSize: 11,
                                   height: 1.3,
                                 ),
                               ),
                             ),
                             const SizedBox(width: 4),
-                            const Text(
+                            Text(
                               'Details ↗',
                               style: TextStyle(
-                                color: Color(0xFFE5A93C),
+                                color: AppColors.accent,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),

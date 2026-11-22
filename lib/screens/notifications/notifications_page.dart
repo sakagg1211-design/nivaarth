@@ -15,6 +15,7 @@ import '../stock/stock_detail_page.dart';
 import '../stock/widgets/price_alert_sheet.dart';
 import '../../core/l10n/l10n_ext.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/theme/app_colors.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
@@ -41,22 +42,22 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final alertsAsync = ref.watch(alertsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF111215),
+        backgroundColor: AppColors.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: AppColors.ink),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           context.t.tipNotifications,
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+          style: TextStyle(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w700),
         ),
         actions: [
           IconButton(
             tooltip: context.t.notifMarkAll,
-            icon: const Icon(Icons.done_all_rounded, color: Color(0xFFE5A93C), size: 22),
+            icon: Icon(Icons.done_all_rounded, color: AppColors.accent, size: 22),
             onPressed: () {
               ref.read(alertsProvider.notifier).markAllAsRead();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -69,7 +70,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           ),
           IconButton(
             tooltip: context.t.commonRefresh,
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white70, size: 22),
+            icon: Icon(Icons.refresh_rounded, color: AppColors.textSecondary, size: 22),
             onPressed: () {
               ref.read(alertsProvider.notifier).fetchAlerts();
             },
@@ -86,9 +87,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           // Alerts List
           Expanded(
             child: alertsAsync.when(
-              loading: () => const Center(
+              loading: () => Center(
                 child: CircularProgressIndicator(
-                  color: Color(0xFFE5A93C),
+                  color: AppColors.accent,
                   strokeWidth: 2,
                 ),
               ),
@@ -96,7 +97,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 child: Text(
                   context.t.notifFailed(err),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white54),
+                  style: TextStyle(color: AppColors.ink.withValues(alpha: 0.54)),
                 ),
               ),
               data: (alerts) {
@@ -107,8 +108,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 }
 
                 return RefreshIndicator(
-                  color: const Color(0xFFE5A93C),
-                  backgroundColor: const Color(0xFF1A1C20),
+                  color: AppColors.accent,
+                  backgroundColor: AppColors.surface,
                   onRefresh: () => ref.read(alertsProvider.notifier).fetchAlerts(),
                   child: ListView.separated(
                     padding: const EdgeInsets.all(AppSpacing.lg),
@@ -133,14 +134,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     return Material(
       type: MaterialType.transparency,
       child: ListTile(
-        leading: const Icon(Icons.notifications_active_outlined, color: Color(0xFFE5A93C), size: 20),
+        leading: Icon(Icons.notifications_active_outlined, color: AppColors.accent, size: 20),
         title: Text(context.t.alertsMine,
-            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+            style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w700)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (count != null) Text(context.t.notifActive(count), style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
-            const Icon(Icons.chevron_right_rounded, color: Color(0xFF8E929B)),
+            if (count != null) Text(context.t.notifActive(count), style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
           ],
         ),
         onTap: () => Navigator.push(
@@ -156,10 +157,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-      decoration: const BoxDecoration(
-        color: Color(0xFF111215),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF23252B), width: 1),
+          bottom: BorderSide(color: AppColors.surfaceSecondary, width: 1),
         ),
       ),
       child: SingleChildScrollView(
@@ -172,15 +173,15 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               child: ChoiceChip(
                 label: Text(NotificationsPage.filterLabel(f, context.t)),
                 selected: isSelected,
-                selectedColor: const Color(0xFFE5A93C),
-                backgroundColor: const Color(0xFF1E2024),
+                selectedColor: AppColors.accent,
+                backgroundColor: AppColors.surfaceSecondary,
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.black : Colors.white70,
+                  color: isSelected ? Colors.black : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   fontSize: 12,
                 ),
                 side: BorderSide(
-                  color: isSelected ? const Color(0xFFE5A93C) : const Color(0xFF2C2F36),
+                  color: isSelected ? AppColors.accent : AppColors.line,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -215,19 +216,19 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
     switch (alert.severity) {
       case AlertSeverity.success:
-        accentColor = const Color(0xFF00C853);
+        accentColor = AppColors.success;
         icon = Icons.trending_up_rounded;
         break;
       case AlertSeverity.warning:
-        accentColor = const Color(0xFFFFB300);
+        accentColor = AppColors.warning;
         icon = Icons.warning_amber_rounded;
         break;
       case AlertSeverity.danger:
-        accentColor = const Color(0xFFFF5252);
+        accentColor = AppColors.danger;
         icon = Icons.error_outline_rounded;
         break;
       case AlertSeverity.info:
-        accentColor = const Color(0xFF29B6F6);
+        accentColor = AppColors.info;
         icon = Icons.info_outline_rounded;
         break;
     }
@@ -281,11 +282,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: alert.isRead ? const Color(0xFF15171B) : const Color(0xFF1C1E24),
+          color: alert.isRead ? AppColors.surface : AppColors.surfaceSecondary,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: alert.isRead
-                ? const Color(0xFF282A30)
+                ? AppColors.line
                 : accentColor.withValues(alpha: 0.35),
             width: alert.isRead ? 1 : 1.5,
           ),
@@ -325,7 +326,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                         child: Text(
                           alert.title,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.ink,
                             fontSize: 14,
                             fontWeight: alert.isRead ? FontWeight.w600 : FontWeight.w700,
                           ),
@@ -346,7 +347,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   Text(
                     alert.message,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.72),
+                      color: AppColors.ink.withValues(alpha: 0.72),
                       fontSize: 13,
                       height: 1.35,
                     ),
@@ -355,7 +356,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   Text(
                     _formatTime(alert.createdAt),
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.38),
+                      color: AppColors.ink.withValues(alpha: 0.38),
                       fontSize: 11,
                     ),
                   ),
@@ -386,20 +387,20 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             width: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF1E2024),
-              border: Border.all(color: const Color(0xFF2C2F36)),
+              color: AppColors.surfaceSecondary,
+              border: Border.all(color: AppColors.line),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_off_outlined,
               size: 32,
-              color: Color(0xFF858A94),
+              color: AppColors.textTertiary,
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(
             context.t.notifEmptyTitle,
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.ink,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -407,7 +408,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           const SizedBox(height: 4),
           Text(
             context.t.notifEmptyBody,
-            style: TextStyle(color: Colors.white54, fontSize: 13),
+            style: TextStyle(color: AppColors.ink.withValues(alpha: 0.54), fontSize: 13),
           ),
         ],
       ),

@@ -6,9 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/price_alert.dart';
 import '../../../providers/price_alert_provider.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
-const _muted = Color(0xFF8E929B);
-const _gold = Color(0xFFE5A93C);
+Color get _muted => AppColors.textSecondary;
+Color get _gold => AppColors.accent;
 
 /// One active alert with a delete button; used in the sheet and on the alerts page.
 class PriceAlertTile extends ConsumerWidget {
@@ -25,11 +26,11 @@ class PriceAlertTile extends ConsumerWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(showSymbol ? '${alert.instrument} · $text' : text,
-              style: const TextStyle(color: Colors.white, fontSize: 13)),
+              style: TextStyle(color: AppColors.ink, fontSize: 13)),
         ),
         IconButton(
           tooltip: context.t.alertRemoveTip,
-          icon: const Icon(Icons.delete_outline_rounded, color: _muted, size: 20),
+          icon: Icon(Icons.delete_outline_rounded, color: _muted, size: 20),
           onPressed: () async {
             final messenger = ScaffoldMessenger.of(context);
             final t = context.t;
@@ -108,8 +109,8 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
         .toList();
     return Container(
       padding: EdgeInsets.fromLTRB(20, 18, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-      decoration: const BoxDecoration(
-        color: Color(0xFF16171B),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -120,11 +121,11 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(context.t.alertTitle(sym),
-                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+                style: TextStyle(color: AppColors.ink, fontSize: 16, fontWeight: FontWeight.w800)),
             if (widget.currentPrice > 0) ...[
               const SizedBox(height: 4),
               Text(context.t.alertCurrent(Formatters.currency(widget.currentPrice)),
-                  style: const TextStyle(color: _muted, fontSize: 13)),
+                  style: TextStyle(color: _muted, fontSize: 13)),
             ],
             const SizedBox(height: 14),
             Row(
@@ -139,14 +140,14 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
               controller: _controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: AppColors.ink),
               cursorColor: _gold, // the app theme's cursor is dark, invisible on this sheet
               decoration: InputDecoration(
                 hintText: context.t.alertPriceHint,
-                hintStyle: const TextStyle(color: _muted),
+                hintStyle: TextStyle(color: _muted),
                 errorText: _error,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: .05),
+                fillColor: AppColors.ink.withValues(alpha: .05),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
             ),
@@ -188,12 +189,12 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
           alignment: Alignment.center,
           constraints: const BoxConstraints(minHeight: 48),
           decoration: BoxDecoration(
-            color: active ? Colors.white.withValues(alpha: .1) : Colors.transparent,
+            color: active ? AppColors.ink.withValues(alpha: .1) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.white.withValues(alpha: active ? .25 : .08)),
+            border: Border.all(color: AppColors.ink.withValues(alpha: active ? .25 : .08)),
           ),
           child: Text(label,
-              style: TextStyle(color: active ? Colors.white : _muted, fontSize: 13, fontWeight: FontWeight.w700)),
+              style: TextStyle(color: active ? AppColors.ink : _muted, fontSize: 13, fontWeight: FontWeight.w700)),
         ),
       ),
     );
@@ -208,15 +209,15 @@ class PriceAlertsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(activePriceAlertsProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF111215),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.ink,
         title: Text(context.t.alertsMine,
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+            style: TextStyle(color: AppColors.ink, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: _gold)),
+        loading: () => Center(child: CircularProgressIndicator(color: _gold)),
         error: (_, _) => Center(child: Text(context.t.alertsLoadFailed, style: TextStyle(color: _muted))),
         data: (list) => list.isEmpty
             ? Center(

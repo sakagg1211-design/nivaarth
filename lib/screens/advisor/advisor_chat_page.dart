@@ -10,6 +10,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../services/backend_service.dart';
 import '../../core/l10n/l10n_ext.dart';
 import '../../providers/advisor_question_provider.dart';
+import '../../core/theme/app_colors.dart';
 
 class ChatMessageModel {
   final String text;
@@ -239,7 +240,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF16171B),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -258,7 +259,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: AppColors.ink.withValues(alpha: 0.24),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -269,12 +270,12 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+                          Icon(Icons.history_rounded, color: AppColors.inkSoft, size: 22),
                           SizedBox(width: 8),
                           Text(
                             context.t.advHistoryTitle,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.ink,
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
@@ -284,13 +285,13 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE5A93C).withValues(alpha: 0.15),
+                          color: AppColors.inkSoft.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           context.t.advQueries(userQuestions.length),
-                          style: const TextStyle(
-                            color: Color(0xFFE5A93C),
+                          style: TextStyle(
+                            color: AppColors.inkSoft,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
@@ -299,18 +300,18 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     ],
                   ),
                 ),
-                const Divider(color: Color(0xFF282A30), height: 1),
+                Divider(color: AppColors.line, height: 1),
                 Expanded(
                   child: userQuestions.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white38, size: 40),
+                              Icon(Icons.chat_bubble_outline_rounded, color: AppColors.ink.withValues(alpha: 0.38), size: 40),
                               const SizedBox(height: 12),
                               Text(
                                 context.t.advNoHistory,
-                                style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 13),
+                                style: TextStyle(color: AppColors.ink.withValues(alpha: 0.5), fontSize: 13),
                               ),
                             ],
                           ),
@@ -333,9 +334,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF1E2026),
+                                  color: AppColors.surfaceSecondary,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFF2C2F36)),
+                                  border: Border.all(color: AppColors.line),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,8 +347,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                                         Expanded(
                                           child: Text(
                                             "Q: ${item['question']}",
-                                            style: const TextStyle(
-                                              color: Color(0xFFE5A93C),
+                                            style: TextStyle(
+                                              color: AppColors.inkSoft,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 13,
                                             ),
@@ -359,7 +360,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                                         const SizedBox(width: 8),
                                         Text(
                                           timeStr,
-                                          style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
+                                          style: TextStyle(color: AppColors.ink.withValues(alpha: 0.4), fontSize: 11),
                                         ),
                                       ],
                                     ),
@@ -367,7 +368,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                                     Text(
                                       item["answer"],
                                       style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.7),
+                                        color: AppColors.ink.withValues(alpha: 0.7),
                                         fontSize: 12,
                                         height: 1.3,
                                       ),
@@ -396,9 +397,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
       if (q != null) Future.microtask(_takePendingQuestion);
     });
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF111215),
+        backgroundColor: AppColors.surface,
         elevation: 0,
         titleSpacing: 16,
         title: Row(
@@ -408,12 +409,12 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               width: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE5A93C), Color(0xFFB87B18)],
+                gradient: LinearGradient(
+                  colors: [AppColors.accent, Color(0xFFB87B18)],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE5A93C).withValues(alpha: 0.3),
+                    color: AppColors.accent.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -428,10 +429,10 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 children: [
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         "NV Advisor",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.ink,
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                         ),
@@ -440,21 +441,21 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00C853).withValues(alpha: 0.15),
+                          color: AppColors.success.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(AppRadius.pill),
                           border: Border.all(
-                            color: const Color(0xFF00C853).withValues(alpha: 0.4),
+                            color: AppColors.success.withValues(alpha: 0.4),
                           ),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            CircleAvatar(radius: 3, backgroundColor: Color(0xFF00C853)),
+                            CircleAvatar(radius: 3, backgroundColor: AppColors.success),
                             SizedBox(width: 4),
                             Text(
                               "LIVE AI",
                               style: TextStyle(
-                                color: Color(0xFF00C853),
+                                color: AppColors.success,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -467,7 +468,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                   Text(
                     context.t.advSub,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: AppColors.ink.withValues(alpha: 0.5),
                       fontSize: 11,
                     ),
                   ),
@@ -479,12 +480,12 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
         actions: [
           IconButton(
             tooltip: context.t.advHistoryTitle,
-            icon: const Icon(Icons.history_rounded, color: Color(0xFFE5A93C), size: 22),
+            icon: Icon(Icons.history_rounded, color: AppColors.inkSoft, size: 22),
             onPressed: _showTodayHistoryModal,
           ),
           IconButton(
             tooltip: context.t.advClear,
-            icon: const Icon(Icons.delete_outline_rounded, color: Colors.white54, size: 20),
+            icon: Icon(Icons.delete_outline_rounded, color: AppColors.ink.withValues(alpha: 0.54), size: 20),
             onPressed: () {
               setState(() {
                 _messages.clear();
@@ -551,14 +552,14 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
     return ActionChip(
       label: Text(
         prompt,
-        style: const TextStyle(
-          color: Color(0xFFD6DADF),
+        style: TextStyle(
+          color: AppColors.inkSoft,
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),
       ),
-      backgroundColor: const Color(0xFF191B20),
-      side: const BorderSide(color: Color(0xFF2C2F37)),
+      backgroundColor: AppColors.surface,
+      side: BorderSide(color: AppColors.surfaceSecondary),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
@@ -609,13 +610,13 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               height: 32,
               width: 32,
               margin: const EdgeInsets.only(right: 8, top: 4),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF1E2024),
+                color: AppColors.surfaceSecondary,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.smart_toy_outlined,
-                color: Color(0xFFE5A93C),
+                color: AppColors.inkSoft,
                 size: 17,
               ),
             ),
@@ -629,8 +630,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: isUser
-                    ? const Color(0xFFE5A93C).withValues(alpha: 0.16)
-                    : const Color(0xFF16171B),
+                    ? AppColors.inkSoft.withValues(alpha: 0.16)
+                    : AppColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -639,8 +640,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                 ),
                 border: Border.all(
                   color: isUser
-                      ? const Color(0xFFE5A93C).withValues(alpha: 0.40)
-                      : const Color(0xFF282A30),
+                      ? AppColors.inkSoft.withValues(alpha: 0.40)
+                      : AppColors.line,
                   width: 1,
                 ),
               ),
@@ -654,7 +655,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     child: Text(
                       "${msg.time.hour.toString().padLeft(2, '0')}:${msg.time.minute.toString().padLeft(2, '0')}",
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: AppColors.ink.withValues(alpha: 0.3),
                         fontSize: 11,
                       ),
                     ),
@@ -668,13 +669,13 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               height: 32,
               width: 32,
               margin: const EdgeInsets.only(left: 8, top: 4),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF262930),
+                color: AppColors.surfaceSecondary,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.person_rounded,
-                color: Colors.white70,
+                color: AppColors.textSecondary,
                 size: 18,
               ),
             ),
@@ -711,9 +712,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF191B20),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF2C2F36)),
+        border: Border.all(color: AppColors.line),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -722,19 +723,19 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           child: Table(
             defaultColumnWidth: const IntrinsicColumnWidth(),
             border: TableBorder.symmetric(
-              inside: const BorderSide(color: Color(0xFF282A30), width: 1),
+              inside: BorderSide(color: AppColors.line, width: 1),
             ),
             children: [
               TableRow(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF20232B),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceSecondary,
                 ),
                 children: headers.map((h) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   child: Text(
                     h.replaceAll('**', ''),
-                    style: const TextStyle(
-                      color: Color(0xFFE5A93C),
+                    style: TextStyle(
+                      color: AppColors.inkSoft,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                     ),
@@ -749,8 +750,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     child: Text(
                       text.replaceAll('**', ''),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppColors.ink,
                         fontSize: 12,
                       ),
                       softWrap: true,
@@ -797,9 +798,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
       // Section divider ---
       if (trimmed == '---' || trimmed == '***') {
         widgets.add(
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 6),
-            child: Divider(color: Color(0xFF2C2F36), height: 1),
+            child: Divider(color: AppColors.line, height: 1),
           ),
         );
         continue;
@@ -815,8 +816,8 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               cleanTitle,
               softWrap: true,
               textWidthBasis: TextWidthBasis.parent,
-              style: const TextStyle(
-                color: Color(0xFFE5A93C),
+              style: TextStyle(
+                color: AppColors.inkSoft,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.2,
@@ -840,16 +841,16 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
             margin: const EdgeInsets.symmetric(vertical: 4),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E2128),
+              color: AppColors.surfaceSecondary,
               borderRadius: BorderRadius.circular(6),
-              border: const Border(
-                left: BorderSide(color: Color(0xFFE5A93C), width: 3),
+              border: Border(
+                left: BorderSide(color: AppColors.lineStrong, width: 1),
               ),
             ),
             child: Text.rich(
               TextSpan(
-                style: const TextStyle(
-                  color: Color(0xFFD6DADF),
+                style: TextStyle(
+                  color: AppColors.inkSoft,
                   fontSize: 13,
                   fontStyle: FontStyle.italic,
                   height: 1.4,
@@ -870,7 +871,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           child: Text.rich(
             TextSpan(
               style: TextStyle(
-                color: isUser ? Colors.white : const Color(0xFFE1E5EA),
+                color: isUser ? AppColors.ink : AppColors.inkSoft,
                 fontSize: 14,
                 height: 1.45,
               ),
@@ -905,7 +906,7 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
       spans.add(TextSpan(
         text: match.group(1),
         style: TextStyle(
-          color: isUser ? Colors.white : const Color(0xFFFFFFFF),
+          color: isUser ? AppColors.ink : AppColors.ink,
           fontWeight: FontWeight.w700,
         ),
       ));
@@ -929,9 +930,9 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF16171B),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF282A30)),
+              border: Border.all(color: AppColors.line),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -941,14 +942,14 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
                   width: 14,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.inkSoft,
                   ),
                 ),
                 SizedBox(width: 10),
                 Text(
                   context.t.advAnalyzing,
                   style: TextStyle(
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.inkSoft,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -964,10 +965,10 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
   Widget _buildInputBar() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      decoration: const BoxDecoration(
-        color: Color(0xFF111215),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         border: Border(
-          top: BorderSide(color: Color(0xFF23252B), width: 1),
+          top: BorderSide(color: AppColors.surfaceSecondary, width: 1),
         ),
       ),
       child: Row(
@@ -975,19 +976,19 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF191B20),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.pill),
-                border: Border.all(color: const Color(0xFF2C2F36)),
+                border: Border.all(color: AppColors.line),
               ),
               child: TextField(
                 controller: _controller,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                cursorColor: const Color(0xFFE5A93C),
+                style: TextStyle(color: AppColors.ink, fontSize: 14),
+                cursorColor: AppColors.inkSoft,
                 textInputAction: TextInputAction.send,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration(
                   hintText: context.t.advHint,
-                  hintStyle: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                  hintStyle: TextStyle(color: AppColors.textTertiary, fontSize: 13),
                   contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   border: InputBorder.none,
                 ),
@@ -1003,10 +1004,10 @@ class _AdvisorChatPageState extends ConsumerState<AdvisorChatPage> {
               width: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFE5A93C),
+                color: AppColors.accent,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE5A93C).withValues(alpha: 0.3),
+                    color: AppColors.accent.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

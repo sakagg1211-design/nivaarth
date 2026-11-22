@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_radius.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/l10n/l10n_ext.dart';
+import '../core/theme/app_colors.dart';
 
 class LegalDisclaimerSheet extends StatelessWidget {
   const LegalDisclaimerSheet({super.key});
@@ -22,8 +23,8 @@ class LegalDisclaimerSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF131418),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppRadius.sheet),
         ),
@@ -38,7 +39,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
               height: 4,
               width: 38,
               decoration: BoxDecoration(
-                color: const Color(0xFF2E3138),
+                color: AppColors.line,
                 borderRadius: BorderRadius.circular(AppRadius.pill),
               ),
             ),
@@ -53,12 +54,12 @@ class LegalDisclaimerSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0x1FE5A93C),
+                    color: AppColors.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.gavel_rounded,
-                    color: Color(0xFFE5A93C),
+                    color: AppColors.accent,
                     size: 20,
                   ),
                 ),
@@ -67,10 +68,10 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Compliance & Disclaimers',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.ink,
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                         ),
@@ -78,7 +79,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                       Text(
                         'SEBI Regulatory & Platform Terms',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: AppColors.ink.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -86,14 +87,14 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: Colors.white54),
+                  icon: Icon(Icons.close_rounded, color: AppColors.ink.withValues(alpha: 0.54)),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
           ),
 
-          const Divider(color: Color(0xFF23252B), height: 24),
+          Divider(color: AppColors.surfaceSecondary, height: 24),
 
           // Content Scroll
           Flexible(
@@ -120,7 +121,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   _buildSectionCard(
                     title: '2. Market Risk & No Guaranteed Returns',
                     badge: 'Mandatory Risk Disclosure',
-                    badgeColor: const Color(0xFFF59E0B),
+                    badgeColor: AppColors.warning,
                     icon: Icons.warning_amber_rounded,
                     body:
                         'Investments in the securities market are subject to market risks. '
@@ -134,7 +135,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   _buildSectionCard(
                     title: '3. Quantitative Methodology & Explainable AI',
                     badge: 'Algorithmic Models',
-                    badgeColor: const Color(0xFF10B981),
+                    badgeColor: AppColors.success,
                     icon: Icons.psychology_outlined,
                     body:
                         'Nivaarth scores (0-100) are purely mathematical aggregations of '
@@ -148,7 +149,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                   _buildSectionCard(
                     title: '4. User Diligence & Advisory Consultation',
                     badge: 'User Responsibility',
-                    badgeColor: const Color(0xFF8B5CF6),
+                    badgeColor: AppColors.violet,
                     icon: Icons.shield_outlined,
                     body:
                         'Users must conduct their own independent evaluation, due diligence, '
@@ -163,7 +164,7 @@ class LegalDisclaimerSheet extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE5A93C),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 13),
                         shape: RoundedRectangleBorder(
@@ -201,9 +202,9 @@ class LegalDisclaimerSheet extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF17191E),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF262830)),
+        border: Border.all(color: AppColors.surfaceSecondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,8 +233,8 @@ class LegalDisclaimerSheet extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.ink,
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -241,8 +242,8 @@ class LegalDisclaimerSheet extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             body,
-            style: const TextStyle(
-              color: Color(0xFF9EA3AE),
+            style: TextStyle(
+              color: AppColors.textSecondary,
               fontSize: 12,
               height: 1.45,
             ),

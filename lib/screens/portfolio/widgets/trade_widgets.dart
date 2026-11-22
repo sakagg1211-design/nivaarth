@@ -5,6 +5,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/holding_math.dart';
 import '../../../models/trade.dart';
 import '../../../core/l10n/l10n_ext.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Tappable trade-date row; opens a date picker limited to today or earlier.
 class TradeDateField extends StatelessWidget {
@@ -31,19 +32,19 @@ class TradeDateField extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E2024),
+          color: AppColors.surfaceSecondary,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF282A30)),
+          border: Border.all(color: AppColors.line),
         ),
         child: Row(
           children: [
-            const Icon(Icons.event_rounded, color: Color(0xFF8E929B), size: 18),
+            Icon(Icons.event_rounded, color: AppColors.textSecondary, size: 18),
             const SizedBox(width: 10),
-            Text(context.t.tradeDate, style: TextStyle(color: Color(0xFF8E929B), fontSize: 13)),
+            Text(context.t.tradeDate, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
             const Spacer(),
             Text(
               DateFormat('d MMM yyyy').format(date),
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+              style: TextStyle(color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -88,9 +89,9 @@ class TradePreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF121316),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF23252B)),
+        border: Border.all(color: AppColors.surfaceSecondary),
       ),
       child: Column(
         children: [
@@ -106,14 +107,14 @@ class TradePreview extends StatelessWidget {
                 context.t.sellRealized,
                 Formatters.currency(after.realizedPl - start.realizedPl, signed: true),
                 color: after.realizedPl >= start.realizedPl
-                    ? const Color(0xFF00E676)
-                    : const Color(0xFFFF5252),
+                    ? AppColors.success
+                    : AppColors.danger,
               ),
             ],
           ],
           if (error != null) ...[
             const SizedBox(height: 6),
-            Text(error, style: const TextStyle(color: Color(0xFFFF5252), fontSize: 12)),
+            Text(error, style: TextStyle(color: AppColors.danger, fontSize: 12)),
           ],
         ],
       ),
@@ -127,11 +128,11 @@ class TradePreview extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Color(0xFF8E929B), fontSize: 12)),
+        Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         Text(
           value,
           style: TextStyle(
-            color: color ?? Colors.white,
+            color: color ?? AppColors.ink,
             fontSize: strong ? 13 : 12,
             fontWeight: strong ? FontWeight.w800 : FontWeight.w700,
           ),
